@@ -19,32 +19,18 @@ use yii\db\Expression;
 /**
  * Class Users
  *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- * @property integer $_id
+ * @property integer $id
  * @property string $uuid
  * @property string $name
- * @property string $login
- * @property string $pass
- * @property integer $type
- * @property string $tagId
- * @property integer $active
- * @property string $whoIs
- * @property integer $image
+ * @property string $pin
  * @property string $contact
- * @property integer $userId
- * @property integer $connectionDate
+ * @property integer $user_id
  * @property integer $createdAt
  * @property integer $changedAt
  */
+
 class Users extends ActiveRecord
 {
-    private static $_IMAGE_ROOT = 'users';
-
-    const USER_SYSTEM = "1111111-1111-1111-1111-111111111111";
     /**
      * Behaviors.
      *
@@ -84,23 +70,15 @@ class Users extends ActiveRecord
                 [
                     'uuid',
                     'name',
-                    'login',
-                    'pass',
-                    'type',
-                    'tagId',
-                    'active',
-                    'whoIs',
-                    'contact',
-                    'userId'
+                    'pin',
+                    'contact'
                 ],
                 'required'
             ],
-            [['type', 'active', 'userId'], 'integer'],
-            [['image'], 'file'],
-            [['connectionDate', 'createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'login', 'pass'], 'string', 'max' => 50],
-            [['name', 'tagId', 'contact'], 'string', 'max' => 100],
-            [['whoIs'], 'string', 'max' => 45],
+            [['user_id'], 'integer'],
+            [['createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'pin'], 'string', 'max' => 50],
+            [['name', 'contact'], 'string', 'max' => 100],
         ];
     }
 
@@ -112,19 +90,12 @@ class Users extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            '_id' => Yii::t('app', '№'),
+            'id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'name' => Yii::t('app', 'Имя'),
-            'login' => Yii::t('app', 'Логин'),
-            'pass' => Yii::t('app', 'Пароль'),
-            'type' => Yii::t('app', 'Тип'),
-            'tagId' => Yii::t('app', 'Tag ID'),
-            'active' => Yii::t('app', 'Статус'),
-            'whoIs' => Yii::t('app', 'Должность'),
-            'image' => Yii::t('app', 'Фотография'),
+            'pin' => Yii::t('app', 'Пин код'),
             'contact' => Yii::t('app', 'Контакт'),
-            'userId' => Yii::t('app', 'User id'),
-            'connectionDate' => Yii::t('app', 'Дата подключения'),
+            'user_id' => Yii::t('app', 'User id'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -138,18 +109,12 @@ class Users extends ActiveRecord
     public function fields()
     {
         return [
-            '_id',
+            'id',
             'uuid',
             'name',
-            'login',
-            'pass',
-            'type',
-            'tagId',
-            'active',
-            'whoIs',
-            'image',
+            'pin',
+            'user_id',
             'contact',
-            'connectionDate',
             'user' => function ($model) {
                 return $model->user;
             },
@@ -165,7 +130,7 @@ class Users extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'userId']);
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
     /**
@@ -207,7 +172,7 @@ class Users extends ActiveRecord
      */
     public function getId()
     {
-        return $this['_id'];
+        return $this['id'];
     }
 
     /**
@@ -247,44 +212,6 @@ class Users extends ActiveRecord
      */
     public function afterFind()
     {
-        $this->active = $this->active == 0 ? false : true;
         parent::afterFind();
-    }
-
-    /**
-     * URL изображения.
-     *
-     * @return string | null
-     */
-    public function getImageUrl()
-    {
-        $dbName = \Yii::$app->session->get('user.dbname');
-
-        $localPath = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . '/' . $this->image;
-        if (file_exists(Yii::getAlias($localPath))) {
-            $userName = \Yii::$app->user->identity->username;
-            $dir = 'storage/' . $userName . '/' . self::$_IMAGE_ROOT . '/'
-                . '/' . $this->image;
-            $url = Yii::$app->request->BaseUrl . '/' . $dir;
-        } else {
-            // такого в штатном режиме быть не должно!
-            $url = null;
-        }
-
-        return $url;
-    }
-
-    /**
-     * Возвращает каталог в котором должен находится файл изображения,
-     * относительно папки web.
-     *
-     * @return string
-     */
-    public function getImageDir()
-    {
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/';
-        return $dir;
     }
 }

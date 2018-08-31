@@ -41,36 +41,15 @@ use kartik\file\FileInput;
 
     <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?php echo $form->field($model, 'login')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'pass')->passwordInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'type')->textInput() ?>
-
-    <?php echo $form->field($model, 'tagId')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'pin')->textInput(['maxlength' => true]) ?>
 
     <?php
     $users = User::find()->all();
     $items = ArrayHelper::map($users, 'id', 'username');
-    echo $form->field($model, 'userId')->dropDownList($items);
+    echo $form->field($model, 'user_id')->dropDownList($items);
     ?>
-
-    <?php
-    $items = ['1' => 'Активный', '0' => 'Отключен', '2' => 'Удален'];
-    echo $form->field($model, 'active')->dropDownList($items);
-    ?>
-
-    <?php echo $form->field($model, 'whoIs')->textInput(['maxlength' => true]) ?>
-
-
-    <?php
-    echo $form->field($model, 'image')->widget(
-        FileInput::classname(),
-        ['options' => ['accept' => '*'],]
-    ); ?>
 
     <?php echo $form->field($model, 'contact')->textInput(['maxlength' => true]) ?>
-
 
     <div class="form-group text-center">
 

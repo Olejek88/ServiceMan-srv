@@ -7,23 +7,18 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
 /**
- * This is the model class for table "equipment_status".
+ * This is the model class for table "house".
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $title
+ * @property string $number
+ * @property string $houseStatusUuid
+ * @property string $streetUuid
  * @property string $createdAt
  * @property string $changedAt
  */
-class EquipmentStatus extends ActiveRecord
+class House extends ActiveRecord
 {
-    const NOT_MOUNTED = "62A9AA68-9FE5-4D8C-A4B8-34278B95E51E";
-    const WORK = "61C5007F-AE18-4C4E-BD57-737A20EF9EBC";
-    const NEED_CHECK = "D818A97E-B6EB-4AEC-9168-174C780E365B";
-    const NEED_REPAIR = "7D0713CC-E79D-48D3-A2A2-60898A70BD8A";
-    const NOT_WORK = "7B9C5D15-4079-489F-AF73-5135C36B330A";
-    const UNKNOWN = "ED20012C-629A-4275-9BFA-A81D08B45758";
-
     public function behaviors()
     {
         return [
@@ -35,12 +30,13 @@ class EquipmentStatus extends ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'equipment_status';
+        return 'house';
     }
 
     /**
@@ -49,11 +45,35 @@ class EquipmentStatus extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'title'], 'required'],
+            [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid'], 'string', 'max' => 50],
-            [['title'], 'string', 'max' => 100],
+            [['uuid', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
         ];
+    }
+
+    public function fields()
+    {
+        return [
+            '_id',
+            'uuid',
+            'houseStatus' => function ($model) {
+                return $model->houseStatus;
+            },
+            'street' => function ($model) {
+                return $model->street;
+            },
+            'createdAt',
+            'changedAt',
+        ];
+    }
+
+    public function getHouseStatus()
+    {
+        return $this->hasOne(HouseStatus::className(), ['uuid' => 'houseStatusUuid']);
+    }
+    public function getStreet()
+    {
+        return $this->hasOne(Street::className(), ['uuid' => 'streetUuid']);
     }
 
     /**
@@ -64,7 +84,8 @@ class EquipmentStatus extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'title' => Yii::t('app', 'Название'),
+            'houseStatus' => Yii::t('app', 'Статус здания'),
+            'street' => Yii::t('app', 'Улица'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

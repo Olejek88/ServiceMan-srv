@@ -75,7 +75,7 @@ class MainFunctions
     {
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
-            ->where(['userId' => $accountUser['id']])
+            ->where(['user_id' => $accountUser['id']])
             ->asArray()
             ->one();
         $journal = new Journal();
@@ -117,7 +117,7 @@ class MainFunctions
     public static function getLocationByUser($user, $full)
     {
         $location = 'не определено';
-        $gps = Gpstrack::find()->where(['userUuid' => $user['uuid']])->orderBy('date DESC')->one();
+/*        $gps = Gpstrack::find()->where(['userUuid' => $user['uuid']])->orderBy('date DESC')->one();
         $objects = Objects::find()->all();
         $max_distance=10;
         foreach ($objects as $object) {
@@ -128,7 +128,7 @@ class MainFunctions
                 if ($full)
                     $location .= ' ['.$gps['latitude'].', '.$gps['longitude'].']';
             }
-        }
+        }*/
         return $location;
     }
 

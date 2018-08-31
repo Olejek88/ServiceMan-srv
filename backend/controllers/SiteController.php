@@ -13,17 +13,21 @@ namespace backend\controllers;
 
 use common\components\MainFunctions;
 use common\components\MyHelpers;
-use common\models\Documentation;
+use common\models\City;
 use common\models\EquipmentRegister;
 use common\models\EquipmentType;
 use common\models\ExternalEvent;
+use common\models\Flat;
+use common\models\Measure;
 use common\models\Message;
 use common\models\ObjectType;
 use common\models\Operation;
+use common\models\Resident;
 use common\models\Service;
 use common\models\Stage;
+use common\models\Street;
+use common\models\Subject;
 use common\models\UsersAttribute;
-use console\workers\OrderService;
 use Yii;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -580,189 +584,32 @@ class SiteController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
-        $events = [];
-        $orders = Orders::find()
-            ->select('*')
-            ->orderBy("_id DESC")
-            ->all();
-        foreach ($orders as $order) {
-            $user = Users::find()
-                ->select('name')
-                ->where(['uuid' => $order['userUuid']])
-                ->asArray()
-                ->one();
-            $status = OrderStatus::find()
-                ->select('title')
-                ->where(['uuid' => $order['orderStatusUuid']])
-                ->asArray()
-                ->one();
-            //$order['orderStatus']->title;
-            $event = new Event();
-            $event->id = $order['_id'];
-            $event->title = '[' . $user['name'] . '] ' . $order['title'];
-            $event->start = $order['startDate'];
-            if ($status['title'] == 'Новый') {
-                $event->backgroundColor = '#aaaaaa';
-            }
-            if ($status['title'] == 'Выполнен') {
-                $event->backgroundColor = '#009911';
-            }
-            if ($status['title'] == 'Не выполнен' || $status['title'] == 'Отменен') {
-                $event->backgroundColor = '#ff1100';
-            }
-
-            if ($order['closeDate'] != '0000-00-00 00:00:00') {
-                $event->end = $order['closeDate'];
-            }
-
-            $event->url = '/orders/' . $order["_id"];
-            $event->color = '#333333';
-            $events[] = $event;
-        }
-
-        $ordersCount = Orders::find()
-            ->select('count(_id) AS count, MONTH(startDate) AS month, orderStatusUuid')
-            ->groupBy('orderStatusUuid, MONTH(startDate)')
+        $accountUser = Yii::$app->user->identity;
+        $currentUser = Users::find()
+            ->where(['user_id' => $accountUser['id']])
             ->asArray()
+            ->one();
+
+        $cityCount = City::find()->count();
+        $streetCount = Street::find()->count();
+        $flatCount = Flat::find()->count();
+        $equipmentCount = Equipment::find()->count();
+        $abonentCount = Subject::find()->count();
+        $residentCount = Resident::find()->count();
+        $equipmentTypeCount = EquipmentType::find()->count();
+        $houseCount = Subject::find()->count();
+        $usersCount = Users::find()->count();
+
+        $measures = Measure::find()
+            ->orderBy('date')
             ->all();
-
-        if (count($ordersCount)>0)
-            $orderStatusUuid = $ordersCount[0]['orderStatusUuid'];
-        else
-            $orderStatusUuid = '';
-        $group = 0;
-        $ordersGroup = [];
-        $status = [];
-        $ordersStatusCount = [0, 0, 0, 0, 0];
-        $ordersStatusPercent = [0, 0, 0, 0, 0];
-        $sumOrderStatusCount = 0;
-        $sumOrderStatusCompleteCount = 0;
-        for ($c = 0; $c <= 4; $c++) {
-            for ($m = 1; $m <= 12; $m++) {
-                $ordersGroup[$c][$m] = 0;
-            }
-        }
-
-        foreach ($ordersCount as $orderCount) {
-            if ($orderStatusUuid != $orderCount['orderStatusUuid']) {
-                $orderStatusUuid = $orderCount['orderStatusUuid'];
-                $group++;
-            }
-
-            $ordersGroup[$group][$orderCount['month']] = $orderCount['count'];
-            $status[$group] = OrderStatus::find()
-                ->select('title')
-                ->where(['uuid' => $orderCount['orderStatusUuid']])
-                ->one();
-            //echo '['.$orderCount['month'].']['.$group.']'.$status[$group]['title'].' = '.$ordersGroup[$group][$orderCount['month']];
-
-            if ($orderCount['orderStatusUuid'] == OrderStatus::NEW_ORDER) {
-                $ordersStatusCount[0] += $orderCount['count'];
-            }
-
-            if ($orderCount['orderStatusUuid'] == OrderStatus::CANCELED) {
-                $ordersStatusCount[1] += $orderCount['count'];
-            }
-
-            if ($orderCount['orderStatusUuid'] == OrderStatus::COMPLETE) {
-                $ordersStatusCount[2] += $orderCount['count'];
-            }
-
-            if ($orderCount['orderStatusUuid'] == OrderStatus::UN_COMPLETE) {
-                $ordersStatusCount[3] += $orderCount['count'];
-            }
-
-            if ($orderCount['orderStatusUuid'] == OrderStatus::IN_WORK) {
-                $ordersStatusCount[3] += $orderCount['count'];
-                $ordersStatusCount[4] += $orderCount['count'];
-            }
-
-            $sumOrderStatusCompleteCount += $ordersStatusCount[2];
-            $sumOrderStatusCount += $orderCount['count'];
-        }
-
-        for ($cnt = 0; $cnt < $group; $cnt++) {
-            $ordersStatusPercent[$cnt] = $ordersStatusCount[$cnt] * 100 / $sumOrderStatusCount;
-        }
-
-        $first = 0;
-        $categories = "'Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'";
-        $bar = '';
-        if ($group>0)
-        for ($c = 0; $c <= $group; $c++) {
-            if ($first > 0) {
-                $bar .= "," . PHP_EOL;
-            }
-
-            $bar .= "{ name: '" . $status[$c]['title'] . "',";
-            $bar .= "data: [";
-            $zero = 0;
-            for ($m = 1; $m <= 12; $m++) {
-                if ($zero > 0) {
-                    $bar .= ",";
-                }
-
-                $bar .= $ordersGroup[$c][$m];
-                //echo $c.' '.$m.' = '.$ordersGroup[$c][$m].PHP_EOL;
-                $zero++;
-            }
-
-            $bar .= "]}";
-            $first++;
-        }
-
-        $sumTaskStatusCount = 0;
-        $sumTaskStatusCompleteCount = 0;
-        $tasksCount = Task::find()
-            ->select('count(_id) AS count, taskStatusUuid')
-            ->groupBy('taskStatusUuid')
-            ->asArray()
-            ->all();
-        foreach ($tasksCount as $taskCount) {
-            if ($taskCount['taskStatusUuid'] == TaskStatus::COMPLETE) {
-                $sumTaskStatusCompleteCount += $taskCount['count'];
-            }
-
-            $sumTaskStatusCount += $taskCount['count'];
-        }
-        $sumStageStatusCount = 0;
-        $sumStageStatusCompleteCount = 0;
-        $stagesCount = Stage::find()
-            ->select('count(_id) AS count, stageStatusUuid')
-            ->groupBy('stageStatusUuid')
-            ->asArray()
-            ->all();
-        foreach ($stagesCount as $stageCount) {
-            if ($stageCount['stageStatusUuid'] == StageStatus::COMPLETE) {
-                $sumStageStatusCompleteCount += $stageCount['count'];
-            }
-
-            $sumStageStatusCount += $stageCount['count'];
-        }
-
-        $sumOperationStatusCount = 0;
-        $sumOperationStatusCompleteCount = 0;
-        $operationsCount = Operation::find()
-            ->select('count(_id) AS count, operationStatusUuid')
-            ->groupBy('operationStatusUuid')
-            ->asArray()
-            ->all();
-        foreach ($operationsCount as $operationCount) {
-            if ($operationCount['operationStatusUuid'] == OperationStatus::COMPLETE) {
-                $sumOperationStatusCompleteCount += $operationCount['count'];
-            }
-
-            $sumOperationStatusCount += $operationCount['count'];
-        }
 
         $equipments = Equipment::find()
-            ->select('*')
-            ->orderBy('createdAt DESC')
-            ->limit(5)
+            ->orderBy('id DESC')
             ->all();
 
-        $equipmentsCount = Equipment::find()
-            ->count();
+        $users = Users::find()
+            ->all();
 
         /**
          * Работа с картой
@@ -787,168 +634,50 @@ class SiteController extends Controller
                 $userData[$count]['longitude'] = 0;
             }
 
-            $userData[$count]['_id'] = $current_user['_id'];
+            $userData[$count]['id'] = $current_user['id'];
             $userData[$count]['name'] = $current_user['name'];
-            $userData[$count]['whois'] = $current_user['whoIs'];
             $userData[$count]['contact'] = $current_user['contact'];
 
             $count++;
         }
 
-        $users = Users::find()
-            ->select('*')
-            ->orderBy('createdAt DESC')
-            ->limit(8)
-            ->all();
-
-        /**
-         * Объекты
-         */
-        $objectSelect = Objects::find()
-            ->select('_id, title, latitude, longitude, description')
-            ->asArray()
-            ->all();
-        $objectsCount = count($objectSelect);
-
-        $cnt = 0;
-        $objectsGroup = 'var objects=L.layerGroup([';
-        $objectsList = '';
-        foreach ($objectSelect as $object) {
-            $objectsList .= 'var object' . $object["_id"]
-                . '= L.marker([' . $object["latitude"] . ','
-                . $object["longitude"] . ']).bindPopup("<b>'
-                . $object["title"] . '</b><br/>' . $object["description"]
-                . '").openPopup();';
-            if ($cnt > 0) {
-                $objectsGroup .= ',';
-            }
-
-            $objectsGroup .= 'object' . $object["_id"];
-            $cnt++;
-        }
-
-        $objectsGroup .= ']);' . PHP_EOL;
-
         $cnt = 0;
         $usersGroup = 'var users=L.layerGroup([';
         $usersList = '';
         foreach ($userData as $user) {
-            $usersList .= 'var user' . $user["_id"] . '= L.marker(['
+            $usersList .= 'var user' . $user["id"] . '= L.marker(['
                 . $user["latitude"] . ',' . $user["longitude"]
                 . '], {icon: userIcon}).bindPopup("<b>' . $user["name"]
-                . '</b><br/>' . $user["whois"] . ' '
-                . $user["contact"] . '").openPopup();';
+                . '</b><br/> '  . $user["contact"] . '").openPopup();';
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
 
-            $usersGroup .= 'user' . $user["_id"];
+            $usersGroup .= 'user' . $user["id"];
             $cnt++;
         }
 
         $usersGroup .= ']);' . PHP_EOL;
 
-        $defectsByType = Defect::find()
-            ->select('COUNT(*) AS cnt, equipment_type.title AS title')
-            ->leftJoin('equipment', 'equipment.uuid=defect.equipmentUuid')
-            ->leftJoin('equipment_model', 'equipment_model.uuid=equipment.equipmentModelUuid')
-            ->leftJoin('equipment_type', 'equipment_type.uuid=equipment_model.equipmentTypeUuid')
-            ->asArray()
-            ->groupBy('equipment_type.title')
-            ->all();
-        $sum = 0;
-        foreach ($defectsByType as $defect) {
-            $sum += $defect['cnt'];
-        }
-
-        $cnt = 0;
-        foreach ($defectsByType as $defect) {
-            $defectsByType[$cnt]['cnt'] = $defect['cnt'] * 100 / $sum;
-            $cnt++;
-        }
-
-        $equipmentTypesCount = EquipmentType::find()->count();
-        $modelsCount = EquipmentModel::find()->count();
-        $documentationCount = Documentation::find()->count();
-        $trackCount = Gpstrack::find()->count();
-        $objectsTypeCount = ObjectType::find()->count();
-
-        $messages = Message::find()
-            ->orderBy('date DESC')
-            ->all();
-        $cnt = 0;
-        $messagesChat=[];
-        foreach ($messages as $message) {
-            $messagesChat[$cnt]['text'] = $message['text'];
-            $messagesChat[$cnt]['date'] = date("Y-m-d H:i",strtotime($message['date']));
-            $messagesChat[$cnt]['fromUser'] = $message['fromUserUuid'];
-            if ($message['fromUser']) {
-                $messagesChat[$cnt]['from'] = $message['fromUser']->name;
-
-                $path = $message['fromUser']->getImageUrl();
-                if (!$path || !$message['fromUser']['image']) {
-                    $path='/images/unknown.png';
-                }
-                $path = Html::encode($path);
-                $messagesChat[$cnt]['fromImage'] = $path;
-            }
-            else {
-                $messagesChat[$cnt]['from'] = 'неизвестен';
-                $messagesChat[$cnt]['fromImage'] = '/images/unknown.png';
-            }
-            $cnt++;
-        }
-
-        $services = Service::find()->all();
-        foreach ($services as $service) {
-            if (strtotime("now")>(strtotime($service['last_start_date'])+5*$service['delay']))
-                $service->setAttribute('status', 0);
-            else
-                $service->setAttribute('status', 1);
-            $service->save();
-        }
-
-        $accountUser = Yii::$app->user->identity;
-        $currentUser = Users::find()
-            ->where(['userId' => $accountUser['id']])
-            ->asArray()
-            ->one();
 
         return $this->render(
             'dashboard',
             [
-                'ordersStatusCount' => $ordersStatusCount,
-                'ordersStatusPercent' => $ordersStatusPercent,
-                'sumOrderStatusCount' => $sumOrderStatusCount,
-                'sumOrderStatusCompleteCount' => $sumOrderStatusCompleteCount,
-                'sumTaskStatusCount' => $sumTaskStatusCount,
-                'sumTaskStatusCompleteCount' => $sumTaskStatusCompleteCount,
-                'sumStageStatusCount' => $sumStageStatusCount,
-                'sumStageStatusCompleteCount' => $sumStageStatusCompleteCount,
-                'sumOperationStatusCount' => $sumOperationStatusCount,
-                'sumOperationStatusCompleteCount' => $sumOperationStatusCompleteCount,
-                'defectsByType' => $defectsByType,
-                'categories' => $categories,
-                'values' => $bar,
-                'events' => $events,
-                'orders' => $orders,
-                'services' => $services,
-                'users' => $users,
-                'currentUser' => $currentUser,
-                'objectsTypeCount' => $objectsTypeCount,
-                'messagesChat' => $messagesChat,
-                'equipmentTypesCount' => $equipmentTypesCount,
-                'modelsCount' => $modelsCount,
-                'documentationCount' => $documentationCount,
-                'trackCount' => $trackCount,
-                'equipmentsCount' => $equipmentsCount,
+                'cityCount' => $cityCount,
+                'houseCount' => $houseCount,
+                'streetCount' => $streetCount,
                 'usersCount' => $usersCount,
-                'objectsCount' => $objectsCount,
-                'objectsGroup' => $objectsGroup,
-                'objectsList' => $objectsList,
+                'flatCount' => $flatCount,
+                'measures' => $measures,
+                'equipments' => $equipments,
+                'users' => $users,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
-                'equipments' => $equipments,
+                'equipmentCount' => $equipmentCount,
+                'equipmentTypeCount' => $equipmentTypeCount,
+                'abonentCount' => $abonentCount,
+                'residentCount' => $residentCount,
+                'currentUser' => $currentUser,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider
             ]
@@ -969,33 +698,12 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            $redis = Yii::$app->redis;
-            $dbName = $redis->get(Yii::$app->user->identity->username);
-            if ($dbName == null) {
-                throw new HttpException(500, 'Не найдена база для пользователя!');
-            }
-
-            $session = \Yii::$app->session;
-            $session->set('user.dbname', $dbName);
-
-            $log = new JournalUser();
-            $log->userId = $model->user->attributes['id'];
-            $log->address = Yii::$app->request->userIP;
-
-            if ($log->save()) {
-                return $this->goBack();
-            } else {
-                // TODO: Установить обработчик ошибок
-                // и решить что делать с полученным результатом
-                return 'Hello!';
-            }
+            return $this->goBack();
         } else {
-            return $this->render(
-                'login',
-                [
-                    'model' => $model,
-                ]
-            );
+            $model->password = '';
+            return $this->render('login', [
+                'model' => $model,
+            ]);
         }
     }
 

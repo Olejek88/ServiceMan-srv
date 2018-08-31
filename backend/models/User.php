@@ -14,8 +14,8 @@ use yii\db\ActiveRecord;
  * @property string $password_reset_token
  * @property string $email
  * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
+ * @property integer $createdAt
+ * @property integer $changedAt
  */
 class User extends ActiveRecord
 {
@@ -33,8 +33,8 @@ class User extends ActiveRecord
     public function rules()
     {
         return [
-            [['username', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
-            [['status', 'created_at', 'updated_at'], 'integer'],
+            [['username', 'auth_key', 'password_hash', 'email', 'createdAt', 'changedAt'], 'required'],
+            [['status', 'createdAt', 'changedAt'], 'integer'],
             [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
@@ -56,8 +56,8 @@ class User extends ActiveRecord
             'password_reset_token' => 'Password Reset Token',
             'email' => 'Email',
             'status' => 'Status',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
+            'createdAt' => 'Created At',
+            'changedAt' => 'Updated At',
         ];
     }
 }

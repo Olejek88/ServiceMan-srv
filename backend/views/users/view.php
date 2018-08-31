@@ -35,26 +35,19 @@ $this->title = 'Профиль пользователя :: '.$model->name;
                 <div class="box box-primary">
                     <div class="box-body box-profile">
                         <?php
-                        $path = $model->getImageUrl();
-                        if (!$path || !$model['image']) {
-                            $path='/images/unknown2.png';
-                        }
+                        $path='/images/unknown2.png';
                         echo '<img class="profile-user-img img-responsive img-circle" src="'.Html::encode($path).'">';
                         ?>
                         <h3 class="profile-username text-center"><?php echo $model['name'] ?></h3>
-                        <p class="text-muted text-center"><?php echo $model['whoIs'] ?></p>
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
-                                <b>Нарядов</b> <a class="pull-right"><?php echo $user_property['orders'] ?></a>
+                                <b>Фотографий</b> <a class="pull-right"><?php echo $user_property['photo'] ?></a>
                             </li>
                             <li class="list-group-item">
-                                <b>Дефектов</b> <a class="pull-right"><?php echo $user_property['defects'] ?></a>
+                                <b>Измерений</b> <a class="pull-right"><?php echo $user_property['measure'] ?></a>
                             </li>
                             <li class="list-group-item">
-                                <b>Собщений</b> <a class="pull-right"><?php echo $user_property['messages'] ?></a>
-                            </li>
-                            <li class="list-group-item">
-                                <b>Аттрибутов</b> <a class="pull-right"><?php echo $user_property['attributes'] ?></a>
+                                <b>Аварий</b> <a class="pull-right"><?php echo $user_property['alarms'] ?></a>
                             </li>
                         </ul>
 <!--                        <a href="#" class="btn btn-primary btn-block"><b>Аттрибуты</b></a> -->
@@ -73,9 +66,9 @@ $this->title = 'Профиль пользователя :: '.$model->name;
                             <?php echo $model['contact'] ?>
                         </span>
                         <hr>
-                        <strong><i class="fa fa-tag margin-r-5"></i> Тег</strong>
+                        <strong><i class="fa fa-tag margin-r-5"></i> Пин-код</strong>
                         <span class="text-muted">
-                            <?php echo $model['tagId'] ?>
+                            <?php echo $model['pin'] ?>
                         </span>
                         <hr>
                         <strong><i class="fa fa-map-marker margin-r-5"></i> Координаты</strong>
@@ -86,8 +79,7 @@ $this->title = 'Профиль пользователя :: '.$model->name;
 
                         <strong><i class="fa fa-check-circle margin-r-5"></i> Статус</strong>
                             <?php
-                             if ($model['active']) echo '<span class="label label-success">Активен</span>';
-                             else echo '<span class="label label-danger">Не активен</span>';
+                             echo '<span class="label label-success">Активен</span>';
                             ?>
 
                         <hr>
@@ -128,7 +120,7 @@ $this->title = 'Профиль пользователя :: '.$model->name;
                         <div class="tab-pane" id="activity">
                             <!-- Post -->
                             <?php
-                                $orderCount=0;
+/*                                $orderCount=0;
                                 foreach ($orders as $order) {
                                     echo '<div class="post"><div class="user-block">';
                                     $path = $order['author']->getImageUrl();
@@ -156,7 +148,7 @@ $this->title = 'Профиль пользователя :: '.$model->name;
                                             </ul>';
                                     echo '</div>';
                                     $orderCount++;
-                                }
+                                }*/
                             ?>
                         </div>
                         <!-- /.tab-pane -->

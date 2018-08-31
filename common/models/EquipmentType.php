@@ -1,28 +1,13 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveRecord;
 /**
  * This is the model class for table "equipment_type".
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  *
  * @property integer $_id
  * @property string $uuid
@@ -32,11 +17,6 @@ use yii\db\Expression;
  */
 class EquipmentType extends ActiveRecord
 {
-    /**
-     * Behaviors.
-     *
-     * @return array
-     */
     public function behaviors()
     {
         return [
@@ -50,10 +30,6 @@ class EquipmentType extends ActiveRecord
     }
 
     /**
-     * Название таблицы.
-     *
-     * @return string
-     *
      * @inheritdoc
      */
     public static function tableName()
@@ -62,10 +38,6 @@ class EquipmentType extends ActiveRecord
     }
 
     /**
-     * Rules.
-     *
-     * @return array
-     *
      * @inheritdoc
      */
     public function rules()
@@ -73,16 +45,22 @@ class EquipmentType extends ActiveRecord
         return [
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid'], 'string', 'max' => 50],
-            [['title'], 'string', 'max' => 100],
+            [['uuid', 'title'], 'string', 'max' => 50],
+        ];
+    }
+
+    public function fields()
+    {
+        return [
+            '_id',
+            'uuid',
+            'title',
+            'createdAt',
+            'changedAt',
         ];
     }
 
     /**
-     * Labels.
-     *
-     * @return array
-     *
      * @inheritdoc
      */
     public function attributeLabels()

@@ -5,7 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 /**
- * This is the model class for table "gpstrack".
+ * This is the model class for table "gps_track".
  *
  * @property string $userUuid
  * @property double $latitude
@@ -19,7 +19,7 @@ class Gpstrack extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'gpstrack';
+        return 'gps_track';
     }
 
     /**

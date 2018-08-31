@@ -1,14 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace common\models;
 
 use Yii;
@@ -19,33 +9,19 @@ use yii\db\Expression;
 /**
  * This is the model class for table "equipment".
  *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- *
  * @property integer $_id
  * @property string $uuid
- * @property string $equipmentModelUuid
- * @property string $title
- * @property string $criticalTypeUuid
- * @property string $startDate
- * @property double $latitude
- * @property double $longitude
- * @property string $tagId
- * @property string $image
+ * @property string $equipmentTypeUuid
+ * @property string $serial
  * @property string $equipmentStatusUuid
- * @property string $inventoryNumber
- * @property string $locationUuid
+ * @property string $testDate
+ * @property string $houseUuid
+ * @property string $flatUuid
  * @property string $createdAt
  * @property string $changedAt
- * @property string $parentEquipmentUuid
- * @property string $serialNumber
  */
 class Equipment extends ActiveRecord
 {
-    private static $_IMAGE_ROOT = 'equipment';
 
     /**
      * Behaviors.
@@ -82,24 +58,20 @@ class Equipment extends ActiveRecord
     public function fields()
     {
         return ['_id', 'uuid',
-            'equipmentModelUuid',
-            'equipmentModel' => function ($model) {
-                return $model->equipmentModel;
+            'equipmentTypeUuid',
+            'equipmentType' => function ($model) {
+                return $model->equipmentType;
             },
             'equipmentStatusUuid',
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'title', 'inventoryNumber', 'serialNumber',
-            'locationUuid',
-            'location' => function ($model) {
-                return $model->location;
+            'flatUuid',
+            'flat' => function ($model) {
+                return $model->flat;
             },
-            'criticalTypeUuid',
-            'criticalType' => function ($model) {
-                return $model->criticalType;
-            }, 'startDate', 'latitude', 'longitude',
-            'tagId', 'image', 'createdAt', 'changedAt'
+            'serial', 'testDate', 'serial',
+            'createdAt', 'changedAt'
         ];
     }
 
@@ -114,32 +86,24 @@ class Equipment extends ActiveRecord
             [
                 [
                     'uuid',
-                    'equipmentModelUuid',
-                    'title',
-                    'criticalTypeUuid',
-                    'tagId',
+                    'equipmentTypeUuid',
                     'equipmentStatusUuid',
-                    'inventoryNumber',
-                    'locationUuid'
+                    'serial',
                 ],
                 'required'
             ],
-            [['startDate', 'createdAt', 'changedAt'], 'safe'],
-            [['latitude', 'longitude'], 'number'],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
+            [['testDate', 'createdAt', 'changedAt'], 'safe'],
             [
                 [
                     'uuid',
-                    'equipmentModelUuid',
-                    'criticalTypeUuid',
-                    'tagId',
+                    'equipmentTypeUuid',
                     'equipmentStatusUuid',
-                    'serialNumber',
-                    'inventoryNumber'
+                    'serial',
+                    'houseUuid',
+                    'flatUuid'
                 ],
                 'string', 'max' => 50
             ],
-            [['title', 'locationUuid'], 'string', 'max' => 100],
         ];
     }
 
@@ -153,22 +117,15 @@ class Equipment extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'equipmentModelUuid' => Yii::t('app', 'Модель оборудования'),
-            'equipmentModel' => Yii::t('app', 'Модель'),
-            'title' => Yii::t('app', 'Название'),
-            'criticalTypeUuid' => Yii::t('app', 'Критичность'),
-            'startDate' => Yii::t('app', 'Дата установки'),
-            'latitude' => Yii::t('app', 'Широта'),
-            'longitude' => Yii::t('app', 'Долгота'),
-            'tagId' => Yii::t('app', 'Tag ID'),
-            'image' => Yii::t('app', 'Фотография'),
+            'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
+            'equipmentType' => Yii::t('app', 'Тип'),
+            'testDate' => Yii::t('app', 'Дата последней поверки'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
-            'inventoryNumber' => Yii::t('app', 'Инвентарный'),
-            'locationUuid' => Yii::t('app', 'Локация'),
-            'parentEquipmentUuid' => Yii::t(
-                'app', 'Uuid родительского оборудования'
-            ),
-            'serialNumber' => Yii::t('app', 'Серийный номер'),
+            'flatUuid' => Yii::t('app', 'Квартира'),
+            'houseUuid' => Yii::t('app', 'Дом'),
+            'flat' => Yii::t('app', 'Квартира'),
+            'house' => Yii::t('app', 'Дом'),
+            'serial' => Yii::t('app', 'Серийный номер'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -193,10 +150,10 @@ class Equipment extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getCriticalType()
+    public function getHouse()
     {
         return $this->hasOne(
-            CriticalType::className(), ['uuid' => 'criticalTypeUuid']
+            House::className(), ['uuid' => 'houseUuid']
         );
     }
 
@@ -217,10 +174,10 @@ class Equipment extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getEquipmentModel()
+    public function getEquipmentType()
     {
         return $this->hasOne(
-            EquipmentModel::className(), ['uuid' => 'equipmentModelUuid']
+            EquipmentType::className(), ['uuid' => 'equipmentTypeUuid']
         );
     }
 
@@ -229,77 +186,9 @@ class Equipment extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getLocation()
+    public function getFlat()
     {
-        return $this->hasOne(Objects::className(), ['uuid' => 'locationUuid']);
+        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
     }
 
-    /**
-     * Объект связанного поля.
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    /*
-    public function getObjects()
-    {
-        return $this->hasOne(Objects::className(), ['uuid' => 'locationUuid']);
-    }*/
-
-    /**
-     * URL изображения.
-     *
-     * @return string
-     */
-    public function getImageUrl()
-    {
-        if ($this->image == '') {
-            return $this->equipmentModel->getImageUrl();
-        }
-
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $typeUuid = $this->equipmentModelUuid;
-        $localPath = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/' . $this->image;
-        if (file_exists(Yii::getAlias($localPath))) {
-            $userName = \Yii::$app->user->identity->username;
-            $dir = 'storage/' . $userName . '/' . self::$_IMAGE_ROOT . '/'
-                . $typeUuid . '/' . $this->image;
-            $url = Yii::$app->request->BaseUrl . '/' . $dir;
-        } else {
-            $url = $this->equipmentModel->getImageUrl();
-        }
-
-        return $url;
-    }
-
-    /**
-     * Возвращает каталог в котором должен находится файл изображения,
-     * относительно папки web.
-     *
-     * @return string
-     */
-    public function getImageDir()
-    {
-        $typeUuid = $this->equipmentModelUuid;
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/';
-        return $dir;
-    }
-
-    /**
-     * Возвращает каталог в котором должен находится файл изображения,
-     * относительно папки web.
-     *
-     * @param string $typeUuid Uuid типа операции
-     *
-     * @return string
-     */
-    public function getImageDirType($typeUuid)
-    {
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/';
-        return $dir;
-    }
 }

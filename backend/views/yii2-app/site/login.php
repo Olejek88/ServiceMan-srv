@@ -22,13 +22,12 @@ $fieldOptions2 = [
                 <div class="login-logo text-center">
                     <h4>
                         <a href="/" style=" color: #333; text-decoration: none;">
-                            <b>ТОИРУС</b>ервис
+                            Сервис обслуживания
                         </a>
                     </h4>
                 </div>
 
                 <div class="login-box-body">
-                    <!-- <p class="login-box-msg">Введите учетные данные</p> -->
 
                     <?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
 
