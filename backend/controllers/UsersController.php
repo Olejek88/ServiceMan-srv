@@ -43,12 +43,6 @@ use backend\models\UsersSearch;
 
 /**
  * UsersController implements the CRUD actions for Users model.
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  */
 class UsersController extends Controller
 {

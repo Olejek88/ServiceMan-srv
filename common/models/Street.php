@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  * @property integer $_id
  * @property string $uuid
  * @property string $title
+ * @property string $cityUuid
  * @property string $createdAt
  * @property string $changedAt
  */
@@ -43,9 +44,9 @@ class Street extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'title'], 'required'],
+            [['uuid', 'title', 'cityUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'title'], 'string', 'max' => 50],
+            [['uuid', 'title', 'cityUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -57,6 +58,7 @@ class Street extends ActiveRecord
             'city' => function ($model) {
                 return $model->city;
             },
+            'cityUuid',
             'title',
             'createdAt',
             'changedAt',
@@ -78,6 +80,7 @@ class Street extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Улица'),
             'city' => Yii::t('app', 'Город'),
+            'cityUuid' => Yii::t('app', 'Город'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

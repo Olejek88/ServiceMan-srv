@@ -27,12 +27,6 @@ use backend\models\ObjectsSearch;
 
 /**
  * ObjectsController implements the CRUD actions for Objects model.
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  */
 class ObjectsController extends Controller
 {

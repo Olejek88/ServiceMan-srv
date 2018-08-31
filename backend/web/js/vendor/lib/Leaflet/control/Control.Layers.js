@@ -28,7 +28,7 @@ import * as DomUtil from '../dom/DomUtil';
  * L.control.layers(baseLayers, overlays).addTo(map);
  * ```
  *
- * The `baseLayers` and `overlays` parameters are object literals with layer names as keys and `Layer` objects as values:
+ * The `baseLayers` and `overlays` parameters are object literals with layer names as keys and `Layer` abonents as values:
  *
  * ```js
  * {

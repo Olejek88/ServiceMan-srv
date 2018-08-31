@@ -15,7 +15,7 @@ class m180830_120640_add_user extends Migration
     $currentTime = date('Y-m-d\TH:i:s');
 
         $this->insert('{{%user}}', [
-            'id' => '1',
+            '_id' => '1',
             'username' => 'dev',
             'auth_key' => 'f1elprxfre3ri79clcY2VcaBdPqhPLZQ',
             'password_hash' => '$2y$13$nGZaF9DU5t/v63X./MM3Gu/eg0HsXBRtnBZ7adA3spSbJUKtLIEbC',

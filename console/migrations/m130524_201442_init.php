@@ -13,7 +13,7 @@ class m130524_201442_init extends Migration
         }
 
         $this->createTable('{{%user}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'username' => $this->string()->notNull()->unique(),
             'auth_key' => $this->string(32)->notNull(),
             'password_hash' => $this->string()->notNull(),
@@ -21,25 +21,25 @@ class m130524_201442_init extends Migration
             'email' => $this->string()->notNull()->unique(),
 
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%city}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%street}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
             'cityUuid' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -59,29 +59,29 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%house_status}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%flat_status}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%house}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'number' => $this->string()->notNull(),
             'houseStatusUuid' => $this->string()->notNull(),
             'streetUuid' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -117,13 +117,13 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%flat}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'number' => $this->string()->notNull(),
             'flatStatusUuid' => $this->string()->notNull(),
             'houseUuid' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -159,13 +159,13 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%resident}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'owner' => $this->string()->notNull(),
             'flatUuid' => $this->string()->notNull(),
             'inn' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -185,13 +185,13 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%subject}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'contractNumber' => $this->string()->unique()->notNull(),
-            'contractDate' => $this->date()->notNull(),
+            'contractDate' => $this->timestamp()->notNull(),
             'houseUuid' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -211,35 +211,35 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%alarm_type}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%alarm_status}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%users}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'user_id' => $this->integer()->notNull()->unique(),
             'name' => $this->string()->notNull(),
             'pin' => $this->string()->notNull(),
             'image' => $this->string(),
             'contact' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%alarm}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'alarmTypeUuid' => $this->string()->notNull(),
             'alarmStatusUuid' => $this->string()->notNull(),
@@ -247,7 +247,7 @@ class m130524_201442_init extends Migration
             'longitude' => $this->double(),
             'latitude' => $this->double(),
             'comment' => $this->string()->notNull(),
-            'date' => $this->date()->notNull()
+            'date' => $this->timestamp()->notNull()
         ], $tableOptions);
 
         $this->createIndex(
@@ -299,32 +299,32 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%equipment_type}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%equipment_status}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%equipment}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'houseUuid' => $this->string()->notNull(),
             'flatUuid' => $this->string()->notNull(),
             'equipmentTypeUuid' => $this->string()->notNull(),
             'equipmentStatusUuid' => $this->string()->notNull(),
             'serial' => $this->string()->notNull(),
-            'testDate' => $this->date()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'testDate' => $this->timestamp()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -392,22 +392,22 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%control_point_type}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%photo_house}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'houseUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -443,14 +443,14 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%photo_flat}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'flatUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -486,14 +486,14 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%photo_equipment}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'equipmentUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -529,14 +529,14 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%photo_alarm}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'alarmUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -572,14 +572,14 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%measure}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'equipmentUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'value' => $this->double(),
-            'date' => $this->date()->notNull(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'date' => $this->timestamp()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(
@@ -615,15 +615,15 @@ class m130524_201442_init extends Migration
         );
 
         $this->createTable('{{%gps_track}}', [
-            'id' => $this->primaryKey(),
+            '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'userUuid' => $this->string()->notNull(),
-            'date' => $this->date()->notNull(),
+            'date' => $this->timestamp()->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
             'sent' => $this->boolean(),
-            'createdAt' => $this->integer()->notNull(),
-            'changedAt' => $this->integer()->notNull(),
+            'createdAt' => $this->timestamp()->notNull(),
+            'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createIndex(

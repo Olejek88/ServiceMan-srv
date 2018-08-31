@@ -605,7 +605,7 @@ class SiteController extends Controller
             ->all();
 
         $equipments = Equipment::find()
-            ->orderBy('id DESC')
+            ->orderBy('_id DESC')
             ->all();
 
         $users = Users::find()

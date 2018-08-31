@@ -28,7 +28,7 @@ class m180830_151215_add_journal extends Migration
     {
         echo "m180830_151215_add_journal cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
     /*

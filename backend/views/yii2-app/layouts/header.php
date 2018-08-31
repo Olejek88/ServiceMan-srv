@@ -70,7 +70,7 @@ $userImage = Yii::$app->view->params['userImage'];
                         <!-- Menu Footer-->
                         <li class="user-footer">
                             <div class="pull-left">
-                                <?= Html::a('Профиль', ['users/view', 'id' => $currentUser['id']],
+                                <?= Html::a('Профиль', ['users/view', '_id' => $currentUser['_id']],
                                     ['class' => 'btn btn-default btn-flat']) ?>
                             </div>
                             <div class="pull-right">

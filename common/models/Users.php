@@ -19,7 +19,7 @@ use yii\db\Expression;
 /**
  * Class Users
  *
- * @property integer $id
+ * @property integer $_id
  * @property string $uuid
  * @property string $name
  * @property string $pin
@@ -90,7 +90,7 @@ class Users extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', '№'),
+            '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'name' => Yii::t('app', 'Имя'),
             'pin' => Yii::t('app', 'Пин код'),
@@ -109,7 +109,7 @@ class Users extends ActiveRecord
     public function fields()
     {
         return [
-            'id',
+            '_id',
             'uuid',
             'name',
             'pin',
@@ -130,7 +130,7 @@ class Users extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['id' => 'user_id']);
+        return $this->hasOne(User::className(), ['_id' => 'user_id']);
     }
 
     /**
@@ -172,7 +172,7 @@ class Users extends ActiveRecord
      */
     public function getId()
     {
-        return $this['id'];
+        return $this['_id'];
     }
 
     /**

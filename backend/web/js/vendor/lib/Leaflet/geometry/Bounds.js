@@ -14,7 +14,7 @@ import {Point, toPoint} from './Point';
  * bounds = L.bounds(p1, p2);
  * ```
  *
- * All Leaflet methods that accept `Bounds` objects also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
+ * All Leaflet methods that accept `Bounds` abonents also accept them in a simple Array form (unless noted otherwise), so the bounds example above can be passed like this:
  *
  * ```js
  * otherBounds.intersects([[10, 10], [40, 60]]);

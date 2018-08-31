@@ -54,16 +54,6 @@ $this->title = Yii::t('app', 'Пользователи');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'whoIs',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class'
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return $data->whoIs;
-                                    }
-                                ],
-                                [
                                     'attribute'=>'name',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
@@ -74,52 +64,34 @@ $this->title = Yii::t('app', 'Пользователи');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'login',
+                                    'attribute'=>'pin',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return $data->login;
+                                        return $data->pin;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'pass',
+                                    'attribute'=>'user_id',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return $data->pass;
+                                        return $data->user_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'userId',
+                                    'attribute'=>'contact',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return $data->userId;
+                                        return $data->contact;
                                     }
-                                ],
-                                [
-                                    'attribute' => 'active',
-                                    'format' => 'raw',
-                                    'filter' => [
-                                        0 => 'No',
-                                        1 => 'Yes',
-                                    ],
-                                    'value' => function ($model, $key, $index, $column) {
-                                        $active = $model->{$column->attribute} == 1;
-                                        return \yii\helpers\Html::tag(
-                                            'span',
-                                            $active ? 'Yes' : 'No',
-                                            [
-                                                'class' => 'label label-' . ($active ? 'success' : 'danger'),
-                                            ]
-                                        );
-                                    },
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',

@@ -162,7 +162,7 @@ $this->title = Yii::t('app', 'Сводная');
                                 $path='/images/unknown2.png';
                                 print '<li><img src="'.Html::encode($path).'" alt="User Image">';
                                 echo Html::a(Html::encode($user['name']),
-                                    ['/users/view', 'id' => Html::encode($user['id'])],['class' => 'users-list-name']);
+                                    ['/users/view', '_id' => Html::encode($user['_id'])],['class' => 'users-list-name']);
                                 echo '<span class="users-list-date">'.$user['createdAt'].'</span></li>';
                                 }
                             ?>

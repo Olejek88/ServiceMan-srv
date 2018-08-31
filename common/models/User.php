@@ -20,13 +20,7 @@ use yii\web\IdentityInterface;
 /**
  * User model
  *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- *
- * @property integer $id
+ * @property integer $_id
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
@@ -94,7 +88,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['_id' => $id, 'status' => self::STATUS_ACTIVE]);
     }
 
     /**
