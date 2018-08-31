@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\House */
 
-$this->title = $model['title'];
+$this->title = $model['street']->title.', '.$model['number'];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Дом'), 'url' => ['index']];
 ?>
 <div class="task-view box-padding">

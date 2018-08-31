@@ -5,6 +5,7 @@ use common\models\FlatStatus;
 use common\models\House;
 use common\models\HouseStatus;
 use common\models\Street;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -36,18 +37,40 @@ use common\models\TaskTemplate;
     }
     ?>
 
-    <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
 
     <?php
     $houses = House::find()->all();
-    $items = ArrayHelper::map($houses, 'uuid', 'number');
-    echo $form->field($model, 'houseUuid')->dropDownList($items);
+    $items = ArrayHelper::map($houses, 'uuid', function($model) {
+        return $model['street']->title.', '.$model['number'];
+    });
+    echo $form->field($model, 'houseUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите квартиру..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php
     $statuses = FlatStatus::find()->all();
     $items = ArrayHelper::map($statuses, 'uuid', 'title');
-    echo $form->field($model, 'flatStatusUuid')->dropDownList($items);
+    echo $form->field($model, 'flatStatusUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите статус..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <div class="form-group text-center">

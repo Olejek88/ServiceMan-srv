@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\HouseStatus */
+/* @var $model common\models\FlatStatus */
 
-$this->title = Yii::t('app', 'Создать статус дома');
+$this->title = Yii::t('app', 'Создать статус квартиры');
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('app', 'Статусы'),
     'url' => ['index']

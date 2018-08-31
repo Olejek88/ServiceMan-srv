@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Квартира');
                 <li class=""><a href="/city">Города</a></li>
                 <li class=""><a href="/street">Улицы</a></li>
                 <li class=""><a href="/house">Дома</a></li>
-                <li class="active"><a href="/residents">Квартиры</a></li>
+                <li class="active"><a href="/flat">Квартиры</a></li>
             </ul>
         </div>
         <div class="panel-body">
@@ -52,15 +52,23 @@ $this->title = Yii::t('app', 'Квартира');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'title',
+                                    'attribute'=>'number',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'title',
+                                    'value'     => 'number',
                                 ],
                                 [
-                                    'attribute'=>'houseUuid',
+                                    'attribute'=>'Улица',
+                                    'contentOptions' =>[
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value'     => 'house.street.title',
+                                ],
+                                [
+                                    'attribute'=>'house',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
@@ -68,7 +76,7 @@ $this->title = Yii::t('app', 'Квартира');
                                     'value'     => 'house.number',
                                 ],
                                 [
-                                    'attribute'=>'flatStatusUuid',
+                                    'attribute'=>'flatStatus',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],

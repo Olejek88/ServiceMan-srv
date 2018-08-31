@@ -53,7 +53,7 @@ class FlatController extends Controller
     {
         $searchModel = new FlatSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 100;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -92,7 +92,7 @@ class FlatController extends Controller
             ]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model
             ]);
         }
     }

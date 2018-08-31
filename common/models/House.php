@@ -47,7 +47,7 @@ class House extends ActiveRecord
         return [
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
+            [['uuid', 'number', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -62,6 +62,7 @@ class House extends ActiveRecord
             'street' => function ($model) {
                 return $model->street;
             },
+            'number',
             'createdAt',
             'changedAt',
         ];
@@ -84,6 +85,7 @@ class House extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
+            'number' => Yii::t('app', 'Номер дома'),
             'houseStatus' => Yii::t('app', 'Статус здания'),
             'street' => Yii::t('app', 'Улица'),
             'createdAt' => Yii::t('app', 'Создан'),

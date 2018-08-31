@@ -47,7 +47,7 @@ class Flat extends ActiveRecord
         return [
             [['uuid', 'flatStatusUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'flatStatusUuid', 'houseUuid'], 'string', 'max' => 50],
+            [['uuid', 'number', 'flatStatusUuid', 'houseUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -56,6 +56,7 @@ class Flat extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'number',
             'flatStatus' => function ($model) {
                 return $model->flatStatus;
             },
@@ -84,6 +85,7 @@ class Flat extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
+            'number' => Yii::t('app', 'Номер квартиры'),
             'flatStatus' => Yii::t('app', 'Статус квартиры'),
             'house' => Yii::t('app', 'Дом'),
             'createdAt' => Yii::t('app', 'Создан'),

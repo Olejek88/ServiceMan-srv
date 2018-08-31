@@ -52,12 +52,12 @@ $this->title = Yii::t('app', 'Дом');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'title',
+                                    'attribute'=>'number',
                                     'contentOptions' =>[
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'title',
+                                    'value'     => 'number',
                                 ],
                                 [
                                     'attribute'=>'street',

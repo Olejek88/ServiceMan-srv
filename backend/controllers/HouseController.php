@@ -81,7 +81,7 @@ class HouseController extends Controller
         $model = new House();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new StreetSearch();
+            $searchModel = new HouseSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 15;
             return $this->render('index', [

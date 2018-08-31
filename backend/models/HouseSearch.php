@@ -68,7 +68,7 @@ class HouseSearch extends House
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'title', $this->number]);
+            ->andFilterWhere(['like', 'number', $this->number]);
 
         return $dataProvider;
     }

@@ -8,7 +8,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Street */
 
-$this->title = $model['taskTemplate']->title;
+$this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Улица'), 'url' => ['index']];
 ?>
 <div class="task-view box-padding">
