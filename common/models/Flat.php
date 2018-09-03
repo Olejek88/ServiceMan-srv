@@ -57,9 +57,11 @@ class Flat extends ActiveRecord
             '_id',
             'uuid',
             'number',
+            'flatStatusUuid',
             'flatStatus' => function ($model) {
                 return $model->flatStatus;
             },
+            'houseUuid',
             'house' => function ($model) {
                 return $model->house;
             },
@@ -86,7 +88,9 @@ class Flat extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'number' => Yii::t('app', 'Номер квартиры'),
+            'flatStatusUuid' => Yii::t('app', 'Статус квартиры'),
             'flatStatus' => Yii::t('app', 'Статус квартиры'),
+            'houseUuid' => Yii::t('app', 'Дом'),
             'house' => Yii::t('app', 'Дом'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),

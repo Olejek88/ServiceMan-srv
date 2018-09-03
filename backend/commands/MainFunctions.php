@@ -18,5 +18,11 @@ class MainFunctions
         fwrite($handle, $str);
         fclose($handle);
     }
+
+    static function getImagePath($type, $uuid)
+    {
+        $localPath = 'storage/' . $type . '/' . $uuid . '.jpg';
+        return $localPath;
+    }
 }
 ?>

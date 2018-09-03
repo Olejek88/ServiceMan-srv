@@ -71,6 +71,7 @@ class OrdersController extends Controller
      */
     public function actionIndex()
     {
+
         $searchModel = new OrderSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;

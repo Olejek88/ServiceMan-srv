@@ -205,3 +205,6 @@ a.desc:after {
     margin-top: 0 !important;
 
 }
+.table_class {
+    align-content: center;
+}

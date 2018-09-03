@@ -13,7 +13,12 @@ namespace backend\controllers;
 
 use backend\models\ResidentSearch;
 use common\models\City;
+use common\models\Flat;
+use common\models\House;
+use common\models\Measure;
 use common\models\Resident;
+use common\models\Street;
+use common\models\Subject;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -72,17 +77,28 @@ class ResidentsController extends Controller
      */
     public function actionIndex()
     {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Resident::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'owner') {
+                $model['owner'] = $_POST['Resident'][$_POST['editableIndex']]['owner'];
+            }
+            if ($_POST['editableAttribute'] == 'inn') {
+                $model['inn'] = $_POST['Resident'][$_POST['editableIndex']]['inn'];
+            }
+            if ($model->save())
+                return json_encode('success');
+            return json_encode('failed');
+        }
+
         $searchModel = new ResidentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
-
-        return $this->render(
-            'index',
-            [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]
-        );
+        return $this->render('table', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
@@ -97,10 +113,10 @@ class ResidentsController extends Controller
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
             if ($_POST['editableAttribute'] == 'owner') {
-                $model['title'] = $_POST['Resident'][$_POST['editableIndex']]['owner'];
+                $model['owner'] = $_POST['Resident'][$_POST['editableIndex']]['owner'];
             }
             if ($_POST['editableAttribute'] == 'inn') {
-                $model['title'] = $_POST['Resident'][$_POST['editableIndex']]['inn'];
+                $model['inn'] = $_POST['Resident'][$_POST['editableIndex']]['inn'];
             }
             if ($model->save())
                 return json_encode('success');
@@ -124,33 +140,20 @@ class ResidentsController extends Controller
      */
     public function actionList()
     {
-        $listObjects = Objects::find()
+        $listResidents = Resident::find()
             ->asArray()
             ->all();
-
-        $listType = ObjectType::find()
-            ->asArray()
-            ->all();
-
-        foreach ($listObjects as $i => $object) {
-            foreach ($listType as $l => $objectType) {
-                if ($listObjects[$i]['objectTypeUuid'] === $listType[$l]['uuid']) {
-                    $listObjects[$i]['objectTypeUuid'] = $listType[$l]['title'];
-                }
-            }
-        }
 
         return $this->render(
             'list',
             [
-                'model' => $listObjects,
-                'type' => $listType,
+                'model' => $listResidents
             ]
         );
     }
 
     /**
-     * Displays a single Objects model.
+     * Displays a single Resident model.
      *
      * @param integer $id Id
      *
@@ -167,15 +170,15 @@ class ResidentsController extends Controller
     }
 
     /**
-     * Creates a new Objects model.
+     * Creates a new Resident model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Objects();
-        $searchModel = new ObjectsSearch();
+        $model = new Resident();
+        $searchModel = new ResidentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
 
@@ -185,17 +188,6 @@ class ResidentsController extends Controller
                 echo var_dump($model);
                 echo var_dump($model->errors);
                 return $this->render('create', ['model' => $model, 'dataProvider' => $dataProvider]);
-            }
-
-            // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'photo');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->photo = $fileName;
-                } else {
-                    // уведомить пользователя, админа о невозможности сохранить файл
-                }
             }
 
             // сохраняем запись
@@ -210,40 +202,24 @@ class ResidentsController extends Controller
     }
 
     /**
-     * Вспомогательный метод для постройки дерева в три уровня.
+     * Вспомогательный метод для постройки дерева.
      *
-     * @param string $uuid Uuid
-     *
-     * @return array|Objects[]|\yii\db\ActiveRecord[]
-     */
-    function getDownObject($uuid)
-    {
-        $objects = Objects::find()
-            ->select('*')
-            ->where(['parentUuid' => $uuid])
-            ->all();
-        return $objects;
-    }
-
-    /**
-     * Вспомогательный метод для постройки дерева в три уровня.
-     *
-     * @param Objects   $object    Объект
+     * @param Resident   $resident    Абонент
      * @param Equipment $equipment Оборудование
      *
      * @return mixed
      */
-    function setObjectParameters($object, $equipment)
+    function setObjectParameters($resident, $equipment)
     {
-        $object['title'] = Html::a(
+        $resident['title'] = Html::a(
             $equipment['title'],
             ['equipment/view', 'id' => $equipment['_id']]
         );
-        $object['inventory'] = $equipment['inventoryNumber'];
-        $object['serial'] = $equipment['serialNumber'];
-        $object['date'] = $equipment['startDate'];
-        $object['tag'] = $equipment['tagId'];
-        $object['type'] = $equipment['equipmentModel']->title;
+        $resident['inventory'] = $equipment['inventoryNumber'];
+        $resident['serial'] = $equipment['serialNumber'];
+        $resident['date'] = $equipment['startDate'];
+        $resident['tag'] = $equipment['tagId'];
+        $resident['type'] = $equipment['equipmentModel']->title;
         $sTitle = $equipment['equipmentStatus']->title;
 
         if ($sTitle == 'Требует ремонта' || $sTitle == 'Неисправно') {
@@ -254,10 +230,10 @@ class ResidentsController extends Controller
             $class = 'critical3';
         }
 
-        $object['status'] = '<div class="progress"><div class="'
+        $resident['status'] = '<div class="progress"><div class="'
             . $class . '">' . $sTitle . '</div></div>';
 
-        return $object;
+        return $resident;
     }
 
     /**
@@ -270,92 +246,129 @@ class ResidentsController extends Controller
 
         $c = 'children';
         $fullTree = array();
-        $cities = City::find()
+        $streets = Street::find()
             ->select('*')
-            ->orderBy(['title DESC'])
+            ->orderBy('title')
             ->all();
         $oCnt0 = 0;
-        foreach ($cities as $city) {
+        foreach ($streets as $street) {
             $fullTree[$oCnt0]['title'] = Html::a(
-                $city['title'],
-                ['city/view', 'id' => $city['id']]
+                $street['title'],
+                ['street/view', '_id' => $street['_id']]
             );
-            $fullTree[$oCnt0]['type'] = 'Город';
-            $fullTree[$oCnt0]['date'] = $object['createdAt'];
+            $fullTree[$oCnt0]['type'] = 'Улица';
+            $fullTree[$oCnt0]['street'] = $street['title'];
+            $fullTree[$oCnt0]['date'] = $street['createdAt'];
+            $fullTree[$oCnt0]['house'] = '';
 
-            $equipments = Equipment::find()
+            $houses = House::find()
                 ->select('*')
-                ->where(['locationUuid' => $object['uuid']])
+                ->where(['streetUuid' => $street['uuid']])
+                ->orderBy('number')
                 ->all();
-            $eCnt = 0;
-            foreach ($equipments as $equipment) {
-                $fullTree[$oCnt0][$c][$eCnt]['inventory']
-                    = $equipment['inventoryNumber'];
-                $fullTree[$oCnt0][$c][$eCnt]
-                    = self::setObjectParameters(
-                        $fullTree[$oCnt0][$c][$eCnt],
-                        $equipment
-                    );
-                $eCnt++;
-            }
-
-            $objects1 = self::getDownObject($object['uuid']);
             $oCnt1 = 0;
-            foreach ($objects1 as $object1) {
+            foreach ($houses as $house) {
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
-                        $object1['title'],
-                        ['object/view', 'id' => $object1['_id']]
-                    );
-                $fullTree[$oCnt0][$c][$oCnt1]['type']
-                    = $object1['objectType']->title;
-                $fullTree[$oCnt0]['children'][$oCnt1]['date']
-                    = $object1['createdAt'];
-                $equipments = Equipment::find()
-                    ->select('*')
-                    ->where(['locationUuid' => $object1['uuid']])
-                    ->all();
-                $eCnt = 0;
-                foreach ($equipments as $equipment) {
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$eCnt]['title']
-                        = $equipment['title'];
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$eCnt]
-                        = self::setObjectParameters(
-                            $fullTree[$oCnt0][$c][$oCnt1][$c][$eCnt],
-                            $equipment
-                        );
-                    $eCnt++;
+                    $house['street']->title.', '.$house['number'],
+                    ['house/view', '_id' => $house['_id']]
+                );
+                $fullTree[$oCnt0][$c][$oCnt1]['type'] = 'Дом';
+                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $house['createdAt'];
+                $fullTree[$oCnt0][$c][$oCnt1]['house'] = $house['number'];
+                $fullTree[$oCnt0][$c][$oCnt1]['street'] = $street['title'];
+
+                if ($house['houseStatusUuid'] == '111') {
+                    $class = 'critical1';
+                } elseif ($house['houseStatusUuid'] == '222') {
+                    $class = 'critical2';
+                } else {
+                    $class = 'critical3';
                 }
-                $objects2 = self::getDownObject($object1['uuid']);
+                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
+                    . $class . '">' . $house['houseStatus']->title . '</div></div>';
+                $subject = Subject::find()
+                    ->select('*')
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->one();
+                $fullTree[$oCnt0][$c][$oCnt1]['resident'] = $subject['title'];
+
+                $flats = Flat::find()
+                    ->select('*')
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->orderBy('number')
+                    ->all();
                 $oCnt2 = 0;
-                foreach ($objects2 as $object2) {
+                foreach ($flats as $flat) {
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['title']
-                        = $object2['title'];
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['type']
-                        = $object2['objectType']->title;
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['date']
-                        = $object2['createdAt'];
+                        = Html::a(
+                        $street['title'].', '.$house['number'].'-'.$flat['number'],
+                        ['flat/view', '_id' => $flat['_id']]
+                    );
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['type'] = 'Квартира';
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['date'] = $flat['createdAt'];
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['house'] = $house['number'];
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['street'] = $street['title'];
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['flat'] = $flat['number'];
+
+                    if ($flat['flatStatusUuid'] == '111') {
+                        $class = 'critical1';
+                    } elseif ($flat['flatStatusUuid'] == '222') {
+                        $class = 'critical2';
+                    } else {
+                        $class = 'critical3';
+                    }
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
+                        . $class . '">' . $flat['flatStatus']->title . '</div></div>';
+
+                    $resident = Resident::find()
+                        ->select('*')
+                        ->where(['flatUuid' => $flat['uuid']])
+                        ->one();
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['resident'] = $resident['owner'];
+
                     $equipments = Equipment::find()
                         ->select('*')
-                        ->where(['locationUuid' => $object2['uuid']])
+                        ->where(['flatUuid' => $flat['uuid']])
                         ->all();
                     $eCnt = 0;
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['title']
-                            = $equipment['title'];
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]
-                            = self::setObjectParameters(
-                                $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt],
-                                $equipment
-                            );
-                        $oCnt1++;
-                    }
-                }
-            }
+                            = Html::a(
+                            $equipment['title'],
+                            ['equipment/view', '_id' => $equipment['_id']]
+                        );
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['type'] = $equipment['type']->title;
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['date'] = $equipment['date'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['house'] = $house['title'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['flat'] = $flat['title'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['serial'] = $equipment['serial'];
 
+                        if ($equipment['equipmentStatusUuid'] == '111') {
+                            $class = 'critical1';
+                        } elseif ($equipment['equipmentStatusUuid'] == '222') {
+                            $class = 'critical2';
+                        } else {
+                            $class = 'critical3';
+                        }
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] = '<div class="progress"><div class="'
+                            . $class . '">' . $flat['status']->title . '</div></div>';
+
+                        $measure = Measure::find()
+                            ->select('*')
+                            ->orderBy('date DESC')
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->one();
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['value'] = $measure['value'];
+
+                        $eCnt++;
+                    }
+                    $oCnt2++;
+                }
+                $oCnt1++;
+            }
             $oCnt0++;
         }
-
         return $this->render(
             'tree',
             [

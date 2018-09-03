@@ -25,7 +25,7 @@ $this->title = 'Дерево абонентов системы';
     </tr>
     <tr>
         <th align="center">Объект</th>
-        <th>Тип объекта</th>
+        <th>Тип оборудования</th>
         <th>Улица</th>
         <th>Дом</th>
         <th>Квартира</th>
@@ -78,13 +78,14 @@ $this->title = 'Дерево абонентов системы';
             ],
             'table' => [
                 'indentation' => 20,
-                "titleColumnIdx" => "1",
-                "typeColumnIdx" => "2",
-                "dateColumnIdx" => "3",
-                "inventoryColumnIdx" => "4",
-                "serialColumnIdx" => "5",
-                "statusColumnIdx" => "6",
-                "tagColumnIdx" => "7"
+                "typeColumnIdx" => "1",
+                "streetColumnIdx" => "2",
+                "houseColumnIdx" => "3",
+                "flatColumnIdx" => "4",
+                "equipmentColumnIdx" => "5",
+                "serialColumnIdx" => "6",
+                "statusColumnIdx" => "7",
+                "valueColumnIdx" => "8"
             ],
             'renderColumns' => new JsExpression(
                 'function(event, data) {

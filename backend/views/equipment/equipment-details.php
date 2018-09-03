@@ -1,5 +1,6 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\Defect;
 use common\models\Equipment;
 use yii\helpers\Html;
@@ -24,7 +25,7 @@ $defects = Defect::find()
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
-                            <img src="<?php echo Html::encode($models->getImageUrl()) ?>" style="padding:2px;width:100%">
+                            <img src="<?php echo Html::encode(MainFunctions::getImagePath('flat',$model['uuid'])) ?>" style="padding:2px;width:100%">
                             <div class="small text-muted"><?php echo $equipment['inventoryNumber'] ?></div>
                         </div>
                     </div>

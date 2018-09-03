@@ -12,7 +12,7 @@ $this->title = $model->owner;
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
-                <?php echo Html::encode($this->owner) ?>
+                <?php echo Html::encode($this->title) ?>
             </h3>
         </div>
         <div class="panel-body">
@@ -35,7 +35,12 @@ $this->title = $model->owner;
                                     'uuid',
                                     'owner',
                                     'inn',
-                                    'flatUuid',
+                                    [
+                                        'label' => 'Квартира',
+                                        'value' => $model['flat']['house']['street']->title.', '.
+                                            $model['flat']['house']->number.', '.
+                                            $model['flat']->number
+                                    ],
                                     'createdAt',
                                     'changedAt',
                                 ],

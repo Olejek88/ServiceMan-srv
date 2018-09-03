@@ -11,9 +11,9 @@ use yii\db\ActiveRecord;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $owner
- * @property string $inn
- * @property string $flatUuid
+ * @property string $contractNumber
+ * @property string $contractDate
+ * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
  */
@@ -45,9 +45,9 @@ class Subject extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'flatUuid'], 'required'],
-            [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'flatUuid', 'owner', 'inn'], 'string', 'max' => 50],
+            [['uuid', 'houseUuid'], 'required'],
+            [['createdAt', 'changedAt', 'contractDate'], 'safe'],
+            [['uuid', 'houseUuid', 'contractNumber'], 'string', 'max' => 50],
         ];
     }
 
@@ -56,19 +56,19 @@ class Subject extends ActiveRecord
         return [
             '_id',
             'uuid',
-            'flat' => function ($model) {
-                return $model->flat;
+            'house' => function ($model) {
+                return $model->house;
             },
-            'owner',
-            'inn',
+            'contractNumber',
+            'contractDate',
             'createdAt',
             'changedAt',
         ];
     }
 
-    public function getFlat()
+    public function getHouse()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(House::className(), ['uuid' => 'houseUuid']);
     }
 
     /**
@@ -79,9 +79,9 @@ class Subject extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'flat' => Yii::t('app', 'Квартира'),
-            'owner' => Yii::t('app', 'Владелец'),
-            'inn' => Yii::t('app', 'ИНН'),
+            'house' => Yii::t('app', 'Дом'),
+            'contractNumber' => Yii::t('app', 'Номер договора'),
+            'contractDate' => Yii::t('app', 'Дата договора'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

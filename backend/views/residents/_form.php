@@ -1,6 +1,7 @@
 <?php
 
 use common\models\Flat;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
@@ -39,8 +40,20 @@ use yii\helpers\ArrayHelper;
 
     <?php
     $flat  = Flat::find()->all();
-    $items = ArrayHelper::map($user,'uuid','name');
-    echo $form->field($model, 'flatUuid')->dropDownList($items);
+    $items = ArrayHelper::map($flat, 'uuid', function($model) {
+        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    });
+    echo $form->field($model, 'flatUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите квартиру..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php echo $form->field($model, 'inn')->textInput(['maxlength' => true]) ?>

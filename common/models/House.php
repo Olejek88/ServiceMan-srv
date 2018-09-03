@@ -62,6 +62,8 @@ class House extends ActiveRecord
             'street' => function ($model) {
                 return $model->street;
             },
+            'houseStatusUuid',
+            'streetUuid',
             'number',
             'createdAt',
             'changedAt',
@@ -88,6 +90,8 @@ class House extends ActiveRecord
             'number' => Yii::t('app', 'Номер дома'),
             'houseStatus' => Yii::t('app', 'Статус здания'),
             'street' => Yii::t('app', 'Улица'),
+            'houseStatusUuid' => Yii::t('app', 'Статус здания'),
+            'streetUuid' => Yii::t('app', 'Улица'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

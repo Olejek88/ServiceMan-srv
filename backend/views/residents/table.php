@@ -21,7 +21,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return Html::a($data->_id,
-                '/residents/timeline?id='.$data->id);
+                '/residents/timeline?id='.$data->_id);
         }
     ],
     [
@@ -31,7 +31,7 @@ $gridColumns = [
             return GridView::ROW_COLLAPSED;
         },
         'detail' => function ($model, $key, $index, $column) {
-            return Yii::$app->controller->renderPartial('abonent-details', ['model' => $model]);
+            return Yii::$app->controller->renderPartial('resident-details', ['model' => $model]);
         },
         'expandIcon' => '<span class="glyphicon glyphicon-expand"></span>',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -40,6 +40,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'owner',
+        'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
@@ -52,6 +53,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'inn',
+        'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
@@ -62,13 +64,16 @@ $gridColumns = [
         }
     ],
     [
-        'attribute' => 'flatUuid',
+        'attribute' => 'flat',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
+        'header' => 'Квартира '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+                '/flat/create?from=residents/table', [
+                    'title' => Yii::t('app', 'Добавить')]),
         'content' => function ($data) {
             return 'ул.'.$data['flat']['house']['street']->title.', '.
             $data['flat']['house']->number.', '.
@@ -236,10 +241,6 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw'
     ],*/
-    [
-        'class' => 'kartik\grid\CheckboxColumn',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-    ],
     [
         'class' => 'kartik\grid\ActionColumn',
         'headerOptions' => ['class' => 'kartik-sheet-style'],

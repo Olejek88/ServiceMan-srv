@@ -59,6 +59,7 @@ class Resident extends ActiveRecord
             'flat' => function ($model) {
                 return $model->flat;
             },
+            'flatUuid',
             'owner',
             'inn',
             'createdAt',
@@ -80,6 +81,7 @@ class Resident extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'flat' => Yii::t('app', 'Квартира'),
+            'flatUuid' => Yii::t('app', 'Квартира'),
             'owner' => Yii::t('app', 'Владелец'),
             'inn' => Yii::t('app', 'ИНН'),
             'createdAt' => Yii::t('app', 'Создан'),
