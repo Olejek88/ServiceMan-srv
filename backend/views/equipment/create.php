@@ -35,7 +35,7 @@ $this->params['breadcrumbs'][] = [
                         <b><?php
                             echo Html::a(
                                 'модель оборудования',
-                                ['/equipment-model/create'],
+                                ['/equipment-type/create'],
                                 ['target' => '_blank',]
                             ) ?></b>,
                         <b><?php
@@ -43,21 +43,7 @@ $this->params['breadcrumbs'][] = [
                                 'статус оборудования',
                                 ['/equipment-status/create'],
                                 ['target' => '_blank',]
-                            ) ?></b>,
-                        <b><?php
-                            echo Html::a(
-                                'тип критичности',
-                                ['/critical-type/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>
-                        или
-                        <b><?php
-                            echo Html::a(
-                                'локацию',
-                                ['/objects/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>, создайте
-                        их!
+                            ) ?></b>, создайте их.
                     </h6>
                 </div>
             </div>

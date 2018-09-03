@@ -18,9 +18,7 @@ $this->title = Yii::t('app', 'Модели оборудования');
             <ul class="nav nav-tabs" style="width: 450px; margin: 0 auto;">
                 <li class=""><a href="/equipment">Список</a></li>
                 <li class=""><a href="/equipment-type">Тип</a></li>
-                <li class="active"><a href="/equipment-model">Модель</a></li>
                 <li class=""><a href="/equipment-status">Статус</a></li>
-                <li class=""><a href="/equipment-model/tree">Дерево моделей</a></li>
             </ul>
         </div>
         <div class="panel-body">

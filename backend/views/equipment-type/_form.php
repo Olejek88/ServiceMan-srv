@@ -27,51 +27,15 @@ use yii\helpers\ArrayHelper;
     ?>
 
     <?php
-    // uuid
-    $uuidField = $form->field($model, 'uuid');
-    $uuidFieldValue = null;
-    $allTypes = array(
-        '00000000-0000-0000-0000-000000000000' => 'Корень',
-    );
-
     if (!$model->isNewRecord) {
-        $types = EquipmentType::find()->where(['!=', '_id', $model->_id])->orderBy('title')->all();
-        $uuidFieldValue = $uuidField->textInput(
-            [
-                'maxlength' => true,
-                'readonly' => true
-            ]
-        );
+        echo $form->field($model, 'uuid')
+            ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        $types = EquipmentType::find()->orderBy('title')->all();
-        $uuidFieldValue = $uuidField->textInput(
-            [
-                'maxlength' => true,
-                'value' => (new MainFunctions)->GUID()
-            ]
-        );
+        echo $form->field($model, 'uuid')
+            ->textInput(
+                ['maxlength' => true, 'readonly' => true, 'value' => (new MainFunctions)->GUID()]
+            );
     }
-    echo $uuidFieldValue;
-    ?>
-
-    <?php
-    $allTypes += ArrayHelper::map($types, 'uuid', 'title');
-    unset($types);
-    // список предков создаваемого/редактируемого типа
-    //echo $form->field($parentModel, 'parentUuid')->dropDownList($allTypes);
-    echo $form->field($parentModel, 'parentUuid')->widget(Select2::classname(),
-        [
-            'data' => $allTypes,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-
-    unset($allTypes);
     ?>
 
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>

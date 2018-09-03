@@ -1,11 +1,12 @@
 <?php
+
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model common\models\CriticalType */
+/* @var $model common\models\EquipmentStatus */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', ' Уровни критичности'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оборудования'), 'url' => ['index']];
 ?>
 <div class="order-status-view box-padding">
 
@@ -39,6 +40,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', ' Уровни кри
                     </h6>
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>

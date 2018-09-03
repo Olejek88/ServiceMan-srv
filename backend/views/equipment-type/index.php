@@ -6,7 +6,7 @@ use common\components\TypeTreeHelper;
 use common\models\EquipmentType;
 use common\models\EquipmentTypeTree;
 
-/* @var $model common\models\StageType */
+/* @var $model common\models\EquipmentType */
 /* @var $searchModel backend\models\EquipmentSearchType */
 
 $this->title = Yii::t('app', 'Типы оборудования');
@@ -18,12 +18,9 @@ $this->title = Yii::t('app', 'Типы оборудования');
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 325px; margin: 0 auto;">
+            <ul class="nav nav-tabs" style="width: 165px; margin: 0 auto;">
                 <li class=""><a href="/equipment">Список</a></li>
                 <li class="active"><a href="/equipment-type">Тип</a></li>
-                <li class=""><a href="/equipment-model">Модель</a></li>
-                <li class=""><a href="/equipment-status">Статус</a></li>
             </ul>
         </div>
         <div class="panel-body">
@@ -62,29 +59,6 @@ $this->title = Yii::t('app', 'Типы оборудования');
                                         }
                                     ],
                                     [
-                                        'header' => 'Родитель',
-                                        'contentOptions' => [
-                                            'class' => 'table_class'
-                                        ],
-                                        'headerOptions' => [
-                                            'class' => 'text-center'
-                                        ],
-                                        'content' => function ($data) {
-                                            $parentId = TypeTreeHelper::getParentId(
-                                                $data->_id,
-                                                EquipmentType::class,
-                                                EquipmentTypeTree::class
-                                            );
-                                            $parentToolType = EquipmentType::findOne($parentId);
-                                            if ($parentToolType) {
-                                                $parentType = $parentToolType->title;
-                                            } else {
-                                                $parentType = 'Корень';
-                                            }
-                                            return $parentType;
-                                        }
-                                    ],
-                                    [
                                         'attribute' => 'title',
                                         'contentOptions' => [
                                             'class' => 'table_class'
@@ -113,7 +87,6 @@ $this->title = Yii::t('app', 'Типы оборудования');
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

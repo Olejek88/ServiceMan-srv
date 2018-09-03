@@ -1,14 +1,15 @@
 <?php
 
+use common\models\EquipmentType;
+use common\models\Flat;
+use common\models\House;
+use kartik\date\DatePicker;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
-use common\models\EquipmentModel;
 use common\models\EquipmentStatus;
-use common\models\CriticalType;
 use yii\helpers\ArrayHelper;
-use kartik\file\FileInput;
-use common\models\Objects;
 use dosamigos\datetimepicker\DateTimePicker;
 
 /* @var $this yii\web\View */
@@ -44,14 +45,23 @@ use dosamigos\datetimepicker\DateTimePicker;
 
     <?php
 
-    $equipmentModel = EquipmentModel::find()->all();
-    $items = ArrayHelper::map($equipmentModel, 'uuid', 'title');
-    echo $form->field($model, 'equipmentModelUuid',
+    $equipmentType = EquipmentType::find()->all();
+    $items = ArrayHelper::map($equipmentType, 'uuid', 'title');
+    echo $form->field($model, 'equipmentTypeUuid',
         ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/equipment-model/create\">
+        <a href=\"/equipment-type/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])
-        ->dropDownList($items);
+        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php
@@ -62,24 +72,32 @@ use dosamigos\datetimepicker\DateTimePicker;
         ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-status/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])
-        ->dropDownList($items);
+        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
-    <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
-        <p style="width: 300px; margin-bottom: 0;">Дата ввода в эксплуатацию</p>
-        <?php echo DateTimePicker::widget(
+        <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
+        <?php echo DatePicker::widget(
             [
                 'model' => $model,
-                'attribute' => 'startDate',
+                'attribute' => 'testDate',
                 'language' => 'ru',
                 'size' => 'ms',
-                'clientOptions' => [
-                    'autoclose' => true,
-                    'linkFormat' => 'yyyy-mm-dd H:ii:ss',
-                    'todayBtn' => true
+                'pluginOptions' => [
+                    'format' => 'dd-M-yyyy',
+                    'todayHighlight' => true
                 ]
             ]
         );
@@ -87,51 +105,40 @@ use dosamigos\datetimepicker\DateTimePicker;
     </div>
 
     <?php
+    $house  = House::find()->all();
+    $items = ArrayHelper::map($house, 'uuid', function($model) {
+        return $model['street']->title.', '.$model['number'];
+    });
+    echo $form->field($model, 'houseUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите дом..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
-    $criticalType = CriticalType::find()->all();
-    $items = ArrayHelper::map($criticalType, 'uuid', 'title');
-    echo $form->field($model, 'criticalTypeUuid',
-        ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/critical-type/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])
-        ->dropDownList($items);
-    ?>
-
-    <?php echo $form->field($model, 'tagId')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'image')->widget(
-        FileInput::classname(),
-        ['options' => ['accept' => '*'],]
-    ); ?>
-
-    <?php
-    echo $form->field($model, 'inventoryNumber')->textInput(['maxlength' => true]);
     ?>
 
     <?php
-    echo $form->field($model, 'serialNumber')->textInput(['maxlength' => true]);
-    ?>
-
-    <?php
-
-    $objectType = Objects::find()->all();
-    $items = ArrayHelper::map($objectType, 'uuid', 'title');
-    $countItems = count($items);
-    $isItems = $countItems != 0;
-
-    if ($isItems) {
-        echo $form->field($model, 'locationUuid',
-            ['template'=> "></span>
-            </button></a></span></div>\n{hint}\n{error}\""])
-            ->dropDownList($items);
-    } else {
-        echo $form->field($model, 'locationUuid')->dropDownList(
-            [
-                '00000000-0000-0000-0000-000000000004' => 'Данных нет'
-            ]
-        );
-    }
+    $flat  = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function($model) {
+        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    });
+    echo $form->field($model, 'flatUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите квартиру..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
     ?>
 

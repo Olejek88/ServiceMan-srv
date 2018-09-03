@@ -3,9 +3,10 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $searchModel backend\models\CriticalSearchType */
+/* @var $searchModel backend\models\EquipmentSearchStatus */
+/* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Уровни критичности');
+$this->title = Yii::t('app', 'Статусы оборудования');
 ?>
 <div class="equipment-index box-padding-index">
 
@@ -14,6 +15,12 @@ $this->title = Yii::t('app', 'Уровни критичности');
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
+
+            <ul class="nav nav-tabs" style="width: 265px; margin: 0 auto;">
+                <li class=""><a href="/equipment">Список</a></li>
+                <li class=""><a href="/equipment-type">Модель</a></li>
+                <li class="active"><a href="/equipment-status">Статус</a></li>
+            </ul>
         </div>
         <div class="panel-body">
 
@@ -36,7 +43,7 @@ $this->title = Yii::t('app', 'Уровни критичности');
                                     'attribute'=>'_id',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
+                                        'style'=>'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -44,10 +51,19 @@ $this->title = Yii::t('app', 'Уровни критичности');
                                     }
                                 ],
                                 [
+                                    'attribute'=>'uuid',
+                                    'contentOptions' =>[
+                                        'class' => 'table_class',
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'content'=>function($data){
+                                        return $data->uuid;
+                                    }
+                                ],
+                                [
                                     'attribute'=>'title',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'padding: 5px 10px 5px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -60,7 +76,6 @@ $this->title = Yii::t('app', 'Уровни критичности');
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],
                                     'contentOptions' =>[
                                         'class' => 'text-center',
-                                        'style'=>'padding: 5px 10px 5px 10px;'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

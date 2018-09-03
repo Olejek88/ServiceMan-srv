@@ -6,14 +6,7 @@ use yii\helpers\Html;
 /* @var $model common\models\EquipmentType */
 /* @var $parentModel \yii\base\DynamicModel */
 
-$this->title = Yii::t(
-    'app',
-    'Обновить {modelClass}: ',
-    [
-        'modelClass' => 'Типы оборудования',
-    ]
-);
-$this->title .= $model->title;
+$this->title = 'Типы оборудования';
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('app', 'Типы оборудования'),
     'url' => ['index']
@@ -35,7 +28,6 @@ $this->params['breadcrumbs'][] = [
                         <?php echo $this->render(
                             '_form',
                             [
-                                'parentModel' => $parentModel,
                                 'model' => $model,
                             ]
                         ) ?>

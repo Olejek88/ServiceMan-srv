@@ -1,15 +1,12 @@
 <?php
+/* @var $model common\models\EquipmentStatus */
 
 use yii\helpers\Html;
 
-/* @var $model common\models\CriticalType */
-
-$this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Уровни критичности',
-]) . $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Уровни критичности'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Создать статус оборудования');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оборудования'), 'url' => ['index']];
 ?>
-<div class="critical-type-update box-padding">
+<div class="equipment-status-create box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">

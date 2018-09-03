@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\OperationType */
+/* @var $model common\models\EquipmentType */
 /* @var $parentModel yii\base\DynamicModel */
 
 $this->title = Yii::t('app', 'Создать тип оборудования');
@@ -28,8 +28,7 @@ $this->params['breadcrumbs'][] = [
                         <?php echo $this->render(
                             '_form',
                             [
-                                'model' => $model,
-                                'parentModel' => $parentModel,
+                                'model' => $model
                             ]
                         ) ?>
                     </h6>

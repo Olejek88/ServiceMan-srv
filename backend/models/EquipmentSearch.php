@@ -18,8 +18,7 @@ class EquipmentSearch extends Equipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentModelUuid', 'title', 'criticalTypeUuid', 'startDate', 'tagId', 'image', 'equipmentStatusUuid', 'inventoryNumber', 'serialNumber', 'locationUuid', 'createdAt', 'changedAt'], 'safe'],
-            [['latitude', 'longitude'], 'number'],
+            [['uuid', 'equipmentTypeUuid', 'flatUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -60,23 +59,15 @@ class EquipmentSearch extends Equipment
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'startDate' => $this->startDate,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'equipmentModelUuid', $this->equipmentModelUuid])
-            ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'criticalTypeUuid', $this->criticalTypeUuid])
-            ->andFilterWhere(['like', 'tagId', $this->tagId])
-            ->andFilterWhere(['like', 'image', $this->image])
+            ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
+            ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
             ->andFilterWhere(['like', 'equipmentStatusUuid', $this->equipmentStatusUuid])
-            ->andFilterWhere(['like', 'inventoryNumber', $this->inventoryNumber])
-            ->andFilterWhere(['like', 'serialNumber', $this->serialNumber])
-            ->andFilterWhere(['like', 'locationUuid', $this->locationUuid])
+            ->andFilterWhere(['like', 'serial', $this->serial])
             ->orderBy(['changedAt' => SORT_DESC]);
 
         return $dataProvider;

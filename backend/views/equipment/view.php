@@ -5,7 +5,7 @@ use yii\widgets\DetailView;
 
 /* @var $model \common\models\Equipment */
 
-$this->title = $model->title;
+$this->title = $model['equipmentType']->title;
 ?>
 <div class="order-status-view box-padding">
 
@@ -16,11 +16,6 @@ $this->title = $model->title;
             </h3>
         </div>
         <div class="panel-body">
-            <div class="user-image-photo">
-                <img src="<?php echo Html::encode($model->getImageUrl()) ?>" alt="">
-            </div>
-            <h1 class="text-center"></h1>
-
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
                     <p class="text-center">
@@ -34,24 +29,17 @@ $this->title = $model->title;
                             [
                                 'model' => $model,
                                 'attributes' => [
-                                    'inventoryNumber',
-                                    'serialNumber',
+                                    'serial',
                                     'uuid',
-                                    'title',
-                                    'tagId',
                                     [
-                                        'label' => 'Модель',
-                                        'value' => $model['equipmentModel']->title
+                                        'label' => 'Квартира',
+                                        'value' => $model['flat']->number
                                     ],
                                     [
                                         'label' => 'Статус',
                                         'value' => $model['equipmentStatus']->title
                                     ],
-                                    [
-                                        'label' => 'Локация',
-                                        'value' => $model['location']->title
-                                    ],
-                                    'startDate',
+                                    'testDate',
                                     'createdAt',
                                     'changedAt',
                                 ],

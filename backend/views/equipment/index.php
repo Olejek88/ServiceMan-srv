@@ -1,15 +1,15 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
-use common\models\EquipmentModel;
 use common\models\EquipmentStatus;
-use common\models\Objects;
+use common\models\EquipmentType;
+use common\models\Flat;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'ТОИРУС::Оборудование');
+$this->title = Yii::t('app', 'Оборудование');
 
 $gridColumns = [
     [
@@ -42,84 +42,28 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'title',
-        'vAlign' => 'middle',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'editableOptions' => [
-            'size' => 'lg',
-        ],
-        'content' => function ($data) {
-            return $data->title;
-        }
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'equipmentModelUuid',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(EquipmentModel::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'header' => 'Модель оборудования '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/equipment-model/create?from=equipment/index',
-                ['title' => Yii::t('app', 'Добавить')]),
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'format' => 'raw',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'value' => 'equipmentModel.title',
-        'editableOptions'=> function ($model, $key, $index, $widget) {
-            $models = ArrayHelper::map(EquipmentModel::find()->orderBy('title')->all(), 'uuid', 'title');
-            return [
-                'header' => 'Модель оборудования',
-                'size' => 'lg',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $models,
-                'data' => $models
-            ];
-        },
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'inventoryNumber',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data->inventoryNumber;
-        }
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'locationUuid',
+        'attribute' => 'equipmentTypeUuid',
         'vAlign' => 'middle',
         'width' => '180px',
-        'value' => 'location.title',
+        'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Местоположение '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/objects/create?from=equipment/index',
+        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+                '/equipment-type/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
-        'filter' => ArrayHelper::map(Objects::find()->orderBy('title')->all(),
+        'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
             'uuid', 'title'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
         'editableOptions'=> function ($model, $key, $index, $widget) {
-            $models = ArrayHelper::map(Objects::find()->orderBy('title')->all(), 'uuid', 'title');
+            $models = ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
-                'header' => 'Локация',
+                'header' => 'Тип оборудования',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $models,
@@ -165,6 +109,78 @@ $gridColumns = [
                 'data' => $list
             ];
         },
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'serial',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->serial;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'testDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'filterType' => GridView::FILTER_DATETIME,
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'editableOptions' => [
+            'header' => 'Дата поверки',
+            'size' => 'md',
+            'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => \kartik\datecontrol\DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd.MM.yyyy',
+                'saveFormat' => 'php:Y-m-d',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ],
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'flatUuid',
+        'vAlign' => 'middle',
+        'width' => '180px',
+        'value' => function ($data) {
+            return $data['flat']['house']['street']->title.', '.$data['flat']['house']->number.'-'.$data['flat']->number;
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+                '/flat/create?from=equipment/index',
+                ['title' => Yii::t('app', 'Добавить')]),
+        'filter' => ArrayHelper::map(Flat::find()->orderBy('number')->all(),
+            'uuid', 'number'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'format' => 'raw',
+        'editableOptions'=> function ($model, $key, $index, $widget) {
+            $models = ArrayHelper::map(Flat::find()->orderBy('number')->all(), 'uuid', 'number');
+            return [
+                'header' => 'Объект',
+                'size' => 'lg',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $models,
+                'data' => $models
+            ];
+        },
+    ],
+    [
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(EquipmentStatus::find()->orderBy('title')->all(),
                 'uuid', 'title'),

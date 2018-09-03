@@ -37,10 +37,6 @@ $this->params['breadcrumbs'][] = [
                                 'attributes' => [
                                     '_id',
                                     'uuid',
-                                    [
-                                        'label' => 'Родитель',
-                                        'value' => $parentType,
-                                    ],
                                     'title',
                                     'createdAt',
                                     'changedAt',

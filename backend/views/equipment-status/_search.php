@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\CriticalSearchType */
+/* @var $model backend\models\EquipmentSearchStatus */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="critical-type-search box-padding">
+<div class="equipment-status-search box-padding">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'uuid') ?>
 
-    <?= $form->field($model, 'type') ?>
+    <?= $form->field($model, 'title') ?>
 
     <?= $form->field($model, 'createdAt') ?>
 

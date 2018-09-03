@@ -70,7 +70,7 @@ class Equipment extends ActiveRecord
             'flat' => function ($model) {
                 return $model->flat;
             },
-            'serial', 'testDate', 'serial',
+            'serial', 'testDate',
             'createdAt', 'changedAt'
         ];
     }

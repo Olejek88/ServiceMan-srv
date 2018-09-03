@@ -11,7 +11,7 @@ $this->title = Yii::t(
         'modelClass' => 'Оборудование',
     ]
 );
-$this->title .= $model->title;
+$this->title .= $model['equipmentType']->title;
 $this->params['breadcrumbs'][] = [
     'label' => Yii::t('app', 'Оборудование'),
     'url' => ['index']
