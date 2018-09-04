@@ -2,19 +2,18 @@
 
 namespace backend\controllers;
 
+use backend\models\MeasureSearch;
+use common\models\Measure;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
-use common\models\TaskStatus;
-
-use backend\models\TaskSearchStatus;
 /**
- * TaskStatusController implements the CRUD actions for TaskStatus model.
+ * MeasureController implements the CRUD actions for Measure model.
  */
-class TaskStatusController extends Controller
+class MeasureController extends Controller
 {
     /**
      * @inheritdoc
@@ -38,14 +37,14 @@ class TaskStatusController extends Controller
         }
 
     }
-    
+
     /**
-     * Lists all TaskStatus models.
+     * Lists all Measure models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TaskSearchStatus();
+        $searchModel = new MeasureSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -56,7 +55,7 @@ class TaskStatusController extends Controller
     }
 
     /**
-     * Displays a single TaskStatus model.
+     * Displays a single Measure model.
      * @param integer $id
      * @return mixed
      */
@@ -68,14 +67,13 @@ class TaskStatusController extends Controller
     }
 
     /**
-     * Creates a new TaskStatus model.
+     * Creates a new Measure model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new TaskStatus();
-
+        $model = new Measure();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -86,7 +84,29 @@ class TaskStatusController extends Controller
     }
 
     /**
-     * Updates an existing TaskStatus model.
+     * Displays a trend of value
+     * @return mixed
+     */
+    public function actionTrend()
+    {
+        $measure = array(0);
+        $name = '';
+        if ($_GET["equipment"]) {
+            $measure = Measure::find()
+                ->where(['equipmentUuid' => $_GET["equipment"]])
+                ->orderBy('date')
+                ->all();
+            if ($measure[0]!=null)
+                $name = $measure[0]['equipment']['equipmentType']->title;
+        }
+        return $this->render('trend', [
+            'values' => $measure,
+            'name' => $name
+        ]);
+    }
+
+    /**
+     * Updates an existing Measure model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +114,6 @@ class TaskStatusController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -105,7 +124,7 @@ class TaskStatusController extends Controller
     }
 
     /**
-     * Deletes an existing TaskStatus model.
+     * Deletes an existing Measure model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,15 +137,15 @@ class TaskStatusController extends Controller
     }
 
     /**
-     * Finds the TaskStatus model based on its primary key value.
+     * Finds the Measure model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TaskStatus the loaded model
+     * @return Measure the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TaskStatus::findOne($id)) !== null) {
+        if (($model = Measure::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

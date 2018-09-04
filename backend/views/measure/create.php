@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 
 /* @var $this yii\web\View */
-/* @var $model common\models\MeasuredValue */
+/* @var $model common\models\Measure */
 
 $this->title = Yii::t('app', 'Добавить измеренное значение');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Измеренные значения'), 'url' => ['index']];

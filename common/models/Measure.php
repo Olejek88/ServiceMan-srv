@@ -91,6 +91,8 @@ class Measure extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
             'userUuid' => Yii::t('app', 'Пользователь'),
+            'equipment' => Yii::t('app', 'Оборудование'),
+            'user' => Yii::t('app', 'Пользователь'),
             'value' => Yii::t('app', 'Значение'),
             'date' => Yii::t('app', 'Дата'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -140,9 +142,9 @@ class Measure extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFlat()
+    public function getEquipment()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(Equipment::className(), ['uuid' => 'equipmentUuid']);
     }
 
     /**
@@ -152,6 +154,6 @@ class Measure extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(Users::className(), ['uuid' => 'userUuid']);
     }
 }

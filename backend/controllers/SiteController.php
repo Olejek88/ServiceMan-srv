@@ -152,7 +152,7 @@ class SiteController extends Controller
         $threshold = $today - 300000000;
         $count = 0;
         foreach ($users as $current_user) {
-            if (strtotime($current_user['connectionDate']) >= $threshold) {
+            if (strtotime($current_user['changedAt']) >= $threshold) {
                 $online[count($online)] = $current_user['uuid'];
             } else {
                 $offline[count($offline)] = $current_user['uuid'];
@@ -173,7 +173,6 @@ class SiteController extends Controller
 
             $userData[$count]['_id'] = $current_user['_id'];
             $userData[$count]['name'] = $current_user['name'];
-            $userData[$count]['whois'] = $current_user['whoIs'];
             $userData[$count]['contact'] = $current_user['contact'];
 
             $gps = Gpstrack::find()
@@ -189,17 +188,6 @@ class SiteController extends Controller
             }
 
             $count++;
-        }
-        $allEquipment = Equipment::find()->all();
-        if (count($online) >= 1) {
-            /*$listOnline = count($online) - 1;
-            $gpsOn = Gpstrack::find()
-                ->select('userUuid, latitude, longitude, date')
-                ->where(['userUuid' => $online[$listOnline]])
-                ->asArray()
-                ->limit(30000)
-                ->all();*/
-            $gpsStatus = true;
         }
 
         if (count($userList) >= 1) {
@@ -222,9 +210,8 @@ class SiteController extends Controller
         /**
          * Настройки - История активности
          */
-
+/*
         $accountUser = Yii::$app->user->identity;
-
         $journalUserId = JournalUser::find()
             ->where(['userId' => $accountUser['id']])
             ->orderBy('_id DESC')
@@ -237,202 +224,18 @@ class SiteController extends Controller
             ->where(['email' => $accountUser['email']])
             ->asArray()
             ->one();
-        Yii::$app->view->params['user'] = $userJournal;
-
-
-        //if (!empty(is_array($journalUserId))) {
-        foreach ($journalUserId as $key => $value) {
-            if ($journalUserId[$key]['userId'] === $userJournal['id']) {
-                $journalUserId[$key]['userId'] = $userJournal['email'];
-            }
-        }
-        //}
-
-        /**
-         * Наряды
-         */
-
-        $query = Orders::find()
-            ->select(
-                '_id,
-                uuid,
-                title,
-                orderStatusUuid,
-                orderVerdictUuid,
-                createdAt,
-                changedAt,
-                closeDate'
-            );
-
-        $queryStatus = $query->where(
-            'orderStatusUuid != :status',
-            ['status' => '53238221-0EF7-4737-975E-FD49AFC92A05']
-        )
-            ->asArray()
-            ->all();
-
-        $queryActive = $query->where('closeDate >= CURDATE()')->all();
-
-        $queryResult = array_merge($queryStatus, $queryActive);
-
-
-        $orderStatus = OrderStatus::find()
-            ->select('_id, uuid, title')
-            ->asArray()
-            ->all();
-
-        $orderVerdict = OrderVerdict::find()
-            ->select('uuid, title')
-            ->asArray()
-            ->all();
-
-        $colorResult = ['#FDF8E7', '#DEF0F8', '#88BC8E', '#FF4A03', '#ccc'];
-
-        foreach ($queryResult as $i => $result) {
-            foreach ($orderStatus as $k => $status) {
-                if ($queryResult[$i]['orderStatusUuid'] === $orderStatus[$k]['uuid']) {
-                    $queryResult[$i]['orderStatusUuid'] = $orderStatus[$k]['title'];
-                    $queryResult[$i]['color'] = $colorResult[$k];
-                    $queryResult[$i]['flow'] = $k;
-                }
-            }
-
-            foreach ($orderVerdict as $l => $verdict) {
-                if ($queryResult[$i]['orderVerdictUuid'] === $orderVerdict[$l]['uuid']) {
-                    $queryResult[$i]['orderVerdictUuid'] = $orderVerdict[$l]['title'];
-                }
-            }
-
-            if ($queryResult[$i]['closeDate'] === '0000-00-00 00:00:00') {
-                $queryResult[$i]['closeDate'] = '';
-            }
-
-            ArrayHelper::multisort($queryResult, ['flow'], [SORT_DESC]);
-        }
-
-        /**
-         * Объекты
-         */
-        $objectSelect = Objects::find()
-            ->select('_id, title, latitude, longitude, description')
-            ->asArray()
-            ->all();
-
-        /**
-         * Оборудование
-         *
-         * @var $criticalVery - Массив очень критичных оборудований
-         */
-        $criticalVery = [];
-        $taskModel = [];
-        $countTask = [];
-        $equipmentList = [];
-        //$equipmentIndex = [];
-
-        $tasks = Task::find()
-            ->select('uuid, comment');
-
-        $equipmentSelect = Equipment::find()
-            ->select(
-                '_id,
-                uuid,
-                title,
-                image,
-                equipmentModelUuid,
-                equipmentStatusUuid,
-                criticalTypeUuid,
-                createdAt,
-                changedAt'
-            );
-
-        foreach ($queryResult as $i => $value) {
-            $taskModel[] = $tasks->where(['orderUuid' => $queryResult[$i]['uuid']])
-                ->asArray()
-                ->all();
-
-            $countTask[] = count($taskModel[$i]);
-        }
-
-
-        $criticalType = CriticalType::find()
-            ->select('uuid, title')
-            ->asArray()
-            ->all();
-
-        $equipmentModel = EquipmentModel::find()
-            ->select('uuid, title')
-            ->all();
-
-        $equipmentStatus = EquipmentStatus::find()
-            ->select('uuid, title')
-            ->all();
-
-        //$criticalUuid = $criticalType['0']['uuid'];
-
-        foreach ($countTask as $index => $value) {
-
-            if (!empty($taskModel[$index][$value - 1]['equipmentUuid'])) {
-                $equipmentList[] = $equipmentSelect
-                    ->where(
-                        ['uuid' => $taskModel[$index][$value - 1]['equipmentUuid']]
-                    )
-                    ->asArray()
-                    ->all();
-                //$equipmentIndex[] = count($equipmentList[$index]);
-            }
-            /*
-            foreach ($equipmentIndex as $key => $eqIndex) {
-                if ($equipmentList[$key][$eqIndex - 1]['criticalTypeUuid'] === $criticalUuid) {
-                    $criticalVery[] = $equipmentList[$key][$eqIndex - 1];
-                }
-            }*/
-        }
-
-        $criticalVery = array_map(
-            "unserialize", array_unique(array_map("serialize", $criticalVery))
-        );
-
-        /**
-         * Формирование ссылки для запроса на изображение
-         *
-         * @var [type]
-         */
-        foreach ($criticalVery as $key => $value) {
-            $tmpPath = '/' . $criticalVery[$key]['equipmentModelUuid'] .
-                '/' . $criticalVery[$key]['image'];
-            $criticalVery[$key]['image'] = MyHelpers::getImgUrl($tmpPath);
-        }
-
-        foreach ($criticalVery as $i => $value) {
-            foreach ($equipmentStatus as $l => $eqStatus) {
-                if ($criticalVery[$i]['equipmentStatusUuid'] === $equipmentStatus[$l]['uuid']) {
-                    $criticalVery[$i]['equipmentStatusUuid'] = $equipmentStatus[$l]['title'];
-                }
-            }
-
-            foreach ($equipmentModel as $l => $eqModel) {
-                if ($criticalVery[$i]['equipmentModelUuid'] === $equipmentModel[$l]['uuid']) {
-                    $criticalVery[$i]['equipmentModelUuid'] = $equipmentModel[$l]['title'];
-                }
-            }
-
-            foreach ($criticalType as $l => $crType) {
-                if ($criticalVery[$i]['criticalTypeUuid'] === $criticalType[$l]['uuid']) {
-                    $criticalVery[$i]['criticalTypeUuid'] = $criticalType[$l]['title'];
-                }
-            }
-        }
+        Yii::$app->view->params['user'] = $userJournal;*/
 
         /**
          * Журнал событий
          */
 
-        // В случаи, если геоданные не были отправлены, ответ на запрос будет null
+/*        // В случаи, если геоданные не были отправлены, ответ на запрос будет null
         $journal = Journal::find()
             ->select('userUuid, description, date')
             ->where('date  >= NOW() - INTERVAL 1 DAY')
             ->asArray()
-            ->all();
+            ->all();*/
 
         $userUuid = Users::find()
             ->select('uuid, name')
@@ -441,37 +244,13 @@ class SiteController extends Controller
 
         // $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
 
-        foreach ($userUuid as $i => $user) {
+/*        foreach ($userUuid as $i => $user) {
             foreach ($journal as $j => $jrnl) {
                 if ($userUuid[$i]['uuid'] === $journal[$j]['userUuid']) {
                     $journal[$j]['userUuid'] = $userUuid[$i]['name'];
                 }
             }
-        }
-
-        $journal = array_map(
-            "unserialize", array_unique(array_map("serialize", $journal))
-        );
-        $journal = array_reverse($journal);
-
-        $cnt = 0;
-        $objectsGroup = 'var objects=L.layerGroup([';
-        $objectsList = '';
-        foreach ($objectSelect as $object) {
-            $objectsList .= 'var object' . $object["_id"]
-                . '= L.marker([' . $object["latitude"]
-                . ',' . $object["longitude"] . ']).bindPopup("<b>'
-                . $object["title"] . '</b><br/>' . $object["description"]
-                . '").openPopup();';
-            if ($cnt > 0) {
-                $objectsGroup .= ',';
-            }
-
-            $objectsGroup .= 'object' . $object["_id"];
-            $cnt++;
-        }
-
-        $objectsGroup .= ']);' . PHP_EOL;
+        }*/
 
         $cnt = 0;
         $usersGroup = 'var users=L.layerGroup([';
@@ -482,7 +261,7 @@ class SiteController extends Controller
                 . ',' . $user["longitude"]
                 . '], {icon: userIcon}).bindPopup("<b>'
                 . $user["name"] . '</b><br/>'
-                . $user["whois"] . ' ' . $user["contact"] . '").openPopup();';
+                . $user["contact"] . '").openPopup();';
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
@@ -491,29 +270,6 @@ class SiteController extends Controller
             $cnt++;
         }
         $usersGroup .= ']);' . PHP_EOL;
-
-        $cnt = 0;
-        $equipmentsGroup = 'var equipments=L.layerGroup([';
-        $equipmentsList = '';
-        foreach ($allEquipment as $equipment) {
-            if ($equipment["latitude"] > 0) {
-                $equipmentsList .= 'var equipment'
-                    . $equipment["_id"]
-                    . '= L.marker([' . $equipment["latitude"]
-                    . ',' . $equipment["longitude"]
-                    . '], {icon: equipmentIcon}).bindPopup("<b>'
-                    . $equipment["title"] . '</b><br/>'
-                    . $equipment["tagId"] . '").openPopup();';
-                if ($cnt > 0) {
-                    $equipmentsGroup .= ',';
-                }
-
-                $equipmentsGroup .= 'equipment' . $equipment["_id"];
-                $cnt++;
-            }
-        }
-
-        $equipmentsGroup .= ']);' . PHP_EOL;
 
         $ways = 'var lat;' . PHP_EOL;
         $cnt = 0;
@@ -545,24 +301,15 @@ class SiteController extends Controller
             'index',
             [
                 'users' => $userData,
-                'objectsGroup' => $objectsGroup,
-                'objectsList' => $objectsList,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
-                'equipmentsGroup' => $equipmentsGroup,
-                'equipmentsList' => $equipmentsList,
                 'ways' => $ways,
                 'wayUsers' => $wayUsers,
                 'lats' => $lats,
                 'gps' => $gps,
                 'gps2' => $gps2,
-                'objects' => $objectSelect,
-                'equipments' => $allEquipment,
-                'orders' => $queryResult,
-                'equipment' => $criticalVery,
-                'journal' => $journal,
-                'accountUser' => $accountUser,
-                'activeUserLog' => $journalUserId
+                //'accountUser' => $accountUser,
+                //'activeUserLog' => $journalUserId
             ]
         );
     }

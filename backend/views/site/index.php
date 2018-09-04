@@ -21,7 +21,7 @@ use yii\helpers\Html;
 /* @var $usersGroup */
 /* @var $wayUsers */
 
-$this->title = Yii::t('app', 'ТОИРУС::Карта');
+$this->title = Yii::t('app', 'Карта');
 
 ?>
 
@@ -48,7 +48,7 @@ $this->title = Yii::t('app', 'ТОИРУС::Карта');
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/">ТОИРУС</a>
+                    <a class="navbar-brand" href="/">СЕРВИС</a>
                 </div>
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -57,53 +57,18 @@ $this->title = Yii::t('app', 'ТОИРУС::Карта');
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Управление <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li role="presentation" class="dropdown-header">Основные разделы</li>
-                                <li><a href="/orders">Наряды</a></li>
-                                <li><a href="/task">Задачи</a></li>
-                                <li><a href="/stage">Этапы</a></li>
-                                <li><a href="/operation">Операции</a></li>
-                                <!-- <li><a href="/measured-value">Измерение</a></li> -->
+                                <li><a href="/alarm">Аварии</a></li>
+                                <li><a href="/street">Улицы</a></li>
+                                <li><a href="/house">Дома</a></li>
+                                <li><a href="/flat">Квартиры</a></li>
                                 <li class="divider"></li>
                                 <li role="presentation" class="dropdown-header">Единицы</li>
                                 <li><a href="/users">Пользователи</a></li>
                                 <li><a href="/equipment">Оборудование</a></li>
-                                <li><a href="/equipment-register">Журнал оборудования</a></li>
-                                <li><a href="/defect">Дефекты</a></li>
-                                <li><a href="/objects">Объекты</a></li>
-                                <li><a href="/external-system">Системы</a></li>
-                                <!-- <li><a href="#">Ремонт</a></li> -->
+                                <li><a href="/residents">Абоненты</a></li>
+                                <li><a href="/measure">Измерения</a></li>
                                 <li class="divider"></li>
                                 <li role="presentation" class="dropdown-header">Справочники</li>
-                                <li><a href="/documentation">Документация</a></li>
-                                <li><a href="/tool">Инструменты</a></li>
-                                <li><a href="/repair-part">ЗИП</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Конфигурирование <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li role="presentation" class="dropdown-header">Дерево шаблонов</li>
-                                <li><a href="/stage-operation/tree">Этапы и операции</a></li>
-                                <li><a href="/equipment-stage/tree">Этапы и оборудование</a></li>
-                                <li><a href="/task-equipment-stage/tree">Шаблоны задач и этапов</a></li>
-                                <li class="divider"></li>
-                                <li role="presentation" class="dropdown-header">Оповещения</li>
-                                <li><a href="/user-channel">Каналы пользователей</a></li>
-                                <li class="divider"></li>
-                                <li role="presentation" class="dropdown-header">События</li>
-                                <li><a href="/attribute-type">Типы аттрибутов</a></li>
-                                <li><a href="/equipment-attribute">Аттрибуты оборудования</a></li>
-                                <li><a href="/objects-attribute">Аттрибуты объектов</a></li>
-                                <li><a href="/users-attribute">Аттрибуты пользователей</a></li>
-                                <li><a href="/event">События</a></li>
-                                <li><a href="/event-attribute-type">Аттрибуты и события</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Параметры <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li role="presentation" class="dropdown-header">Меню</li>
-                                <!-- <li><a href="/help">Помошь</a></li> -->
-                                <li><a href="#" class="settings-model">Настройки</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -403,12 +368,8 @@ $this->title = Yii::t('app', 'ТОИРУС::Карта');
     });
 
     <?php
-    echo $objectsList;
-    echo $objectsGroup;
     echo $usersList;
     echo $usersGroup;
-    echo $equipmentsList;
-    echo $equipmentsGroup;
     echo $ways;
     $cnt=0;
     foreach ($users as $user) {
@@ -422,8 +383,6 @@ $this->title = Yii::t('app', 'ТОИРУС::Карта');
     };
     var overlayMapsB = {
         "Пользователи": users,
-        "Объекты": objects,
-        "Оборудование": equipments,
         "Маршруты:": ways
         <?php
         $cnt=0;
@@ -433,7 +392,7 @@ $this->title = Yii::t('app', 'ТОИРУС::Карта');
         }
         ?>
     };
-    var map = L.map('mapid',{zoomControl: false, layers: [users, objects, equipments]}).setView([55.2969, 61.5157], 13);
+    var map = L.map('mapid',{zoomControl: false, layers: [users]}).setView([55.2969, 61.5157], 13);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
         id: 'mapbox.streets'

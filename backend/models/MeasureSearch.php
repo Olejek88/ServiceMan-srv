@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
+use common\models\Measure;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\StageTemplate;
 
 /**
- * StageSearchTemplate represents the model behind the search form about `common\models\StageTemplate`.
+ * MeasureSearch represents the model behind the search form about `common\models\Measure`.
  */
-class StageSearchTemplate extends StageTemplate
+class MeasureSearch extends Measure
 {
     /**
      * @inheritdoc
@@ -17,8 +17,8 @@ class StageSearchTemplate extends StageTemplate
     public function rules()
     {
         return [
-            [['_id', 'normative'], 'integer'],
-            [['uuid', 'description', 'image', 'title', 'stageTypeUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['_id'], 'integer'],
+            [['uuid', 'equipmentUuid', 'userUuid', 'date', 'value', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class StageSearchTemplate extends StageTemplate
      */
     public function search($params)
     {
-        $query = StageTemplate::find();
+        $query = Measure::find();
 
         // add conditions that should always apply here
 
@@ -59,16 +59,15 @@ class StageSearchTemplate extends StageTemplate
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'normative' => $this->normative,
+            'date' => $this->date,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'image', $this->image])
-            ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'stageTypeUuid', $this->stageTypeUuid]);
+            ->andFilterWhere(['like', 'equipmentUuid', $this->equipmentUuid])
+            ->andFilterWhere(['like', 'userUuid', $this->userUuid])
+            ->andFilterWhere(['like', 'value', $this->value]);
 
         return $dataProvider;
     }

@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Типы измерений');
             </h3>
 
             <ul class="nav nav-tabs" style="width: 301px; margin: 0 auto;">
-                <li class=""><a href="/measured-value">Измерения</a></li>
+                <li class=""><a href="/measure">Измерения</a></li>
                 <li class="active"><a href="/measure-type">Типы измерений</a></li>
             </ul>
         </div>

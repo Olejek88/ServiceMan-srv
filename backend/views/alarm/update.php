@@ -2,11 +2,11 @@
 
 use yii\helpers\Html;
 
-/* @var $model \common\models\Service */
+/* @var $model \common\models\Alarm */
 
-$this->title = Yii::t('app', 'Создать сервис');
+$this->title = 'Обновить аварию';
 ?>
-<div class="equipment-create box-padding">
+<div class="equipment-update box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">

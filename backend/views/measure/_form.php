@@ -1,17 +1,17 @@
 <?php
 
+use common\models\Users;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
 use yii\helpers\ArrayHelper;
 use common\models\Equipment;
-use common\models\MeasureType;
-use common\models\Operation;
 use dosamigos\datetimepicker\DateTimePicker;
 
 
 /* @var $this yii\web\View */
-/* @var $model common\models\MeasuredValue */
+/* @var $model common\models\Measure */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -36,17 +36,39 @@ use dosamigos\datetimepicker\DateTimePicker;
     ?>
 
     <?php
-        $equipment = Equipment::find()->all();
-        $items = ArrayHelper::map($equipment,'uuid','title');
-        echo $form->field($model, 'equipmentUuid')->dropDownList($items);
+    $equipments = Equipment::find()->all();
+    $items = ArrayHelper::map($equipments, 'uuid', function($model) {
+        return $model['equipmentType']->title.' ('.$model['flat']['house']['street']->title.', '.
+            $model['flat']['house']->number.', '.
+            $model['flat']->number.')';
+    });
+    echo $form->field($model, 'equipmentUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите оборудование..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+    <?php
+    $users = Users::find()->all();
+    $items = ArrayHelper::map($users, 'uuid', 'name');
+    echo $form->field($model, 'userUuid')->widget(Select2::classname(),
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите пользователя..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
-        $operation = Operation::find()->all();
-        $items = ArrayHelper::map($operation,'uuid','operationTemplate.title');
-        echo $form->field($model, 'operationUuid')->dropDownList($items);
-
-        $measureType = MeasureType::find()->all();
-        $items = ArrayHelper::map($measureType,'uuid','title');
-        echo $form->field($model, 'measureTypeUuid')->dropDownList($items);
     ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px;">

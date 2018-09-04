@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\MeasuredValue */
 
-$this->title = $model->_id;
+$this->title = 'Измеренное значение';
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Измеренные значения'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -18,15 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="box-body" style="padding: 30px;">
-        <p>
-            <?= Html::a(Yii::t('app', 'Обновить'), ['update', 'id' => $model->_id], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a(Yii::t('app', 'Удалить'), ['delete', 'id' => $model->_id], [
-                'class' => 'btn btn-danger',
-                'data' => [
-                    'confirm' => Yii::t('app', 'Вы действительно хотите удалить данный элемент?'),
-                    'method' => 'post',
-                ],
-            ]) ?>
+        <p class="text-center">
+            <?php
+            echo $this->render('@backend/views/yii2-app/layouts/buttons.php',
+                ['model' => $model]);
+            ?>
         </p>
 
         <?= DetailView::widget([
@@ -34,9 +30,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'attributes' => [
                 '_id',
                 'uuid',
-                'equipmentUuid',
-                'operationUuid',
-                'measureTypeUuid',
+                [
+                    'label' => 'Оборудование',
+                    'value' => $model['equipment']['equipmentType']->title
+                ],
+                [
+                    'label' => 'Пользователь',
+                    'value' => $model['user']->name
+                ],
                 'date',
                 'value',
                 'createdAt',

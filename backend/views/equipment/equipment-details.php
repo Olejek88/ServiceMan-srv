@@ -16,21 +16,22 @@ $measures = Measure::find()
     ->where(['equipmentUuid' => $equipment['uuid']])
     ->all();
 
-$categories = "'-'";
-$values="data: [";
+$categories = "[";
+$values="name: 'Значения', data: [";
 $zero = 0;
 
 $counts=0;
 foreach ($measures as $measure) {
     if ($counts > 0) {
         $values .= ",";
+        $categories .= ",";
     }
     $values .= $measure['value'];
-    $categories[$counts]=$measure['date'];
-    $values[$counts]=$measure['value'];
+    $categories .= "'".date_format(date_create($measure['date']), 'Y-m-d')."'";
     $counts++;
 }
 $values .= "]";
+$categories .= "]";
 ?>
 <div class="kv-expand-row kv-grid-demo">
     <div class="kv-expand-detail skip-export kv-grid-demo">
@@ -43,7 +44,7 @@ $values .= "]";
                             <div class="small text-muted"><?php echo $equipment['serial'] ?></div>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-2">
                         <table class="table table-bordered table-condensed table-hover small kv-table">
                             <tr class="success">
                                 <th colspan="2" class="text-center text-danger">Последние показания</th>
@@ -60,13 +61,13 @@ $values .= "]";
                         <table class="table table-bordered table-condensed table-hover small kv-table">
                             <tr class="danger">
                                 <td class="text-center">
-                                    <div id="container" style="height: 250px;"></div>
+                                    <div id="container" style="height: 250px; width: 430px"></div>
                                     <script src="/js/vendor/lib/HighCharts/highcharts.js"></script>
                                     <script src="/js/vendor/lib/HighCharts/modules/exporting.js"></script>
                                     <script type="text/javascript">
                                         Highcharts.chart('container', {
                                             data: {
-                                                table: 'datatable'
+                                                table: 'data_table'
                                             },
                                             chart: {
                                                 type: 'column'
@@ -74,12 +75,14 @@ $values .= "]";
                                             title: {
                                                 text: ''
                                             },
+                                            legend: {
+                                                enabled: false
+                                            },
                                             xAxis: {
-                                                categories: [
+                                                categories:
                                                     <?php
                                                         echo $categories;
                                                     ?>
-                                                ]
                                             },
                                             tooltip: {
                                                 headerFormat: '<b>{point.x}</b><br/>',
@@ -100,15 +103,13 @@ $values .= "]";
                                                     text: 'Последние данные'
                                                 }
                                             },
-                                            series: {
+                                            series: [{
                                                 <?php
                                                 echo $values;
                                                 ?>
-                                            }
+                                            }]
                                         });
-                            </script>
-                        </div>
-
+                                    </script>
                                 </td>
                             </tr>
                         </table>

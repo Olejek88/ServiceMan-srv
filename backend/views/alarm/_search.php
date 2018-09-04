@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\ServiceSearch */
+/* @var $model backend\models\AlarmSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -21,19 +21,17 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'uuid') ?>
 
-    <?php echo $form->field($model, 'service_name') ?>
+    <?php echo $form->field($model, 'alarmTypeUuid') ?>
 
-    <?php echo $form->field($model, 'title') ?>
+    <?php echo $form->field($model, 'alarmStatusUuid') ?>
 
-    <?php echo $form->field($model, 'status') ?>
+    <?php echo $form->field($model, 'userUuid') ?>
 
-    <?php echo $form->field($model, 'delay') ?>
+    <?php echo $form->field($model, 'latitude') ?>
 
-    <?php echo $form->field($model, 'active') ?>
+    <?php echo $form->field($model, 'longitude') ?>
 
-    <?php echo $form->field($model, 'last_start_date') ?>
-
-    <?php echo $form->field($model, 'last_stop_date') ?>
+    <?php echo $form->field($model, 'date') ?>
 
     <div class="form-group">
         <?php echo Html::submitButton(

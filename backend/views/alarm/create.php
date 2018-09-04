@@ -2,11 +2,15 @@
 
 use yii\helpers\Html;
 
-/* @var $model \common\models\Service */
+/* @var $model \common\models\Alarm */
 
-$this->title = Yii::t('app', 'Обновить сервис');
+$this->title = Yii::t('app', 'Создать событие аварии');
+$this->params['breadcrumbs'][] = [
+    'label' => Yii::t('app', 'Оборудование'),
+    'url' => ['index']
+];
 ?>
-<div class="equipment-update box-padding">
+<div class="equipment-create box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">

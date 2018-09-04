@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\Service */
+/* @var $model \common\models\Alarm */
 
-$this->title = $model->title;
+$this->title = "Предупреждение / авария / событие";
 ?>
 <div class="order-status-view box-padding">
 
@@ -16,8 +16,6 @@ $this->title = $model->title;
             </h3>
         </div>
         <div class="panel-body">
-            <h1 class="text-center"></h1>
-
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
                     <p class="text-center">
@@ -31,17 +29,22 @@ $this->title = $model->title;
                             [
                                 'model' => $model,
                                 'attributes' => [
-                                    '_id',
+                                    'latitude',
+                                    'longitude',
                                     'uuid',
-                                    'service_name',
-                                    'title',
-                                    'status',
-                                    'delay',
-                                    'active',
-                                    'last_start_date',
-                                    'last_stop_date',
-                                    'last_message',
-                                    'last_message_type',
+                                    [
+                                        'label' => 'Пользователь',
+                                        'value' => $model['user']->name
+                                    ],
+                                    [
+                                        'label' => 'Тип',
+                                        'value' => $model['alarmType']->title
+                                    ],
+                                    [
+                                        'label' => 'Статус',
+                                        'value' => $model['alarmStatus']->title
+                                    ],
+                                    'date',
                                     'createdAt',
                                     'changedAt',
                                 ],
