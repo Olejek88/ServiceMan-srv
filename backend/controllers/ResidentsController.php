@@ -16,6 +16,8 @@ use common\models\City;
 use common\models\Flat;
 use common\models\House;
 use common\models\Measure;
+use common\models\PhotoEquipment;
+use common\models\PhotoFlat;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;

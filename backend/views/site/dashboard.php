@@ -214,8 +214,8 @@ $this->title = Yii::t('app', 'Сводная');
                             foreach ($measures as $measure) {
                                 print '<tr><td><a href="/measure/view?id='.$measure["_id"].'">'.$measure["_id"].'</a></td>
                                         <td>'.$measure["date"].'</td>
-                                        <td>'.$measure["equipment"]["house"]->title.', '.$measure["equipment"]["flat"]->title.'</td>
-                                        <td>'.$measure["equipment"]->title.'</td>
+                                        <td>'.$measure["equipment"]["house"]["street"]->title.','.$measure["equipment"]["house"]->number.', '.$measure["equipment"]["flat"]->number.'</td>
+                                        <td>'.$measure["equipment"]["equipmentType"]->title.'</td>
                                         <td>'.$measure["value"].'</td>';
                                 print '<td><div class="sparkbar" data-color="#00a65a" data-height="20">'.$measure['user']->name.'</div></td></tr>';
                                 $count++;

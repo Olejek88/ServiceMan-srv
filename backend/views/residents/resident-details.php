@@ -11,17 +11,20 @@ use yii\helpers\Html;
 
 $photoFlat = PhotoFlat::find()
     ->where(['flatUuid' => $model['flatUuid']])
+    ->orderBy('createdAt DESC')
     ->one();
 $equipments = Equipment::find()
     ->where(['flatUuid' => $model['flatUuid']])
     ->all();
 $counts=0;
+$equipment_photo[]='';
 foreach ($equipments as $next_equipment) {
-    $photo = PhotoEquipment::find()
+    $photoEquipment = PhotoEquipment::find()
         ->where(['equipmentUuid' => $next_equipment['uuid']])
-        ->all();
+        ->orderBy('createdAt DESC')
+        ->one();
     $equipment[$counts]=$next_equipment;
-    $equipment_photo[$counts]=$photo;
+    $equipment_photo[$counts]=$photoEquipment;
     $counts++;
     if ($counts>2) break;
 }
@@ -37,16 +40,20 @@ foreach ($equipments as $next_equipment) {
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
-                            <img src="<?php echo Html::encode(MainFunctions::getImagePath('flat',$model['uuid'])) ?>" style="padding:2px;width:100%">
-                            <div class="small text-muted"><?php echo $model['flat']['flatStatus']->title ?></div>
+                            <img src="../<?php echo Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])) ?>" style="padding:2px;width:100%">
+                            <div class="small text-muted"><?php echo $photoFlat['date'] ?></div>
                         </div>
                     </div>
                     <?php
                     for ($t=0; $t<$counts; $t++) {
-                        echo '<div class="col-sm-2">';
-                        echo '<div class="img-thumbnail img-rounded text-center">';
-                        echo '<img style="padding:2px;width:100%" src="'.
-                            Html::encode(MainFunctions::getImagePath('equipment',$equipment[0]['uuid'])).'"></div></div>';
+                        if ($equipment_photo[$t]!='') {
+                            echo '<div class="col-sm-2">';
+                            echo '<div class="img-thumbnail img-rounded text-center">';
+                            echo '<img style="padding:2px;width:100%" src="../' .
+                                Html::encode(MainFunctions::getImagePath('equipment', $equipment_photo[$t]['uuid'])) . '">
+                            <div class="small text-muted">' . $equipment_photo[$t]['date'] . '</div></div></div>';
+                        }
+
                         echo '<div class="col-sm-2">';
                         echo '<table class="table table-bordered table-condensed table-hover small kv-table">
                                 <tr class="success">
