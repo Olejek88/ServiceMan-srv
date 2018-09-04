@@ -254,9 +254,8 @@ class ResidentsController extends Controller
         foreach ($streets as $street) {
             $fullTree[$oCnt0]['title'] = Html::a(
                 $street['title'],
-                ['street/view', '_id' => $street['_id']]
+                ['street/view', 'id' => $street['_id']]
             );
-            $fullTree[$oCnt0]['type'] = 'Улица';
             $fullTree[$oCnt0]['street'] = $street['title'];
             $fullTree[$oCnt0]['date'] = $street['createdAt'];
             $fullTree[$oCnt0]['house'] = '';
@@ -271,9 +270,8 @@ class ResidentsController extends Controller
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
                     $house['street']->title.', '.$house['number'],
-                    ['house/view', '_id' => $house['_id']]
+                    ['house/view', 'id' => $house['_id']]
                 );
-                $fullTree[$oCnt0][$c][$oCnt1]['type'] = 'Дом';
                 $fullTree[$oCnt0][$c][$oCnt1]['date'] = $house['createdAt'];
                 $fullTree[$oCnt0][$c][$oCnt1]['house'] = $house['number'];
                 $fullTree[$oCnt0][$c][$oCnt1]['street'] = $street['title'];
@@ -303,9 +301,8 @@ class ResidentsController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['title']
                         = Html::a(
                         $street['title'].', '.$house['number'].'-'.$flat['number'],
-                        ['flat/view', '_id' => $flat['_id']]
+                        ['flat/view', 'id' => $flat['_id']]
                     );
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['type'] = 'Квартира';
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['date'] = $flat['createdAt'];
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['house'] = $house['number'];
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['street'] = $street['title'];
@@ -335,14 +332,14 @@ class ResidentsController extends Controller
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['title']
                             = Html::a(
-                            $equipment['title'],
-                            ['equipment/view', '_id' => $equipment['_id']]
+                            $equipment['equipmentType']->title,
+                            ['equipment/view', 'id' => $equipment['_id']]
                         );
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['type'] = $equipment['type']->title;
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['date'] = $equipment['date'];
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['house'] = $house['title'];
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['flat'] = $flat['title'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['date'] = $equipment['testDate'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['house'] = $house['number'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['flat'] = $flat['number'];
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['serial'] = $equipment['serial'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['street'] = $street['title'];
 
                         if ($equipment['equipmentStatusUuid'] == '111') {
                             $class = 'critical1';
@@ -352,7 +349,7 @@ class ResidentsController extends Controller
                             $class = 'critical3';
                         }
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] = '<div class="progress"><div class="'
-                            . $class . '">' . $flat['status']->title . '</div></div>';
+                            . $class . '">' . $flat['flatStatus']->title . '</div></div>';
 
                         $measure = Measure::find()
                             ->select('*')

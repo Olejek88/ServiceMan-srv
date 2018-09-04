@@ -163,15 +163,7 @@ class EquipmentController extends Controller
      */
     public function actionUpdate($id)
     {
-        // TODO: реализовать перенос файлов документации в новый каталог
-        // если изменилась модель оборудования при редактировании оборудования!
-        // так как файлы документации должны храниться в папке с uuid
-        // модели оборудования
-
         $model = $this->findModel($id);
-        // сохраняем старое значение image
-        $oldImage = $model->image;
-
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->_id]);

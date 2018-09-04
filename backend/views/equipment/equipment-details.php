@@ -30,7 +30,7 @@ foreach ($measures as $measure) {
     $values[$counts]=$measure['value'];
     $counts++;
 }
-$values .= "]}";
+$values .= "]";
 ?>
 <div class="kv-expand-row kv-grid-demo">
     <div class="kv-expand-detail skip-export kv-grid-demo">
@@ -100,11 +100,11 @@ $values .= "]}";
                                                     text: 'Последние данные'
                                                 }
                                             },
-                                            series: [
+                                            series: {
                                                 <?php
-                                                    echo $values;
+                                                echo $values;
                                                 ?>
-                                            ]
+                                            }
                                         });
                             </script>
                         </div>

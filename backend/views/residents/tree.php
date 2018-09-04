@@ -11,8 +11,6 @@ $this->title = 'Дерево абонентов системы';
     <colgroup>
         <col width="*">
         <col width="200px">
-        <col width="130px">
-        <col width="120px">
         <col width="120px">
         <col width="120px">
         <col width="180px">
@@ -25,11 +23,9 @@ $this->title = 'Дерево абонентов системы';
     </tr>
     <tr>
         <th align="center">Объект</th>
-        <th>Тип оборудования</th>
         <th>Улица</th>
         <th>Дом</th>
         <th>Квартира</th>
-        <th>Оборудование</th>
         <th>Серийный</th>
         <th>Статус</th>
         <th>Значение</th>
@@ -38,8 +34,6 @@ $this->title = 'Дерево абонентов системы';
     <tbody>
     <tr>
         <td></td>
-        <td class="alt"></td>
-        <td class="center"></td>
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
@@ -78,27 +72,23 @@ $this->title = 'Дерево абонентов системы';
             ],
             'table' => [
                 'indentation' => 20,
-                "typeColumnIdx" => "1",
-                "streetColumnIdx" => "2",
-                "houseColumnIdx" => "3",
-                "flatColumnIdx" => "4",
-                "equipmentColumnIdx" => "5",
-                "serialColumnIdx" => "6",
-                "statusColumnIdx" => "7",
-                "valueColumnIdx" => "8"
+                "streetColumnIdx" => "1",
+                "houseColumnIdx" => "2",
+                "flatColumnIdx" => "3",
+                "serialColumnIdx" => "4",
+                "statusColumnIdx" => "5",
+                "valueColumnIdx" => "6"
             ],
             'renderColumns' => new JsExpression(
                 'function(event, data) {
                     var node = data.node;
                     $tdList = $(node.tr).find(">td");
-                    $tdList.eq(1).text(node.data.type);
-                    $tdList.eq(2).text(node.data.street);           
-                    $tdList.eq(3).text(node.data.house);
-                    $tdList.eq(4).text(node.data.flat);
-                    $tdList.eq(5).text(node.data.equipment);
-                    $tdList.eq(6).text(node.data.serial);
-                    $tdList.eq(7).html(node.data.status);
-                    $tdList.eq(8).text(node.data.value);
+                    $tdList.eq(1).text(node.data.street);           
+                    $tdList.eq(2).text(node.data.house);
+                    $tdList.eq(3).text(node.data.flat);
+                    $tdList.eq(4).text(node.data.serial);
+                    $tdList.eq(5).html(node.data.status);
+                    $tdList.eq(6).text(node.data.value);
                 }'
             )
         ]

@@ -96,7 +96,7 @@ use dosamigos\datetimepicker\DateTimePicker;
                 'language' => 'ru',
                 'size' => 'ms',
                 'pluginOptions' => [
-                    'format' => 'dd-M-yyyy',
+                    'format' => 'yyyy-mm-dd',
                     'todayHighlight' => true
                 ]
             ]

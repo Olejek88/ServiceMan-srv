@@ -2,11 +2,11 @@
 /* @var $cityCount
  * @var $streetCount
  * @var $flatCount
- * @var $abonentCount
+ * @var $subjectCount
  * @var $equipmentCount
  * @var $equipmentTypeCount
  * @var $residentCount
- * @var $houseCount
+ * @var $subjectsCount
  * @var $measures
  * @var $equipments
  * @var $sumStageStatusCompleteCount
@@ -50,7 +50,7 @@ $this->title = Yii::t('app', 'Сводная');
 
             <div class="info-box-content">
                 <span>Городов <?= $cityCount; ?> / Улиц <?= $streetCount; ?></span><br/>
-                <span>Квартир <?= $flatCount; ?> / Абонентов <?= $abonentCount; ?></span><br/>
+                <span>Квартир <?= $flatCount; ?> / Абонентов <?= $subjectCount; ?></span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -80,9 +80,9 @@ $this->title = Yii::t('app', 'Сводная');
             <a href="/objects"><span class="info-box-icon bg-green"><i class="fa fa-map-marker"></i></span></a>
 
             <div class="info-box-content">
-                <span class="info-box-text">Объекты</span>
-                <span><br/></span>
-                <span class="info-box-number"><?= $houseCount ?></span>
+                <span class="info-box-text">Субъекты</span>
+                <span>Жители <?= $residentCount; ?> / Организации <?= $subjectCount; ?></span><br/>
+                <span class="info-box-number"><?= $subjectsCount ?></span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -258,11 +258,11 @@ $this->title = Yii::t('app', 'Сводная');
                         $path = '/storage/order-level/no-image-icon-4.png';
                         print '<li class="item">
                                 <div class="product-img">
-                                    <img src="'.Html::encode($path).'" alt="'.$equipment['title'].'">
+                                    <img src="'.Html::encode($path).'" alt="'.$equipment['equipmentType']->title.'">
                                 </div>
                                 <div class="product-info">
                                     <a href="/equipment/view?id='.$equipment["_id"].'" class="product-title">'.$equipment["serial"].'
-                                    <span class="label label-warning pull-right">'.$equipment["title"].'</span></a>
+                                    <span class="label label-warning pull-right">'.$equipment['equipmentType']->title.'</span></a>
                                     <span class="product-description">'.$equipment["equipmentType"]->title.'</span>
                                 </div></li>';
                     }

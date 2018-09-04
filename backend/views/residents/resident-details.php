@@ -43,23 +43,23 @@ foreach ($equipments as $next_equipment) {
                     </div>
                     <?php
                     for ($t=0; $t<$counts; $t++) {
+                        echo '<div class="col-sm-2">';
                         echo '<div class="img-thumbnail img-rounded text-center">';
                         echo '<img style="padding:2px;width:100%" src="'.
-                            Html::encode(MainFunctions::getImagePath('equipment',$equipment[0]['uuid'])).'">';
-                        echo '<div class="small text-muted">' . $equipment[$t]['equipmentStatus']->title . '</div>
-                              </div>
-                              <div class="col-sm-4">
-                                <table class="table table-bordered table-condensed table-hover small kv-table">
+                            Html::encode(MainFunctions::getImagePath('equipment',$equipment[0]['uuid'])).'"></div></div>';
+                        echo '<div class="col-sm-2">';
+                        echo '<table class="table table-bordered table-condensed table-hover small kv-table">
                                 <tr class="success">
                                 <th colspan="2" class="text-center text-danger">Параметры оборудования</th>
                                 </tr>
-                                <tr><td>Тип</td><td class="text-right">' . $equipment[$t]['type']->title . '</td></tr>
+                                <tr><td>Тип</td><td class="text-right">' . $equipment[$t]['equipmentType']->title . '</td></tr>
                                 <tr><td>Статус</td>
-                                <td class="text-right">' . $equipment[$t]['status']->title . '</td></tr>';
-                        echo '<tr><td>Серийный номер</td><td class="text-right">'.$equipment[$t]['serialNumber'].'</td></tr>';
-                        echo '<tr><td>Дата монтажа</td><td class="text-right">'.$equipment[$t]['startDate'].'</td></tr>
-                              </table></div>';
-                        }
+                                <td class="text-right">' . $equipment[$t]['equipmentStatus']->title . '</td></tr>';
+                        echo '<tr><td>Серийный номер</td><td class="text-right">'.$equipment[$t]['serial'].'</td></tr>';
+                        echo '<tr><td>Дата монтажа</td><td class="text-right">'.$equipment[$t]['testDate'].'</td></tr>
+                              </table>';
+                        echo '</div>';
+                    }
                     ?>
                     <div class="col-sm-1">
                         <div class="kv-button-stack">

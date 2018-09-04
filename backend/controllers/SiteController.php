@@ -60,12 +60,6 @@ use backend\models\UsersSearch;
 
 /**
  * Site controller
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  */
 class SiteController extends Controller
 {
@@ -594,10 +588,10 @@ class SiteController extends Controller
         $streetCount = Street::find()->count();
         $flatCount = Flat::find()->count();
         $equipmentCount = Equipment::find()->count();
-        $abonentCount = Subject::find()->count();
+        $subjectCount = Subject::find()->count();
         $residentCount = Resident::find()->count();
         $equipmentTypeCount = EquipmentType::find()->count();
-        $houseCount = Subject::find()->count();
+        $subjectsCount = Subject::find()->count() + Resident::find()->count();
         $usersCount = Users::find()->count();
 
         $measures = Measure::find()
@@ -664,7 +658,7 @@ class SiteController extends Controller
             'dashboard',
             [
                 'cityCount' => $cityCount,
-                'houseCount' => $houseCount,
+                'subjectsCount' => $subjectsCount,
                 'streetCount' => $streetCount,
                 'usersCount' => $usersCount,
                 'flatCount' => $flatCount,
@@ -675,7 +669,7 @@ class SiteController extends Controller
                 'usersList' => $usersList,
                 'equipmentCount' => $equipmentCount,
                 'equipmentTypeCount' => $equipmentTypeCount,
-                'abonentCount' => $abonentCount,
+                'subjectCount' => $subjectCount,
                 'residentCount' => $residentCount,
                 'currentUser' => $currentUser,
                 'searchModel' => $searchModel,

@@ -4,6 +4,7 @@
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Flat;
+use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -42,12 +43,42 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'flatUuid',
+        'vAlign' => 'middle',
+        'width' => '180px',
+        'value' => function ($data) {
+            return $data['flat']['house']['street']->title.', '.$data['flat']['house']->number.'-'.$data['flat']->number;
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+                '/flat/create?from=equipment/index',
+                ['title' => Yii::t('app', 'Добавить')]),
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'format' => 'raw',
+        'editableOptions'=> function ($model, $key, $index, $widget) {
+            $flat  = Flat::find()->all();
+            $items = ArrayHelper::map($flat, 'uuid', function($model) {
+                return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+            });
+            $models = ArrayHelper::map($items, 'uuid', 'number');
+            return [
+                'header' => 'Объект',
+                'size' => 'lg',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $models,
+                'data' => $items
+            ];
+        },
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'equipmentTypeUuid',
+        'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Тип '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/equipment-type/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
@@ -81,6 +112,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
+        'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
         'editableOptions'=> function () {
@@ -128,18 +160,15 @@ $gridColumns = [
         'attribute' => 'testDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
-        'filterType' => GridView::FILTER_DATETIME,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
         'editableOptions' => [
             'header' => 'Дата поверки',
             'size' => 'md',
-            'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
+            'inputType' => Editable::INPUT_WIDGET,
             'widgetClass' =>  'kartik\datecontrol\DateControl',
             'options' => [
-                'type' => \kartik\datecontrol\DateControl::FORMAT_DATETIME,
+                'type' => DateControl::FORMAT_DATE,
                 'displayFormat' => 'dd.MM.yyyy',
                 'saveFormat' => 'php:Y-m-d',
                 'options' => [
@@ -149,36 +178,6 @@ $gridColumns = [
                 ]
             ]
         ],
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'flatUuid',
-        'vAlign' => 'middle',
-        'width' => '180px',
-        'value' => function ($data) {
-            return $data['flat']['house']['street']->title.', '.$data['flat']['house']->number.'-'.$data['flat']->number;
-        },
-        'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/flat/create?from=equipment/index',
-                ['title' => Yii::t('app', 'Добавить')]),
-        'filter' => ArrayHelper::map(Flat::find()->orderBy('number')->all(),
-            'uuid', 'number'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'format' => 'raw',
-        'editableOptions'=> function ($model, $key, $index, $widget) {
-            $models = ArrayHelper::map(Flat::find()->orderBy('number')->all(), 'uuid', 'number');
-            return [
-                'header' => 'Объект',
-                'size' => 'lg',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $models,
-                'data' => $models
-            ];
-        },
     ],
     [
         'filterType' => GridView::FILTER_SELECT2,
