@@ -21,8 +21,8 @@ class m130524_201442_init extends Migration
             'email' => $this->string()->notNull()->unique(),
 
             'status' => $this->smallInteger()->notNull()->defaultValue(10),
-            'createdAt' => $this->timestamp()->notNull(),
-            'changedAt' => $this->timestamp()->notNull(),
+            'created_at' => $this->timestamp()->notNull(),
+            'updated_at' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
         $this->createTable('{{%city}}', [

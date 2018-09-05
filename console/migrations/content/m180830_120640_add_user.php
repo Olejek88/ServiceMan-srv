@@ -21,8 +21,8 @@ class m180830_120640_add_user extends Migration
             'password_hash' => '$2y$13$nGZaF9DU5t/v63X./MM3Gu/eg0HsXBRtnBZ7adA3spSbJUKtLIEbC',
             'email' => 'shtrmvk@gmail.com',
             'status' => '10',
-            'createdAt' => $currentTime,
-            'changedAt' => $currentTime
+            'created_at' => $currentTime,
+            'updated_at' => $currentTime
         ]);
     }
 
