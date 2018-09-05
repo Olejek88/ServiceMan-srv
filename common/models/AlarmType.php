@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  */
 class AlarmType extends ActiveRecord
 {
+
     public function behaviors()
     {
         return [

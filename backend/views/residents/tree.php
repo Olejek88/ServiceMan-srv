@@ -10,12 +10,14 @@ $this->title = 'Дерево абонентов системы';
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="200px">
+        <col width="120px">
+        <col width="90px">
+        <col width="60px">
         <col width="120px">
         <col width="120px">
-        <col width="180px">
         <col width="120px">
-        <col width="180px">
+        <col width="130px">
+        <col width="80px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
@@ -26,6 +28,8 @@ $this->title = 'Дерево абонентов системы';
         <th>Улица</th>
         <th>Дом</th>
         <th>Квартира</th>
+        <th>Абонент</th>
+        <th>ИНН/№</th>
         <th>Серийный</th>
         <th>Статус</th>
         <th>Значение</th>
@@ -34,6 +38,8 @@ $this->title = 'Дерево абонентов системы';
     <tbody>
     <tr>
         <td></td>
+        <td class="alt"></td>
+        <td class="center"></td>
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
@@ -76,8 +82,10 @@ $this->title = 'Дерево абонентов системы';
                 "houseColumnIdx" => "2",
                 "flatColumnIdx" => "3",
                 "serialColumnIdx" => "4",
-                "statusColumnIdx" => "5",
-                "valueColumnIdx" => "6"
+                "abonentColumnIdx" => "5",
+                "innColumnIdx" => "6",
+                "statusColumnIdx" => "7",
+                "valueColumnIdx" => "8"
             ],
             'renderColumns' => new JsExpression(
                 'function(event, data) {
@@ -86,9 +94,11 @@ $this->title = 'Дерево абонентов системы';
                     $tdList.eq(1).text(node.data.street);           
                     $tdList.eq(2).text(node.data.house);
                     $tdList.eq(3).text(node.data.flat);
-                    $tdList.eq(4).text(node.data.serial);
-                    $tdList.eq(5).html(node.data.status);
-                    $tdList.eq(6).text(node.data.value);
+                    $tdList.eq(4).text(node.data.resident);
+                    $tdList.eq(5).text(node.data.inn);
+                    $tdList.eq(6).text(node.data.serial);
+                    $tdList.eq(7).html(node.data.status);
+                    $tdList.eq(8).text(node.data.value);
                 }'
             )
         ]

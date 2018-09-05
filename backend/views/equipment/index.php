@@ -124,8 +124,7 @@ $gridColumns = [
                 if ($stat['uuid']==EquipmentStatus::UNKNOWN ||
                     $stat['uuid']==EquipmentStatus::NOT_MOUNTED)
                     $color='background-color: gray';
-                if ($stat['uuid']==EquipmentStatus::NEED_CHECK ||
-                    $stat['uuid']==EquipmentStatus::NEED_REPAIR)
+                if ($stat['uuid']==EquipmentStatus::NOT_WORK)
                     $color='background-color: lightred';
                 if ($stat['uuid']==EquipmentStatus::WORK)
                     $color='background-color: green';

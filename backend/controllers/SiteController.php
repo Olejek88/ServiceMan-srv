@@ -13,6 +13,7 @@ namespace backend\controllers;
 
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
+use common\models\Alarm;
 use common\models\City;
 use common\models\CriticalType;
 use common\models\Defect;
@@ -475,19 +476,6 @@ class SiteController extends Controller
     }
 
     /**
-     */
-    public function actionTest()
-    {
-        $order = new OrderService();
-        $order->run();
-        return $this->render(
-            'test',
-            [
-            ]
-        );
-    }
-
-    /**
      * Displays a timeline
      *
      * @return mixed
@@ -495,127 +483,44 @@ class SiteController extends Controller
     public function actionTimeline()
     {
         $events = [];
-        $defects = Defect::find()
+        $measures = Measure::find()
             ->orderBy('date DESC')
-            ->limit(10)
+            ->limit(20)
             ->all();
-        foreach ($defects as $defect) {
-            if ($defect['process'] == 0) $status = '<a class="btn btn-success btn-xs">Исправлен</a>';
-            else $status = '<a class="btn btn-danger btn-xs">Активен</a>';
-            $path = $defect['equipment']->getImageUrl();
-            if ($path == null)
-                $path = '/storage/order-level/no-image-icon-4.png';
+        foreach ($measures as $measure) {
+            $status = '<a class="btn btn-success btn-xs">Значение</a>';
+            //$path = $measure['equipment']->getPhotoUrl();
+            //if ($path == null)
+            $path = '/images/no-image-icon-4.png';
             $text = '<img src="' . Html::encode($path) . '" class="margin" style="width:50px; margin: 2; float:left" alt="">';
-            $text .= '<a class="btn btn-default btn-xs">' . $defect['equipment']->title . '</a>
-                ' . $defect['comment'] . '<br/>
-                <i class="fa fa-cogs"></i>&nbsp;Задача: ' . $defect['task']['taskTemplate']->title . '<br/>
-                <i class="fa fa-check-square"></i>&nbsp;Статус: ' . $status . '';
-            $events[] = ['date' => $defect['date'], 'event' => self::formEvent($defect['date'], 'defect', $defect['_id'],
-                $defect['defectType']->title, $text, $defect['user']->name)];
+            $text .= '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
+                <i class="fa fa-cogs"></i>&nbsp;Оборудование: ' . $measure['equipment']['equipmentType']->title . '<br/>
+                <i class="fa fa-check-square"></i>&nbsp;Значение: ' . $measure['value'] . '';
+            $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
+                $measure['_id'],
+                $measure['equipment']['equipmentType']->title, $text, $measure['user']->name)];
         }
 
-        $journals = Journal::find()
+        $alarms = Alarm::find()
             ->orderBy('date DESC')
-            ->limit(10)
+            ->limit(20)
             ->all();
-        foreach ($journals as $journal) {
-            $text = '<i class="fa fa-calendar"></i>&nbsp;'.$journal['description'];
-            $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], 'journal', 0,
-                $journal['description'], $text, $journal['user']->name)];
-        }
-
-        $externalEvents = ExternalEvent::find()
-            ->orderBy('date DESC')
-            ->limit(5)
-            ->all();
-        foreach ($externalEvents as $event) {
-            $text = '<i class="fa fa-desktop"></i>&nbsp; Система:
-                <span class="btn btn-default btn-xs">' . $event['externalTag']['externalSystem']->title .
-                ' ['.$event['externalTag']['externalSystem']->address.']</span><br/>
-                <i class="fa fa-exclamation"></i>&nbsp; Тег: 
-                <span class="btn btn-primary btn-xs">' . $event['externalTag']->tag .
-                ' ['.$event['externalTag']->value.']</span><br/>
-                <i class="fa fa-cogs"></i>&nbsp;Оборудование: 
-                <span class="btn btn-default btn-xs">' . $event['externalTag']['equipment']->title . '</span><br/>
-                <i class="fa fa-plug"></i>&nbsp;Действие: 
-                <span class="btn btn-default btn-xs">' . $event['externalTag']['actionType']->title . '</span>';
-            $events[] = ['date' => $event['date'], 'event' => self::formEvent($event['date'],
-                'event', 0, '', $text, '')];
-        }
-
-        $equipmentRegisters = EquipmentRegister::find()
-            ->orderBy('date DESC')
-            ->limit(10)
-            ->all();
-        foreach ($equipmentRegisters as $equipmentRegister) {
-            $path = $equipmentRegister['equipment']->getImageUrl();
-            if ($path == null)
-                $path = '/storage/order-level/no-image-icon-4.png';
+        foreach ($alarms as $alarm) {
+            //$path = $alarm['user']->getImageUrl();
+            //if ($path == null)
+                $path = '/images/p1.jpg';
             $text = '<img src="' . Html::encode($path) . '" class="img-circle" style="width:50px; margin: 2; float:left" alt="">';
             $text .= '<i class="fa fa-cogs"></i>&nbsp;
-                <a class="btn btn-default btn-xs">' . $equipmentRegister['equipment']->title . '</a><br/>
+                <a class="btn btn-default btn-xs">' . $alarm['alarmType']->title . '</a><br/>
                 <i class="fa fa-user"></i>&nbsp;Пользователь: <span class="btn btn-primary btn-xs">'
-                . $equipmentRegister['user']->name . '</span><br/>
-                <i class="fa fa-clipboard"></i>&nbsp;Изменил параметр: <a class="btn btn-default btn-xs">'
-                . $equipmentRegister['fromParameterUuid'] . '</a>&nbsp;&gt;&nbsp;
-                    <a class="btn btn-default btn-xs">' . $equipmentRegister['toParameterUuid'] . '</a>';
-            $events[] = ['date' => $equipmentRegister['date'], 'event' => self::formEvent($equipmentRegister['date'],
-                'equipmentRegister', 0, '', $text, $equipmentRegister['user']->name)];
+                . $alarm['user']->name . '</span><br/>
+                <i class="fa fa-clipboard"></i>&nbsp;Статус: <a class="btn btn-default btn-xs">'
+                . $alarm['alarmStatus']->title . '</a>&nbsp;&gt;&nbsp;
+                    <a class="btn btn-default btn-xs">[' . $alarm['longitude'] .'</a> | <a class="btn btn-default btn-xs">'. $alarm['longitude'] . ']</a>';
+            $events[] = ['date' => $alarm['date'], 'event' => self::formEvent($alarm['date'],
+                'alarm', 0, '', $text, $alarm['user']->name)];
         }
 
-        $usersAttributes = UsersAttribute::find()
-            ->orderBy('date DESC')
-            ->limit(10)
-            ->all();
-        foreach ($usersAttributes as $usersAttribute) {
-            $text = '<i class="fa fa-user"></i>&nbsp;Пользователь: <a class="btn btn-primary btn-xs">' .
-                $usersAttribute['user']->name . '</a><br/>';
-            $text = '<a class="btn btn-default btn-xs">Для пользователя зарегистрировано событие</a><br/>
-                &nbsp;' . $usersAttribute['attributeType']->name . ' <a class="btn btn-default btn-xs">'
-                . $usersAttribute['value'] . '</a>';
-            $events[] = ['date' => $usersAttribute['date'], 'event' => self::formEvent($usersAttribute['date'],
-                'usersAttribute', 0, '', $text, $usersAttribute['user']->name)];
-        }
-
-        $orders = Orders::find()
-            ->orderBy('startDate DESC')
-            ->all();
-        foreach ($orders as $order) {
-            if ($order['openDate'] > 0) $openDate = date("j-d-Y h:m", strtotime($order['openDate']));
-            else $openDate = 'не начинался';
-            if ($order['closeDate'] > 0) $closeDate = date("j-d-Y h:m", strtotime($order['closeDate']));
-            else $closeDate = 'не закончился';
-            $path = $order['user']->getImageUrl();
-            if (!$path) {
-                $path='/images/unknown.png';
-            }
-            $text = '<img src="' . Html::encode($path) . '" class="margin img-circle" style="width:50px; margin: 2; float:left" alt="">';
-            $text .= '<i class="fa fa-user"></i>&nbsp;Автор: <a class="btn btn-primary btn-xs">' .
-                $order['author']->name . '</a>&nbsp;Исполнитель: <a class="btn btn-primary btn-xs">' .
-                $order['user']->name . '</a><br/>
-                <i class="fa fa-calendar"></i>&nbsp;Открыт: [' . $openDate . ']
-                <i class="fa fa-calendar"></i>&nbsp;Закрыт: [' . $closeDate . ']<br/>';
-            if ($order['reason'])
-                $text .= 'Основание: <a class="btn btn-default btn-xs">' . $order['reason'] . '</a><br/>';
-            else
-                $text .= 'Основание: <a class="btn btn-default btn-xs">не указано</a><br/>';
-            if ($order['comment']) $text .= $order['comment'] . '<br/>';
-            switch ($order['orderStatus']) {
-                case OrderStatus::COMPLETE:
-                    $text .= '<a class="btn btn-success btn-xs">Закончен</a>&nbsp;';
-                    break;
-                case OrderStatus::CANCELED:
-                    $text .= '<a class="btn btn-danger btn-xs">Отменен</a>&nbsp;';
-                    break;
-                case OrderStatus::UN_COMPLETE:
-                    $text .= '<a class="btn btn-warning btn-xs">Не закончен</a>&nbsp;';
-                    break;
-                default:
-                    $text .= '<a class="btn btn-warning btn-xs">Не определен</a>&nbsp;';
-            }
-            $events[] = ['date' => $order['startDate'], 'event' => self::formEvent($order['startDate'],
-                'order', 0, $order['title'], $text, $order['user']->name)];
-        }
         $sort_events = MainFunctions::array_msort($events, ['date'=>SORT_DESC]);
         $today = date("j-m-Y h:m");
 
@@ -642,56 +547,23 @@ class SiteController extends Controller
     public static function formEvent($date, $type, $id, $title, $text, $user)
     {
         $event = '<li>';
-        if ($type == 'defect')
+        if ($type == 'measure')
             $event .= '<i class="fa fa-wrench bg-red"></i>';
-        if ($type == 'journal')
+        if ($type == 'alarm')
             $event .= '<i class="fa fa-calendar bg-aqua"></i>';
-        if ($type == 'equipmentRegister')
-            $event .= '<i class="fa fa-cogs bg-green"></i>';
-        if ($type == 'usersAttribute')
-            $event .= '<i class="fa fa-user bg-gray"></i>';
-        if ($type == 'order')
-            $event .= '<i class="fa fa-sitemap bg-yellow"></i>';
-        if ($type == 'message')
-            $event .= '<i class="fa fa-mail bg-blue"></i>';
-        if ($type == 'event')
-            $event .= '<i class="fa fa-link bg-maroon"></i>';
 
         $event .= '<div class="timeline-item">';
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
-        if ($type == 'event')
+        if ($type == 'measure')
             $event .= '<span class="timeline-header" style="vertical-align: middle">' .
-                Html::a('Внешняя система сгенерировала событие &nbsp;',
-                    ['/defect/view', 'id' => Html::encode($id)]) . $title . '</span>';
+                Html::a('Снято показание &nbsp;',
+                    ['/measure/view', 'id' => Html::encode($id)]) . $title . '</span>';
 
-        if ($type == 'defect')
+        if ($type == 'alarm')
             $event .= '&nbsp;<span class="btn btn-primary btn-xs">'.$user.'</span>&nbsp;
                     <span class="timeline-header" style="vertical-align: middle">' .
-                    Html::a('Пользователь зарегистрировал дефект &nbsp;',
-                    ['/defect/view', 'id' => Html::encode($id)]) . $title . '</span>';
-
-        if ($type == 'journal')
-            $event .= '&nbsp;<span class="btn btn-primary btn-xs">'.$user.'</span>&nbsp;
-                      <span class="timeline-header" style="vertical-align: middle">
-                      <a href="#">Добавлено событие журнала</a></span>';
-
-        if ($type == 'equipmentRegister')
-            $event .= '&nbsp;<span class="btn btn-primary btn-xs">'.$user.'</span>&nbsp;
-                    <span class="timeline-header" style="vertical-align: middle">' .
-                    Html::a('Параметр оборудования изменен &nbsp;',
-                    ['/equipment-register/view', 'id' => Html::encode($id)]) . $title . '</span>';
-
-        if ($type == 'usersAttribute')
-            $event .= '&nbsp;<span class="btn btn-primary btn-xs">'.$user.'</span>&nbsp; 
-                    <span class="timeline-header" style="vertical-align: middle">' .
-                    Html::a('Изменен аттрибут пользователя &nbsp;',
-                    ['/equipment-register/view', 'id' => Html::encode($id)]) . $title . '</span>';
-        if ($type == 'order')
-            $event .= '<h3 class="timeline-header">' . Html::a('Сформирован наряд &nbsp;',
-                    ['/orders/view', 'id' => Html::encode($id)]).'['. $title . ']</h3>';
-        if ($type == 'message')
-            $event .= '<h3 class="timeline-header">' . Html::a('Получено сообщение &nbsp;',
-                    ['/messages/view', 'id' => Html::encode($id)]) . $title . '</h3>';
+                    Html::a('Зафиксировано событие &nbsp;',
+                    ['/alarm/view', 'id' => Html::encode($id)]) . $title . '</span>';
 
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';

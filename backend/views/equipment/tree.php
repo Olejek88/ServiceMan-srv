@@ -6,8 +6,6 @@ use yii\web\JsExpression;
 $this->title = 'Дерево моделей оборудования';
 
 /* @var $registers common\models\EquipmentRegister */
-/* @var $operations common\models\Operation */
-/* @var $defects common\models\Defect */
 
 ?>
 <script type="text/javascript">
@@ -25,23 +23,26 @@ $this->title = 'Дерево моделей оборудования';
         });
     });
 </script>
+
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="*">
+        <col width="120px">
+        <col width="120px">
+        <col width="130px">
+        <col width="130px">
         <col width="80px">
-        <col width="100px">
-        <col width="100px">
-        <col width="100px">
-        <col width="170px">
+        <col width="120px">
+        <col width="120px">
         <col width="140px">
-        <col width="100px">
-        <col width="80px">
+        <col width="120px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
-    <tr><th align="center" colspan="10" style="background-color: #3c8dbc; color: whitesmoke">Оборудование системы</th></tr>
+    <tr><th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
-        <th>Расположение</th> <th>Критичность</th> <th>Инвентарный</th> <th>Серийный</th> <th>Статус</th><th>Тег</th><th>Дата ввода</th><th>Дефектов</th><th>КН</th></tr>
+        <th>Серийный</th> <th>Статус</th><th>Дата поверки</th>
+        <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
+        <th>Дата фото</th><th>Пользователь фото</th><th>Фото</th></tr>
     </thead>
     <tbody>
     <tr>
@@ -55,7 +56,6 @@ $this->title = 'Дерево моделей оборудования';
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
-        <td class="center"></td>
     </tr>
     </tbody>
 </table>
@@ -82,28 +82,28 @@ $this->title = 'Дерево моделей оборудования';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "locationColumnIdx" => "2",
-            "criticalColumnIdx" => "3",
-            "inventoryColumnIdx" => "4",
-            "serialColumnIdx" => "5",
-            "statusColumnIdx" => "6",
-            "tagColumnIdx" => "7",
-            "startColumnIdx" => "8",
-            "defectsColumnIdx" => "9",
-            "coefficientColumnIdx" => "10"
+            "serialColumnIdx" => "2",
+            "statusColumnIdx" => "3",
+            "dateColumnIdx" => "4",
+            "dateMeasureColumnIdx" => "5",
+            "valueColumnIdx" => "6",
+            "userColumnIdx" => "7",
+            "datePhotoColumnIdx" => "8",
+            "userPhotoColumnIdx" => "9",
+            "photoColumnIdx" => "10"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.location);
-            $tdList.eq(2).html(node.data.critical);           
-            $tdList.eq(3).text(node.data.inventory);
-            $tdList.eq(4).text(node.data.serial);
-            $tdList.eq(5).html(node.data.status);
-            $tdList.eq(6).text(node.data.tag);
-            $tdList.eq(7).html(node.data.start);
-            $tdList.eq(8).html(node.data.defects);
-            $tdList.eq(9).html(node.data.coefficient);
+            $tdList.eq(1).text(node.data.serial);
+            $tdList.eq(2).html(node.data.status);
+            $tdList.eq(3).html(node.data.date);
+            $tdList.eq(4).html(node.data.measure_date);
+            $tdList.eq(5).text(node.data.measure_value);
+            $tdList.eq(6).html(node.data.measure_user);
+            $tdList.eq(7).html(node.data.photo_date);
+            $tdList.eq(8).html(node.data.photo_user);
+            $tdList.eq(9).html(node.data.photo);
         }')
     ]
 ]);
@@ -128,15 +128,10 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($defects as $defect): ?>
+<!--                    <?php /*foreach ($defects as $defect): */?>
                         <tr>
-                            <td><?= $defect['_id'] ?></td>
-                            <td><?= $defect['user']->name ?></td>
-                            <td><?= $defect['comment'] ?></td>
-                            <td><?= $defect['defectType']->title ?></td>
-                            <td><?= $defect['date'] ?></td>
                         </tr>
-                    <?php endforeach; ?>
+                    --><?php /*endforeach; */?>
                     </tbody>
                 </table>
             </div>
@@ -163,15 +158,15 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($operations as $operation): ?>
+<!--                    <?php /*foreach ($operations as $operation): */?>
                         <tr>
-                            <td><?= $operation['id'] ?></td>
-                            <td><?= $operation['user'] ?></td>
-                            <td><?= $operation['title'] ?></td>
-                            <td><?= $operation['date'] ?></td>
-                            <td><?= $operation['verdict'] ?></td>
+                            <td><?/*= $operation['id'] */?></td>
+                            <td><?/*= $operation['user'] */?></td>
+                            <td><?/*= $operation['title'] */?></td>
+                            <td><?/*= $operation['date'] */?></td>
+                            <td><?/*= $operation['verdict'] */?></td>
                         </tr>
-                    <?php endforeach; ?>
+                    --><?php /*endforeach; */?>
                     </tbody>
                 </table>
             </div>
@@ -196,14 +191,14 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($registers as $register): ?>
+<!--                    <?php /*foreach ($registers as $register): */?>
                         <tr>
-                            <td><?= $register['uuid'] ?></td>
-                            <td><?= $register['user'] ?></td>
-                            <td><?= $register['type'] ?></td>
-                            <td><?= $register['date'] ?></td>
+                            <td><?/*= $register['uuid'] */?></td>
+                            <td><?/*= $register['user'] */?></td>
+                            <td><?/*= $register['type'] */?></td>
+                            <td><?/*= $register['date'] */?></td>
                         </tr>
-                    <?php endforeach; ?>
+                    --><?php /*endforeach; */?>
                     </tbody>
                 </table>
             </div>

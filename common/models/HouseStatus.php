@@ -17,6 +17,10 @@ use yii\db\ActiveRecord;
  */
 class HouseStatus extends ActiveRecord
 {
+    const HOUSE_STATUS_OK = '9236E1FF-D967-4080-9F42-59B03ADD25E8';
+    const HOUSE_STATUS_NO_ENTRANCE = '559FBFE0-9543-4965-AC84-8919237EC317';
+    const HOUSE_STATUS_ABSENT = '9B6C8A1D-498E-40EE-B973-AA9ACC6322A0';
+
     public function behaviors()
     {
         return [

@@ -13,8 +13,11 @@ namespace backend\controllers;
 
 use backend\models\ResidentSearch;
 use common\models\Equipment;
+use common\models\EquipmentStatus;
 use common\models\Flat;
+use common\models\FlatStatus;
 use common\models\House;
+use common\models\HouseStatus;
 use common\models\Measure;
 use common\models\Resident;
 use common\models\Street;
@@ -236,7 +239,6 @@ class ResidentsController extends Controller
      */
     public function actionTree()
     {
-
         $c = 'children';
         $fullTree = array();
         $streets = Street::find()
@@ -269,9 +271,9 @@ class ResidentsController extends Controller
                 $fullTree[$oCnt0][$c][$oCnt1]['house'] = $house['number'];
                 $fullTree[$oCnt0][$c][$oCnt1]['street'] = $street['title'];
 
-                if ($house['houseStatusUuid'] == '111') {
+                if ($house['houseStatusUuid'] == HouseStatus::HOUSE_STATUS_ABSENT) {
                     $class = 'critical1';
-                } elseif ($house['houseStatusUuid'] == '222') {
+                } elseif ($house['houseStatusUuid'] == HouseStatus::HOUSE_STATUS_NO_ENTRANCE) {
                     $class = 'critical2';
                 } else {
                     $class = 'critical3';
@@ -283,6 +285,7 @@ class ResidentsController extends Controller
                     ->where(['houseUuid' => $house['uuid']])
                     ->one();
                 $fullTree[$oCnt0][$c][$oCnt1]['resident'] = $subject['title'];
+                $fullTree[$oCnt0][$c][$oCnt1]['inn'] = $subject['contractNumber'];
 
                 $flats = Flat::find()
                     ->select('*')
@@ -301,9 +304,9 @@ class ResidentsController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['street'] = $street['title'];
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['flat'] = $flat['number'];
 
-                    if ($flat['flatStatusUuid'] == '111') {
+                    if ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_ABSENT) {
                         $class = 'critical1';
-                    } elseif ($flat['flatStatusUuid'] == '222') {
+                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE) {
                         $class = 'critical2';
                     } else {
                         $class = 'critical3';
@@ -315,7 +318,10 @@ class ResidentsController extends Controller
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
                         ->one();
-                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['resident'] = $resident['owner'];
+                    if ($resident) {
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['resident'] = $resident['owner'];
+                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['inn'] = $resident['inn'];
+                    }
 
                     $equipments = Equipment::find()
                         ->select('*')
@@ -334,9 +340,9 @@ class ResidentsController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['serial'] = $equipment['serial'];
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['street'] = $street['title'];
 
-                        if ($equipment['equipmentStatusUuid'] == '111') {
+                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
                             $class = 'critical1';
-                        } elseif ($equipment['equipmentStatusUuid'] == '222') {
+                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                             $class = 'critical2';
                         } else {
                             $class = 'critical3';

@@ -17,6 +17,10 @@ use yii\db\ActiveRecord;
  */
 class AlarmStatus extends ActiveRecord
 {
+    const ALARM_FOUND = '4329BF34-D3D1-49AA-A8FC-C8A06E4C395A';
+    const ALARM_FIXED = '0AABB3A1-C8DD-490E-92F3-BDD996182ADD';
+    const ALARM_UNKNOWN = '57CCC9A0-50F2-4432-BFF3-AE301CEBA50E';
+
     public function behaviors()
     {
         return [

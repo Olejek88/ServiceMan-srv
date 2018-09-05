@@ -1,14 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace common\models;
 
 use Yii;
@@ -18,12 +8,6 @@ use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "documentation".
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  *
  * @property integer $_id
  * @property string $uuid
