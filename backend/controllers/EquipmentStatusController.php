@@ -7,9 +7,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
 use common\models\EquipmentStatus;
-
 use backend\models\EquipmentSearchStatus;
 
 /**
@@ -32,12 +30,11 @@ class EquipmentStatusController extends Controller
         ];
     }
 
-    public function init() {
-
+    public function init()
+    {
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
-
     }
 
     /**
@@ -49,7 +46,6 @@ class EquipmentStatusController extends Controller
         $searchModel = new EquipmentSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
-
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -76,7 +72,6 @@ class EquipmentStatusController extends Controller
     public function actionCreate()
     {
         $model = new EquipmentStatus();
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -95,7 +90,6 @@ class EquipmentStatusController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -114,7 +108,6 @@ class EquipmentStatusController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
@@ -134,3 +127,5 @@ class EquipmentStatusController extends Controller
         }
     }
 }
+
+?>

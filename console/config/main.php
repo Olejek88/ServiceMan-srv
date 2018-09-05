@@ -9,6 +9,10 @@ return [
     'id' => 'app-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm' => '@vendor/npm-asset',
+    ],
     'components' => [
         'log' => [
             'targets' => [
@@ -19,5 +23,27 @@ return [
             ],
         ],
     ],
+    'controllerMap' => [
+        'fixture' => [
+            'class' => 'yii\console\controllers\FixtureController',
+            'namespace' => 'common\fixtures',
+        ],
+        'migrate' => [
+            'class' => 'console\controllers\MigrateController',
+            'migrationPath' => '@app/migrations/schema',
+            'migrationTable' => '{{%migration}}',
+        ],
+        'migrate-rbac' => [
+            'class' => 'console\controllers\RbacMigrateController',
+            'migrationPath' => '@app/migrations/rbac',
+            'migrationTable' => '{{%migration_rbac}}',
+        ],
+        'migrate-content' => [
+            'class' => 'console\controllers\ContentMigrateController',
+            'migrationPath' => '@app/migrations/content',
+            'migrationTable' => '{{%migration_content}}',
+        ],
+    ],
+
     'params' => $params,
 ];

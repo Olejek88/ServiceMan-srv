@@ -180,16 +180,6 @@ $gridColumns = [
         ],
     ],
     [
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(EquipmentStatus::find()->orderBy('title')->all(),
-                'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'format' => 'raw'
-    ],
-    [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
