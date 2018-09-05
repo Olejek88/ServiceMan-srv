@@ -19,16 +19,16 @@ class m180905_041835_add_references_record extends Migration
         $this->insertIntoReference('equipment_status','A01B7550-4211-4D7A-9935-80A2FC257E92',
             'Отсутствует');
 
-        $this->insertIntoReference('alarm-type','6FBD878D-1C49-41F4-B05E-90ABEF0153EB',
+        $this->insertIntoReference('alarm_type','6FBD878D-1C49-41F4-B05E-90ABEF0153EB',
             'Незаконная врезка');
-        $this->insertIntoReference('alarm-type','A29D4407-B1DE-4094-B4F5-838C7C8D335E',
+        $this->insertIntoReference('alarm_type','A29D4407-B1DE-4094-B4F5-838C7C8D335E',
             'Протечка воды');
 
-        $this->insertIntoReference('alarm-status','4329BF34-D3D1-49AA-A8FC-C8A06E4C395A',
+        $this->insertIntoReference('alarm_status','4329BF34-D3D1-49AA-A8FC-C8A06E4C395A',
             'Обнаружено');
-        $this->insertIntoReference('alarm-status','0AABB3A1-C8DD-490E-92F3-BDD996182ADD',
+        $this->insertIntoReference('alarm_status','0AABB3A1-C8DD-490E-92F3-BDD996182ADD',
             'Устранена');
-        $this->insertIntoReference('alarm-status','57CCC9A0-50F2-4432-BFF3-AE301CEBA50E',
+        $this->insertIntoReference('alarm_status','57CCC9A0-50F2-4432-BFF3-AE301CEBA50E',
             'Неизвестен');
 
         $this->insertIntoReference('house_status','9236E1FF-D967-4080-9F42-59B03ADD25E8',
