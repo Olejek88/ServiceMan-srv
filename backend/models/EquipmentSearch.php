@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\Equipment;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Equipment;
 
 /**
  * EquipmentSearch represents the model behind the search form about `common\models\Equipment`.

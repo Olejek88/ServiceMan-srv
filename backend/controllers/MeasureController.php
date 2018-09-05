@@ -5,9 +5,9 @@ namespace backend\controllers;
 use backend\models\MeasureSearch;
 use common\models\Measure;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
 /**

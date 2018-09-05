@@ -4,13 +4,13 @@ namespace backend\controllers;
 
 use backend\models\AlarmSearch;
 use common\models\Alarm;
+use common\models\Users;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
-use common\models\Users;
 /**
  * AlarmController implements the CRUD actions for Alarm model.
  */

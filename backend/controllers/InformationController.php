@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use yii\web\UnauthorizedHttpException;
 use yii\web\Controller;
+use yii\web\UnauthorizedHttpException;
 
 class InformationController extends Controller
 {

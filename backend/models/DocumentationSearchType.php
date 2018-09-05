@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\DocumentationType;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\DocumentationType;
 
 /**
  * DocumentationSearchType represents the model behind the search form about `common\models\DocumentationType`.

@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\EquipmentStatus;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\EquipmentStatus;
 
 /**
  * EquipmentSearchStatus represents the model behind the search form about `common\models\EquipmentStatusController.php`.

@@ -1,20 +1,14 @@
 <?php
 namespace backend\controllers;
 
-use common\components\TypeTreeHelper;
+use backend\models\EquipmentSearchType;
 use common\models\DefectType;
-use common\models\EquipmentModel;
-use common\models\EquipmentTypeTree;
+use common\models\EquipmentType;
 use Yii;
-use yii\base\DynamicModel;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\EquipmentType;
-
-use backend\models\EquipmentSearchType;
 
 /**
  * EquipmentTypeController implements the CRUD actions for EquipmentType model.

@@ -12,28 +12,19 @@
 namespace backend\controllers;
 
 use backend\models\ResidentSearch;
-use common\models\City;
+use common\models\Equipment;
 use common\models\Flat;
 use common\models\House;
 use common\models\Measure;
-use common\models\PhotoEquipment;
-use common\models\PhotoFlat;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
 use Yii;
+use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
-use yii\helpers\Html;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\Objects;
-use common\models\Equipment;
-use common\models\ObjectType;
-
-use backend\models\ObjectsSearch;
 
 /**
  * ResidentsController implements the CRUD actions for Residents model.

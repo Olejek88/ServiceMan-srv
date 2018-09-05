@@ -2,13 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\EquipmentSearchStatus;
+use common\models\EquipmentStatus;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-use common\models\EquipmentStatus;
-use backend\models\EquipmentSearchStatus;
 
 /**
  * EquipmentStatusController implements the CRUD actions for EquipmentStatus model.

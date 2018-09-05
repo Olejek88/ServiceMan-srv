@@ -11,16 +11,14 @@
 
 namespace backend\controllers;
 
+use backend\models\ObjectSearchType;
+use common\models\ObjectType;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\ObjectType;
-
-use backend\models\ObjectSearchType;
+use yii\web\UploadedFile;
 
 /**
  * ObjectTypeController implements the CRUD actions for ObjectType model.

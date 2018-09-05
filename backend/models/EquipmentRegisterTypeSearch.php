@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\EquipmentRegisterType;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\EquipmentRegisterType;
 
 /**
  * EquipmentRegisterTypeSearch represents the model behind the search form about `common\models\EquipmentRegisterType`.

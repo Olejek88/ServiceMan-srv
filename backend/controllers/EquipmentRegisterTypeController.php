@@ -2,14 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\EquipmentRegisterTypeSearch;
+use common\models\EquipmentRegisterType;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\EquipmentRegisterType;
-use backend\models\EquipmentRegisterTypeSearch;
 
 /**
  * EquipmentRegisterTypeController implements the CRUD actions for EquipmentRegisterType model.

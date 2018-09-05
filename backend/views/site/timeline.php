@@ -3,9 +3,6 @@
 /* @var $events */
 /* @var $today_date */
 
-use common\components\MyHelpers;
-use yii\helpers\Html;
-
 $this->title = Yii::t('app', 'ТОИРУС::Новости');
 
 ?>

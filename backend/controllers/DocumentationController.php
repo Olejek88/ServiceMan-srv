@@ -11,15 +11,15 @@
 
 namespace backend\controllers;
 
+use backend\models\DocumentationSearch;
+use common\models\Documentation;
 use Yii;
 use yii\base\DynamicModel;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
-use common\models\Documentation;
-use backend\models\DocumentationSearch;
+use yii\web\UploadedFile;
 
 /**
  * DocumentationController implements the CRUD actions for Documentation model.

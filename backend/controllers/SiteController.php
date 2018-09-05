@@ -11,52 +11,37 @@
 
 namespace backend\controllers;
 
+use backend\models\UsersSearch;
 use common\components\MainFunctions;
-use common\components\MyHelpers;
 use common\models\City;
+use common\models\CriticalType;
+use common\models\Defect;
+use common\models\Equipment;
 use common\models\EquipmentRegister;
 use common\models\EquipmentType;
 use common\models\ExternalEvent;
 use common\models\Flat;
+use common\models\Gpstrack;
+use common\models\Journal;
+use common\models\LoginForm;
 use common\models\Measure;
-use common\models\Message;
-use common\models\ObjectType;
 use common\models\Operation;
+use common\models\OperationStatus;
+use common\models\Orders;
+use common\models\OrderStatus;
+use common\models\OrderVerdict;
 use common\models\Resident;
-use common\models\Service;
 use common\models\Stage;
+use common\models\StageStatus;
 use common\models\Street;
 use common\models\Subject;
+use common\models\Users;
 use common\models\UsersAttribute;
 use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
-use yii\web\HttpException;
-
-use yii2fullcalendar\models\Event;
-use common\models\LoginForm;
-use common\models\User;
-use common\models\Users;
-use common\models\Journal;
-use common\models\JournalUser;
-use common\models\Defect;
-use common\models\Equipment;
-use common\models\EquipmentModel;
-use common\models\EquipmentStatus;
-use common\models\CriticalType;
-use common\models\Task;
-use common\models\Orders;
-use common\models\Objects;
-use common\models\Gpstrack;
-use common\models\OrderStatus;
-use common\models\TaskStatus;
-use common\models\StageStatus;
-use common\models\OperationStatus;
-use common\models\OrderVerdict;
-use backend\models\UsersSearch;
 
 /**
  * Site controller

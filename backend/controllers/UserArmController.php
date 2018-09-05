@@ -2,11 +2,10 @@
 
 namespace backend\controllers;
 
+use backend\models\UserArm;
 use Yii;
 use yii\web\Controller;
 use yii\web\UnauthorizedHttpException;
-
-use backend\models\UserArm;
 
 /**
  * UsersController implements the CRUD actions for Users model.

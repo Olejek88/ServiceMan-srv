@@ -2,15 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\FlatSearchStatus;
+use common\models\FlatStatus;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\FlatStatus;
-
-use backend\models\FlatSearchStatus;
 
 /**
  * FlatStatusController implements the CRUD actions for FlatStatus model.

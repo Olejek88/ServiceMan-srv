@@ -2,9 +2,9 @@
 
 namespace backend\models;
 
+use common\models\Objects;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Objects;
 
 /**
  * ObjectsSearch represents the model behind the search form about `common\models\Objects`.

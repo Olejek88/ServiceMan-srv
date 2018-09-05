@@ -1,7 +1,7 @@
 <?php
 
-use yii\widgets\Pjax;
 use yii\helpers\Html;
+use yii\widgets\Pjax;
 
 /* @var $accountUser */
 /* @var $orders */

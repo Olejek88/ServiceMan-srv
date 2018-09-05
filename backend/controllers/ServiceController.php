@@ -14,9 +14,9 @@ namespace backend\controllers;
 use backend\models\ServiceSearch;
 use common\models\Service;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
 /**

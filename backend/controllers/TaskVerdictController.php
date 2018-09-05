@@ -2,16 +2,15 @@
 
 namespace backend\controllers;
 
+use backend\models\TaskSearchVerdict;
+use common\models\TaskType;
+use common\models\TaskVerdict;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
-use common\models\TaskVerdict;
-use common\models\TaskType;
-
-use backend\models\TaskSearchVerdict;
 /**
  * TaskVerdictController implements the CRUD actions for TaskVerdict model.
  */

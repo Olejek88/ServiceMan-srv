@@ -11,15 +11,14 @@
 
 namespace backend\controllers;
 
+use backend\models\OperationSearch;
+use common\models\Operation;
 use common\models\OperationFile;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\Operation;
-use backend\models\OperationSearch;
 
 /**
  * OperationController implements the CRUD actions for Operation model.

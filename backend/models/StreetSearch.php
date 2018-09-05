@@ -2,7 +2,6 @@
 
 namespace backend\models;
 
-use common\models\City;
 use common\models\Street;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;

@@ -1,8 +1,8 @@
 <?php
 namespace backend\models;
 
-use yii\base\Model;
 use common\models\User;
+use yii\base\Model;
 
 /**
  * Signup form

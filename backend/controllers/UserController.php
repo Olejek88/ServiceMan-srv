@@ -2,15 +2,12 @@
 
 namespace backend\controllers;
 
-use common\models\Orders;
-use common\models\Users;
-use Yii;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
-
 use backend\models\User;
 use backend\models\UserSearch;
+use Yii;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * UsersController implements the CRUD actions for Users model.

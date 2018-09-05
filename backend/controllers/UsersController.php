@@ -11,11 +11,11 @@
 
 namespace backend\controllers;
 
+use api\controllers\TokenController;
+use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
-use common\models\AlarmStatus;
 use common\models\Defect;
-use common\models\EquipmentRegister;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
@@ -25,21 +25,15 @@ use common\models\OrderStatus;
 use common\models\PhotoEquipment;
 use common\models\PhotoFlat;
 use common\models\PhotoHouse;
-use common\models\Task;
-use common\models\TaskStatus;
-use common\models\User;
-use common\models\UsersAttribute;
+use common\models\Token;
+use common\models\Users;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
-use api\controllers\TokenController;
-use common\models\Users;
-use common\models\Token;
-use backend\models\UsersSearch;
+use yii\web\UploadedFile;
 
 /**
  * UsersController implements the CRUD actions for Users model.

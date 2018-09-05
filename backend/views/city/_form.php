@@ -1,14 +1,10 @@
 <?php
 
+use app\commands\MainFunctions;
+use common\models\TaskTemplate;
+use common\models\TaskVerdict;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-
-use app\commands\MainFunctions;
-use common\models\Orders;
-use common\models\TaskVerdict;
-use common\models\TaskStatus;
-use common\models\TaskTemplate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\City */

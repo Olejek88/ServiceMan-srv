@@ -2,9 +2,10 @@
 
 namespace backend\models;
 
+use common\models\UserChannel;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\UserChannel;
+
 /**
  * UserChannelSearch represents the model behind the search form about `backend\models\UserChannel`.
  */

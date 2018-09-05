@@ -2,26 +2,25 @@
 
 namespace backend\controllers;
 
+use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\Equipment;
+use common\models\Operation;
+use common\models\OperationStatus;
+use common\models\OperationTemplate;
 use common\models\Orders;
 use common\models\OrderStatus;
-use common\models\Users;
-use yii\helpers\Html;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
-use common\models\Operation;
-use common\models\OperationTemplate;
-use common\models\OperationStatus;
 use common\models\Stage;
-use common\models\StageTemplate;
 use common\models\StageStatus;
-use common\components\MainFunctions;
-
+use common\models\StageTemplate;
 use common\models\Task;
 use common\models\TaskStatus;
 use common\models\TaskTemplate;
+use common\models\Users;
+use yii\filters\VerbFilter;
+use yii\helpers\Html;
+use yii\web\Controller;
+use yii\web\UnauthorizedHttpException;
 
 
 class AnalyticsController extends Controller

@@ -2,15 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\HouseSearchStatus;
+use common\models\HouseStatus;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\HouseStatus;
-
-use backend\models\HouseSearchStatus;
 
 /**
  * HouseStatusController implements the CRUD actions for HouseStatus model.

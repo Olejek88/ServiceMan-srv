@@ -2,15 +2,13 @@
 
 namespace backend\controllers;
 
+use backend\models\DocumentationSearchType;
+use common\models\DocumentationType;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\DocumentationType;
-
-use backend\models\DocumentationSearchType;
 
 /**
  * DocumentationTypeController implements the CRUD actions for DocumentationType model.

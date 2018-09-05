@@ -5,9 +5,9 @@ namespace backend\controllers;
 use backend\models\CitySearch;
 use common\models\City;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
 /**

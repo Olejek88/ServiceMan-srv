@@ -2,18 +2,12 @@
 
 namespace backend\controllers;
 
-use backend\models\CitySearch;
 use backend\models\FlatSearch;
-use backend\models\HouseSearch;
-use backend\models\StreetSearch;
-use common\models\City;
 use common\models\Flat;
-use common\models\House;
-use common\models\Street;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
 /**
@@ -117,7 +111,7 @@ class FlatController extends Controller
     }
 
     /**
-     * Deletes an existing House model.
+     * Deletes an existing Flat model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -130,15 +124,15 @@ class FlatController extends Controller
     }
 
     /**
-     * Finds the House model based on its primary key value.
+     * Finds the Flat model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return House the loaded model
+     * @return Flat the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = House::findOne($id)) !== null) {
+        if (($model = Flat::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

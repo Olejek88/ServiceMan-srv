@@ -11,19 +11,17 @@
 
 namespace backend\controllers;
 
+use backend\models\EquipmentSearchModel;
 use common\components\TypeTreeHelper;
-use common\models\EquipmentTypeTree;
-use Yii;
-use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
-use yii\web\UnauthorizedHttpException;
-
 use common\models\EquipmentModel;
 use common\models\EquipmentType;
-
-use backend\models\EquipmentSearchModel;
+use common\models\EquipmentTypeTree;
+use Yii;
+use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\web\UnauthorizedHttpException;
+use yii\web\UploadedFile;
 
 /**
  * EquipmentModelController implements the CRUD actions for EquipmentModel model.

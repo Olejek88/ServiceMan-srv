@@ -1,5 +1,6 @@
 <?php
-use \kartik\datecontrol\Module;
+
+use kartik\datecontrol\Module;
 
 $params = array_merge(
     require(__DIR__ . '/../../common/config/params.php'),

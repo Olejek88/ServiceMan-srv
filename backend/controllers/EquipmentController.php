@@ -11,24 +11,15 @@
 
 namespace backend\controllers;
 
-use common\components\FancyTreeHelper;
+use backend\models\EquipmentSearch;
 use common\models\Defect;
-use common\models\EquipmentRegister;
-use common\models\EquipmentType;
-use common\models\EquipmentTypeTree;
+use common\models\Equipment;
 use common\models\Operation;
 use Yii;
-use yii\db\ActiveRecord;
-use yii\helpers\Html;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\Equipment;
-
-use backend\models\EquipmentSearch;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.

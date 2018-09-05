@@ -1,20 +1,14 @@
 <?php
 
-use backend\models\User;
+use app\commands\MainFunctions;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
-use common\models\EquipmentType;
-use common\models\Flat;
-use common\models\House;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use common\models\EquipmentStatus;
-use yii\helpers\ArrayHelper;
-use dosamigos\datetimepicker\DateTimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Alarm */

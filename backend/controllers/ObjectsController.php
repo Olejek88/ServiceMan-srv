@@ -11,19 +11,17 @@
 
 namespace backend\controllers;
 
+use backend\models\ObjectsSearch;
+use common\models\Equipment;
+use common\models\Objects;
+use common\models\ObjectType;
 use Yii;
+use yii\filters\VerbFilter;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
-use yii\helpers\Html;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\Objects;
-use common\models\Equipment;
-use common\models\ObjectType;
-
-use backend\models\ObjectsSearch;
+use yii\web\UploadedFile;
 
 /**
  * ObjectsController implements the CRUD actions for Objects model.

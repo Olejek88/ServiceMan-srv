@@ -11,13 +11,13 @@
 
 namespace backend\controllers;
 
+use backend\models\EventSearch;
+use common\models\Event;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-use common\models\Event;
-use backend\models\EventSearch;
 
 /**
  * EventController implements the CRUD actions for Event model.

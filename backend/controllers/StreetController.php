@@ -2,14 +2,12 @@
 
 namespace backend\controllers;
 
-use backend\models\CitySearch;
 use backend\models\StreetSearch;
-use common\models\City;
 use common\models\Street;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
 /**

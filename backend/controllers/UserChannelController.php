@@ -2,14 +2,14 @@
 
 namespace backend\controllers;
 
+use backend\models\UserChannelSearch;
+use common\models\UserChannel;
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
-use common\models\UserChannel;
-use backend\models\UserChannelSearch;
 /**
  * UserChannelController implements the CRUD actions for UserChannel model.
  */

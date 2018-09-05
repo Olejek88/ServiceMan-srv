@@ -1,20 +1,14 @@
 <?php
 
-use common\models\City;
+use app\commands\MainFunctions;
 use common\models\FlatStatus;
 use common\models\House;
-use common\models\HouseStatus;
-use common\models\Street;
+use common\models\TaskTemplate;
+use common\models\TaskVerdict;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-
-use app\commands\MainFunctions;
-use common\models\Orders;
-use common\models\TaskVerdict;
-use common\models\TaskStatus;
-use common\models\TaskTemplate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Flat */
