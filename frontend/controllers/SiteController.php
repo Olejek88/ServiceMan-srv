@@ -89,16 +89,6 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            // получаем базу в которой хранится пользователь
-            $redis = Yii::$app->redis;
-            $dbName = $redis->get(Yii::$app->user->identity->username);
-            if ($dbName == null) {
-                throw new HttpException(500, 'Не найдена база для пользователя!');
-            }
-            // устанавливаем имя базы данных в сессию
-            $session = \Yii::$app->session;
-            $session->set('user.dbname', $dbName);
-
             return $this->goBack();
         } else {
             return $this->render('login', [

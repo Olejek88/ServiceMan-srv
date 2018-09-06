@@ -13,19 +13,21 @@ return [
     'controllerNamespace' => 'api\controllers',
     'components' => [
         'request' => [
-            'csrfParam' => '_csrf-frontend',
+            'csrfParam' => '_csrf-api',
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
         ],
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+            'enableAutoLogin' => false,
+            'enableSession' => false,
+            'loginUrl' => null,
+            'identityCookie' => ['name' => '_identity-api', 'httpOnly' => true],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend
-            'name' => 'advanced-frontend',
+            'name' => 'advanced-api',
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -36,16 +38,16 @@ return [
                 ],
             ],
         ],
-        'errorHandler' => [
-            'errorAction' => 'manual/site/error',
-        ],
+#        'errorHandler' => [
+#            'errorAction' => 'manual/site/error',
+#        ],
 
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
                 // rules for your project
-                '/' => 'manual/site/index',
+//                '/' => 'auth/request',
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'orders'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'gpstrack'],
             ],

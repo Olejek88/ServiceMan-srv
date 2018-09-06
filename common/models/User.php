@@ -1,13 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace common\models;
 
@@ -29,6 +20,8 @@ use yii\web\IdentityInterface;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
+ * @property int $id
+ * @property string $authKey
  * @property string $password write-only password
  */
 class User extends ActiveRecord implements IdentityInterface
@@ -58,7 +51,7 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            TimestampBehavior::class,
         ];
     }
 
@@ -95,18 +88,21 @@ class User extends ActiveRecord implements IdentityInterface
      * Поиск пользователя по accessToken.
      *
      * @param string $token Токен.
-     * @param string $type  Тип.
+     * @param string $type Тип.
      *
      * @inheritdoc
      *
-     * @return void
+     * @return User
      * @throws NotSupportedException
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        throw new NotSupportedException(
-            '"findIdentityByAccessToken" is not implemented.'
-        );
+        $userToken = UserToken::findOne(['token' => $token]);
+        if ($userToken != null && $userToken->isValid()) {
+            return User::findOne($userToken->user_id);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -215,10 +211,24 @@ class User extends ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Validates pin
+     *
+     * @param string $pin pin to validate
+     *
+     * @return bool if pin provided is valid for current user
+     */
+    public function validatePin($pin)
+    {
+        $users = Users::findOne(['_id' => $this->id]);
+        return Yii::$app->security->validatePassword($pin, $users->pin);
+    }
+
+    /**
      * Generates password hash from password and sets it to the model
      * @param string $password Пароль.
      *
      * @return void
+     * @throws \Exception
      */
     public function setPassword($password)
     {
@@ -229,6 +239,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates "remember me" authentication key
      *
      * @return void
+     * @throws \Exception
      */
     public function generateAuthKey()
     {
@@ -239,11 +250,13 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates new password reset token
      *
      * @return void
+     *
+     * @throws \Exception
      */
     public function generatePasswordResetToken()
     {
         $this->password_reset_token = Yii::$app->security
-            ->generateRandomString() . '_' . time();
+                ->generateRandomString() . '_' . time();
     }
 
     /**
@@ -254,5 +267,45 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * @param null $duration
+     * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     */
+    public function generateAccessToken($duration = null)
+    {
+        if ($duration === null) {
+            $duration = \Yii::$app->params['duration']['week'];
+        }
+
+        $token = \Yii::createObject([
+            'class' => UserTokenAuth::class,
+            'valid_till' => date(DATE_W3C, time() + $duration),
+//            'type' => UserTokenAuth::AUTH_TYPE,
+        ]);
+
+        $token->link('user', $this);
+
+
+        return $token->token;
+    }
+
+    /**
+     * Finds user by username or email
+     *
+     * @param string $login
+     * @return static|null
+     */
+    public static function findByLogin($login)
+    {
+        return static::find()
+            ->where([
+                'and',
+                ['or', ['username' => $login], ['email' => $login]],
+                'status' => self::STATUS_ACTIVE,
+            ])
+            ->one();
     }
 }
