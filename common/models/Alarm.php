@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "alarm".
  *
@@ -19,6 +20,10 @@ use yii\db\ActiveRecord;
  * @property string $date
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property Users $user
+ * @property AlarmStatus $alarmStatus
+ * @property AlarmType $alarmType
  */
 class Alarm extends ActiveRecord
 {
@@ -26,7 +31,7 @@ class Alarm extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -60,6 +65,7 @@ class Alarm extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'userUuid',
             'user' => function ($model) {
                 return $model->user;
             },
@@ -79,15 +85,17 @@ class Alarm extends ActiveRecord
 
     public function getAlarmType()
     {
-        return $this->hasOne(AlarmType::className(), ['uuid' => 'alarmTypeUuid']);
+        return $this->hasOne(AlarmType::class, ['uuid' => 'alarmTypeUuid']);
     }
+
     public function getAlarmStatus()
     {
-        return $this->hasOne(AlarmStatus::className(), ['uuid' => 'alarmStatusUuid']);
+        return $this->hasOne(AlarmStatus::class, ['uuid' => 'alarmStatusUuid']);
     }
+
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
     /**

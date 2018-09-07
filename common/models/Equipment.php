@@ -19,6 +19,11 @@ use yii\db\Expression;
  * @property string $flatUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property EquipmentStatus $equipmentStatus
+ * @property EquipmentType $equipmentType
+ * @property House $house
+ * @property Flat $flat
  */
 class Equipment extends ActiveRecord
 {
@@ -32,7 +37,7 @@ class Equipment extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -58,6 +63,14 @@ class Equipment extends ActiveRecord
     public function fields()
     {
         return ['_id', 'uuid',
+            'houseUuid',
+            'house' => function ($model) {
+                return $model->equipmentType;
+            },
+            'flatUuid',
+            'flat' => function ($model) {
+                return $model->flat;
+            },
             'equipmentTypeUuid',
             'equipmentType' => function ($model) {
                 return $model->equipmentType;
@@ -65,10 +78,6 @@ class Equipment extends ActiveRecord
             'equipmentStatusUuid',
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
-            },
-            'flatUuid',
-            'flat' => function ($model) {
-                return $model->flat;
             },
             'serial', 'testDate',
             'createdAt', 'changedAt'
@@ -153,7 +162,7 @@ class Equipment extends ActiveRecord
     public function getHouse()
     {
         return $this->hasOne(
-            House::className(), ['uuid' => 'houseUuid']
+            House::class, ['uuid' => 'houseUuid']
         );
     }
 
@@ -165,7 +174,7 @@ class Equipment extends ActiveRecord
     public function getEquipmentStatus()
     {
         return $this->hasOne(
-            EquipmentStatus::className(), ['uuid' => 'equipmentStatusUuid']
+            EquipmentStatus::class, ['uuid' => 'equipmentStatusUuid']
         );
     }
 
@@ -177,7 +186,7 @@ class Equipment extends ActiveRecord
     public function getEquipmentType()
     {
         return $this->hasOne(
-            EquipmentType::className(), ['uuid' => 'equipmentTypeUuid']
+            EquipmentType::class, ['uuid' => 'equipmentTypeUuid']
         );
     }
 
@@ -188,7 +197,7 @@ class Equipment extends ActiveRecord
      */
     public function getFlat()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
     }
 
 }

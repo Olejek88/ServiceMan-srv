@@ -5,6 +5,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+
 /**
  * This is the model class for table "photo_house".
  *
@@ -16,6 +17,10 @@ use yii\db\Expression;
  * @property double $longitude
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property Users $user
+ * @property House $house
+ * @property string $photoUrl
  */
 class PhotoHouse extends ActiveRecord
 {
@@ -30,7 +35,7 @@ class PhotoHouse extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -140,7 +145,7 @@ class PhotoHouse extends ActiveRecord
      */
     public function getHouse()
     {
-        return $this->hasOne(House::className(), ['uuid' => 'houseUuid']);
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
     /**
@@ -150,7 +155,7 @@ class PhotoHouse extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(User::class, ['uuid' => 'userUuid']);
     }
 
     /**

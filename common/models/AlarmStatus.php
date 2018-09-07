@@ -25,7 +25,7 @@ class AlarmStatus extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),

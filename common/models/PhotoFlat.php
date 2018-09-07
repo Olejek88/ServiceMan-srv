@@ -1,10 +1,12 @@
 <?php
+
 namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+
 /**
  * This is the model class for table "photo_flat".
  *
@@ -16,6 +18,10 @@ use yii\db\Expression;
  * @property double $longitude
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property Users $user
+ * @property Flat $flat
+ * @property string $photoUrl
  */
 class PhotoFlat extends ActiveRecord
 {
@@ -30,7 +36,7 @@ class PhotoFlat extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -68,7 +74,7 @@ class PhotoFlat extends ActiveRecord
                 ],
                 'required'
             ],
-/*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
+            /*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
             [['latitude', 'longitude'], 'number'],
             [['uuid', 'flatUuid', 'userUuid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
@@ -103,7 +109,7 @@ class PhotoFlat extends ActiveRecord
      */
     public function fields()
     {
-        return ['_id','uuid',
+        return ['_id', 'uuid',
             'flat' => function ($model) {
                 return $model->flat;
             },
@@ -140,7 +146,7 @@ class PhotoFlat extends ActiveRecord
      */
     public function getFlat()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
     }
 
     /**
@@ -150,7 +156,7 @@ class PhotoFlat extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(User::class, ['uuid' => 'userUuid']);
     }
 
     /**

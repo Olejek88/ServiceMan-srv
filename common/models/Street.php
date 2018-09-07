@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "street".
  *
@@ -15,6 +16,8 @@ use yii\db\ActiveRecord;
  * @property string $cityUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property City $city
  */
 class Street extends ActiveRecord
 {
@@ -22,7 +25,7 @@ class Street extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -67,7 +70,7 @@ class Street extends ActiveRecord
 
     public function getCity()
     {
-        return $this->hasOne(City::className(), ['uuid' => 'cityUuid']);
+        return $this->hasOne(City::class, ['uuid' => 'cityUuid']);
     }
 
     /**

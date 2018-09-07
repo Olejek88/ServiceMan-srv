@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "flat".
  *
@@ -16,6 +17,9 @@ use yii\db\ActiveRecord;
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property mixed $house
+ * @property mixed $flatStatus
  */
 class Flat extends ActiveRecord
 {
@@ -23,7 +27,7 @@ class Flat extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -72,11 +76,12 @@ class Flat extends ActiveRecord
 
     public function getFlatStatus()
     {
-        return $this->hasOne(FlatStatus::className(), ['uuid' => 'flatStatusUuid']);
+        return $this->hasOne(FlatStatus::class, ['uuid' => 'flatStatusUuid']);
     }
+
     public function getHouse()
     {
-        return $this->hasOne(House::className(), ['uuid' => 'houseUuid']);
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
     /**

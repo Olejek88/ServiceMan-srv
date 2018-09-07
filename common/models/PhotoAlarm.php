@@ -5,21 +5,26 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+
 /**
- * This is the model class for table "photo_alert".
+ * This is the model class for table "photo_alarm".
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $alertUuid
+ * @property string $alarmUuid
  * @property string $userUuid
  * @property double $latitude
  * @property double $longitude
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property Users $user
+ * @property Alarm $alarm
+ * @property string $photoUrl
  */
-class PhotoAlert extends ActiveRecord
+class PhotoAlarm extends ActiveRecord
 {
-    private static $_IMAGE_ROOT = 'alert';
+    private static $_IMAGE_ROOT = 'alarm';
 
     /**
      * Behaviors
@@ -30,7 +35,7 @@ class PhotoAlert extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -47,7 +52,7 @@ class PhotoAlert extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'photo_alert';
+        return 'photo_alarm';
     }
 
     /**
@@ -63,14 +68,14 @@ class PhotoAlert extends ActiveRecord
             [
                 [
                     'uuid',
-                    'alertUuid',
+                    'alarmUuid',
                     'userUuid',
                 ],
                 'required'
             ],
 /*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
             [['latitude', 'longitude'], 'number'],
-            [['uuid', 'alertUuid', 'userUuid'], 'string', 'max' => 50],
+            [['uuid', 'alarmUuid', 'userUuid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
         ];
     }
@@ -87,7 +92,7 @@ class PhotoAlert extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'alertUuid' => Yii::t('app', 'Событие'),
+            'alarmUuid' => Yii::t('app', 'Событие'),
             'userUuid' => Yii::t('app', 'Пользователь'),
             'latitude' => Yii::t('app', 'Широта'),
             'longitude' => Yii::t('app', 'Долгота'),
@@ -104,10 +109,10 @@ class PhotoAlert extends ActiveRecord
     public function fields()
     {
         return ['_id','uuid',
-            'alert' => function ($model) {
-                return $model->alert;
+            'alarm' => function ($model) {
+                return $model->alarm;
             },
-            'alertUuid',
+            'alarmUuid',
             'user' => function ($model) {
                 return $model->user;
             },
@@ -138,9 +143,9 @@ class PhotoAlert extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFlat()
+    public function getAlarm()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(Alarm::class, ['uuid' => 'alarmUuid']);
     }
 
     /**
@@ -150,7 +155,7 @@ class PhotoAlert extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(User::class, ['uuid' => 'userUuid']);
     }
 
     /**

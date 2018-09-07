@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "house".
  *
@@ -16,6 +17,9 @@ use yii\db\ActiveRecord;
  * @property string $streetUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property mixed $street
+ * @property mixed $houseStatus
  */
 class House extends ActiveRecord
 {
@@ -23,7 +27,7 @@ class House extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -56,15 +60,15 @@ class House extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'number',
+            'houseStatusUuid',
             'houseStatus' => function ($model) {
                 return $model->houseStatus;
             },
+            'streetUuid',
             'street' => function ($model) {
                 return $model->street;
             },
-            'houseStatusUuid',
-            'streetUuid',
-            'number',
             'createdAt',
             'changedAt',
         ];
@@ -72,11 +76,11 @@ class House extends ActiveRecord
 
     public function getHouseStatus()
     {
-        return $this->hasOne(HouseStatus::className(), ['uuid' => 'houseStatusUuid']);
+        return $this->hasOne(HouseStatus::class, ['uuid' => 'houseStatusUuid']);
     }
     public function getStreet()
     {
-        return $this->hasOne(Street::className(), ['uuid' => 'streetUuid']);
+        return $this->hasOne(Street::class, ['uuid' => 'streetUuid']);
     }
 
     /**
