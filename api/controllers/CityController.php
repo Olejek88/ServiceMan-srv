@@ -4,11 +4,10 @@ namespace api\controllers;
 
 use api\components\BaseController;
 
-class JournalController extends BaseController
+class CityController extends BaseController
 {
     public function actionIndex()
     {
-        return ['message' => 'Journal'];
+        return ['message' => 'city'];
     }
-
 }

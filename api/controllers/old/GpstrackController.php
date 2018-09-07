@@ -9,7 +9,7 @@
  * @link     http://www.toirus.ru
  */
 
-namespace api\controllers;
+namespace api\old\controllers;
 
 use Yii;
 use yii\rest\ActiveController;

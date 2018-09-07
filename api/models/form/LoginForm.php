@@ -3,8 +3,8 @@
 namespace api\models\form;
 
 use api\models\User;
-use Yii;
 use yii\base\Model;
+use yii\web\UnauthorizedHttpException;
 
 /**
  * Class LoginForm
@@ -40,6 +40,8 @@ class LoginForm extends Model
     /**
      * @param $attribute
      * @param $params
+     *
+     * @throws UnauthorizedHttpException
      */
     public function validatePin($attribute, $params)
     {
@@ -51,7 +53,8 @@ class LoginForm extends Model
 //                || !$user->role
 //              || !in_array($user->role, User::$back_allowed_roles)
             ) {
-                $this->addError($attribute, Yii::t('app', 'error password'));
+//                $this->addError($attribute, Yii::t('app', 'error password'));
+                throw new UnauthorizedHttpException();
             }
         }
     }

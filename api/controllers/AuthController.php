@@ -4,6 +4,7 @@ namespace api\controllers;
 
 use api\models\form\LoginForm;
 use yii\rest\Controller;
+use yii\web\Response;
 
 class AuthController extends Controller
 {
@@ -27,7 +28,7 @@ class AuthController extends Controller
         $model->load(\Yii::$app->request->bodyParams, '');
         if ($model->validate()) {
             $user = $model->getUser();
-            $token = $user->generateAccessToken(60*60*24*7  );
+            $token = $user->generateAccessToken(60 * 60 * 24 * 7);
             $user->save();
 
             return [
@@ -37,5 +38,11 @@ class AuthController extends Controller
         } else {
             return $model;
         }
+    }
+
+    public function actionIndex()
+    {
+        \Yii::$app->response->format = Response::FORMAT_HTML;
+        return $this->render('index');
     }
 }
