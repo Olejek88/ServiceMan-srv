@@ -3,12 +3,10 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use yii\db\ActiveRecord;
 
 class PhotoAlarmController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'PhotoAlarm'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = PhotoAlarmController::class;
 }

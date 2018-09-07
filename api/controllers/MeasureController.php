@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Measure;
+use yii\db\ActiveRecord;
 
 class MeasureController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Measure'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Measure::class;
 }

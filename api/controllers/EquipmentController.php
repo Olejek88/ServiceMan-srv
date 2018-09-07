@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Equipment;
+use yii\db\ActiveRecord;
 
 class EquipmentController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Equipment'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Equipment::class;
 }

@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\PhotoHouse;
+use yii\db\ActiveRecord;
 
 class PhotoHouseController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'PhotoHouse'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = PhotoHouse::class;
 }

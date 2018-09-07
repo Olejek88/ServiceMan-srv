@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Alarm;
+use yii\db\ActiveRecord;
 
 class AlarmController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Alarm'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Alarm::class;
 }

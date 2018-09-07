@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Resident;
+use yii\db\ActiveRecord;
 
 class ResidentController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Resident'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Resident::class;
 }

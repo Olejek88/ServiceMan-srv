@@ -9,7 +9,7 @@
  * @link     http://www.toirus.ru
  */
 
-namespace api\controllers;
+namespace api\old\controllers;
 
 use common\components\MyHelpers;
 use common\models\MeasuredValue;

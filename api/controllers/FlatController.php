@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Flat;
+use yii\db\ActiveRecord;
 
 class FlatController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Flat'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Flat::class;
 }

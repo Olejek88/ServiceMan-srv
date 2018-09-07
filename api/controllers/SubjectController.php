@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Subject;
+use yii\db\ActiveRecord;
 
 class SubjectController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Subject'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Subject::class;
 }

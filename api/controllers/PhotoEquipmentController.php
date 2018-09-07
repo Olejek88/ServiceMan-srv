@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\PhotoEquipment;
+use yii\db\ActiveRecord;
 
 class PhotoEquipmentController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'PhotoEquipment'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = PhotoEquipment::class;
 }

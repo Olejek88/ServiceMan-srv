@@ -3,12 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
+use common\models\Street;
+use yii\db\ActiveRecord;
 
 class StreetController extends BaseController
 {
-    public function actionIndex()
-    {
-        return ['message' => 'Street'];
-    }
-
+    /** @var ActiveRecord $modelClass */
+    public $modelClass = Street::class;
 }
