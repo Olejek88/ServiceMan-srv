@@ -18,8 +18,9 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property mixed $street
- * @property mixed $houseStatus
+ * @property Street $street
+ * @property HouseStatus $houseStatus
+ * @property PhotoHouse $photoHouse
  */
 class House extends ActiveRecord
 {
@@ -99,5 +100,9 @@ class House extends ActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
+    }
+
+    public function getPhotoHouse() {
+        return PhotoHouse::hasMany(PhotoHouse::class, ['houseUuid' => 'uuid']);
     }
 }

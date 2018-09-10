@@ -18,8 +18,9 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property mixed $house
- * @property mixed $flatStatus
+ * @property House $house
+ * @property FlatStatus $flatStatus
+ * @property PhotoFlat $photoFlat
  */
 class Flat extends ActiveRecord
 {
@@ -100,5 +101,9 @@ class Flat extends ActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
+    }
+
+    public function getPhotoFlat() {
+        return PhotoFlat::hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
     }
 }

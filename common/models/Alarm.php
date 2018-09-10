@@ -24,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property Users $user
  * @property AlarmStatus $alarmStatus
  * @property AlarmType $alarmType
+ * @property PhotoAlarm $photoAlarm
  */
 class Alarm extends ActiveRecord
 {
@@ -96,6 +97,10 @@ class Alarm extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
+    }
+
+    public function getPhotoAlarm() {
+        return $this->hasMany(PhotoAlarm::class, ['alarmUuid' => 'uuid']);
     }
 
     /**

@@ -13,6 +13,17 @@ class BaseController extends Controller
     /**
      * @inheritdoc
      */
+    public function verbs()
+    {
+        $verbs = parent::verbs();
+        $verbs['create'] = ['POST'];
+        $verbs['index'] = ['GET'];
+        return $verbs;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function behaviors()
     {
         $behaviors = parent::behaviors();
@@ -52,5 +63,35 @@ class BaseController extends Controller
         // выбираем данные из базы
         $result = $query->all();
         return $result;
+    }
+
+    /**
+     * Action create
+     *
+     * @return array
+     */
+    public function actionCreate()
+    {
+        $success = true;
+        $saved = array();
+        $rawData = \Yii::$app->getRequest()->getRawBody();
+        $items = json_decode($rawData, true);
+        foreach ($items as $item) {
+            /** @var ActiveRecord $class */
+            $class = $this->modelClass;
+            /** @var ActiveRecord $line */
+            $line = new $class;
+            $line->setAttributes($item, false);
+            if ($line->save()) {
+                $saved[] = [
+                    '_id' => $item['_id'],
+                    'uuid' => $item['uuid'],
+                ];
+            } else {
+                $success = false;
+            }
+        }
+
+        return ['success' => $success, 'data' => $saved];
     }
 }
