@@ -20,6 +20,7 @@ use yii\db\ActiveRecord;
  * @property string $date
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $comment
  *
  * @property Users $user
  * @property AlarmStatus $alarmStatus

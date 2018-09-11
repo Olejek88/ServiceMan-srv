@@ -17,5 +17,8 @@ class JournalController extends BaseController
         return [];
     }
 
-
+    public function actionCreate()
+    {
+        return parent::createSimpleObject();
+    }
 }

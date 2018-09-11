@@ -5,6 +5,7 @@ namespace api\components;
 use yii\db\ActiveRecord;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
+use yii\web\BadRequestHttpException;
 
 class BaseController extends Controller
 {
@@ -66,15 +67,26 @@ class BaseController extends Controller
     }
 
     /**
-     * Action create
-     *
-     * @return array
+     * @return array|void
+     * @throws BadRequestHttpException
      */
     public function actionCreate()
     {
+        throw new BadRequestHttpException();
+    }
+
+    /**
+     * Метод для сохранения в базу "простых" объектов.
+     * Справочная информация на которую они ссылаются уже есть в базе.
+     *
+     * @return array
+     */
+    public function createSimpleObject()
+    {
         $success = true;
         $saved = array();
-        $rawData = \Yii::$app->getRequest()->getRawBody();
+        $request = \Yii::$app->getRequest();
+        $rawData = $request->getRawBody();
         $items = json_decode($rawData, true);
         foreach ($items as $item) {
             /** @var ActiveRecord $class */
@@ -85,7 +97,7 @@ class BaseController extends Controller
             if ($line->save()) {
                 $saved[] = [
                     '_id' => $item['_id'],
-                    'uuid' => $item['uuid'],
+                    'uuid' => isset($item['uuid']) ? $item['uuid'] : '',
                 ];
             } else {
                 $success = false;

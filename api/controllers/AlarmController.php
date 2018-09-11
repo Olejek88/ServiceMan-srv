@@ -10,4 +10,9 @@ class AlarmController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
     public $modelClass = Alarm::class;
+
+    public function actionCreate()
+    {
+        parent::createSimpleObject();
+    }
 }
