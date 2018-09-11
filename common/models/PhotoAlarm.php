@@ -173,4 +173,50 @@ class PhotoAlarm extends ActiveRecord
         }
         return $url;
     }
+
+    /**
+     * URL изображения.
+     *
+     * @return string
+     */
+    private function getPhotoDir()
+    {
+        $localPath = 'storage/' . self::$_IMAGE_ROOT;
+        return $localPath;
+    }
+
+    public static function saveUploadFile($file)
+    {
+        // создаём запись в базе о файле
+        $operationFile = PhotoAlarm::findOne(
+            ['_id' => $file['_id'], 'uuid' => $file['uuid']]
+        );
+        if ($operationFile == null) {
+            $operationFile = new PhotoAlarm();
+        }
+
+        $operationFile->setAttributes($file, false);
+
+        $dir = Yii::getAlias('@backend/web/');
+        $dir = $dir . $operationFile->getPhotoDir() . '/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $fileMoved = move_uploaded_file(
+            $_FILES['file']['tmp_name'][$file['uuid']], $dir . $file['fileName']
+        );
+        if (!$fileMoved) {
+            return null;
+        }
+
+        if ($operationFile->validate()) {
+            $operationFile->save(false);
+        } else {
+            return null;
+        }
+
+        return $operationFile;
+    }
+
 }

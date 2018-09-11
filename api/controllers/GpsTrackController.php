@@ -19,6 +19,6 @@ class GpsTrackController extends BaseController
 
     public function actionCreate()
     {
-        return parent::createSimpleObject();
+        return parent::createSimpleObjects();
     }
 }

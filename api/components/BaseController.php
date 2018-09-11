@@ -76,25 +76,32 @@ class BaseController extends Controller
     }
 
     /**
+     * @return array
+     */
+    public function actionCreateSimple() {
+        $request = \Yii::$app->getRequest();
+        $rawData = $request->getRawBody();
+        if ($rawData !== false) {
+            $items = json_decode($rawData, true);
+            return self::createSimpleObjects($items);
+        } else {
+            return [];
+        }
+    }
+
+    /**
      * Метод для сохранения в базу "простых" объектов.
      * Справочная информация на которую они ссылаются уже есть в базе.
      *
+     * @param array $items
      * @return array
      */
-    public function createSimpleObject()
+    protected function createSimpleObjects($items)
     {
         $success = true;
         $saved = array();
-        $request = \Yii::$app->getRequest();
-        $rawData = $request->getRawBody();
-        $items = json_decode($rawData, true);
         foreach ($items as $item) {
-            /** @var ActiveRecord $class */
-            $class = $this->modelClass;
-            /** @var ActiveRecord $line */
-            $line = new $class;
-            $line->setAttributes($item, false);
-            if ($line->save()) {
+            if (self::createSimpleObject($item)) {
                 $saved[] = [
                     '_id' => $item['_id'],
                     'uuid' => isset($item['uuid']) ? $item['uuid'] : '',
@@ -105,5 +112,26 @@ class BaseController extends Controller
         }
 
         return ['success' => $success, 'data' => $saved];
+    }
+
+    /**
+     * Метод для сохранения в базу "простого" объекта.
+     * Справочная информация на которую он ссылается уже есть в базе.
+     *
+     * @param array $item
+     * @return boolean
+     */
+    protected function createSimpleObject($item)
+    {
+        /** @var ActiveRecord $class */
+        /** @var ActiveRecord $line */
+        $class = $this->modelClass;
+        $line = $class::findOne(['uuid' => $item['uuid']]);
+        if ($line == null) {
+            $line = new $class;
+        }
+
+        $line->setAttributes($item, false);
+        return $line->save();
     }
 }
