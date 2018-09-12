@@ -12,7 +12,7 @@ class PhotoAlarmController extends BaseController
     public $modelClass = PhotoAlarm::class;
 
     /**
-     * Во входных данных будет один PhotoAlarm. Но для унификации он будет передан как один элемент массива.
+     * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
      *
      * @return array
      */
@@ -21,19 +21,20 @@ class PhotoAlarmController extends BaseController
         $request = \Yii::$app->request;
 
         // запись для загружаемого файла
-        $photoAlarms = $request->getBodyParam('photoAlarms');
-        $savedPhotoAlarms = parent::createSimpleObjects($photoAlarms);
+        $photos = $request->getBodyParam('photos');
+        $savedPhotos = parent::createSimpleObjects($photos);
 
         // сохраняем файл
-        foreach ($photoAlarms as $photoAlarm) {
-            if (!PhotoAlarm::saveUploadFile($photoAlarm['uuid'] . '.jpg')) {
-                $savedPhotoAlarms = [
+        foreach ($photos as $photo) {
+            $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+            if (!parent::saveUploadFile($photo['uuid'] . '.' . $ext, PhotoAlarm::getImageRoot())) {
+                $savedPhotos = [
                     'success' => false,
                     'data' => []
                 ];
             }
         }
 
-        return  $savedPhotoAlarms;
+        return $savedPhotos;
     }
 }

@@ -134,4 +134,24 @@ class BaseController extends Controller
         $line->setAttributes($item, false);
         return $line->save();
     }
+
+    /**
+     * Сохраняет загруженый через форму файл.
+     *
+     * @param string $fileName
+     * @param string $imageRoot
+     * @param string $fileElementName
+     * @return boolean
+     */
+    public static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
+    {
+        $dir = \Yii::getAlias('@storage/') . $imageRoot;
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0755, true)) {
+                return false;
+            }
+        }
+
+        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
+    }
 }

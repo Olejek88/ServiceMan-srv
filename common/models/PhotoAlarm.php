@@ -180,27 +180,8 @@ class PhotoAlarm extends ActiveRecord
      *
      * @return string
      */
-    public static function getPhotoDir()
+    public static function getImageRoot()
     {
         return self::$_IMAGE_ROOT;
-    }
-
-    /**
-     * Сохраняет загруженый через форму файл.
-     *
-     * @param string $fileName
-     * @param string $fileElementName
-     * @return boolean
-     */
-    public static function saveUploadFile($fileName, $fileElementName = 'file')
-    {
-        $dir = \Yii::getAlias('@storage/') . self::$_IMAGE_ROOT;
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                return false;
-            }
-        }
-
-        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
     }
 }
