@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use common\components\IPhoto;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
@@ -22,7 +23,7 @@ use yii\db\Expression;
  * @property House $house
  * @property string $photoUrl
  */
-class PhotoHouse extends ActiveRecord
+class PhotoHouse extends ActiveRecord implements IPhoto
 {
     private static $_IMAGE_ROOT = 'house';
 

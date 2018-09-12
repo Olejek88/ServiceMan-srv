@@ -2,10 +2,12 @@
 
 namespace api\components;
 
+use common\components\IPhoto;
 use yii\db\ActiveRecord;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
+use yii\web\NotAcceptableHttpException;
 
 class BaseController extends Controller
 {
@@ -164,10 +166,10 @@ class BaseController extends Controller
     /**
      * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
      *
-     * @param string $imageRoot
      * @return array
+     * @throws NotAcceptableHttpException
      */
-    protected function createBasePhoto($imageRoot)
+    protected function createBasePhoto()
     {
         $request = \Yii::$app->request;
 
@@ -178,11 +180,18 @@ class BaseController extends Controller
         // сохраняем файл
         foreach ($photos as $photo) {
             $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-            if (!self::saveUploadFile($photo['uuid'] . '.' . $ext, $imageRoot)) {
-                $savedPhotos = [
-                    'success' => false,
-                    'data' => []
-                ];
+            /** @var IPhoto $class */
+            $class = $this->modelClass;
+            $isInterfacePresent = in_array(IPhoto::class, class_implements($class));
+            if ($isInterfacePresent) {
+                if (!self::saveUploadFile($photo['uuid'] . '.' . $ext, $class::getImageRoot())) {
+                    $savedPhotos = [
+                        'success' => false,
+                        'data' => []
+                    ];
+                }
+            } else {
+                throw new NotAcceptableHttpException();
             }
         }
 

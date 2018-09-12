@@ -5,6 +5,7 @@ namespace api\controllers;
 use api\components\BaseController;
 use common\models\PhotoAlarm;
 use yii\db\ActiveRecord;
+use yii\web\NotAcceptableHttpException;
 
 class PhotoAlarmController extends BaseController
 {
@@ -15,9 +16,10 @@ class PhotoAlarmController extends BaseController
      * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
      *
      * @return array
+     * @throws NotAcceptableHttpException
      */
     public function actionCreate()
     {
-        return parent::createBasePhoto(PhotoAlarm::getImageRoot());
+        return parent::createBasePhoto();
     }
 }
