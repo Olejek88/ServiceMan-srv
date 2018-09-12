@@ -165,12 +165,23 @@ class PhotoHouse extends ActiveRecord
      */
     public function getPhotoUrl()
     {
-        $localPath = 'storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
-        if (file_exists(Yii::getAlias($localPath))) {
-            $url = Yii::$app->request->BaseUrl . '/' . $localPath;
+        $localPath = '/storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
+        if (file_exists(Yii::getAlias('@backend/web/' . $localPath))) {
+            $url = $localPath;
         } else {
             $url = null;
         }
+
         return $url;
+    }
+
+    /**
+     * Каталог где хранится изображение.
+     *
+     * @return string
+     */
+    public static function getImageRoot()
+    {
+        return self::$_IMAGE_ROOT;
     }
 }
