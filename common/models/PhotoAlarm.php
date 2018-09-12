@@ -165,58 +165,42 @@ class PhotoAlarm extends ActiveRecord
      */
     public function getPhotoUrl()
     {
-        $localPath = 'storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
-        if (file_exists(Yii::getAlias($localPath))) {
-            $url = Yii::$app->request->BaseUrl . '/' . $localPath;
+        $localPath = '/storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
+        if (file_exists(Yii::getAlias('@backend/web/' . $localPath))) {
+            $url = $localPath;
         } else {
             $url = null;
         }
+
         return $url;
     }
 
     /**
-     * URL изображения.
+     * Каталог где хранится изображение.
      *
      * @return string
      */
-    private function getPhotoDir()
+    public static function getPhotoDir()
     {
-        $localPath = 'storage/' . self::$_IMAGE_ROOT;
-        return $localPath;
+        return self::$_IMAGE_ROOT;
     }
 
-    public static function saveUploadFile($file)
+    /**
+     * Сохраняет загруженый через форму файл.
+     *
+     * @param string $fileName
+     * @param string $fileElementName
+     * @return boolean
+     */
+    public static function saveUploadFile($fileName, $fileElementName = 'file')
     {
-        // создаём запись в базе о файле
-        $operationFile = PhotoAlarm::findOne(
-            ['_id' => $file['_id'], 'uuid' => $file['uuid']]
-        );
-        if ($operationFile == null) {
-            $operationFile = new PhotoAlarm();
-        }
-
-        $operationFile->setAttributes($file, false);
-
-        $dir = Yii::getAlias('@backend/web/');
-        $dir = $dir . $operationFile->getPhotoDir() . '/';
+        $dir = \Yii::getAlias('@storage/') . self::$_IMAGE_ROOT;
         if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+            if (!mkdir($dir, 0755, true)) {
+                return false;
+            }
         }
 
-        $fileMoved = move_uploaded_file(
-            $_FILES['file']['tmp_name'][$file['uuid']], $dir . $file['fileName']
-        );
-        if (!$fileMoved) {
-            return null;
-        }
-
-        if ($operationFile->validate()) {
-            $operationFile->save(false);
-        } else {
-            return null;
-        }
-
-        return $operationFile;
+        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
     }
-
 }
