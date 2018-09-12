@@ -22,14 +22,14 @@ class AlarmController extends BaseController
             return [];
         }
 
-        // список записей сообщений
-        $alarms = json_decode($rawData, true);
-        if (!is_array($alarms)) {
+        // список записей
+        $items = json_decode($rawData, true);
+        if (!is_array($items)) {
             return [];
         }
 
         // сохраняем записи
-        $savedAlarms = parent::createSimpleObjects($alarms);
-        return $savedAlarms;
+        $saved = parent::createSimpleObjects($items);
+        return $saved;
     }
 }
