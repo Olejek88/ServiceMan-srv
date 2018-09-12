@@ -76,20 +76,6 @@ class BaseController extends Controller
     }
 
     /**
-     * @return array
-     */
-    public function actionCreateSimple() {
-        $request = \Yii::$app->getRequest();
-        $rawData = $request->getRawBody();
-        if ($rawData !== false) {
-            $items = json_decode($rawData, true);
-            return self::createSimpleObjects($items);
-        } else {
-            return [];
-        }
-    }
-
-    /**
      * Метод для сохранения в базу "простых" объектов.
      * Справочная информация на которую они ссылаются уже есть в базе.
      *
@@ -143,7 +129,7 @@ class BaseController extends Controller
      * @param string $fileElementName
      * @return boolean
      */
-    public static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
+    protected static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
     {
         $dir = \Yii::getAlias('@storage/') . $imageRoot;
         if (!is_dir($dir)) {
@@ -153,5 +139,53 @@ class BaseController extends Controller
         }
 
         return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
+    }
+
+    protected function createBase()
+    {
+        $request = \Yii::$app->request;
+
+        $rawData = $request->getRawBody();
+        if ($rawData == null) {
+            return [];
+        }
+
+        // список записей
+        $items = json_decode($rawData, true);
+        if (!is_array($items)) {
+            return [];
+        }
+
+        // сохраняем записи
+        $saved = self::createSimpleObjects($items);
+        return $saved;
+    }
+
+    /**
+     * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
+     *
+     * @param string $imageRoot
+     * @return array
+     */
+    protected function createBasePhoto($imageRoot)
+    {
+        $request = \Yii::$app->request;
+
+        // запись для загружаемого файла
+        $photos = $request->getBodyParam('photos');
+        $savedPhotos = self::createSimpleObjects($photos);
+
+        // сохраняем файл
+        foreach ($photos as $photo) {
+            $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+            if (!self::saveUploadFile($photo['uuid'] . '.' . $ext, $imageRoot)) {
+                $savedPhotos = [
+                    'success' => false,
+                    'data' => []
+                ];
+            }
+        }
+
+        return $savedPhotos;
     }
 }

@@ -18,23 +18,6 @@ class PhotoAlarmController extends BaseController
      */
     public function actionCreate()
     {
-        $request = \Yii::$app->request;
-
-        // запись для загружаемого файла
-        $photos = $request->getBodyParam('photos');
-        $savedPhotos = parent::createSimpleObjects($photos);
-
-        // сохраняем файл
-        foreach ($photos as $photo) {
-            $ext = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
-            if (!parent::saveUploadFile($photo['uuid'] . '.' . $ext, PhotoAlarm::getImageRoot())) {
-                $savedPhotos = [
-                    'success' => false,
-                    'data' => []
-                ];
-            }
-        }
-
-        return $savedPhotos;
+        return parent::createBasePhoto(PhotoAlarm::getImageRoot());
     }
 }
