@@ -11,6 +11,11 @@ use yii\db\ActiveRecord;
  * @property double $latitude
  * @property double $longitude
  * @property string $date
+ * @property int $_id
+ * @property string $uuid
+ * @property bool $sent
+ * @property int $changedAt
+ * @property int $createdAt
  */
 class Gpstrack extends ActiveRecord
 {

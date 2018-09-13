@@ -27,6 +27,7 @@ use yii\db\Expression;
  * @property integer $user_id
  * @property integer $createdAt
  * @property integer $changedAt
+ * @property string $image
  */
 
 class Users extends ActiveRecord

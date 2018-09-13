@@ -43,11 +43,6 @@ class BaseController extends Controller
         $class = $this->modelClass;
         $query = $class::find();
 
-        $id = $req->getQueryParam('id');
-        if ($id != null) {
-            $query->andWhere(['_id' => $id]);
-        }
-
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
             $query->andWhere(['uuid' => $uuid]);
@@ -89,9 +84,10 @@ class BaseController extends Controller
         $success = true;
         $saved = array();
         foreach ($items as $item) {
-            if (self::createSimpleObject($item)) {
+            $line = self::createSimpleObject($item);
+            if ($line->save()) {
                 $saved[] = [
-                    '_id' => $item['_id'],
+                    '_id' => $line->getAttribute('_id'),
                     'uuid' => isset($item['uuid']) ? $item['uuid'] : '',
                 ];
             } else {
@@ -107,7 +103,7 @@ class BaseController extends Controller
      * Справочная информация на которую он ссылается уже есть в базе.
      *
      * @param array $item
-     * @return boolean
+     * @return ActiveRecord
      */
     protected function createSimpleObject($item)
     {
@@ -120,7 +116,7 @@ class BaseController extends Controller
         }
 
         $line->setAttributes($item, false);
-        return $line->save();
+        return $line;
     }
 
     /**
@@ -156,6 +152,10 @@ class BaseController extends Controller
         $items = json_decode($rawData, true);
         if (!is_array($items)) {
             return [];
+        }
+
+        foreach ($items as $key => $item) {
+            unset($items[$key]['_id']);
         }
 
         // сохраняем записи

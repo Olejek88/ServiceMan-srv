@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "subject".
  *
@@ -16,6 +17,8 @@ use yii\db\ActiveRecord;
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property House $house
  */
 class Subject extends ActiveRecord
 {

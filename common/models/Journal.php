@@ -3,6 +3,7 @@
 namespace common\models;
 
 use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "journal".
  *
@@ -10,6 +11,8 @@ use yii\db\ActiveRecord;
  * @property string $userUuid
  * @property string $description
  * @property string $date
+ *
+ * @property Users $user
  */
 class Journal extends ActiveRecord
 {
