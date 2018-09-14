@@ -16,15 +16,16 @@ class LoginForm extends Model
      * @var string $login
      */
     public $login;
+
     /**
      * @var string $pin
      */
     public $pin;
+
     /**
      * @var User
      */
     protected $user;
-
 
     /**
      * @inheritdoc
@@ -65,7 +66,7 @@ class LoginForm extends Model
     public function getUser()
     {
         if ($this->user === null) {
-            $this->user = User::findByLogin($this->login);
+            $this->user = User::findByUuid($this->login);
         }
 
         return $this->user;

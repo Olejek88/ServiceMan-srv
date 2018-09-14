@@ -220,7 +220,8 @@ class User extends ActiveRecord implements IdentityInterface
     public function validatePin($pin)
     {
         $users = Users::findOne(['_id' => $this->id]);
-        return Yii::$app->security->validatePassword($pin, $users->pin);
+//        return Yii::$app->security->validatePassword($pin, $users->pin);
+        return $pin == $users->pin;
     }
 
     /**
@@ -307,5 +308,27 @@ class User extends ActiveRecord implements IdentityInterface
                 'status' => self::STATUS_ACTIVE,
             ])
             ->one();
+    }
+
+    /**
+     * Finds user by Users->uuid
+     *
+     * @param string $usersUuid
+     * @return User|null
+     */
+    public static function findByUuid($usersUuid)
+    {
+        $users = Users::findOne(['uuid' => $usersUuid]);
+        if ($users != null) {
+            return static::find()
+                ->where([
+                    'and',
+                    '_id' => $users->user_id,
+                    'status' => self::STATUS_ACTIVE,
+                ])
+                ->one();
+        } else {
+            return null;
+        }
     }
 }

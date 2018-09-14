@@ -1,13 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace common\models;
 
@@ -28,8 +19,9 @@ use yii\db\Expression;
  * @property integer $createdAt
  * @property integer $changedAt
  * @property string $image
+ *
+ * @property User $user
  */
-
 class Users extends ActiveRecord
 {
     /**
@@ -41,7 +33,7 @@ class Users extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -116,103 +108,22 @@ class Users extends ActiveRecord
             'pin',
             'user_id',
             'contact',
-            'user' => function ($model) {
-                return $model->user;
-            },
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
             'createdAt',
             'changedAt',
+            'image',
         ];
     }
 
     /**
-     * Связываем пользователей из yii с пользователями из toir.
+     * Связываем пользователей из yii с пользователями из sman.
      *
      * @return \yii\db\ActiveQuery
      */
     public function getUser()
     {
-        return $this->hasOne(User::className(), ['_id' => 'user_id']);
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Поск объекта по имени пользователя.
-     *
-     * @param string $username Имя пользователя.
-     *
-     * @return null|static
-     */
-    public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Возвращает id.
-     *
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this['_id'];
-    }
-
-    /**
-     * Что-то проверяет.
-     *
-     * @param array $User Пользователь.
-     *
-     * @return int
-     */
-    public function dataChecking($User)
-    {
-        if ($User === "") {
-            $User = null;
-        }
-        $count = count($User);
-        if ($count === 0 || $count > 1) {
-            // В случае более одной строчек из таблицы user,
-            // необходимо передать эту информацию администратору, для
-            // устранения совподений в таблице.
-            // В полученном маccиве, нуль или больше одного, выдаем Not object.
-
-            // При необходимости создатиь ветку отправки данных с ошибкой
-            // $postError = new Table();
-            //     $postError->error = $dataUser;
-            // $postError->save();
-
-            return 0;
-        } else {
-            return $count;
-        }
-    }
-
-    /**
-     * Какие-то действия.
-     *
-     * @return void
-     */
-    public function afterFind()
-    {
-        parent::afterFind();
+        return $this->hasOne(User::class, ['_id' => 'user_id']);
     }
 }
