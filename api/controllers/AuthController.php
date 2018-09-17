@@ -3,6 +3,7 @@
 namespace api\controllers;
 
 use api\models\form\LoginForm;
+use common\models\Users;
 use yii\rest\Controller;
 use yii\web\Response;
 
@@ -30,9 +31,8 @@ class AuthController extends Controller
             $user = $model->getUser();
             $token = $user->generateAccessToken(60 * 60 * 24 * 7);
             $user->save();
-
             return [
-                'user_id' => $user->id,
+                'usersUuid' => $user->getUsers()->uuid,
                 'token' => $token,
             ];
         } else {
