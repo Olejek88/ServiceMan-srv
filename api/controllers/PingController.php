@@ -11,6 +11,6 @@ class PingController extends BaseController
     public $modelClass = null;
 
     public function actionIndex() {
-        return '';
+        return 'PONG';
     }
 }

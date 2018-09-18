@@ -17,10 +17,13 @@ use yii\db\ActiveRecord;
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $flatTypeUuid
+ * @property string $title
  *
  * @property House $house
  * @property FlatStatus $flatStatus
  * @property PhotoFlat $photoFlat
+ * @property FlatType $flatType
  */
 class Flat extends ActiveRecord
 {
@@ -66,6 +69,8 @@ class Flat extends ActiveRecord
             'flatStatus' => function ($model) {
                 return $model->flatStatus;
             },
+            'flatTypeUuid',
+            'title',
             'houseUuid',
             'house' => function ($model) {
                 return $model->house;
@@ -103,7 +108,17 @@ class Flat extends ActiveRecord
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getPhotoFlat() {
         return PhotoFlat::hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFlatType() {
+        return FlatType::hasOne(FlatType::class, ['uuid' => 'flatTypeUuid']);
     }
 }
