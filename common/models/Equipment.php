@@ -66,7 +66,7 @@ class Equipment extends ActiveRecord
         return ['_id', 'uuid',
             'houseUuid',
             'house' => function ($model) {
-                return $model->equipmentType;
+                return $model->house;
             },
             'flatUuid',
             'flat' => function ($model) {
@@ -202,6 +202,6 @@ class Equipment extends ActiveRecord
     }
 
     public function getPhotoEquipment() {
-        return PhotoEquipment::hasMany(PhotoEquipment::class, ['equipmentUuid' => 'uuid']);
+        return $this->hasMany(PhotoEquipment::class, ['equipmentUuid' => 'uuid']);
     }
 }

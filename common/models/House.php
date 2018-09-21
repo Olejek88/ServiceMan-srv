@@ -70,6 +70,9 @@ class House extends ActiveRecord
                 return $model->houseStatus;
             },
             'houseTypeUuid',
+            'houseType' => function ($model) {
+                return $model->houseType;
+            },
             'title',
             'streetUuid',
             'street' => function ($model) {
@@ -84,6 +87,7 @@ class House extends ActiveRecord
     {
         return $this->hasOne(HouseStatus::class, ['uuid' => 'houseStatusUuid']);
     }
+
     public function getStreet()
     {
         return $this->hasOne(Street::class, ['uuid' => 'streetUuid']);
@@ -110,14 +114,16 @@ class House extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPhotoHouse() {
-        return PhotoHouse::hasMany(PhotoHouse::class, ['houseUuid' => 'uuid']);
+    public function getPhotoHouse()
+    {
+        return $this->hasMany(PhotoHouse::class, ['houseUuid' => 'uuid']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getHouseType() {
-        return HouseType::hasOne(FlatType::class, ['uuid' => 'flatTypeUuid']);
+    public function getHouseType()
+    {
+        return $this->hasOne(HouseType::class, ['uuid' => 'houseTypeUuid']);
     }
 }

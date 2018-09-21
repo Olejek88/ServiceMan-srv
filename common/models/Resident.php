@@ -59,10 +59,10 @@ class Resident extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'flatUuid',
             'flat' => function ($model) {
                 return $model->flat;
             },
-            'flatUuid',
             'owner',
             'inn',
             'createdAt',

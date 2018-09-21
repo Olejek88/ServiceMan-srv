@@ -110,14 +110,14 @@ class PhotoHouse extends ActiveRecord implements IPhoto
     public function fields()
     {
         return ['_id','uuid',
+            'houseUuid',
             'house' => function ($model) {
                 return $model->house;
             },
-            'houseUuid',
+            'userUuid',
             'user' => function ($model) {
                 return $model->user;
             },
-            'userUuid',
             'latitude',
             'longitude',
             'createdAt',

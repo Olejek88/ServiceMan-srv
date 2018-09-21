@@ -110,14 +110,14 @@ class PhotoAlarm extends ActiveRecord implements IPhoto
     public function fields()
     {
         return ['_id','uuid',
+            'alarmUuid',
             'alarm' => function ($model) {
                 return $model->alarm;
             },
-            'alarmUuid',
+            'userUuid',
             'user' => function ($model) {
                 return $model->user;
             },
-            'userUuid',
             'latitude',
             'longitude',
             'createdAt',

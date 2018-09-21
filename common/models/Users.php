@@ -108,9 +108,9 @@ class Users extends ActiveRecord
             'pin',
             'user_id',
             'contact',
-//            'user' => function ($model) {
-//                return $model->user;
-//            },
+            'user' => function ($model) {
+                return $model->user;
+            },
             'createdAt',
             'changedAt',
             'image',
