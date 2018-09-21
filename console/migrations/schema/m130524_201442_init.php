@@ -188,7 +188,7 @@ class m130524_201442_init extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'contractNumber' => $this->string()->unique()->notNull(),
-            'contractDate' => $this->timestamp()->notNull(),
+            'contractDate' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
             'houseUuid' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull(),
             'changedAt' => $this->timestamp()->notNull(),
@@ -247,7 +247,7 @@ class m130524_201442_init extends Migration
             'longitude' => $this->double(),
             'latitude' => $this->double(),
             'comment' => $this->string()->notNull(),
-            'date' => $this->timestamp()->notNull()
+            'date' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull()
         ], $tableOptions);
 
         $this->createIndex(
@@ -322,7 +322,7 @@ class m130524_201442_init extends Migration
             'equipmentTypeUuid' => $this->string()->notNull(),
             'equipmentStatusUuid' => $this->string()->notNull(),
             'serial' => $this->string()->notNull(),
-            'testDate' => $this->timestamp()->notNull(),
+            'testDate' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
             'createdAt' => $this->timestamp()->notNull(),
             'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
@@ -577,7 +577,7 @@ class m130524_201442_init extends Migration
             'equipmentUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'value' => $this->double(),
-            'date' => $this->timestamp()->notNull(),
+            'date' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
             'createdAt' => $this->timestamp()->notNull(),
             'changedAt' => $this->timestamp()->notNull(),
         ], $tableOptions);
@@ -618,7 +618,7 @@ class m130524_201442_init extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'userUuid' => $this->string()->notNull(),
-            'date' => $this->timestamp()->notNull(),
+            'date' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
             'sent' => $this->boolean(),
