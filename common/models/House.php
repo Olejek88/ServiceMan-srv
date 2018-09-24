@@ -18,7 +18,6 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $changedAt
  * @property string $houseTypeUuid
- * @property string $title
  *
  * @property Street $street
  * @property HouseStatus $houseStatus

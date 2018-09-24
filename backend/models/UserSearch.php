@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\models\User;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -16,7 +17,7 @@ class UserSearch extends User
     public function rules()
     {
         return [
-            [['_id', 'status', 'createdAt', 'changedAt'], 'integer'],
+            [['_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['username', 'auth_key', 'password_hash', 'password_reset_token', 'email'], 'safe'],
         ];
     }
@@ -59,8 +60,8 @@ class UserSearch extends User
         $query->andFilterWhere([
             '_id' => $this->_id,
             'status' => $this->status,
-            'createdAt' => $this->createdAt,
-            'changedAt' => $this->changedAt,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'username', $this->username])

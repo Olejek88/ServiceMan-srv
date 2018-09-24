@@ -38,6 +38,19 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'owner',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->owner;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'contractNumber',
         'hAlign' => 'center',
         'vAlign' => 'middle',

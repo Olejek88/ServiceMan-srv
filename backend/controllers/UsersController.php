@@ -148,10 +148,10 @@ class UsersController extends Controller
                 ->where(['=','userUuid', $user['uuid']])
                 ->all();
             foreach ($measures as $measure) {
-                $text = '<a class="btn btn-default btn-xs">'.$measure['equipment']->title.'</a><br/>
-                <i class="fa fa-cogs"></i>&nbsp;Значения: ' . $measure['measure']->value . '<br/>';
+                $text = '<a class="btn btn-default btn-xs">'.$measure['equipment']['equipmentType']->title.'</a><br/>
+                <i class="fa fa-cogs"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
                 $events[]=['date' => $measure['date'],'event' => self::formEvent($measure['date'],'measure',
-                    $measure['_id'], $measure['equipment']->title, $text)];
+                    $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
             }
             $journals = Journal::find()
                 ->where(['=','userUuid', $user['uuid']])
@@ -219,17 +219,7 @@ class UsersController extends Controller
     public function actionDashboard()
     {
         $users = Users::find()->orderBy('createdAt DESC')->all();
-        $count=0;
         $user_property[][]='';
-        foreach ($users as $user) {
-            $user_orders = Orders::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['orders']=$user_orders;
-            $user_defects = Defect::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['defects']=$user_defects;
-            $user_messages = Message::find()->where(['toUserUuid' => $user['uuid']])->count();
-            $user_property[$count]['messages']=$user_messages;
-            $count++;
-        }
         return $this->render('dashboard', [
             'users'  => $users,
             'user_property'  => $user_property

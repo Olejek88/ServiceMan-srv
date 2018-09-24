@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $owner
  * @property string $contractNumber
  * @property string $contractDate
  * @property string $houseUuid
@@ -50,9 +51,10 @@ class Subject extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'houseUuid', 'flatUuid'], 'required'],
+            [['uuid', 'houseUuid', 'flatUuid', 'owner'], 'required'],
             [['createdAt', 'changedAt', 'contractDate'], 'safe'],
             [['uuid', 'houseUuid', 'flatUuid', 'contractNumber'], 'string', 'max' => 50],
+            [['owner'], 'string', 'max' => 100],
         ];
     }
 
@@ -61,6 +63,7 @@ class Subject extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'owner',
             'houseUuid',
             'house' => function ($model) {
                 return $model->house;
@@ -93,6 +96,7 @@ class Subject extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
+            'owner' => Yii::t('app', 'Субъект'),
             'house' => Yii::t('app', 'Дом'),
             'flat' => Yii::t('app', 'Помещение'),
             'contractNumber' => Yii::t('app', 'Номер договора'),

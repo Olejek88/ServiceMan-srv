@@ -78,6 +78,8 @@ use yii\helpers\ArrayHelper;
 
     <?php echo $form->field($model, 'contractNumber')->textInput(['maxlength' => true]) ?>
 
+    <?php echo $form->field($model, 'owner')->textInput(['maxlength' => true]) ?>
+
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата договора</p>
         <?php echo DatePicker::widget(

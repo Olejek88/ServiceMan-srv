@@ -284,7 +284,7 @@ class ResidentsController extends Controller
                     ->select('*')
                     ->where(['houseUuid' => $house['uuid']])
                     ->one();
-                $fullTree[$oCnt0][$c][$oCnt1]['resident'] = $subject['title'];
+                $fullTree[$oCnt0][$c][$oCnt1]['resident'] = $subject['owner'];
                 $fullTree[$oCnt0][$c][$oCnt1]['inn'] = $subject['contractNumber'];
 
                 $flats = Flat::find()

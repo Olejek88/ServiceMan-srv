@@ -64,6 +64,7 @@ class SubjectSearch extends Subject
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
+            ->andFilterWhere(['like', 'owner', $this->owner])
             ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
             ->andFilterWhere(['like', 'houseUuid', $this->houseUuid])
             ->andFilterWhere(['like', 'contractNumber', $this->contractNumber])

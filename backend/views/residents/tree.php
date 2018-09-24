@@ -10,7 +10,7 @@ $this->title = 'Дерево абонентов системы';
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="120px">
+        <col width="160px">
         <col width="90px">
         <col width="60px">
         <col width="120px">

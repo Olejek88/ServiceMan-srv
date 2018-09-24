@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 
-/* @var $model \common\models\Resident */
+/* @var $model \common\models\Subject */
 
 $this->title = Yii::t('app', 'Обновить абонента');
 ?>
