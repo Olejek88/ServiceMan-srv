@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
-use common\models\Flat;
+use common\models\HouseType;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * FlatSearch represents the model behind the search form about `common\models\Flat`.
+ * HouseSearchType represents the model behind the search form about `common\models\HouseType`.
  */
-class FlatSearch extends Flat
+class HouseSearchType extends HouseType
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class FlatSearch extends Flat
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'number', 'streetUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class FlatSearch extends Flat
      */
     public function search($params)
     {
-        $query = Flat::find();
+        $query = HouseType::find();
 
         // add conditions that should always apply here
 
@@ -59,14 +59,12 @@ class FlatSearch extends Flat
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'houseUuid' => $this->houseUuid,
-            'flatStatusUuid' => $this->flatStatusUuid,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'number', $this->number]);
+            ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

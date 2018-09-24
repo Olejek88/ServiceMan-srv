@@ -361,7 +361,7 @@ class SiteController extends Controller
                 $userData[$count]['longitude'] = 0;
             }
 
-            $userData[$count]['id'] = $current_user['id'];
+            $userData[$count]['id'] = $current_user['_id'];
             $userData[$count]['name'] = $current_user['name'];
             $userData[$count]['contact'] = $current_user['contact'];
 

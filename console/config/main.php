@@ -44,6 +44,9 @@ return [
             'migrationPath' => '@app/migrations/content',
             'migrationTable' => '{{%migration_content}}',
         ],
+        'export' => [
+            'class' => 'console\controllers\ExportController',
+        ],
     ],
 
     'params' => $params,
