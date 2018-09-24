@@ -7,7 +7,7 @@ use common\models\PhotoFlat;
 use yii\helpers\Html;
 
 /* @var $model \common\models\Equipment */
-/* @var $resident \common\models\Resident */
+/* @var $resident \common\models\Subject */
 
 $photoFlat = PhotoFlat::find()
     ->where(['flatUuid' => $model['flatUuid']])

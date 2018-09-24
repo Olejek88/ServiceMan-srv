@@ -182,16 +182,16 @@ class ExportController extends Controller
         }
 
         $subject = Subject::find()->where(['contractNumber' => $dogovor])->andWhere(['houseUuid' => $house->uuid])->one();
-        if ($resident == null) {
-            $resident = new Subject();
-            $resident->uuid = self::GUID();
-            $resident->houseUuid = $house->uuid;
-            $resident->contractDate = new Date();
-            $resident->contractNumber = $dogovor;
-            $resident->changedAt = new Date();
-            $resident->createdAt = new Date();
-            echo ('store resident: '.$resident->inn.' ['.$resident->uuid.']'.PHP_EOL);
-            $resident->save();
+        if ($subject == null) {
+            $subject = new Subject();
+            $subject->uuid = self::GUID();
+            $subject->houseUuid = $house->uuid;
+            $subject->contractDate = new Date();
+            $subject->contractNumber = $dogovor;
+            $subject->changedAt = new Date();
+            $subject->createdAt = new Date();
+            echo ('store subject: '.$subject->contractNumber.' ['.$subject->uuid.']'.PHP_EOL);
+            $subject->save();
         }
     }
     

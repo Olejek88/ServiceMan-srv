@@ -15,10 +15,12 @@ use yii\db\ActiveRecord;
  * @property string $contractNumber
  * @property string $contractDate
  * @property string $houseUuid
+ * @property string $flatUuid
  * @property string $createdAt
  * @property string $changedAt
  *
  * @property House $house
+ * @property Flat $flat
  */
 class Subject extends ActiveRecord
 {
@@ -48,9 +50,9 @@ class Subject extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'houseUuid'], 'required'],
+            [['uuid', 'houseUuid', 'flatUuid'], 'required'],
             [['createdAt', 'changedAt', 'contractDate'], 'safe'],
-            [['uuid', 'houseUuid', 'contractNumber'], 'string', 'max' => 50],
+            [['uuid', 'houseUuid', 'flatUuid', 'contractNumber'], 'string', 'max' => 50],
         ];
     }
 
@@ -62,6 +64,9 @@ class Subject extends ActiveRecord
             'houseUuid',
             'house' => function ($model) {
                 return $model->house;
+            },
+            'flat' => function ($model) {
+                return $model->flat;
             },
             'contractNumber',
             'contractDate',
@@ -75,6 +80,11 @@ class Subject extends ActiveRecord
         return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
+    public function getFlat()
+    {
+        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+    }
+
     /**
      * @inheritdoc
      */
@@ -84,6 +94,7 @@ class Subject extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'house' => Yii::t('app', 'Дом'),
+            'flat' => Yii::t('app', 'Помещение'),
             'contractNumber' => Yii::t('app', 'Номер договора'),
             'contractDate' => Yii::t('app', 'Дата договора'),
             'createdAt' => Yii::t('app', 'Создан'),

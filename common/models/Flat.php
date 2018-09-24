@@ -18,7 +18,6 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $changedAt
  * @property string $flatTypeUuid
- * @property string $title
  *
  * @property House $house
  * @property FlatStatus $flatStatus
@@ -73,7 +72,6 @@ class Flat extends ActiveRecord
             'flatType' => function($model) {
                 return $model->flatType;
             },
-            'title',
             'houseUuid',
             'house' => function ($model) {
                 return $model->house;
