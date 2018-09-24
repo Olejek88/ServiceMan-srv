@@ -42,7 +42,7 @@ class m180910_110350_fix_date_fields extends Migration
             $this->addColumn($table, 'createdAt', $type);
         }
 
-        $type = $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP');
+        $type = $this->timestamp()->notNull()->defaultValue('0000-00-00 00:00:00');
         $table = '{{%subject}}';
         $this->dropColumn($table, 'contractDate');
         $this->addColumn($table, 'contractDate', $type);
