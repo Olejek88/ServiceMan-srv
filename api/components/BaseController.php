@@ -177,7 +177,8 @@ class BaseController extends Controller
     }
 
     /**
-     * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
+     * Создаём запись о файле, сохраняем файл.
+     * Во входных данных должен быть один объект.
      *
      * @return array
      * @throws NotAcceptableHttpException
@@ -187,7 +188,11 @@ class BaseController extends Controller
         $request = \Yii::$app->request;
 
         // запись для загружаемого файла
-        $photos = $request->getBodyParam('photos');
+        $photos[] = $request->getBodyParam('photo');
+        foreach ($photos as $key => $photo) {
+            unset($photos[$key]['_id']);
+        }
+
         $savedPhotos = self::createSimpleObjects($photos);
 
         // сохраняем файл
@@ -197,7 +202,14 @@ class BaseController extends Controller
             $class = $this->modelClass;
             $isInterfacePresent = in_array(IPhoto::class, class_implements($class));
             if ($isInterfacePresent) {
-                if (!self::saveUploadFile($photo['uuid'] . '.' . $ext, $class::getImageRoot())) {
+                try {
+                    if (!self::saveUploadFile($photo['uuid'] . '.' . $ext, $class::getImageRoot())) {
+                        $savedPhotos = [
+                            'success' => false,
+                            'data' => []
+                        ];
+                    }
+                } catch (\Exception $exception) {
                     $savedPhotos = [
                         'success' => false,
                         'data' => []

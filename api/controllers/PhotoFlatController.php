@@ -13,7 +13,7 @@ class PhotoFlatController extends BaseController
     public $modelClass = PhotoFlat::class;
 
     /**
-     * Во входных данных будет один объект. Но для унификации он будет передан как один элемент массива.
+     * Во входных данных должен быть один объект.
      *
      * @return array
      * @throws NotAcceptableHttpException
