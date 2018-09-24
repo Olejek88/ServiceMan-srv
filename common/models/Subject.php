@@ -59,6 +59,7 @@ class Subject extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'houseUuid',
             'house' => function ($model) {
                 return $model->house;
             },
@@ -71,7 +72,7 @@ class Subject extends ActiveRecord
 
     public function getHouse()
     {
-        return $this->hasOne(House::className(), ['uuid' => 'houseUuid']);
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
     /**

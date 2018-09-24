@@ -111,14 +111,14 @@ class PhotoFlat extends ActiveRecord implements IPhoto
     public function fields()
     {
         return ['_id', 'uuid',
+            'flatUuid',
             'flat' => function ($model) {
                 return $model->flat;
             },
-            'flatUuid',
+            'userUuid',
             'user' => function ($model) {
                 return $model->user;
             },
-            'userUuid',
             'latitude',
             'longitude',
             'createdAt',

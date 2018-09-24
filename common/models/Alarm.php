@@ -72,9 +72,11 @@ class Alarm extends ActiveRecord
                 return $model->user;
             },
             'date',
+            'alarmStatusUuid',
             'alarmStatus' => function ($model) {
                 return $model->alarmStatus;
             },
+            'alarmTypeUuid',
             'alarmType' => function ($model) {
                 return $model->alarmType;
             },

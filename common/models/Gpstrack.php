@@ -24,7 +24,7 @@ class Gpstrack extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'gps_track';
+        return '{{%gps_track}}';
     }
 
     /**

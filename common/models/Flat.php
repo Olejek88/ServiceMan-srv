@@ -70,6 +70,9 @@ class Flat extends ActiveRecord
                 return $model->flatStatus;
             },
             'flatTypeUuid',
+            'flatType' => function($model) {
+                return $model->flatType;
+            },
             'title',
             'houseUuid',
             'house' => function ($model) {
@@ -112,13 +115,13 @@ class Flat extends ActiveRecord
      * @return \yii\db\ActiveQuery
      */
     public function getPhotoFlat() {
-        return PhotoFlat::hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
+        return $this->hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
     public function getFlatType() {
-        return FlatType::hasOne(FlatType::class, ['uuid' => 'flatTypeUuid']);
+        return $this->hasOne(FlatType::class, ['uuid' => 'flatTypeUuid']);
     }
 }

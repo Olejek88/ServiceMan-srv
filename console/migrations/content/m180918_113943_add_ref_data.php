@@ -20,22 +20,31 @@ class m180918_113943_add_ref_data extends \console\yii2\Migration
      */
     public function up()
     {
+        $date = date('Y-m-d\TH:i:s');
         $this->insert(self::FLAT_TYPE, [
             'uuid' => FlatType::FLAT_TYPE_GENERAL,
             'title' => 'Основная',
+            'createdAt' => $date,
+            'changedAt' => $date,
         ]);
         $this->insert(self::FLAT_TYPE, [
             'uuid' => FlatType::FLAT_TYPE_COMMERCE,
             'title' => 'Комерческая',
+            'createdAt' => $date,
+            'changedAt' => $date,
         ]);
         $this->insert(self::FLAT_TYPE, [
             'uuid' => FlatType::FLAT_TYPE_INPUT,
             'title' => 'Вводная',
+            'createdAt' => $date,
+            'changedAt' => $date,
         ]);
 
         $this->insert(self::HOUSE_TYPE, [
             'uuid' => HouseType::HOUSE_TYPE_PRIVATE,
             'title' => 'Частный',
+            'createdAt' => $date,
+            'changedAt' => $date,
         ]);
 
         $this->addForeignKey(
@@ -47,7 +56,6 @@ class m180918_113943_add_ref_data extends \console\yii2\Migration
             self::FK_RESTRICT,
             self::FK_CASCADE
         );
-
 
         $this->addForeignKey(
             self::FK_HOUSE2HOUSE_TYPE,

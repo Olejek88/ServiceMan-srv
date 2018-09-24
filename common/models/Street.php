@@ -58,10 +58,10 @@ class Street extends ActiveRecord
         return [
             '_id',
             'uuid',
+            'cityUuid',
             'city' => function ($model) {
                 return $model->city;
             },
-            'cityUuid',
             'title',
             'createdAt',
             'changedAt',

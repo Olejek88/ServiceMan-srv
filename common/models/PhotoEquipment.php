@@ -111,14 +111,14 @@ class PhotoEquipment extends ActiveRecord implements IPhoto
     public function fields()
     {
         return ['_id', 'uuid',
+            'equipmentUuid',
             'equipment' => function ($model) {
                 return $model->equipment;
             },
-            'equipmentUuid',
+            'userUuid',
             'user' => function ($model) {
                 return $model->user;
             },
-            'userUuid',
             'latitude',
             'longitude',
             'createdAt',
