@@ -8,7 +8,6 @@ use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use \yii\console\Controller;
 use Yii;
 use common\models\Flat;
@@ -33,7 +32,7 @@ class ExportController extends Controller
             $houseTypeMKD = HouseType::find()->where(['title' => 'Многоквартирный дом'])->one();
             $houseTypeOther = HouseType::find()->where(['title' => 'Коммерческая организация'])->one();
 
-            $houseStatus = '9236E1FF-D967-4080-9F42-59B03ADD25E8';
+            $houseStatus = '9127B1A3-D0C1-4F96-8026-B597600FC9CD';
             $flatStatus = '9D86D530-1910-488E-87D9-FD2FE06CA5E7';
 
             $flatTypePrivate = '42686CFC-34D0-45FF-95A4-04B0D865EC35';
@@ -74,8 +73,8 @@ class ExportController extends Controller
                     if ($type=='3')
                         $houseType = $houseTypeMKD['uuid'];
                     $ls_code = $ls.' ['.$code.']';
-                    $this->StoreHouse($houseType, $street, $house, $flat, $ls_code, $cityFirst,
-                        $houseStatus, $flatStatus, $flatType);
+                    $this->StoreHouse(1, "", $ls_code, $street, $house, $cityFirst, $flat,
+                        $houseStatus, $houseType, $flatStatus, $flatType);
                 }
                 $row_num++;
             }
@@ -99,7 +98,7 @@ class ExportController extends Controller
         $houseTypeBudget = HouseType::find()->where(['title' => 'Бюджетное учереждение'])->one();
         $houseTypeOther = HouseType::find()->where(['title' => 'Другой'])->one();
 
-        $houseStatus = '9236E1FF-D967-4080-9F42-59B03ADD25E8';
+        $houseStatus = '9127B1A3-D0C1-4F96-8026-B597600FC9CD';
         $flatStatus = '9D86D530-1910-488E-87D9-FD2FE06CA5E7';
         $flatTypeInput = 'F68A562B-8F61-476F-A3E7-5666F9CEAFA1';
 
@@ -110,36 +109,56 @@ class ExportController extends Controller
             $cell_num = 0;
             $title = '';
             $dogovor = '';
+            $type = '';
+            $street = '';
+            $house = '';
             foreach ($cellIterator as $cell) {
                 switch ($cell_num) {
                     case 0:
                         $title = $cell->getValue();
                         break;
                     case 1:
-                        $dogovor = $cell->getValue();
+                        $adr = $cell->getValue();
+                        if ($adr!=null) {
+                            $address = str_replace("ул.", "", $adr);
+                            $address = trim($address);
+                            $pieces = explode(",", $address);
+                            //echo $pieces[0];
+                            if (count($pieces)==2) {
+                                $street = trim($pieces[0]);
+                                $house = trim($pieces[1]);
+                            }
+                            //ул. Бархатовой,15
+                        }
+                        break;
+                    case 2:
+                        $dogovor = $cell->getValue()."";
+                        break;
+                    case 3:
+                        $type = $cell->getValue();
                         break;
                 }
                 $cell_num++;
             }
-            if ($dogovor != '') {
+            if ($dogovor != '' && $street!='' && $house!='') {
                 $houseType = $houseTypeOther['uuid'];
-                if (strstr($title,'ИП') || strstr($title,'ООО') || strstr($title,'ФЛ') ||
-                    strstr($title,'АО') || strstr($title,'ОАО'))
-                    $houseType = $houseTypeCommercial;
-                if (strstr($title,'МКДОУ'))
-                    $houseType = $houseTypeMDOU;
-                if (strstr($title,'школа'))
-                    $houseType = $houseTypeSchool;
-                $flatValue = 'Котельная';
-                $street = 'nodd';
-                $this->StoreHouse($title, $dogovor, $street, $house, $cityFirst, $flatValue, $houseStatus, $houseType,
-                    $flatStatus, $flatType);
+                if ($type=='11')
+                    $houseType = $houseTypeCommercial['uuid'];
+                if ($type=='10')
+                    $houseType = $houseTypeMDOU['uuid'];
+                if ($type=='9')
+                    $houseType = $houseTypeSchool['uuid'];
+                if ($type=='13')
+                    $houseType = $houseTypeBudget['uuid'];
+                $flatValue = "Вводной №".$dogovor;
+                $this->StoreHouse(2, $title, $dogovor, $street, $house, $cityFirst, $flatValue, $houseStatus, $houseType,
+                    $flatStatus, $flatTypeInput);
             }
             $row_num++;
         }
     }
 
-    private function StoreHouse ($title, $dogovor, $streetValue, $houseValue, $cityFirst, $flatValue, $houseStatus,
+    private function StoreHouse ($type, $title, $dogovor, $streetValue, $houseValue, $cityFirst, $flatValue, $houseStatus,
                                  $houseType, $flatStatus, $flatType) {
         $street = Street::find()->where(['title' => $streetValue])->one();
         if ($street==null && $cityFirst!=null) {
@@ -147,8 +166,8 @@ class ExportController extends Controller
             $street->uuid = self::GUID();
             $street->cityUuid = $cityFirst->uuid;
             $street->title = $streetValue;
-            $street->changedAt = new Date();
-            $street->createdAt = new Date();
+            $street->changedAt = date('Y-m-d H:i:s');
+            $street->createdAt = date('Y-m-d H:i:s');
             echo ('store street: '.$street->title.' ['.$street->uuid.']'.PHP_EOL);
             $street->save();
         }
@@ -160,9 +179,9 @@ class ExportController extends Controller
             $house->number = $houseValue;
             $house->houseStatusUuid=$houseStatus;
             $house->houseTypeUuid=$houseType;
-            $house->changedAt = new Date();
-            $house->createdAt = new Date();
-            echo ('store house: '.$house->number.' ['.$house->uuid.']'.PHP_EOL);
+            $house->changedAt = date('Y-m-d H:i:s');
+            $house->createdAt = date('Y-m-d H:i:s');
+            echo ('store house: '.$street->title.','.$house->number.' ['.$house->uuid.']'.PHP_EOL);
             $house->save();
         }
 
@@ -175,27 +194,45 @@ class ExportController extends Controller
             $flat->number = $flatValue;
             $flat->flatStatusUuid = $flatStatus;
             $flat->flatTypeUuid = $flatType;
-            $flat->changedAt = new Date();
-            $flat->createdAt = new Date();
+            $flat->changedAt = date('Y-m-d H:i:s');
+            $flat->createdAt = date('Y-m-d H:i:s');
             echo ('store flat: '.$flat->number.' ['.$flat->uuid.']'.PHP_EOL);
             $flat->save();
         }
 
-        $subject = Subject::find()->where(['contractNumber' => $dogovor])->andWhere(['houseUuid' => $house->uuid])->one();
-        if ($subject == null) {
-            $subject = new Subject();
-            $subject->uuid = self::GUID();
-            $subject->houseUuid = $house->uuid;
-            $subject->contractDate = new Date();
-            $subject->contractNumber = $dogovor;
-            $subject->changedAt = new Date();
-            $subject->createdAt = new Date();
-            echo ('store subject: '.$subject->contractNumber.' ['.$subject->uuid.']'.PHP_EOL);
-            $subject->save();
+        if ($type==1) {
+            $resident = Resident::find()->where(['inn' => $dogovor])->andWhere(['flatUuid' => $flat->uuid])->one();
+            if ($resident == null) {
+                $resident = new Resident();
+                $resident->uuid = self::GUID();
+                $resident->flatUuid = $flat->uuid;
+                $resident->owner = "Ф.И.О.";
+                $resident->inn = $dogovor;
+                $resident->changedAt = date('Y-m-d H:i:s');
+                $resident->createdAt = date('Y-m-d H:i:s');
+                echo('store resident: ' . $resident->owner . ' [' . $resident->uuid . ']' . PHP_EOL);
+                $resident->save();
+            }
+        }
+        else {
+            $subject = Subject::find()->where(['contractNumber' => $dogovor])->one();
+            if ($subject == null) {
+                $subject = new Subject();
+                $subject->uuid = self::GUID();
+                $subject->owner = $title;
+                $subject->flatUuid = $flat->uuid;
+                $subject->houseUuid = $house->uuid;
+                $subject->contractDate = date('Y-m-d H:i:s');
+                $subject->contractNumber = $dogovor;
+                $subject->changedAt = date('Y-m-d H:i:s');
+                $subject->createdAt = date('Y-m-d H:i:s');
+                echo('store subject: ' . $subject->owner.' '.$subject->contractNumber . ' [' . $subject->uuid . ']' . PHP_EOL);
+                $subject->save();
+            }
         }
     }
-    
-        public static function GUID()
+
+    public static function GUID()
     {
         if (function_exists('com_create_guid') === true) {
             return trim(com_create_guid(), '{}');

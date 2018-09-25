@@ -275,6 +275,8 @@ class ResidentsController extends Controller
                     $class = 'critical1';
                 } elseif ($house['houseStatusUuid'] == HouseStatus::HOUSE_STATUS_NO_ENTRANCE) {
                     $class = 'critical2';
+                } elseif ($house['houseStatusUuid'] == HouseStatus::HOUSE_STATUS_DEFAULT) {
+                    $class = 'critical4';
                 } else {
                     $class = 'critical3';
                 }
@@ -305,9 +307,11 @@ class ResidentsController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['flat'] = $flat['number'];
 
                     if ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_ABSENT) {
-                        $class = 'critical1';
-                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE) {
                         $class = 'critical2';
+                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE) {
+                        $class = 'critical1';
+                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_DEFAULT) {
+                        $class = 'critical4';
                     } else {
                         $class = 'critical3';
                     }
