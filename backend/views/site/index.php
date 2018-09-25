@@ -14,6 +14,9 @@ use yii\widgets\Pjax;
 /* @var $objectsList */
 /* @var $objectsGroup */
 /* @var $usersList */
+/* @var $photoHouses */
+/* @var $photosGroup */
+/* @var $photosList */
 /* @var $equipmentsList */
 /* @var $equipmentsGroup */
 /* @var $ways */
@@ -360,8 +363,8 @@ $this->title = Yii::t('app', 'Карта');
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76]
     });
-    var equipmentIcon = L.icon({
-        iconUrl: '/images/equipment_marker.png',
+    var houseIcon = L.icon({
+        iconUrl: '/images/house_marker2.png',
         iconSize: [35, 35],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76]
@@ -370,6 +373,8 @@ $this->title = Yii::t('app', 'Карта');
     <?php
     echo $usersList;
     echo $usersGroup;
+    echo $photosList;
+    echo $photosGroup;
     echo $ways;
     $cnt=0;
     foreach ($users as $user) {
@@ -382,6 +387,7 @@ $this->title = Yii::t('app', 'Карта');
     var overlayMapsA = {
     };
     var overlayMapsB = {
+        "Дома": photos,
         "Пользователи": users,
         "Маршруты:": ways
         <?php
@@ -392,7 +398,7 @@ $this->title = Yii::t('app', 'Карта');
         }
         ?>
     };
-    var map = L.map('mapid',{zoomControl: false, layers: [users]}).setView([55.2969, 61.5157], 13);
+    var map = L.map('mapid',{zoomControl: false, layers: [users,photos]}).setView([55.2969, 61.5157], 13);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
         id: 'mapbox.streets'

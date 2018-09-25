@@ -31,6 +31,7 @@ use common\models\OperationStatus;
 use common\models\Orders;
 use common\models\OrderStatus;
 use common\models\OrderVerdict;
+use common\models\PhotoHouse;
 use common\models\Resident;
 use common\models\Stage;
 use common\models\StageStatus;
@@ -109,8 +110,6 @@ class SiteController extends Controller
          * Работа с картой
          * [$online, $offline, $gpsOn, $gps description]
          *
-         * @var $online - Список пользователей активных в течении 5 минут
-         * @var $offline - Список пользователей не активных в течении 5 минут
          * @var $gpsOn - Список геоданных по онлайн пользователям
          * @var $gps - Список геоданных по оффлайн пользователям
          */
@@ -122,7 +121,6 @@ class SiteController extends Controller
         $gps = 0;
         $gps2 = 0;
         $gpsStatus = false;
-
 
         $users = Users::find()->select('*')->all();
         $userList[] = $users;
@@ -196,7 +194,34 @@ class SiteController extends Controller
         /**
          * Настройки - История активности
          */
-/*
+        $cnt = 0;
+        $photosGroup = 'var photos=L.layerGroup([';
+        $photosList = '';
+        $photoHouses  = PhotoHouse::find()
+            ->select('*')
+            //->groupBy('houseUuid')
+            //->asArray()
+            ->all();
+
+        foreach ($photoHouses as $photoHouse) {
+            if ($photoHouse["latitude"] > 0) {
+                $photosList .= 'var photo'
+                    . $photoHouse["_id"]
+                    . '= L.marker([' . $photoHouse["latitude"]
+                    . ',' . $photoHouse["longitude"]
+                    . '], {icon: houseIcon}).bindPopup("<b>'
+                    . $photoHouse["house"]["street"]->title.', '.$photoHouse["house"]->number. '</b><br/>'
+                    . $photoHouse["user"]->name . '['.$photoHouse['createdAt'].']").openPopup();';
+                if ($cnt > 0) {
+                    $photosGroup .= ',';
+                }
+                $photosGroup .= 'photo' . $photoHouse["_id"];
+                $cnt++;
+            }
+        }
+        $photosGroup .= ']);' . PHP_EOL;
+
+        /*
         $accountUser = Yii::$app->user->identity;
         $journalUserId = JournalUser::find()
             ->where(['userId' => $accountUser['id']])
@@ -289,6 +314,9 @@ class SiteController extends Controller
                 'users' => $userData,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
+                'photos' => $photoHouses,
+                'photosGroup' => $photosGroup,
+                'photosList' => $photosList,
                 'ways' => $ways,
                 'wayUsers' => $wayUsers,
                 'lats' => $lats,
