@@ -29,7 +29,7 @@ class Subject extends ActiveRecord
     {
         return [
             [
-                'class' => TimestampBehavior::className(),
+                'class' => TimestampBehavior::class,
                 'createdAtAttribute' => 'createdAt',
                 'updatedAtAttribute' => 'changedAt',
                 'value' => new Expression('NOW()'),
@@ -68,6 +68,7 @@ class Subject extends ActiveRecord
             'house' => function ($model) {
                 return $model->house;
             },
+            'flatUuid',
             'flat' => function ($model) {
                 return $model->flat;
             },
@@ -85,7 +86,7 @@ class Subject extends ActiveRecord
 
     public function getFlat()
     {
-        return $this->hasOne(Flat::className(), ['uuid' => 'flatUuid']);
+        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
     }
 
     /**
