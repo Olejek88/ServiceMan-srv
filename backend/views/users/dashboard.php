@@ -18,10 +18,7 @@ $this->title = Yii::t('app', 'Пользователи');
                 if ($count>0) print '</div>';
                 print '<div class="row">';
             }
-            $path = $user->getImageUrl();
-            if (!$path || !$user['image']) {
-                $path='/images/unknown.png';
-            }
+            $path='/images/unknown.png';
             print '<div class="col-md-4">
                         <div class="box box-widget widget-user-2">
                         <div class="widget-user-header bg-yellow">
@@ -30,14 +27,14 @@ $this->title = Yii::t('app', 'Пользователи');
                 ['/users/view', 'id' => Html::encode($user['_id'])]);
                 print '</div>';
                 print '<h3 class="widget-user-username" style="color: white; font-size: 24px">'.$user['name'].'</h3>';
-                print '<h5 class="widget-user-desc" style="color: white; font-size: 14px">'.$user['whoIs'].'</h5>';
+                print '<h5 class="widget-user-desc" style="color: white; font-size: 14px">'.$user['contact'].'</h5>';
                 print '</div>
                         <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
-                            <li><a href="/orders/table">Нарядов 
-                            <span class="pull-right badge bg-blue">'.$user_property[$count]['orders'].'</span></a></li>
-                            <li><a href="#">Дефектов 
-                            <span class="pull-right badge bg-red">'.$user_property[$count]['defects'].'</span></a></li>
+                            <li><a href="#">Фотографий
+                            <span class="pull-right badge bg-blue">'.$user_property[$count]['photos'].'</span></a></li>
+                            <li><a href="#">Аварий 
+                            <span class="pull-right badge bg-red">'.$user_property[$count]['alarms'].'</span></a></li>
                             <li><a href="#">Сообщений 
                             <span class="pull-right badge bg-green">'.$user_property[$count]['messages'].'</span></a></li>
                         </ul>

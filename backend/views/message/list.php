@@ -31,16 +31,6 @@ $this->title = Yii::t('app', 'Сообщения');
                             </button>
                         </div>
                     </div>
-                    <div class="box-body no-padding">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li class="<?php if (!isset($_GET['type'])) echo 'active'; ?>"><a href="/message/list"><i class="fa fa-inbox"></i> Входящие
-                                    <span class="label label-primary pull-right"><?php echo count($income) ?></span></a></li>
-                            <li class="<?php if (isset($_GET['type'])) echo 'active'; ?>"><a href="/message/list?type=sent"><i class="fa fa-envelope-o"></i> Отправленные
-                                    <span class="label label-primary pull-right"><?php echo count($sent) ?></span></a></li>
-                            <li><a href="#"><i class="fa fa-trash-o"></i> Корзина</a></li>
-                        </ul>
-                    </div>
-                    <!-- /.box-body -->
                 </div>
                 <!-- /. box -->
                 <div class="box box-solid">
@@ -64,10 +54,7 @@ $this->title = Yii::t('app', 'Сообщения');
             <div class="col-md-9">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">
-                            <?php if (isset($_GET['type']) && $_GET['type']=='')
-                                echo 'Входящие'; else echo 'Отправленные'; ?>
-                        </h3>
+                        <h3 class="box-title">Входящие</h3>
 
                         <div class="box-tools pull-right">
                             <div class="has-feedback">
@@ -98,14 +85,11 @@ $this->title = Yii::t('app', 'Сообщения');
                                     $messages = $sent;
                                 foreach ($messages as $message) {
                                     print '<tr><td><input type="checkbox"></td>';
-                                    if ($message['status']>0)
-                                        print '<td class="mailbox-star"><i class="fa fa-star text-yellow"></i></td>';
-                                    else
-                                        print '<td class="mailbox-star"><i class="fa fa-star-o text-yellow"></i></td>';
+                                    print '<td class="mailbox-star"><i class="fa fa-star text-yellow"></i></td>';
                                     print '<td class="mailbox-name">
-                                    <a href="/users/view?id='.$message['fromUser']->id.'">'.$message['fromUser']->name.'</a></td>';
-                                    print '<td class="mailbox-subject">'.$message['text'].'</td>';
-                                    print '<td class="mailbox-attachment"></td>';
+                                    <a href="/users/view?id='.$message['user']->_id.'">'.$message['user']->name.'</a></td>';
+                                    print '<td class="mailbox-subject">'.$message['message'].'</td>';
+                                    print '<td class="mailbox-attachment">'.$message['flat']->number.'</td>';
                                     print '<td class="mailbox-date">'.$message['date'].'</td></tr>';
                                 }
                                 ?>

@@ -13,12 +13,6 @@ $this->title = Yii::t('app', 'Сообщения');
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 255px; margin: 0 auto;">
-                <li><a href="/users">Пользователи</a></li>
-                <li><a href="/message-type">Тип</a></li>
-                <li><a href="/message-channel">Канал</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -41,7 +35,7 @@ $this->title = Yii::t('app', 'Сообщения');
                                     'attribute'=>'_id',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center; padding: 18px 10px 15px 10px;'
+                                        'style'=>'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -49,28 +43,25 @@ $this->title = Yii::t('app', 'Сообщения');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'fromUserUuid',
+                                    'attribute'=>'userUuid',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'fromUser.name',
+                                    'value'     => 'user.name',
                                 ],
                                 [
-                                    'attribute'=>'toUserUuid',
+                                    'attribute'=>'flatUuid',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'toUser.name',
+                                    'value'     => 'flat.number',
                                 ],
                                 [
                                     'attribute'=>'date',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -78,25 +69,13 @@ $this->title = Yii::t('app', 'Сообщения');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'text',
+                                    'attribute'=>'message',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return $data->text;
-                                    }
-                                ],
-                                [
-                                    'attribute'=>'status',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return $data->status;
+                                        return $data->message;
                                     }
                                 ],
                                 [
@@ -105,7 +84,6 @@ $this->title = Yii::t('app', 'Сообщения');
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],
                                     'contentOptions' =>[
                                         'class' => 'text-center',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

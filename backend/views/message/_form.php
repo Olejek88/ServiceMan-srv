@@ -1,5 +1,7 @@
 <?php
 
+use common\models\Flat;
+use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -36,13 +38,25 @@ use dosamigos\datetimepicker\DateTimePicker;
     <?php
     $user  = Users::find()->all();
     $items = ArrayHelper::map($user,'uuid','name');
-    echo $form->field($model, 'fromUserUuid')->dropDownList($items);
+    echo $form->field($model, 'userUuid')->dropDownList($items);
     ?>
 
     <?php
-    $user  = Users::find()->all();
-    $items = ArrayHelper::map($user,'uuid','name');
-    echo $form->field($model, 'toUserUuid')->dropDownList($items);
+    $flat  = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function($model) {
+        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    });
+    echo $form->field($model, 'flatUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите квартиру..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px;">
@@ -61,9 +75,7 @@ use dosamigos\datetimepicker\DateTimePicker;
         ?>
     </div>
 
-    <?= $form->field($model, 'text')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'status')->checkbox() ?>
+    <?= $form->field($model, 'message')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-center">
 
