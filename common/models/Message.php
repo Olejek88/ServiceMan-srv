@@ -17,6 +17,7 @@ use yii\db\Expression;
  * @property string $date
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $message
  *
  * @property Users $user
  * @property Flat $flat
@@ -50,7 +51,7 @@ class Message extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'message';
+        return '{{%message}}';
     }
 
     /**
