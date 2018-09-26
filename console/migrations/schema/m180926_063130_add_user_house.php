@@ -7,7 +7,7 @@ use yii\db\Migration;
  */
 class m180926_063130_add_user_house extends Migration
 {
-    const USER_HOUSE = '{{%usr_house}}';
+    const USER_HOUSE = '{{%user_house}}';
     const FK_RESTRICT = 'RESTRICT';
     const FK_CASCADE = 'CASCADE';
 
