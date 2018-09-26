@@ -222,17 +222,6 @@ class UsersController extends Controller
     }
 
     /**
-     * @inheritdoc
-     */
-    public function beforeAction($action){
-        if ($action=='actionCreate' || $action=='actionUpdate') {
-            if(!empty($this->pin))
-                $this->pin = md5($this->pin);
-        }
-        return parent::beforeAction($action);
-    }
-
-    /**
      * @return mixed
      */
     public function actionDashboard()

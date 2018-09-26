@@ -70,7 +70,7 @@ $this->title = Yii::t('app', 'Пользователи');
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return md5($data->pin);
+                                        $data->pin;
                                     }
                                 ],
                                 [
