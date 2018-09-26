@@ -205,7 +205,7 @@ class UsersController extends Controller
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 MainFunctions::register('Добавлен пользователь ' . $model->name);
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render('create', ['model' => $model]);
             }
@@ -257,7 +257,7 @@ class UsersController extends Controller
 
             if ($model->save()) {
                 MainFunctions::register('Обновлен профиль пользователя ' . $model->name);
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render(
                     'update',

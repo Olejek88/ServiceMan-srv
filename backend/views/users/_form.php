@@ -45,7 +45,7 @@ use kartik\file\FileInput;
 
     <?php
     $users = User::find()->all();
-    $items = ArrayHelper::map($users, 'id', 'username');
+    $items = ArrayHelper::map($users, '_id', 'username');
     echo $form->field($model, 'user_id')->dropDownList($items);
     ?>
 
