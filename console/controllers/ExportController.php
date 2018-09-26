@@ -24,8 +24,8 @@ class ExportController extends Controller
         echo('[' . self::LOG_ID . '] start load flats').PHP_EOL;
         echo('[' . self::LOG_ID . '] [' . Yii::$app->db->dsn . '] user/pass ' . Yii::$app->db->username).PHP_EOL;
         $reader = new Xls();
-        for ($year = 2016; $year <= 2018; $year++) {
-            for ($file_private = 1; $file_private <= 12; $file_private++) {
+        for ($year = 2018; $year <= 2018; $year++) {
+            for ($file_private = 9; $file_private <= 12; $file_private++) {
                 $file_name = \Yii::$app->basePath . "/export-data/data/".$year."/" . sprintf("%02d", $file_private) . ".".$year.".xls";
                 echo ('[' . self::LOG_ID . '] ' . $file_name) . PHP_EOL;
                 if (file_exists($file_name)) {
@@ -144,7 +144,7 @@ class ExportController extends Controller
                             $userHouse->changedAt = date('Y-m-d H:i:s');
                             $userHouse->createdAt = date('Y-m-d H:i:s');
                             echo('store user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);
-                            $userHouse->save();
+                            //$userHouse->save();
                         }
                     }
                 }
