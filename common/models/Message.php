@@ -97,6 +97,7 @@ class Message extends ActiveRecord
             'date' => Yii::t('app', 'Дата'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
+            'message' => Yii::t('app', 'Сообщение'),
         ];
     }
 
@@ -119,6 +120,7 @@ class Message extends ActiveRecord
             'date',
             'createdAt',
             'changedAt',
+            'message',
         ];
     }
 
