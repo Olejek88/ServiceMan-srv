@@ -47,7 +47,7 @@ class StreetController extends Controller
     {
         $searchModel = new StreetSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 150;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
