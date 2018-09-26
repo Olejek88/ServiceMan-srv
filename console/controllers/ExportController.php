@@ -8,6 +8,8 @@ use common\models\HouseType;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
+use common\models\UserHouse;
+use common\models\Users;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use \yii\console\Controller;
 use Yii;
@@ -97,6 +99,60 @@ class ExportController extends Controller
                     }
                 }
             }
+        }
+    }
+
+    public function actionUserHouse()
+    {
+        echo('[' . self::LOG_ID . '] start user house definition').PHP_EOL;
+        $reader = new Xls();
+        $file_name = \Yii::$app->basePath."/export-data/data/controller.xls";
+        echo('[' . self::LOG_ID . '] '.$file_name).PHP_EOL;
+        $file = $reader->load($file_name);
+        $sheet = $file->getActiveSheet();
+
+        $row_num = 0;
+        foreach ($sheet->getRowIterator() as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(FALSE);
+            $cell_num = 0;
+            $userValue = '';
+            $streetValue = '';
+            foreach ($cellIterator as $cell) {
+                switch ($cell_num) {
+                    case 1:
+                        $streetValue = $cell->getValue()."";
+                        break;
+                    case 2:
+                        $userValue = $cell->getValue()."";
+                        break;
+                }
+                $cell_num++;
+            }
+            if ($streetValue!='' && $userValue!='') {
+                $user = Users::find()->where(['_id' => $userValue])->one();
+                $street = Street::find()->where(['title' => $streetValue])->one();
+                if ($street!=null && $user!=null) {
+                    $houses = House::find()->where(['streetUuid' => $street['uuid']])->all();
+                    foreach ($houses as $house) {
+                        $userHouse = UserHouse::find()->where(['userUuid' => $user['uuid']])->andWhere(['houseUuid' => $house['uuid']])->one();
+                        if ($userHouse == null) {
+                            $userHouse = new UserHouse();
+                            $userHouse->uuid = MainFunctions::GUID();
+                            $userHouse->userUuid = $user['uuid'];
+                            $userHouse->houseUuid = $house['uuid'];
+                            $userHouse->changedAt = date('Y-m-d H:i:s');
+                            $userHouse->createdAt = date('Y-m-d H:i:s');
+                            echo('store user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);
+                            $userHouse->save();
+                        }
+                    }
+                }
+            }
+            else {
+                echo 'cannot find street='.$streetValue.' | user='.$userValue;
+            }
+            $row_num++;
         }
     }
 
