@@ -211,7 +211,6 @@ class UsersController extends Controller
                     // уведомить пользователя, админа о невозможности сохранить файл
                 }
             }
-
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 MainFunctions::register('Добавлен пользователь ' . $model->name);
                 return $this->redirect(['view', 'id' => $model->_id]);
@@ -223,12 +222,35 @@ class UsersController extends Controller
     }
 
     /**
+     * @inheritdoc
+     */
+    public function beforeAction($action){
+        if ($action=='actionCreate' || $action=='actionUpdate') {
+            if(!empty($this->pin))
+                $this->pin = md5($this->pin);
+        }
+        return parent::beforeAction($action);
+    }
+
+    /**
      * @return mixed
      */
     public function actionDashboard()
     {
         $users = Users::find()->orderBy('createdAt DESC')->all();
         $user_property[][]='';
+        $count=0;
+        foreach ($users as $user) {
+            $user_photo_flat = PhotoFlat::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_photo_equipment = PhotoEquipment::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_photo_house = PhotoHouse::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['photos']=$user_photo_house+$user_photo_flat+$user_photo_equipment;
+            $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['alarms']=$user_alarms;
+            //$user_messages = Message::find()->where(['toUserUuid' => $user['uuid']])->count();
+            $user_property[$count]['messages']=0;
+            $count++;
+        }
         return $this->render('dashboard', [
             'users'  => $users,
             'user_property'  => $user_property
