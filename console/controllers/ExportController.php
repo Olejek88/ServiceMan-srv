@@ -1,7 +1,7 @@
 <?php
 
 namespace console\controllers;
-use app\commands\MainFunctions;
+use common\components\MainFunctions;
 use common\models\City;
 use common\models\House;
 use common\models\HouseType;
