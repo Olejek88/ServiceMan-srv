@@ -86,7 +86,7 @@ class Users extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'name' => Yii::t('app', 'Имя'),
-            'pin' => Yii::t('app', 'Пин код'),
+            'pin' => Yii::t('app', 'Хеш пин кода'),
             'contact' => Yii::t('app', 'Контакт'),
             'user_id' => Yii::t('app', 'User id'),
             'createdAt' => Yii::t('app', 'Создан'),

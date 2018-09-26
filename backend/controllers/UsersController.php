@@ -104,9 +104,15 @@ class UsersController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        $oldPin = $model->pin;
         $oldImage = $model->image;
         // сохраняем старое значение image
         if ($model->load(Yii::$app->request->post())) {
+            // хешируем пин
+            if ($oldPin != $model->pin) {
+                $model->pin = md5($model->pin);
+            }
+
             // получаем изображение для последующего сохранения
             $file = UploadedFile::getInstance($model, 'image');
             if ($file && $file->tempName) {
@@ -191,6 +197,9 @@ class UsersController extends Controller
             if (!$model->validate()) {
                 return $this->render('create', ['model' => $model]);
             }
+
+            // хешируем пин
+            $model->pin = md5($model->pin);
 
             // получаем изображение для последующего сохранения
             $file = UploadedFile::getInstance($model, 'image');
