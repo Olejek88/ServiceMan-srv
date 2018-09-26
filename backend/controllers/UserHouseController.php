@@ -2,10 +2,12 @@
 
 namespace backend\controllers;
 
+use app\commands\MainFunctions;
 use backend\models\HouseSearch;
 use backend\models\UserHouseSearch;
 use common\models\House;
 use common\models\UserHouse;
+use common\models\Users;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -91,6 +93,44 @@ class UserHouseController extends Controller
                 'model' => $model,
             ]);
         }
+    }
+
+    /**
+     * Creates a records for all House model.
+     * @return mixed
+     */
+    public function actionCreateDefault()
+    {
+        $houses = House::find()
+            ->all();
+        $currentUser = Users::find()
+            ->where('user_id>3')
+            ->asArray()
+            ->one();
+
+        foreach ($houses as $house) {
+            $userHouse = UserHouse::find()
+                ->where(['houseUuid' => $house['uuid']])
+                ->all();
+            if ($userHouse==null) {
+                $model = new UserHouse();
+                $model->uuid = MainFunctions::GUID();
+                $model->userUuid = $currentUser['uuid'];
+                $model->houseUuid = $house['uuid'];
+                $model->changedAt = date('Y-m-d H:i:s');
+                $model->createdAt = date('Y-m-d H:i:s');
+                echo('store user house: ' . $model->uuid . ' [' . $model->userUuid . ']' . PHP_EOL . '<br/>');
+                $model->save();
+            }
+        }
+        $searchModel = new UserHouseSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 100;
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
