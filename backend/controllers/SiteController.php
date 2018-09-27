@@ -522,7 +522,7 @@ class SiteController extends Controller
                 ->one();
 
             $status = '<a class="btn btn-success btn-xs">Значение</a>';
-            $path = '/storage/flat/' . $photo['uuid'] . '.jpg';
+            $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
             if ($path == null)
                 $path = 'images/no-image-icon-4.png';
             $text = '<img src="' . Html::encode($path) . '" class="margin" style="width:50px; margin: 2; float:left" alt="">';

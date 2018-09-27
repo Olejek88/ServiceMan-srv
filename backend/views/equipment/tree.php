@@ -27,7 +27,7 @@ $this->title = 'Дерево моделей оборудования';
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="120px">
+        <col width="100px">
         <col width="120px">
         <col width="130px">
         <col width="130px">
