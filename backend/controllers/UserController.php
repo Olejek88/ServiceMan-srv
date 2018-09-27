@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use backend\models\User;
 use backend\models\UserSearch;
+use common\models\User;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -61,7 +61,7 @@ class UserController extends Controller
     public function actionView($id)
     {
 
-        $model = User::find()->where(['id' => $id])->one();
+        $model = User::find()->where(['_id' => $id])->one();
 
         return $this->render('view', [
             'model' => $model,
@@ -78,7 +78,7 @@ class UserController extends Controller
         $model = new User;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', '_id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -105,7 +105,7 @@ class UserController extends Controller
     public function actionUpdate($id)
     {
         $model = new User;
-        $model = $model::find()->where(['id' => $id])->one();
+        $model = $model::find()->where(['_id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model['id']]);
@@ -125,7 +125,7 @@ class UserController extends Controller
     public function actionDelete($id)
     {
         $model = new User;
-        $model = $model::find()->where(['id' => $id])->one();
+        $model = $model::find()->where(['_id' => $id])->one();
 
         $model->delete();
 

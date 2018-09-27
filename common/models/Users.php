@@ -126,4 +126,6 @@ class Users extends ActiveRecord
     {
         return $this->hasOne(User::class, ['_id' => 'user_id']);
     }
+
+    public const USER_SERVICE_UUID = '00000000-9bf0-4542-b127-f4ecefce49da';
 }
