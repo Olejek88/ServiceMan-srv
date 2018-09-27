@@ -49,12 +49,7 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-            if (!$user
-                || !$user->validatePin($this->pin)
-//                || !$user->role
-//              || !in_array($user->role, User::$back_allowed_roles)
-            ) {
-//                $this->addError($attribute, Yii::t('app', 'error password'));
+            if (!$user || !$user->validatePin($this->pin)) {
                 throw new UnauthorizedHttpException();
             }
         }

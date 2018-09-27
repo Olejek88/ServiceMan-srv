@@ -72,12 +72,13 @@ class UserToken extends ActiveRecord
     }
 
     /**
-     * дергаем время последнего доступа по токену
+     * дергаем время последнего доступа по токену, продлеваем его на неделю.
      */
     public function touchLastAccess()
     {
+        $this->valid_till = date(DATE_W3C, strtotime('+1 week'));
         $this->last_access = new Expression('CURRENT_TIMESTAMP');
-        $this->save(false, ['last_access']);
+        $this->save(false, ['last_access', 'valid_till']);
     }
 
     /**
