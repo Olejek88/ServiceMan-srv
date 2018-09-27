@@ -30,6 +30,7 @@ use common\models\OperationStatus;
 use common\models\Orders;
 use common\models\OrderStatus;
 use common\models\OrderVerdict;
+use common\models\PhotoEquipment;
 use common\models\PhotoHouse;
 use common\models\Resident;
 use common\models\Stage;
@@ -515,12 +516,21 @@ class SiteController extends Controller
             ->limit(20)
             ->all();
         foreach ($measures as $measure) {
+            $photo = PhotoEquipment::find()
+                ->where(['equipmentUuid' => $measure['equipmentUuid']])
+                ->orderBy('createdAt DESC')
+                ->one();
+
             $status = '<a class="btn btn-success btn-xs">Значение</a>';
-            //$path = $measure['equipment']->getPhotoUrl();
-            //if ($path == null)
-            $path = '/images/no-image-icon-4.png';
+            $path = '/storage/flat/' . $photo['uuid'] . '.jpg';
+            if ($path == null)
+                $path = 'images/no-image-icon-4.png';
             $text = '<img src="' . Html::encode($path) . '" class="margin" style="width:50px; margin: 2; float:left" alt="">';
-            $text .= '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
+            $text .= '<a class="btn btn-default btn-xs">'.
+                $measure['equipment']['equipmentType']->title . ' [' .
+                $measure['equipment']['flat']['house']['street']->title . ', ' .
+                $measure['equipment']['flat']['house']->number . ', ' .
+                $measure['equipment']['flat']['number'] . ']</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Оборудование: ' . $measure['equipment']['equipmentType']->title . '<br/>
                 <i class="fa fa-check-square"></i>&nbsp;Значение: ' . $measure['value'] . '';
             $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',

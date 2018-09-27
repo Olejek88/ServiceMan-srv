@@ -40,7 +40,12 @@ foreach ($equipments as $next_equipment) {
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
-                            <img src="../<?php echo Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])) ?>" style="padding:2px;width:100%">
+                            <?php
+                                if ($photoFlat!=null)
+                                echo '<img src="'.
+                                    Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])).'
+                                    " style="padding:2px;width:100%">';
+                            ?>
                             <div class="small text-muted"><?php echo $photoFlat['date'] ?></div>
                         </div>
                     </div>
@@ -49,7 +54,7 @@ foreach ($equipments as $next_equipment) {
                         if ($equipment_photo[$t]!='') {
                             echo '<div class="col-sm-2">';
                             echo '<div class="img-thumbnail img-rounded text-center">';
-                            echo '<img style="padding:2px;width:100%" src="../' .
+                            echo '<img style="padding:2px;width:100%" src="' .
                                 Html::encode(MainFunctions::getImagePath('equipment', $equipment_photo[$t]['uuid'])) . '">
                             <div class="small text-muted">' . $equipment_photo[$t]['date'] . '</div></div></div>';
                         }

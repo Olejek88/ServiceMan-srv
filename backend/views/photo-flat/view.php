@@ -1,25 +1,19 @@
 <?php
-/*  @var $model \common\models\MeasureType  */
+/*  @var $model \common\models\PhotoFlat  */
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use common\components\MyHelpers;
-
-$this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы измерений'), 'url' => ['index']];
 ?>
 <div class="order-status-view box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
-            <h3 class="text-center" style="color: #333;">
-                <?= Html::encode($this->title) ?>
-            </h3>
+            <h3 class="text-center" style="color: #333;">Фотография квартиры</h3>
         </div>
         <div class="panel-body">
             <?php
-            $tmpPath = '/' . $model->uuid . '/' . $model->icon;
-            $path = MyHelpers::getImgUrl($tmpPath);
+            $path = '/storage/flat/' . $model->uuid . '.jpg';
             ?>
             <div class="user-image-photo">
                 <img src="<?php echo Html::encode($path) ?>" alt="">

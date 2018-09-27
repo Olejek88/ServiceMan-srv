@@ -18,7 +18,8 @@ $measures = Measure::find()
     ->all();
 $photo = PhotoEquipment::find()
     ->where(['equipmentUuid' => $equipment['uuid']])
-    ->all();
+    ->orderBy('createdAt DESC')
+    ->one();
 
 $categories = "[";
 $values="name: 'Значения', data: [";
