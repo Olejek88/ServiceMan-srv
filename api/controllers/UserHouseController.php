@@ -4,13 +4,13 @@ namespace api\controllers;
 
 use api\components\BaseController;
 use common\models\User;
-use common\models\Equipment;
+use common\models\UserHouse;
 use yii\db\ActiveRecord;
 
-class EquipmentController extends BaseController
+class UserHouseController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = Equipment::class;
+    public $modelClass = UserHouse::class;
 
     public function actionIndex()
     {
@@ -25,12 +25,12 @@ class EquipmentController extends BaseController
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
-            $query->andWhere(['`equipment`.`uuid`' => $uuid]);
+            $query->andWhere(['`user_house`.`uuid`' => $uuid]);
         }
 
         $changedAfter = $req->getQueryParam('changedAfter');
         if ($changedAfter != null) {
-            $query->andWhere(['>=', '`equipment`.`changedAt`', $changedAfter]);
+            $query->andWhere(['>=', '`user_house`.`changedAt`', $changedAfter]);
         }
 
         // проверяем что хоть какие-то условия были заданы
@@ -39,20 +39,9 @@ class EquipmentController extends BaseController
         }
 
         // выбираем данные из базы
-        $query->select('equipment.*')
-            ->leftJoin('flat', '`equipment`.`flatUuid` = `flat`.`uuid`')
-            ->leftJoin('user_house', '`flat`.`houseUuid` = `user_house`.`houseUuid`')
-            ->andWhere(['`user_house`.`userUuid`' => $users->uuid]);
+        $query->andWhere(['`user_house`.`userUuid`' => $users->uuid]);
         $result = $query->asArray()->all();
 
         return $result;
-    }
-
-    /**
-     * @return array
-     */
-    public function actionCreate()
-    {
-        return parent::createBase();
     }
 }

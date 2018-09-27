@@ -2,7 +2,7 @@
 
 namespace api\components;
 
-use api\models\User;
+use common\models\Users;
 use common\components\IPhoto;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
@@ -92,7 +92,7 @@ class BaseController extends Controller
             case FlatStatus::class :
             case EquipmentType::class :
             case EquipmentStatus::class :
-            case User::class :
+            case Users::class :
                 // выбираем данные из базы
                 $result = $query->all();
                 break;
