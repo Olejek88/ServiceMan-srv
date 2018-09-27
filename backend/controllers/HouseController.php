@@ -22,7 +22,7 @@ class HouseController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -47,7 +47,7 @@ class HouseController extends Controller
     {
         $searchModel = new HouseSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 500;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -79,7 +79,7 @@ class HouseController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $searchModel = new HouseSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 15;
+            $dataProvider->pagination->pageSize = 500;
             return $this->render('index', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

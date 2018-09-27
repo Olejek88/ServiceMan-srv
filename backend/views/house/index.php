@@ -64,7 +64,7 @@ $this->title = Yii::t('app', 'Дом');
                                             ->where(['houseUuid' => $data['uuid']])
                                             ->one();
                                         return Html::a($data->number,
-                                            '/user-house/update?id='.$userHouseId);
+                                            '/user-house/update?id='.$userHouseId['_id']);
                                     }
                                 ],
                                 [
