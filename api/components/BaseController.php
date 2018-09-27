@@ -2,7 +2,17 @@
 
 namespace api\components;
 
+use api\models\User;
 use common\components\IPhoto;
+use common\models\AlarmStatus;
+use common\models\AlarmType;
+use common\models\City;
+use common\models\EquipmentStatus;
+use common\models\EquipmentType;
+use common\models\FlatStatus;
+use common\models\FlatType;
+use common\models\HouseStatus;
+use common\models\HouseType;
 use yii\db\ActiveRecord;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
@@ -36,13 +46,13 @@ class BaseController extends Controller
 
     public function actionIndex()
     {
-        // проверяем параметры запроса
         $req = \Yii::$app->request;
 
         /** @var ActiveRecord $class */
         $class = $this->modelClass;
         $query = $class::find();
 
+        // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
             $query->andWhere(['uuid' => $uuid]);
@@ -71,8 +81,25 @@ class BaseController extends Controller
          * }])->asArray()->all()
          */
 
-        // выбираем данные из базы
-        $result = $query->all();
+        // отдаём "простые" справочники, т.е. которые не ссылаются на другие таблицы
+        switch ($this->modelClass) {
+            case City::class :
+            case AlarmType::class :
+            case AlarmStatus::class :
+            case HouseType::class :
+            case HouseStatus::class :
+            case FlatType::class :
+            case FlatStatus::class :
+            case EquipmentType::class :
+            case EquipmentStatus::class :
+            case User::class :
+                // выбираем данные из базы
+                $result = $query->all();
+                break;
+            default :
+                $result = [];
+        }
+
         return $result;
     }
 
