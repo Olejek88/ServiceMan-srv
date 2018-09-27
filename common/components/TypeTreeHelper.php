@@ -11,7 +11,7 @@
 
 namespace common\components;
 
-use \yii\db\ActiveRecord;
+use yii\db\ActiveRecord;
 
 /**
  * This is the class TypeTreeHelper.

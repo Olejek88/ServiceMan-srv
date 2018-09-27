@@ -23,7 +23,6 @@ use common\models\EquipmentType;
 use common\models\ExternalEvent;
 use common\models\Flat;
 use common\models\Gpstrack;
-use common\models\Journal;
 use common\models\LoginForm;
 use common\models\Measure;
 use common\models\Operation;

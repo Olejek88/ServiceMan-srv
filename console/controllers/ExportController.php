@@ -3,6 +3,7 @@
 namespace console\controllers;
 use common\components\MainFunctions;
 use common\models\City;
+use common\models\Flat;
 use common\models\House;
 use common\models\HouseType;
 use common\models\Resident;
@@ -11,9 +12,8 @@ use common\models\Subject;
 use common\models\UserHouse;
 use common\models\Users;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
-use \yii\console\Controller;
 use Yii;
-use common\models\Flat;
+use yii\console\Controller;
 
 class ExportController extends Controller
 {

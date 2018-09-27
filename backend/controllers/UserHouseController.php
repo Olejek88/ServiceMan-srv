@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use app\commands\MainFunctions;
-use backend\models\HouseSearch;
 use backend\models\UserHouseSearch;
 use common\models\House;
 use common\models\UserHouse;

@@ -1,27 +1,18 @@
 <?php
+/* @var $searchModel backend\models\PhotoEquipmentSearch */
 
-use common\models\UserHouse;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $searchModel  backend\models\HouseSearch */
-
-$this->title = Yii::t('app', 'Дом');
+$this->title = Yii::t('app', 'Фотографии оборудования');
 ?>
-<div class="orders-index box-padding-index">
+<div class="equipment-index box-padding-index">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 305px; margin: 0 auto;">
-                <li class=""><a href="/city">Города</a></li>
-                <li class=""><a href="/street">Улицы</a></li>
-                <li class="active"><a href="/house">Дома</a></li>
-                <li class=""><a href="/flat">Квартиры</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -52,50 +43,54 @@ $this->title = Yii::t('app', 'Дом');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'number',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class'
+                                    'attribute' => 'equipmentUuid',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'hAlign' => 'center',
+                                        'style' => 'width: 200px'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        $userHouseId = UserHouse::find()
-                                            ->select('_id')
-                                            ->where(['houseUuid' => $data['uuid']])
-                                            ->one();
-                                        return Html::a($data->number,
-                                            '/user-house/update?id='.$userHouseId['_id']);
+                                    'content' => function ($data) {
+                                        return $data['equipment']['equipmentType']->title . ' [' .
+                                            $data['equipment']['flat']['house']['street']->title . ', ' .
+                                            $data['equipment']['flat']['house']->number . ', ' .
+                                            $data['equipment']['flat']['number'] . ']';
+
                                     }
                                 ],
                                 [
-                                    'attribute'=>'street',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class'
+                                    'attribute' => 'userUuid',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 200px'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'street.title',
+                                    'value' => 'user.name'
                                 ],
                                 [
-                                    'attribute'=>'houseStatus',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class'
+                                    'attribute' => 'latitude',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 100px'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'houseStatus.title',
+                                    'value' => 'latitude'
                                 ],
                                 [
-                                    'attribute'=>'houseType',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class'
+                                    'attribute' => 'longitude',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 100px'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'houseType.title',
+                                    'value' => 'longitude'
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
                                     'header'=>'Действия',
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],
                                     'contentOptions' =>[
-                                        'class' => 'text-center'
+                                        'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

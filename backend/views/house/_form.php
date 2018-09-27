@@ -1,9 +1,5 @@
 <?php
 
-use common\models\City;
-use common\models\FlatStatus;
-use common\models\House;
-use common\models\HouseStatus;
 use common\models\HouseType;
 use common\models\Street;
 use kartik\widgets\Select2;
@@ -12,10 +8,6 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 
 use app\commands\MainFunctions;
-use common\models\Orders;
-use common\models\TaskVerdict;
-use common\models\TaskStatus;
-use common\models\TaskTemplate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\House */

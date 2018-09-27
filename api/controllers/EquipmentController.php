@@ -3,8 +3,8 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\User;
 use common\models\Equipment;
+use common\models\User;
 use yii\db\ActiveRecord;
 
 class EquipmentController extends BaseController

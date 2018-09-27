@@ -4,8 +4,8 @@ namespace common\models;
 
 use common\components\IPhoto;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**

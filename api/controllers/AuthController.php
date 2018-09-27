@@ -3,7 +3,6 @@
 namespace api\controllers;
 
 use api\models\form\LoginForm;
-use common\models\Users;
 use yii\rest\Controller;
 use yii\web\Response;
 

@@ -2,14 +2,15 @@
 
 namespace backend\models;
 
-use common\models\Message;
+use common\models\EventAttributeType;
+use common\models\PhotoEquipment;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * MessageSearch represents the model behind the search form about `common\models\Message`.
+ * PhotoEquipmentSearch represents the model behind the search form about `common\models\PhotoEquipment`.
  */
-class MessageSearch extends Message
+class PhotoEquipmentSearch extends PhotoEquipment
 {
     /**
      * @inheritdoc
@@ -18,7 +19,7 @@ class MessageSearch extends Message
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'flatUuid', 'userUuid', 'date', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'equipmentUuid', 'userUuid', 'latitude', 'longitude', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +41,7 @@ class MessageSearch extends Message
      */
     public function search($params)
     {
-        $query = Message::find();
+        $query = PhotoEquipment::find();
 
         // add conditions that should always apply here
 
@@ -59,14 +60,16 @@ class MessageSearch extends Message
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'date' => $this->date,
+            'userUuid' => $this->userUuid,
+            'equipmentUuid' => $this->equipmentUuid,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
-            ->andFilterWhere(['like', 'userUuid', $this->userUuid]);
+            ->orderBy(['changedAt' => SORT_DESC]);
 
         return $dataProvider;
     }

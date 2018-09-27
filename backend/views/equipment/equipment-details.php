@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\Measure;
+use common\models\PhotoEquipment;
 use yii\helpers\Html;
 
 /* @var $model \common\models\Equipment */
@@ -13,6 +14,9 @@ $equipment = Equipment::find()
 $models = Equipment::findOne($model['_id']);
 
 $measures = Measure::find()
+    ->where(['equipmentUuid' => $equipment['uuid']])
+    ->all();
+$photo = PhotoEquipment::find()
     ->where(['equipmentUuid' => $equipment['uuid']])
     ->all();
 
@@ -40,7 +44,13 @@ $categories .= "]";
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
-                            <img src="<?php echo Html::encode(MainFunctions::getImagePath('equipment', $equipment['uuid'])) ?>" style="padding:2px;width:100%">
+                            <?php
+                                if ($photo!=null) {
+                                    echo '<img src="'.
+                                        Html::encode(MainFunctions::getImagePath('equipment', $photo['uuid'])).'
+                                        " style="padding:2px;width:100%">';
+                                }
+                            ?>
                             <div class="small text-muted"><?php echo $equipment['serial'] ?></div>
                         </div>
                     </div>

@@ -1,6 +1,5 @@
 <?php
 namespace common\components;
-use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Objects;
 use common\models\Users;

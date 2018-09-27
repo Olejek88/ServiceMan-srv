@@ -2,8 +2,10 @@
 
 namespace backend\controllers;
 
-use backend\models\MessageSearch;
-use common\models\Message;
+use backend\models\MeasureSearch;
+use backend\models\PhotoEquipmentSearch;
+use common\models\Measure;
+use common\models\PhotoEquipment;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -11,9 +13,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * MessageController implements the CRUD actions for Message model.
+ * PhotoEquipment implements the CRUD actions for PhotoEquipment model.
  */
-class MessageController extends Controller
+class PhotoEquipmentController extends Controller
 {
     /**
      * @inheritdoc
@@ -22,7 +24,7 @@ class MessageController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -39,14 +41,14 @@ class MessageController extends Controller
     }
 
     /**
-     * Lists all Message models.
+     * Lists all PhotoEquipment models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new MessageSearch();
+        $searchModel = new PhotoEquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 150;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -55,7 +57,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Displays a single Message model.
+     * Displays a single PhotoEquipment model.
      * @param integer $id
      * @return mixed
      */
@@ -67,13 +69,13 @@ class MessageController extends Controller
     }
 
     /**
-     * Creates a new Message model.
+     * Creates a new PhotoEquipment model
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Message();
+        $model = new PhotoEquipment();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -84,19 +86,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Displays a messagebox
-     * @return mixed
-     */
-    public function actionList()
-    {
-        $messages = Message::find()->all();
-        return $this->render('list', [
-            'messages' => $messages
-        ]);
-    }
-
-    /**
-     * Updates an existing Message model.
+     * Updates an existing PhotoEquipment model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -114,7 +104,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Deletes an existing Message model.
+     * Deletes an existing PhotoEquipment model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -127,15 +117,15 @@ class MessageController extends Controller
     }
 
     /**
-     * Finds the Message model based on its primary key value.
+     * Finds the Measure model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Message the loaded model
+     * @return PhotoEquipment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Message::findOne($id)) !== null) {
+        if (($model = PhotoEquipment::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

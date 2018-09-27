@@ -2,22 +2,15 @@
 namespace common\components;
 //namespace bsource\gridview;//in vendor folder
 
+use PHPExcel;
+use PHPExcel_IOFactory;
+use PHPExcel_Settings;
+use PHPExcel_Style_Fill;
+use PHPExcel_Worksheet;
+use PHPExcel_Writer_IWriter;
 use Yii;
-use Closure;
-use yii\i18n\Formatter;
-use yii\base\InvalidConfigException;
-use yii\helpers\Url;
-use yii\helpers\Html;
-use yii\helpers\Json;
-use yii\helpers\ArrayHelper;
-use yii\widgets\BaseListView;
 use yii\base\Model;
-use \PHPExcel;
-use \PHPExcel_IOFactory;
-use \PHPExcel_Settings;
-use \PHPExcel_Style_Fill;
-use \PHPExcel_Writer_IWriter;
-use \PHPExcel_Worksheet;
+use yii\helpers\ArrayHelper;
 
 class ExcelGrid extends \yii\grid\GridView
 {

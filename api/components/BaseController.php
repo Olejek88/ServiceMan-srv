@@ -2,7 +2,6 @@
 
 namespace api\components;
 
-use common\models\Users;
 use common\components\IPhoto;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
@@ -13,6 +12,7 @@ use common\models\FlatStatus;
 use common\models\FlatType;
 use common\models\HouseStatus;
 use common\models\HouseType;
+use common\models\Users;
 use yii\db\ActiveRecord;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
