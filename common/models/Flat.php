@@ -102,6 +102,8 @@ class Flat extends ActiveRecord
             'number' => Yii::t('app', 'Номер квартиры'),
             'flatStatusUuid' => Yii::t('app', 'Статус квартиры'),
             'flatStatus' => Yii::t('app', 'Статус квартиры'),
+            'flatTypeUuid' => Yii::t('app', 'Тип квартиры'),
+            'flatType' => Yii::t('app', 'Тип квартиры'),
             'houseUuid' => Yii::t('app', 'Дом'),
             'house' => Yii::t('app', 'Дом'),
             'createdAt' => Yii::t('app', 'Создан'),

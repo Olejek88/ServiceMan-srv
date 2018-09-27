@@ -106,6 +106,8 @@ class House extends ActiveRecord
             'street' => Yii::t('app', 'Улица'),
             'houseStatusUuid' => Yii::t('app', 'Статус здания'),
             'streetUuid' => Yii::t('app', 'Улица'),
+            'houseTypeUuid' => Yii::t('app', 'Тип дома'),
+            'houseType' => Yii::t('app', 'Тип дома'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

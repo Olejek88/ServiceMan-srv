@@ -38,6 +38,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Дом'), 'url' => [
                                 'number',
                                 'streetUuid',
                                 'houseStatusUuid',
+                                'houseTypeUuid',
                                 'createdAt',
                                 'changedAt',
                             ],

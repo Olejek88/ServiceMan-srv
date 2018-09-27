@@ -84,6 +84,14 @@ $this->title = Yii::t('app', 'Дом');
                                     'value'     => 'houseStatus.title',
                                 ],
                                 [
+                                    'attribute'=>'houseType',
+                                    'contentOptions' =>[
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value'     => 'houseType.title',
+                                ],
+                                [
                                     'class' => 'yii\grid\ActionColumn',
                                     'header'=>'Действия',
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],

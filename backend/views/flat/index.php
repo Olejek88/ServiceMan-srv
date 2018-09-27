@@ -83,6 +83,14 @@ $this->title = Yii::t('app', 'Квартира');
                                     'value'     => 'flatStatus.title',
                                 ],
                                 [
+                                    'attribute'=>'flatType',
+                                    'contentOptions' =>[
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value'     => 'flatType.title',
+                                ],
+                                [
                                     'class' => 'yii\grid\ActionColumn',
                                     'header'=>'Действия',
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],

@@ -2,6 +2,7 @@
 
 use app\commands\MainFunctions;
 use common\models\FlatStatus;
+use common\models\FlatType;
 use common\models\House;
 use common\models\TaskTemplate;
 use common\models\TaskVerdict;
@@ -60,6 +61,22 @@ use yii\widgets\ActiveForm;
             'language' => 'ru',
             'options' => [
                 'placeholder' => 'Выберите статус..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+
+    <?php
+    $types = FlatType::find()->all();
+    $items = ArrayHelper::map($types, 'uuid', 'title');
+    echo $form->field($model, 'flatTypeUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
             ],
             'pluginOptions' => [
                 'allowClear' => true
