@@ -18,7 +18,6 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  * @property string $houseTypeUuid
- * @property string $title
  *
  * @property Street $street
  * @property HouseStatus $houseStatus
@@ -73,7 +72,6 @@ class House extends ActiveRecord
             'houseType' => function ($model) {
                 return $model->houseType;
             },
-            'title',
             'streetUuid',
             'street' => function ($model) {
                 return $model->street;

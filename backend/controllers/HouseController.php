@@ -85,6 +85,7 @@ class HouseController extends Controller
                 'dataProvider' => $dataProvider,
             ]);
         } else {
+            var_dump($model->errors);
             return $this->render('create', [
                 'model' => $model,
             ]);

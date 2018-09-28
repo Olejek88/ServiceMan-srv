@@ -247,7 +247,7 @@ class EquipmentController extends Controller
                 if ($photo) {
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
                     $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a(
-                        '<img width="100px" src="storage/equipment/'.$photo['uuid'].'.jpg" />',
+                        '<img width="100px" src="/storage/equipment/'.$photo['uuid'].'.jpg" />',
                         ['storage/equipment/'.$photo['uuid'].'.jpg']
                     );
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
