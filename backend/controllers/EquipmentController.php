@@ -94,7 +94,7 @@ class EquipmentController extends Controller
 
         $searchModel = new EquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 50;
+        $dataProvider->pagination->pageSize = 25;
 
         return $this->render(
             'index',

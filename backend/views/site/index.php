@@ -364,7 +364,7 @@ $this->title = Yii::t('app', 'Карта');
         popupAnchor: [-3, -76]
     });
     var houseIcon = L.icon({
-        iconUrl: '/images/house_marker2.png',
+        iconUrl: '/images/marker_house.png',
         iconSize: [35, 35],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76]

@@ -163,7 +163,7 @@ class SiteController extends Controller
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
-                ->limit(30000)
+                ->limit(5000)
                 ->all();
             if ($gps) {
                 $lats[$count] = $gps;
@@ -177,19 +177,18 @@ class SiteController extends Controller
         if (count($userList) >= 1) {
             // В случаи, если геоданные не были отправлены,
             // ответ на запрос будет null
-            $gps = Gpstrack::find()
+/*            $gps = Gpstrack::find()
                 ->select('userUuid, latitude, longitude, date')
                 ->where('date  >= CURDATE()')
                 ->orderBy('date DESC')
                 ->asArray()
                 ->limit(30000)
-                ->all();
+                ->all();*/
             $gpsStatus = true;
         }
 
         if (!$gpsStatus) {
             $gps = Gpstrack::find()->orderBy('date DESC')->asArray()->one();
-            var_dump($gps);
         }
         /**
          * Настройки - История активности
@@ -513,7 +512,7 @@ class SiteController extends Controller
         $events = [];
         $measures = Measure::find()
             ->orderBy('date DESC')
-            ->limit(20)
+            ->limit(100)
             ->all();
         foreach ($measures as $measure) {
             $photo = PhotoEquipment::find()
@@ -525,7 +524,8 @@ class SiteController extends Controller
             $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
             if ($path == null)
                 $path = 'images/no-image-icon-4.png';
-            $text = '<img src="' . Html::encode($path) . '" class="margin" style="width:50px; margin: 2; float:left" alt="">';
+            $text = '<a href="/storage/equipment/'.$photo['uuid'].'.jpg"><img src="' . Html::encode($path) . '" class="margin" 
+                        style="width:50px; margin: 2px; float:left" alt=""></a>';
             $text .= '<a class="btn btn-default btn-xs">'.
                 $measure['equipment']['equipmentType']->title . ' [' .
                 $measure['equipment']['flat']['house']['street']->title . ', ' .
@@ -592,7 +592,8 @@ class SiteController extends Controller
         $event .= '<div class="timeline-item">';
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
         if ($type == 'measure')
-            $event .= '<span class="timeline-header" style="vertical-align: middle">' .
+            $event .= '<span class="timeline-header" style="vertical-align: middle">
+                        <span class="btn btn-primary btn-xs">' . $user .'</span>&nbsp;'.
                 Html::a('Снято показание &nbsp;',
                     ['/measure/view', 'id' => Html::encode($id)]) . $title . '</span>';
 

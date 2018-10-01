@@ -33,10 +33,17 @@ $this->title = Yii::t('app', 'Пользователи');
                         <ul class="nav nav-stacked">
                             <li><a href="#">Фотографий
                             <span class="pull-right badge bg-blue">'.$user_property[$count]['photos'].'</span></a></li>
-                            <li><a href="#">Аварий 
-                            <span class="pull-right badge bg-red">'.$user_property[$count]['alarms'].'</span></a></li>
                             <li><a href="#">Сообщений 
                             <span class="pull-right badge bg-green">'.$user_property[$count]['messages'].'</span></a></li>
+                            <li><a href="#">Домов/квартир 
+                            <span class="pull-right badge bg-orange">'.count($user_property[$count]['houses']).' / '.
+                                $user_property[$count]['objects'].'</span></a>
+                            </li>
+                            <li><a href="#">Измерений (%) 
+                                <span class="pull-right badge bg-red">'.$user_property[$count]['measure'].' / '.
+                                    $user_property[$count]['complete'].'%</span></a></li>
+                            <li><a href="#">Треков передвижения 
+                            <span class="pull-right badge bg-yellow">'.$user_property[$count]['messages'].'</span></a></li>
                         </ul>
                     </div>
                     </div>

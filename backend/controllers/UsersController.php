@@ -16,15 +16,18 @@ use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\Defect;
+use common\models\Flat;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
+use common\models\Message;
 use common\models\Orders;
 use common\models\OrderStatus;
 use common\models\PhotoEquipment;
 use common\models\PhotoFlat;
 use common\models\PhotoHouse;
 use common\models\Token;
+use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\filters\VerbFilter;
@@ -235,8 +238,26 @@ class UsersController extends Controller
             $user_property[$count]['photos']=$user_photo_house+$user_photo_flat+$user_photo_equipment;
             $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['alarms']=$user_alarms;
-            //$user_messages = Message::find()->where(['toUserUuid' => $user['uuid']])->count();
-            $user_property[$count]['messages']=0;
+            $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['messages']=$user_messages;
+            $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->count();
+            //
+            $user_property[$count]['measure'] = $user_measure;
+            $user_tracks = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['tracks'] = $user_tracks;
+            $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->all();
+            $user_property[$count]['houses'] = $user_houses;
+            $user_flats=0;
+            foreach ($user_houses as $user_house) {
+                $user_flats += Flat::find()->where(['houseUuid' => $user_house['uuid']])->count();
+            }
+            $user_property[$count]['objects'] = $user_flats;
+
+            $user_property[$count]['complete'] = 0;
+            if ($user_flats>0) {
+                $user_property[$count]['complete'] = $user_measure * 100 / $user_flats;
+            }
+
             $count++;
         }
         return $this->render('dashboard', [

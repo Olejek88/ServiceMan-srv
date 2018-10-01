@@ -295,6 +295,7 @@ class ResidentsController extends Controller
                     ->orderBy('number')
                     ->all();
                 $oCnt2 = 0;
+                $sum_status=1;
                 foreach ($flats as $flat) {
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['title']
                         = Html::a(
@@ -308,12 +309,15 @@ class ResidentsController extends Controller
 
                     if ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_ABSENT) {
                         $class = 'critical2';
+                        $sum_status = 0;
                     } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE) {
                         $class = 'critical1';
+                        $sum_status = 0;
                     } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_DEFAULT) {
                         $class = 'critical4';
                     } else {
                         $class = 'critical3';
+                        $sum_status = 0;
                     }
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
                         . $class . '">' . $flat['flatStatus']->title . '</div></div>';
@@ -364,6 +368,10 @@ class ResidentsController extends Controller
                         $eCnt++;
                     }
                     $oCnt2++;
+                }
+                if ($sum_status == 1) {
+                    //$house['houseStatusUuid'] = HouseStatus::HOUSE_STATUS_OK;
+                    //$house->save();
                 }
                 $oCnt1++;
             }
