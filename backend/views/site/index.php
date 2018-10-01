@@ -365,7 +365,7 @@ $this->title = Yii::t('app', 'Карта');
     });
     var houseIcon = L.icon({
         iconUrl: '/images/marker_house.png',
-        iconSize: [35, 35],
+        iconSize: [32, 51],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76]
     });

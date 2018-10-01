@@ -228,7 +228,7 @@ class UsersController extends Controller
      */
     public function actionDashboard()
     {
-        $users = Users::find()->orderBy('createdAt DESC')->all();
+        $users = Users::find()->where('name!="sUser"')->orderBy('createdAt DESC')->all();
         $user_property[][]='';
         $count=0;
         foreach ($users as $user) {
@@ -243,19 +243,21 @@ class UsersController extends Controller
             $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->count();
             //
             $user_property[$count]['measure'] = $user_measure;
+
             $user_tracks = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['tracks'] = $user_tracks;
+
             $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->all();
             $user_property[$count]['houses'] = $user_houses;
             $user_flats=0;
             foreach ($user_houses as $user_house) {
-                $user_flats += Flat::find()->where(['houseUuid' => $user_house['uuid']])->count();
+                $user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
             }
             $user_property[$count]['objects'] = $user_flats;
 
             $user_property[$count]['complete'] = 0;
             if ($user_flats>0) {
-                $user_property[$count]['complete'] = $user_measure * 100 / $user_flats;
+                $user_property[$count]['complete'] = number_format($user_measure * 100 / $user_flats,2);
             }
 
             $count++;

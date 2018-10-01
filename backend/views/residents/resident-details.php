@@ -46,7 +46,7 @@ foreach ($equipments as $next_equipment) {
                                     Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])).'
                                     " style="padding:2px;width:100%">';
                             ?>
-                            <div class="small text-muted"><?php echo $photoFlat['date'] ?></div>
+                            <div class="small text-muted"><?php echo $photoFlat['createdAt'] ?></div>
                         </div>
                     </div>
                     <?php

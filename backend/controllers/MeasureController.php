@@ -22,7 +22,7 @@ class MeasureController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -46,7 +46,7 @@ class MeasureController extends Controller
     {
         $searchModel = new MeasureSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 200;
 
         return $this->render('index', [
             'searchModel' => $searchModel,

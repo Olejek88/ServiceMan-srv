@@ -43,7 +43,7 @@ $this->title = Yii::t('app', 'Пользователи');
                                 <span class="pull-right badge bg-red">'.$user_property[$count]['measure'].' / '.
                                     $user_property[$count]['complete'].'%</span></a></li>
                             <li><a href="#">Треков передвижения 
-                            <span class="pull-right badge bg-yellow">'.$user_property[$count]['messages'].'</span></a></li>
+                            <span class="pull-right badge bg-yellow">'.$user_property[$count]['tracks'].'</span></a></li>
                         </ul>
                     </div>
                     </div>
