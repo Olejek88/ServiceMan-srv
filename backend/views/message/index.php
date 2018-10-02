@@ -79,7 +79,7 @@ $this->title = Yii::t('app', 'Сообщения');
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
-                                        return $data->message;
+                                        return substr($data->message,0,150);
                                     }
                                 ],
                                 [

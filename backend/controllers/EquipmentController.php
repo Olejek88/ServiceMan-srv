@@ -7,8 +7,12 @@ use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Flat;
+use common\models\House;
 use common\models\Measure;
 use common\models\PhotoEquipment;
+use common\models\User;
+use common\models\UserHouse;
+use common\models\Users;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
@@ -238,6 +242,95 @@ class EquipmentController extends Controller
                 ->select('*')
                 ->where(['equipmentTypeUuid' => $type['uuid']])
                 ->orderBy('serial')
+                ->all();
+            $oCnt1 = 0;
+            foreach ($equipments as $equipment) {
+                $fullTree[$oCnt0][$c][$oCnt1]['title']
+                    = Html::a(
+                    'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                    ['equipment/view', 'id' => $equipment['_id']]
+                );
+                if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
+                    $class = 'critical1';
+                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
+                    $class = 'critical2';
+                } else {
+                    $class = 'critical3';
+                }
+                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
+                    . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
+                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
+                $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
+
+                $measure = Measure::find()
+                    ->select('*')
+                    ->where(['equipmentUuid' => $equipment['uuid']])
+                    ->orderBy('date DESC')
+                    ->one();
+                if ($measure) {
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                } else {
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
+                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
+                }
+
+                $photo = PhotoEquipment::find()
+                    ->select('*')
+                    ->where(['equipmentUuid' => $equipment['uuid']])
+                    ->orderBy('createdAt DESC')
+                    ->one();
+                if ($photo) {
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a(
+                        '<img width="100px" src="/storage/equipment/'.$photo['uuid'].'.jpg" />',
+                        ['storage/equipment/'.$photo['uuid'].'.jpg']
+                    );
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
+                }
+                else {
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
+                }
+                $oCnt1++;
+            }
+            $oCnt0++;
+        }
+        return $this->render(
+            'tree',
+            ['equipment' => $fullTree]
+        );
+    }
+
+    /**
+     * Build tree of equipment by user
+     *
+     * @return mixed
+     */
+    public function actionTreeUser()
+    {
+        $c = 'children';
+        $fullTree = array();
+        $users = Users::find()
+            ->select('*')
+            ->where('name != "sUser"')
+            ->orderBy('_id')
+            ->all();
+        $oCnt0 = 0;
+        foreach ($users as $user) {
+            $fullTree[$oCnt0]['title'] = Html::a(
+                $user['name'],
+                ['user/view', 'id' => $user['_id']]
+            );
+            $equipments = Equipment::find()
+                ->select('*')
+                ->where(['flatUuid' => (
+                    Flat::find()->select('uuid')->where(['houseUuid' => (
+                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->one()
+                    )]))->one()])
                 ->all();
             $oCnt1 = 0;
             foreach ($equipments as $equipment) {
