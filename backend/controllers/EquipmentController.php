@@ -329,8 +329,8 @@ class EquipmentController extends Controller
                 ->select('*')
                 ->where(['flatUuid' => (
                     Flat::find()->select('uuid')->where(['houseUuid' => (
-                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->one()
-                    )]))->one()])
+                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
+                    )]))])
                 ->all();
             $oCnt1 = 0;
             foreach ($equipments as $equipment) {
@@ -373,8 +373,7 @@ class EquipmentController extends Controller
                     ->one();
                 if ($photo) {
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a(
-                        '<img width="100px" src="/storage/equipment/'.$photo['uuid'].'.jpg" />',
+                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
                         ['storage/equipment/'.$photo['uuid'].'.jpg']
                     );
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
