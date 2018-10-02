@@ -378,7 +378,7 @@ class SiteController extends Controller
          * Работа с картой
          */
         $userData = array();
-        $users = Users::find()->select('*')->all();
+        $users = Users::find()->where('name != "sUser"')->select('*')->all();
         $userList[] = $users;
         $usersCount = count($users);
 

@@ -19,6 +19,7 @@ use common\models\FlatStatus;
 use common\models\House;
 use common\models\HouseStatus;
 use common\models\Measure;
+use common\models\Message;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
@@ -330,6 +331,12 @@ class ResidentsController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['resident'] = $resident['owner'];
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['inn'] = $resident['inn'];
                     }
+                    $message = Message::find()
+                        ->select('*')
+                        ->orderBy('date DESC')
+                        ->where(['flatUuid' => $flat['uuid']])
+                        ->one();
+                    $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['value'] = $message['message'];
 
                     $equipments = Equipment::find()
                         ->select('*')

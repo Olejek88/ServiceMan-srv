@@ -72,7 +72,7 @@ use dosamigos\datetimepicker\DateTimePicker;
         ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-status/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -109,7 +109,7 @@ use dosamigos\datetimepicker\DateTimePicker;
     $items = ArrayHelper::map($house, 'uuid', function($model) {
         return $model['street']->title.', '.$model['number'];
     });
-    echo $form->field($model, 'houseUuid')->widget(Select2::classname(),
+    echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -128,7 +128,7 @@ use dosamigos\datetimepicker\DateTimePicker;
     $items = ArrayHelper::map($flat, 'uuid', function($model) {
         return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
     });
-    echo $form->field($model, 'flatUuid')->widget(Select2::classname(),
+    echo $form->field($model, 'flatUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',

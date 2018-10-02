@@ -40,7 +40,7 @@ class MeasureSearch extends Measure
      */
     public function search($params)
     {
-        $query = Measure::find();
+        $query = Measure::find()->orderBy('date DESC');
 
         // add conditions that should always apply here
 

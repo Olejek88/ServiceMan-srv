@@ -40,7 +40,7 @@ class MessageSearch extends Message
      */
     public function search($params)
     {
-        $query = Message::find();
+        $query = Message::find()->orderBy('date DESC');
 
         // add conditions that should always apply here
 
@@ -66,6 +66,7 @@ class MessageSearch extends Message
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
+            ->andFilterWhere(['like', 'message', $this->message])
             ->andFilterWhere(['like', 'userUuid', $this->userUuid]);
 
         return $dataProvider;

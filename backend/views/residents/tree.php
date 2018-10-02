@@ -17,7 +17,7 @@ $this->title = 'Дерево абонентов системы';
         <col width="120px">
         <col width="120px">
         <col width="130px">
-        <col width="80px">
+        <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>

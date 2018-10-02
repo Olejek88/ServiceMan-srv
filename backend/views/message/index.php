@@ -57,6 +57,10 @@ $this->title = Yii::t('app', 'Сообщения');
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'value'     => 'flat.number',
+                                    'content'=>function($data){
+                                        return 'ул.'.$data['flat']['house']['street']->title.', '.
+                                            $data['flat']['house']->number.', '.$data['flat']['number'];
+                                    }
                                 ],
                                 [
                                     'attribute'=>'date',

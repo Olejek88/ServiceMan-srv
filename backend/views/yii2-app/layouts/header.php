@@ -32,13 +32,13 @@ $userImage = Yii::$app->view->params['userImage'];
                 </li>
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="/message" class="dropdown-toggle">
                         <i class="fa fa-envelope-o"></i>
                     </a>
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->
                 <li class="dropdown notifications-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="/alarm" class="dropdown-toggle">
                         <i class="fa fa-bell-o"></i>
                     </a>
                 </li>
