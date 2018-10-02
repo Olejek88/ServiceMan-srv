@@ -110,7 +110,7 @@ $this->title = Yii::t('app', 'Сводная');
 <!-- Main row -->
 <div class="row">
     <!-- Left col -->
-    <div class="col-md-7">
+    <div class="col-md-12">
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title">Статистика измерений</h3>
@@ -140,9 +140,6 @@ $this->title = Yii::t('app', 'Сводная');
                             <script src="/js/vendor/lib/HighCharts/modules/exporting.js"></script>
                             <script type="text/javascript">
                                 Highcharts.chart('container', {
-                                    data: {
-                                        table: 'datatable'
-                                    },
                                     chart: {
                                         type: 'column'
                                     },
@@ -173,7 +170,6 @@ $this->title = Yii::t('app', 'Сводная');
                                     },
                                     plotOptions: {
                                         column: {
-                                            stacking: 'normal',
                                             dataLabels: {
                                                 enabled: true,
                                                 color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'

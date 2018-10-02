@@ -348,7 +348,7 @@ class ResidentsController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['serial'] = $equipment['serial'];
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['street'] = $street['title'];
 
-                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
+/*                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
                             $class = 'critical1';
                         } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                             $class = 'critical2';
@@ -356,13 +356,30 @@ class ResidentsController extends Controller
                             $class = 'critical3';
                         }
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] = '<div class="progress"><div class="'
-                            . $class . '">' . $flat['flatStatus']->title . '</div></div>';
+                            . $class . '">' . $flat['flatStatus']->title . '</div></div>';*/
 
                         $measure = Measure::find()
                             ->select('*')
                             ->orderBy('date DESC')
                             ->where(['equipmentUuid' => $equipment['uuid']])
                             ->one();
+                        if ($measure!=null) {
+                            $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] =
+                                '<div class="progress"><div class="critical3">Снято</div></div>';
+                            if ($house['houseStatusUuid']!=HouseStatus::HOUSE_STATUS_OK) {
+                                $house['houseStatusUuid'] = HouseStatus::HOUSE_STATUS_OK;
+                                $house['changedAt'] = date('Y-m-d H:i:s');
+                                $house->save();
+                            }
+                        } else {
+                            if ($house['houseStatusUuid']!=HouseStatus::HOUSE_STATUS_DEFAULT) {
+                                $house['houseStatusUuid'] = HouseStatus::HOUSE_STATUS_DEFAULT;
+                                $house['changedAt'] = date('Y-m-d H:i:s');
+                                $house->save();
+                            }
+                            $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] =
+                                '<div class="progress"><div class="critical4">Нет показаний</div></div>';
+                        }
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['value'] = $measure['value'];
 
                         $eCnt++;

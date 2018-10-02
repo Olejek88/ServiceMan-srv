@@ -401,6 +401,34 @@ class SiteController extends Controller
         }
         $bar .= "]},";
 
+        $bar .= "{ name: 'объектов',";
+        $bar .= "data: [";
+        $count=0;
+        foreach ($users as $current_user) {
+            if ($count>0)
+                $bar .= ",";
+            $houses = UserHouse::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->count();
+            $bar.= $houses;
+            $count++;
+        }
+        $bar .= "]},";
+
+        $bar .= "{ name: 'фотографий',";
+        $bar .= "data: [";
+        $count=0;
+        foreach ($users as $current_user) {
+            if ($count>0)
+                $bar .= ",";
+            $photos = PhotoEquipment::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->count();
+            $bar.= $photos;
+            $count++;
+        }
+        $bar .= "]}";
+
         $count=0;
         foreach ($users as $current_user) {
             $gps = Gpstrack::find()
