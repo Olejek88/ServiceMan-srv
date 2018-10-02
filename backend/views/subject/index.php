@@ -3,10 +3,7 @@
 
 use common\models\OrderStatus;
 use common\models\OrderVerdict;
-use common\models\Users;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Таблица организаций');

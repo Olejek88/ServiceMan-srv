@@ -1,6 +1,7 @@
 <?php
 
 use backend\assets\AdminLteAsset;
+
 AdminLteAsset::register($this);
 /* @var $defects common\models\Defect */
 $this->title = Yii::t('app', 'Распределение дефектов');

@@ -5,8 +5,6 @@ use yii\web\JsExpression;
 
 $this->title = 'Дерево моделей оборудования';
 
-/* @var $registers common\models\Equipment */
-
 ?>
 <table id="tree">
     <colgroup>
@@ -14,17 +12,18 @@ $this->title = 'Дерево моделей оборудования';
         <col width="100px">
         <col width="120px">
         <col width="130px">
-        <col width="120px">
+        <col width="140px">
         <col width="120px">
         <col width="130px">
         <col width="120px">
+        <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
-    <tr><th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
+    <tr><th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
         <th>Серийный</th> <th>Статус</th>
         <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
-        <th>Дата фото</th><th>Фото</th></tr>
+        <th>Дата фото</th><th>Фото</th><th>Сообщение</th></tr>
     </thead>
     <tbody>
     <tr>
@@ -36,6 +35,7 @@ $this->title = 'Дерево моделей оборудования';
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
+        <td class="center"></td>
     </tr>
     </tbody>
 </table>
@@ -68,7 +68,8 @@ $this->title = 'Дерево моделей оборудования';
             "valueColumnIdx" => "5",
             "userColumnIdx" => "6",
             "datePhotoColumnIdx" => "7",
-            "photoColumnIdx" => "8"
+            "photoColumnIdx" => "8",
+            "messageColumnIdx" => "9"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
@@ -80,6 +81,7 @@ $this->title = 'Дерево моделей оборудования';
             $tdList.eq(5).html(node.data.measure_user);
             $tdList.eq(6).html(node.data.photo_date);
             $tdList.eq(7).html(node.data.photo);
+            $tdList.eq(8).html(node.data.message);
         }')
     ]
 ]);

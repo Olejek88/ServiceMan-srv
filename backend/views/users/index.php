@@ -2,8 +2,8 @@
 /* @var $searchModel backend\models\UsersSearch */
 /* @var $dataProvider */
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Пользователи');

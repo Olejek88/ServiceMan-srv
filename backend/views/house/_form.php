@@ -1,14 +1,13 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\HouseStatus;
 use common\models\HouseType;
 use common\models\Street;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-
-use app\commands\MainFunctions;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\House */

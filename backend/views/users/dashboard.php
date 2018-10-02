@@ -3,8 +3,6 @@
 /* @var $user_property */
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Пользователи');
 ?>

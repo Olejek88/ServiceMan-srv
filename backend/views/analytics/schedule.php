@@ -1,4 +1,5 @@
 <?php
+
 use backend\assets\AdminLteAsset;
 use miloschuman\highcharts\Highcharts;
 use miloschuman\highcharts\HighchartsAsset;

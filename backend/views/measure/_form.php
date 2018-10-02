@@ -1,13 +1,13 @@
 <?php
 
+use app\commands\MainFunctions;
+use common\models\Equipment;
 use common\models\Users;
+use dosamigos\datetimepicker\DateTimePicker;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
-use common\models\Equipment;
-use dosamigos\datetimepicker\DateTimePicker;
 
 
 /* @var $this yii\web\View */

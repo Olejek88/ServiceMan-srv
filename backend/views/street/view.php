@@ -1,8 +1,6 @@
 <?php
 
-use wbraganca\fancytree\FancytreeWidget;
 use yii\helpers\Html;
-use yii\web\JsExpression;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */

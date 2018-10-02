@@ -9,6 +9,7 @@ use common\models\EquipmentType;
 use common\models\Flat;
 use common\models\House;
 use common\models\Measure;
+use common\models\Message;
 use common\models\PhotoEquipment;
 use common\models\User;
 use common\models\UserHouse;
@@ -366,6 +367,14 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
                 }
 
+                $message = Message::find()
+                    ->select('*')
+                    ->orderBy('date DESC')
+                    ->where(['flatUuid' => $equipment['flat']['uuid']])
+                    ->one();
+                if ($message!=null)
+                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = $message['message'];
+
                 $photo = PhotoEquipment::find()
                     ->select('*')
                     ->where(['equipmentUuid' => $equipment['uuid']])
@@ -388,7 +397,7 @@ class EquipmentController extends Controller
             $oCnt0++;
         }
         return $this->render(
-            'tree',
+            'tree-user',
             ['equipment' => $fullTree]
         );
     }

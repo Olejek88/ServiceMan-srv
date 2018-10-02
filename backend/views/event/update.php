@@ -1,5 +1,6 @@
 <?php
 /* @var $model common\models\Event */
+
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Обновить {modelClass}: ', [

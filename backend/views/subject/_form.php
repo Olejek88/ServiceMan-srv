@@ -1,13 +1,13 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\Flat;
 use common\models\House;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Subject */
