@@ -170,8 +170,16 @@ class EquipmentController extends Controller
                 $equipments[$equipment_count] = $equipment;
                 $equipment_count++;
             }
+            else {
+                if ($equipment['equipmentTypeUuid'] != EquipmentType::EQUIPMENT_HVS) {
+                    $equipment['equipmentTypeUuid'] = EquipmentType::EQUIPMENT_HVS;
+                    $equipment['changedAt'] = date('Y-m-d H:i:s');
+                    $equipment->save();
+                    echo $equipment['uuid'] . '<br/>';
+                }
+            }
         }
-        return $this->render('new', ['equipments' => $equipments]);
+        //return $this->render('new', ['equipments' => $equipments]);
     }
 
 

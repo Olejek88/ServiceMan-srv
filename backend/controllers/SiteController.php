@@ -37,6 +37,7 @@ use common\models\Stage;
 use common\models\StageStatus;
 use common\models\Street;
 use common\models\Subject;
+use common\models\UserHouse;
 use common\models\Users;
 use common\models\UsersAttribute;
 use Yii;
@@ -354,12 +355,20 @@ class SiteController extends Controller
         $subjectsCount = Subject::find()->count() + Resident::find()->count();
         $usersCount = Users::find()->count();
 
+        $last_measures = Measure::find()
+            ->where('createdAt > (NOW()-(4*24*3600000));')
+            ->count();
+        $complete=0;
+        if ($flatCount>0)
+            $complete = number_format($last_measures*100/$flatCount,2);
+
         $measures = Measure::find()
             ->orderBy('date')
             ->all();
 
         $equipments = Equipment::find()
             ->orderBy('_id DESC')
+            ->limit(20)
             ->all();
 
         $users = Users::find()
@@ -374,6 +383,25 @@ class SiteController extends Controller
         $usersCount = count($users);
 
         $count = 0;
+        $categories = "";
+        $bar = "{ name: 'измерений',";
+        $bar .= "data: [";
+        foreach ($users as $current_user) {
+            if ($count>0) {
+                $categories .= ',';
+                $bar .= ",";
+            }
+            $categories .= '"'.$current_user['name'].'"';
+            $values[$count] = Measure::find()
+                ->where('createdAt > (NOW()-(5*24*3600000))')
+                ->andWhere(['userUuid' => $current_user['uuid']])
+                ->count();
+            $bar.= $values[$count];
+            $count++;
+        }
+        $bar .= "]},";
+
+        $count=0;
         foreach ($users as $current_user) {
             $gps = Gpstrack::find()
                 ->select('latitude, longitude, date')
@@ -425,8 +453,12 @@ class SiteController extends Controller
                 'measures' => $measures,
                 'equipments' => $equipments,
                 'users' => $users,
+                'categories' => $categories,
+                'bar' => $bar,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
+                'last_measures' => $last_measures,
+                'complete' => $complete,
                 'equipmentCount' => $equipmentCount,
                 'equipmentTypeCount' => $equipmentTypeCount,
                 'subjectCount' => $subjectCount,

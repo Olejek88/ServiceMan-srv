@@ -51,7 +51,7 @@ foreach ($equipments as $next_equipment) {
                             echo '<div class="img-thumbnail img-rounded text-center">';
                             echo '<img style="padding:2px;width:100%" src="../' .
                                 Html::encode(MainFunctions::getImagePath('equipment', $equipment_photo[$t]['uuid'])) . '">
-                            <div class="small text-muted">' . $equipment_photo[$t]['date'] . '</div></div></div>';
+                            <div class="small text-muted">' . $equipment_photo[$t]['createdAt'] . '</div></div></div>';
                         }
 
                         echo '<div class="col-sm-2">';

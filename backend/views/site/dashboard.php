@@ -31,9 +31,10 @@
  * @var $objectsList
  * @var $objectsGroup
  * @var $usersList
+ * @var $last_measures
+ * @var $complete
  * @var $usersGroup
  * @var $defectsByType
- * @var $values
  */
 
 use yii\helpers\Html;
@@ -51,6 +52,7 @@ $this->title = Yii::t('app', 'Сводная');
             <div class="info-box-content">
                 <span>Городов <?= $cityCount; ?> / Улиц <?= $streetCount; ?></span><br/>
                 <span>Квартир <?= $flatCount; ?> / Абонентов <?= $subjectCount; ?></span><br/>
+                <span>Выполнено <?= $last_measures; ?> [<?= $complete;?> %]</span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -108,6 +110,100 @@ $this->title = Yii::t('app', 'Сводная');
 <!-- Main row -->
 <div class="row">
     <!-- Left col -->
+    <div class="col-md-7">
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title">Статистика измерений</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-wrench"></i></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="/measure">Измерения</a></li>
+                            <li class="divider"></li>
+                        </ul>
+                    </div>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="chart">
+                            <div id="container" style="height: 250px;"></div>
+                            <script src="/js/vendor/lib/HighCharts/highcharts.js"></script>
+                            <script src="/js/vendor/lib/HighCharts/modules/exporting.js"></script>
+                            <script type="text/javascript">
+                                Highcharts.chart('container', {
+                                    data: {
+                                        table: 'datatable'
+                                    },
+                                    chart: {
+                                        type: 'column'
+                                    },
+                                    title: {
+                                        text: ''
+                                    },
+                                    xAxis: {
+                                        categories: [
+                                            <?php
+                                                echo $categories;
+                                            ?>
+                                        ]
+                                    },
+                                    legend: {
+                                        align: 'right',
+                                        x: -300,
+                                        verticalAlign: 'top',
+                                        y: 0,
+                                        floating: true,
+                                        backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
+                                        borderColor: '#CCC',
+                                        borderWidth: 1,
+                                        shadow: false
+                                    },
+                                    tooltip: {
+                                        headerFormat: '<b>{point.x}</b><br/>',
+                                        pointFormat: '{series.name}: {point.y}<br/>Всего: {point.stackTotal}'
+                                    },
+                                    plotOptions: {
+                                        column: {
+                                            stacking: 'normal',
+                                            dataLabels: {
+                                                enabled: true,
+                                                color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
+                                            }
+                                        }
+                                    },
+                                    yAxis: {
+                                        min: 0,
+                                        title: {
+                                            text: 'Количество измерений по пользователям'
+                                        }
+                                    },
+                                    series: [
+                                        <?php
+                                            echo $bar;
+                                        ?>
+                                    ]
+                                });
+                            </script>
+                        </div>
+                        <!-- /.chart-responsive -->
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </div>
+        </div>
+    </div>
+
+
     <div class="col-md-8">
         <!-- MAP & BOX PANE -->
         <div class="box box-success">
@@ -160,7 +256,7 @@ $this->title = Yii::t('app', 'Сводная');
                             $count=0;
                             foreach ($users as $user) {
                                 $path='/images/unknown2.png';
-                                print '<li><img src="'.Html::encode($path).'" alt="User Image">';
+                                print '<li><img src="'.Html::encode($path).'" alt="User Image" width="150px">';
                                 echo Html::a(Html::encode($user['name']),
                                     ['/users/view', '_id' => Html::encode($user['_id'])],['class' => 'users-list-name']);
                                 echo '<span class="users-list-date">'.$user['createdAt'].'</span></li>';
@@ -255,7 +351,7 @@ $this->title = Yii::t('app', 'Сводная');
                 <ul class="products-list product-list-in-box">
                     <?php
                     foreach ($equipments as $equipment) {
-                        $path = '/storage/order-level/no-image-icon-4.png';
+                        $path = '/images/no-image-icon-4.png';
                         print '<li class="item">
                                 <div class="product-img">
                                     <img src="'.Html::encode($path).'" alt="'.$equipment['equipmentType']->title.'">
@@ -285,7 +381,7 @@ $this->title = Yii::t('app', 'Сводная');
 
 <footer class="main-footer" style="margin-left: 0px !important;">
     <div class="pull-right hidden-xs">
-        <b>Version</b> 0.0.1
+        <b>Version</b> 0.0.2
     </div>
     <?php echo Html::a('<img src="images/toir-logo_4x_m.png">', 'http://toirus.ru'); ?>
     <strong>Copyright &copy; 2014-2018 <a href="http://toirus.ru">ТОиРУС</a>.</strong> Все права на
