@@ -1,23 +1,13 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace backend\controllers;
 
+use app\commands\MainFunctions;
 use backend\models\EquipmentSearch;
-use common\models\Defect;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
+use common\models\Flat;
 use common\models\Measure;
-use common\models\Operation;
 use common\models\PhotoEquipment;
 use Yii;
 use yii\filters\VerbFilter;
@@ -42,7 +32,7 @@ class EquipmentController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -146,6 +136,42 @@ class EquipmentController extends Controller
         } else {
             return $this->render('create', ['model' => $model]);
         }
+    }
+
+    /**
+     * Creates a new Equipment models.
+     *
+     * @return mixed
+     */
+    public function actionNew()
+    {
+        $equipments = array();
+        $equipment_count=0;
+        $flats = Flat::find()
+            ->select('*')
+            ->all();
+        foreach ($flats as $flat) {
+            $equipment = Equipment::find()
+                ->select('*')
+                ->where(['flatUuid' => $flat['uuid']])
+                ->one();
+            if ($equipment==null) {
+                $equipment = new Equipment();
+                $equipment->uuid = MainFunctions::GUID();
+                $equipment->houseUuid = $flat['house']->uuid;
+                $equipment->flatUuid = $flat['uuid'];
+                $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
+                $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
+                $equipment->serial = '222222';
+                $equipment->testDate = date('Y-m-d H:i:s');
+                $equipment->changedAt = date('Y-m-d H:i:s');
+                $equipment->createdAt = date('Y-m-d H:i:s');
+                $equipment->save();
+                $equipments[$equipment_count] = $equipment;
+                $equipment_count++;
+            }
+        }
+        return $this->render('new', ['equipments' => $equipments]);
     }
 
 

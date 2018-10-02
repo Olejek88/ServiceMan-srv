@@ -39,7 +39,7 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($houses, 'uuid', function($model) {
         return $model['street']->title.', '.$model['number'];
     });
-    echo $form->field($model, 'houseUuid')->widget(Select2::classname(),
+    echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -55,7 +55,7 @@ use yii\widgets\ActiveForm;
     <?php
     $statuses = FlatStatus::find()->all();
     $items = ArrayHelper::map($statuses, 'uuid', 'title');
-    echo $form->field($model, 'flatStatusUuid')->widget(Select2::classname(),
+    echo $form->field($model, 'flatStatusUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',

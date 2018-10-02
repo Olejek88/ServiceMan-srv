@@ -19,7 +19,7 @@ $this->title = Yii::t('app', 'Пользователи');
                 print '<div class="row">';
             }
             $path='/images/unknown.png';
-            print '<div class="col-md-4">
+            print '<div class="col-md-3">
                         <div class="box box-widget widget-user-2">
                         <div class="widget-user-header bg-yellow">
                         <div class="widget-user-image">';

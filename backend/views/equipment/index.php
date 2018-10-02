@@ -42,7 +42,7 @@ $gridColumns = [
         'expandOneOnly' => true
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
+        'class' => 'kartik\grid\DataColumn',
         'attribute' => 'flatUuid',
         'vAlign' => 'middle',
         'width' => '180px',
@@ -55,20 +55,6 @@ $gridColumns = [
                 ['title' => Yii::t('app', 'Добавить')]),
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
-        'editableOptions'=> function ($model, $key, $index, $widget) {
-            $flat  = Flat::find()->all();
-            $items = ArrayHelper::map($flat, 'uuid', function($model) {
-                return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
-            });
-            $models = ArrayHelper::map($items, 'uuid', 'number');
-            return [
-                'header' => 'Объект',
-                'size' => 'lg',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $models,
-                'data' => $items
-            ];
-        },
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -198,6 +184,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
+            Html::a('Добавить недостающие', ['/equipment/new'], ['class'=>'btn btn-success']),
             Html::a('Новое', ['/equipment/create'], ['class'=>'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
