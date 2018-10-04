@@ -341,11 +341,13 @@ class EquipmentController extends Controller
             $photo_count=0;
             $message_count=0;
             foreach ($equipments as $equipment) {
+
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
                     'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
                     ['equipment/view', 'id' => $equipment['_id']]
                 );
+
                 if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                     $class = 'critical1';
                 } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
@@ -455,11 +457,13 @@ class EquipmentController extends Controller
                             'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
-                        if ($user!=null)
+
+/*                        if ($user!=null)
                             $fullTree[$oCnt0][$c][$oCnt1]['user'] = Html::a(
                             $user['name'],
                             ['user-house/delete', 'id' => $user_house['_id']], ['target'=>'_blank']
                         );
+*/
 
                         if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                             $class = 'critical1';
