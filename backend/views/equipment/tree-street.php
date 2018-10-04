@@ -9,20 +9,19 @@ $this->title = 'Дерево моделей оборудования';
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="100px">
+        <col width="160px">
         <col width="120px">
         <col width="130px">
-        <col width="140px">
-        <col width="120px">
+        <col width="130px">
+        <col width="160px">
         <col width="130px">
         <col width="120px">
         <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr><th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
-    <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
-        <th>Серийный</th> <th>Статус</th>
-        <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
+    <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Адрес</th><th align="center">Ответственный</th>
+        <th>Статус</th><th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
         <th>Дата фото</th><th>Фото</th><th>Сообщение</th></tr>
     </thead>
     <tbody>
@@ -62,11 +61,11 @@ $this->title = 'Дерево моделей оборудования';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "serialColumnIdx" => "2",
+            "userColumnIdx" => "2",
             "statusColumnIdx" => "3",
             "dateMeasureColumnIdx" => "4",
             "valueColumnIdx" => "5",
-            "userColumnIdx" => "6",
+            "userMeasureColumnIdx" => "6",
             "datePhotoColumnIdx" => "7",
             "photoColumnIdx" => "8",
             "messageColumnIdx" => "9"
@@ -74,7 +73,7 @@ $this->title = 'Дерево моделей оборудования';
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.serial);
+            $tdList.eq(1).text(node.data.user);
             $tdList.eq(2).html(node.data.status);
             $tdList.eq(3).html(node.data.measure_date);
             $tdList.eq(4).text(node.data.measure_value);

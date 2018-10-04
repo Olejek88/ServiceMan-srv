@@ -337,6 +337,9 @@ class EquipmentController extends Controller
             $equipments = $query->all();
 
             $oCnt1 = 0;
+            $measure_count=0;
+            $photo_count=0;
+            $message_count=0;
             foreach ($equipments as $equipment) {
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
@@ -366,6 +369,7 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                    $measure_count++;
                 } else {
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
@@ -377,8 +381,10 @@ class EquipmentController extends Controller
                     ->orderBy('date DESC')
                     ->where(['flatUuid' => $equipment['flat']['uuid']])
                     ->one();
-                if ($message!=null)
-                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'],0,150);
+                if ($message!=null) {
+                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'], 0, 150);
+                    $message_count++;
+                }
 
                 $photo = PhotoEquipment::find()
                     ->select('*')
@@ -391,6 +397,7 @@ class EquipmentController extends Controller
                         ['storage/equipment/'.$photo['uuid'].'.jpg']
                     );
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
+                    $photo_count++;
                 }
                 else {
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
@@ -398,6 +405,11 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
                 }
                 $oCnt1++;
+            }
+            if ($oCnt1>0) {
+                $fullTree[$oCnt0]['measure_value'] = $measure_count.'['.number_format($measure_count*100/$oCnt1,2).'%]';
+                $fullTree[$oCnt0]['photo'] = $photo_count.'['.number_format($photo_count*100/$oCnt1,2).'%]';
+                $fullTree[$oCnt0]['message'] = $message_count.'['.number_format($message_count*100/$oCnt1,2).'%]';
             }
             $oCnt0++;
         }
@@ -426,81 +438,82 @@ class EquipmentController extends Controller
                 $street['title'],
                 ['street/view', 'id' => $street['_id']]
             );
-            $query = Equipment::find()
-                ->select('*')
-                ->where(['flatUuid' => (
-                Flat::find()->select('uuid')->where(['houseUuid' => (
-                House::find()->select('uuid')->where(['streetUuid' => $street['uuid']])
-                    ->orderBy('number')->all()
-                )]))]);
-            //$query->with('user-house')->where(['houseUuid' => 'houseUuid']);
-            $equipments = $query->all();
-
             $oCnt1 = 0;
-            foreach ($equipments as $equipment) {
-                $fullTree[$oCnt0][$c][$oCnt1]['title']
-                    = Html::a(
-                    'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
-                    ['equipment/view', 'id' => $equipment['_id']]
-                );
+            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
+                orderBy('number')->all();
+            foreach ($houses as $house) {
+                $user = Users::find()->where(['uuid' =>
+                        UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
+                ])->one();
+                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
+                foreach ($flats as $flat) {
+                    $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
+                    foreach ($equipments as $equipment) {
+                        $fullTree[$oCnt0][$c][$oCnt1]['title']
+                            = Html::a(
+                            'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                            ['equipment/view', 'id' => $equipment['_id']]
+                        );
+                        if ($user!=null)
+                            $fullTree[$oCnt0][$c][$oCnt1]['user'] = $user['name'];
 
-                $fullTree[$oCnt0][$c][$oCnt1]['user'] = 'нет фото';
+                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
+                            $class = 'critical1';
+                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
+                            $class = 'critical2';
+                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
+                            $class = 'critical4';
+                        } else {
+                            $class = 'critical3';
+                        }
+                        $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
+                            . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
+                        $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
+                        //$fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
 
-                if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                    $class = 'critical1';
-                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                    $class = 'critical2';
-                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
-                    $class = 'critical4';
-                } else {
-                    $class = 'critical3';
+                        $measure = Measure::find()
+                            ->select('*')
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->orderBy('date DESC')
+                            ->one();
+                        if ($measure) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                        } else {
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
+                        }
+
+                        $message = Message::find()
+                            ->select('*')
+                            ->orderBy('date DESC')
+                            ->where(['flatUuid' => $equipment['flat']['uuid']])
+                            ->one();
+                        if ($message!=null)
+                            $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'],0,150);
+
+                        $photo = PhotoEquipment::find()
+                            ->select('*')
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->orderBy('createdAt DESC')
+                            ->one();
+                        if ($photo) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
+                                ['storage/equipment/'.$photo['uuid'].'.jpg']
+                            );
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
+                        }
+                        else {
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
+                        }
+                        $oCnt1++;
+                    }
                 }
-                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
-                    . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
-                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
-                $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
-
-                $measure = Measure::find()
-                    ->select('*')
-                    ->where(['equipmentUuid' => $equipment['uuid']])
-                    ->orderBy('date DESC')
-                    ->one();
-                if ($measure) {
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                } else {
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
-                }
-
-                $message = Message::find()
-                    ->select('*')
-                    ->orderBy('date DESC')
-                    ->where(['flatUuid' => $equipment['flat']['uuid']])
-                    ->one();
-                if ($message!=null)
-                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'],0,150);
-
-                $photo = PhotoEquipment::find()
-                    ->select('*')
-                    ->where(['equipmentUuid' => $equipment['uuid']])
-                    ->orderBy('createdAt DESC')
-                    ->one();
-                if ($photo) {
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
-                        ['storage/equipment/'.$photo['uuid'].'.jpg']
-                    );
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                }
-                else {
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
-                }
-                $oCnt1++;
             }
             $oCnt0++;
         }
