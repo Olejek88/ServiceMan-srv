@@ -442,6 +442,7 @@ class EquipmentController extends Controller
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
                 orderBy('number')->all();
             foreach ($houses as $house) {
+                $user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
                 $user = Users::find()->where(['uuid' =>
                         UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
@@ -455,7 +456,10 @@ class EquipmentController extends Controller
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
                         if ($user!=null)
-                            $fullTree[$oCnt0][$c][$oCnt1]['user'] = $user['name'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['user'] = Html::a(
+                            $user['name'],
+                            ['user-house/delete', 'id' => $user_house['_id']], ['target'=>'_blank']
+                        );
 
                         if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                             $class = 'critical1';

@@ -73,7 +73,7 @@ $this->title = 'Дерево моделей оборудования';
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.user);
+            $tdList.eq(1).html(node.data.user);
             $tdList.eq(2).html(node.data.status);
             $tdList.eq(3).html(node.data.measure_date);
             $tdList.eq(4).text(node.data.measure_value);
