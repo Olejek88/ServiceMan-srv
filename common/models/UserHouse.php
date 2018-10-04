@@ -71,7 +71,7 @@ class UserHouse extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
     /**
@@ -80,6 +80,6 @@ class UserHouse extends ActiveRecord
      */
     public function getHouse()
     {
-        return $this->hasOne(House::className(), ['uuid' => 'houseUuid']);
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 }
