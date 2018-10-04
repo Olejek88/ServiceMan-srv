@@ -156,6 +156,69 @@ class ExportController extends Controller
         }
     }
 
+    public function actionUserLeft()
+    {
+        echo('[' . self::LOG_ID . '] start user house delete').PHP_EOL;
+        echo('[' . self::LOG_ID . '] [' . Yii::$app->db->dsn . '] user/pass ' . Yii::$app->db->username).PHP_EOL;
+        $reader = new Xls();
+        for ($year = 2016; $year <= 2018; $year++) {
+            for ($file_private = 1; $file_private <= 12; $file_private++) {
+                $file_name = \Yii::$app->basePath . "/export-data/data/".$year."/" . sprintf("%02d", $file_private) . ".".$year.".xls";
+                echo ('[' . self::LOG_ID . '] ' . $file_name) . PHP_EOL;
+                if (file_exists($file_name)) {
+                    $file = $reader->load($file_name);
+                    $sheet = $file->getActiveSheet();
+                    $row_num = 0;
+                    foreach ($sheet->getRowIterator() as $row) {
+                        $cellIterator = $row->getCellIterator();
+                        $cellIterator->setIterateOnlyExistingCells(FALSE);
+                        $cell_num = 0;
+                        $city = '';
+                        $flat = '';
+                        $house = '';
+                        $street = '';
+                        $name = '';
+                        foreach ($cellIterator as $cell) {
+                            switch ($cell_num) {
+                                case 1:
+                                    $city = $cell->getValue();
+                                    break;
+                                case 3:
+                                    $street = $cell->getValue();
+                                    break;
+                                case 4:
+                                    $house = $cell->getValue();
+                                    break;
+                                case 5:
+                                    $flat = $cell->getValue();
+                                    break;
+                                case 8:
+                                    $name = $cell->getValue();
+                                    break;
+                            }
+                            $cell_num++;
+                        }
+                        if ($name == 'Летний водопровод' || $city == 'Водоснабжение из скважин') {
+                            $street = Street::find()->where(['title' => $street])->one();
+                            if ($street!=null) {
+                                $house = House::find()->where(['streetUuid' => $street['uuid']])
+                                    ->andWhere(['number' => $house])->one();
+                                if ($house!=null) {
+                                    $userHouse = UserHouse::find()->where(['houseUuid' => $house['uuid']])->one();
+                                    if ($userHouse != null) {
+                                        $userHouse->delete();
+                                        echo('deassign user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $userHouse['uuid'] . ']' . PHP_EOL);
+                                    }
+                                }
+                            }
+                        }
+                        $row_num++;
+                    }
+                }
+            }
+        }
+    }
+
     public function actionLoadSubject()
     {
         echo('[' . self::LOG_ID . '] start load subjects').PHP_EOL;
