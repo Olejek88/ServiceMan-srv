@@ -198,7 +198,8 @@ class ExportController extends Controller
                             }
                             $cell_num++;
                         }
-                        if ($name == 'Летний водопровод' || $city == 'Водоснабжение из скважин') {
+                        if ($name == 'Летний водопровод' || $city == 'Водоснабжение из скважин')
+                        if ($flat == '') {
                             $street = Street::find()->where(['title' => $street])->one();
                             if ($street!=null) {
                                 $house = House::find()->where(['streetUuid' => $street['uuid']])
