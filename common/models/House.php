@@ -126,4 +126,8 @@ class House extends ActiveRecord
     {
         return $this->hasOne(HouseType::class, ['uuid' => 'houseTypeUuid']);
     }
+
+    public function getFullTitle() {
+        return 'ул.'.$this->street['title'].', д.'.$this->number;
+    }
 }

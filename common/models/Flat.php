@@ -124,4 +124,9 @@ class Flat extends ActiveRecord
     public function getFlatType() {
         return $this->hasOne(FlatType::class, ['uuid' => 'flatTypeUuid']);
     }
+
+    public function getFullTitle() {
+        return 'ул.'.$this->house['street']['title'].', д.'.$this->house['number'];
+    }
+
 }

@@ -56,6 +56,22 @@ class FlatController extends Controller
     }
 
     /**
+     * Lists all Flat models.
+     * @return mixed
+     */
+    public function actionTable()
+    {
+        $searchModel = new FlatSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 1200;
+
+        return $this->render('table', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single Flat model.
      * @param integer $id
      * @return mixed

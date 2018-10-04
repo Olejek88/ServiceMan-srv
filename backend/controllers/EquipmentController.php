@@ -330,7 +330,8 @@ class EquipmentController extends Controller
                 ->select('*')
                 ->where(['flatUuid' => (
                     Flat::find()->select('uuid')->where(['houseUuid' => (
-                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
+                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->
+                        orderBy('houseUuid DESC')->all()
                     )]))])
                 ->all();
             $oCnt1 = 0;
@@ -344,6 +345,8 @@ class EquipmentController extends Controller
                     $class = 'critical1';
                 } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
                     $class = 'critical2';
+                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
+                    $class = 'critical4';
                 } else {
                     $class = 'critical3';
                 }
@@ -373,7 +376,7 @@ class EquipmentController extends Controller
                     ->where(['flatUuid' => $equipment['flat']['uuid']])
                     ->one();
                 if ($message!=null)
-                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = $message['message'];
+                    $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'],0,150);
 
                 $photo = PhotoEquipment::find()
                     ->select('*')
