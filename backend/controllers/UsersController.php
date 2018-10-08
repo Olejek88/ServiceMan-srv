@@ -240,8 +240,9 @@ class UsersController extends Controller
             $user_property[$count]['alarms']=$user_alarms;
             $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['messages']=$user_messages;
-            $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->count();
-            //
+
+            $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->
+            andWhere('date > NOW() - INTERVAL 7 DAY')->count();
             $user_property[$count]['measure'] = $user_measure;
 
             $user_tracks = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();

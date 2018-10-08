@@ -541,8 +541,24 @@ class EquipmentController extends Controller
     public
     function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $equipment = $this->findModel($id);
+        $photos = PhotoEquipment::find()
+            ->select('*')
+            ->where(['equipmentUuid' => $equipment['uuid']])
+            ->all();
+        foreach ($photos as $photo) {
+            $photo->delete();
+        }
 
+        $measures = Measure::find()
+                ->select('*')
+                ->where(['equipmentUuid' => $equipment['uuid']])
+                ->all();
+        foreach ($measures as $measure) {
+            $measure->delete();
+        }
+
+        $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
 
