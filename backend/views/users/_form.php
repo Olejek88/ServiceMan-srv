@@ -2,6 +2,7 @@
 
 use app\commands\MainFunctions;
 use common\models\User;
+use kartik\widgets\FileInput;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -47,6 +48,12 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($users, '_id', 'username');
     echo $form->field($model, 'user_id')->dropDownList($items);
     ?>
+
+    <?php
+    echo $form->field($model, 'image')->widget(
+        FileInput::class,
+        ['options' => ['accept' => '*'],]
+    ); ?>
 
     <?php echo $form->field($model, 'contact')->textInput(['maxlength' => true]) ?>
 

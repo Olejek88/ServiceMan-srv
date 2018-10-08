@@ -35,7 +35,10 @@ $this->title = 'Профиль пользователя :: '.$model->name;
                 <div class="box box-primary">
                     <div class="box-body box-profile">
                         <?php
-                        $path='/images/unknown2.png';
+                        $path = $model->getPhotoUrl();
+                        if (!$path || !$model['image']) {
+                            $path='/images/unknown2.png';
+                        }
                         echo '<img class="profile-user-img img-responsive img-circle" src="'.Html::encode($path).'">';
                         ?>
                         <h3 class="profile-username text-center"><?php echo $model['name'] ?></h3>

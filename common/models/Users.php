@@ -24,6 +24,8 @@ use yii\db\Expression;
  */
 class Users extends ActiveRecord
 {
+    private static $_IMAGE_ROOT = 'users';
+
     /**
      * Behaviors.
      *
@@ -68,6 +70,7 @@ class Users extends ActiveRecord
                 ],
                 'required'
             ],
+            [['image'], 'file'],
             [['user_id'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'pin'], 'string', 'max' => 50],
@@ -87,6 +90,7 @@ class Users extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'name' => Yii::t('app', 'Имя'),
             'pin' => Yii::t('app', 'Хеш пин кода'),
+            'image' => Yii::t('app', 'Фото'),
             'contact' => Yii::t('app', 'Контакт'),
             'user_id' => Yii::t('app', 'User id'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -127,5 +131,55 @@ class Users extends ActiveRecord
         return $this->hasOne(User::class, ['_id' => 'user_id']);
     }
 
+    /**
+     * Проверка целостности модели?
+     *
+     * @return bool
+     */
+    public function upload()
+    {
+        if ($this->validate()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
+     * Возвращает id.
+     *
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this['_id'];
+    }
+
+    /**
+     * URL изображения.
+     *
+     * @return string | null
+     */
+    public function getImageDir()
+    {
+        $localPath = 'storage/' . self::$_IMAGE_ROOT . '/';
+        return $localPath;
+    }
+
+    /**
+     * URL изображения.
+     *
+     * @return string
+     */
+    public function getPhotoUrl()
+    {
+        $localPath = '/storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
+        if (file_exists(Yii::getAlias('@backend/web/' . $localPath))) {
+            $url = $localPath;
+        } else {
+            $url = null;
+        }
+
+        return $url;
+    }
     public const USER_SERVICE_UUID = '00000000-9bf0-4542-b127-f4ecefce49da';
 }

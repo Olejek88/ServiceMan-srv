@@ -299,7 +299,7 @@ class UsersController extends Controller
 
             if ($model->save()) {
                 MainFunctions::register('Обновлен профиль пользователя ' . $model->name);
-                return $this->redirect(['view', 'id' => $model->_id]);
+                //return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render(
                     'update',

@@ -16,7 +16,11 @@ $this->title = Yii::t('app', 'Пользователи');
                 if ($count>0) print '</div>';
                 print '<div class="row">';
             }
-            $path='/images/unknown.png';
+            $path = $user->getPhotoUrl();
+            if (!$path || !$user['image']) {
+                $path='/images/unknown.png';
+            }
+
             print '<div class="col-md-3">
                         <div class="box box-widget widget-user-2">
                         <div class="widget-user-header bg-yellow">
