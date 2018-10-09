@@ -358,15 +358,24 @@ class EquipmentController extends Controller
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
+                        $message_flat_count = Message::find()
+                            ->where(['flatUuid' => $equipment['flat']['uuid']])
+                            ->count();
+                        $photo_flat_count = PhotoEquipment::find()
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->count();
+
                         $message = Message::find()
                             ->select('*')
                             ->orderBy('date DESC')
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
+                        $message_text = '['.$photo_flat_count.'/'.$message_flat_count.'] ';
                         if ($message != null) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'], 0, 150);
+                            $message_text .= substr($message['message'], 0, 150);
                             $message_count++;
                         }
+                        $fullTree[$oCnt0][$c][$oCnt1]['message'] = $message_text;
 
                         $photo = PhotoEquipment::find()
                             ->select('*')
