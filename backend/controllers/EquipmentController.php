@@ -337,6 +337,7 @@ class EquipmentController extends Controller
             $equipments = $query->orderBy('changedAt')->groupBy('flatUuid')->all();
 
             $oCnt1 = 0;
+            $measure_total_count=0;
             $measure_count=0;
             $photo_count=0;
             $message_count=0;
@@ -357,7 +358,7 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                    $measure_count++;
+                    $measure_total_count++;
                 } else {
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
@@ -375,11 +376,15 @@ class EquipmentController extends Controller
                 }
 
                 $status = $equipment['equipmentStatus']->title;
-                if ($measure)
-                    if (time() - strtotime($measure['date'])<(3600*24*1000*5)) {
+                if ($measure) {
+                    //echo $measure['date'].' | '.time() .'-'. strtotime($measure['date']). ' < ' . (3600 * 24 * 7 * 1).'<br/>';
+                    if (time() - strtotime($measure['date']) > (3600 * 24 * 7 * 1)) {
                         $class = 'critical2';
                         $status = 'Посещался';
                     }
+                    else
+                        $measure_count++;
+                }
 
                 $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
                     . $class . '">' . $status . '</div></div>';
@@ -418,6 +423,19 @@ class EquipmentController extends Controller
                 $oCnt1++;
             }
             if ($oCnt1>0) {
+                if ($oCnt1>0) {
+                    $ok = $measure_count*100/$oCnt1;
+                    if ($ok<20) {
+                        $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">Очень плохо</div></div>';
+                    } elseif ($ok<45) {
+                        $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">Плохо</div></div>';
+                    } elseif ($ok<70) {
+                        $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">Средне</div></div>';
+                    } else {
+                        $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">Хорошо</div></div>';
+                    }
+                }
+                $fullTree[$oCnt0]['measure_date'] = 'Показаний: '.$measure_count.'['.$measure_total_count.']';
                 $fullTree[$oCnt0]['measure_value'] = $measure_count.'['.number_format($measure_count*100/$oCnt1,2).'%]';
                 $fullTree[$oCnt0]['photo'] = $photo_count.'['.number_format($photo_count*100/$oCnt1,2).'%]';
                 $fullTree[$oCnt0]['message'] = $message_count.'['.number_format($message_count*100/$oCnt1,2).'%]';
@@ -445,6 +463,10 @@ class EquipmentController extends Controller
             ->all();
         $oCnt0 = 0;
         foreach ($streets as $street) {
+            $last_user='';
+            $last_date='';
+            $house_count=0;
+            $house_visited=0;
             $fullTree[$oCnt0]['title'] = Html::a(
                 $street['title'],
                 ['street/view', 'id' => $street['_id']]
@@ -459,6 +481,8 @@ class EquipmentController extends Controller
                 ])->one();
                 $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($flats as $flat) {
+                    $house_count++;
+                    $visited=0;
                     $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1]['title']
@@ -467,11 +491,11 @@ class EquipmentController extends Controller
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
-                        if ($user!=null)
+                        if ($user != null)
                             $fullTree[$oCnt0][$c][$oCnt1]['user'] = Html::a(
-                            $user['name'],
-                            ['user-house/delete', 'id' => $user_house['_id']], ['target'=>'_blank']
-                        );
+                                $user['name'],
+                                ['user-house/delete', 'id' => $user_house['_id']], ['target' => '_blank']
+                            );
 
                         if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
                             $class = 'critical1';
@@ -496,6 +520,10 @@ class EquipmentController extends Controller
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                            $last_user = $measure['user']->name;
+                            $last_date = $measure['date'];
+                            $house_visited++;
+                            $visited++;
                         } else {
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
@@ -507,8 +535,11 @@ class EquipmentController extends Controller
                             ->orderBy('date DESC')
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
-                        if ($message!=null)
-                            $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'],0,150);
+                        if ($message != null) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'], 0, 150);
+                            if ($visited==0)
+                                $house_visited++;
+                        }
 
                         $photo = PhotoEquipment::find()
                             ->select('*')
@@ -521,6 +552,9 @@ class EquipmentController extends Controller
                                 ['storage/equipment/'.$photo['uuid'].'.jpg']
                             );
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
+                            $last_user = $photo['user']->name;
+                            if ($visited==0)
+                                $house_visited++;
                         }
                         else {
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
@@ -530,6 +564,26 @@ class EquipmentController extends Controller
                         $oCnt1++;
                     }
                 }
+            }
+            $fullTree[$oCnt0]['measure_user'] = $last_user;
+            $fullTree[$oCnt0]['measure_date'] = $last_date;
+            $fullTree[$oCnt0]['photo_user'] = $last_user;
+            $fullTree[$oCnt0]['photo_date'] = $last_date;
+            $ok=0;
+            if ($house_count>0)
+                $ok = $house_visited*100/$house_count;
+            if ($ok<20) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">'.
+                    number_format($ok,2).'%</div></div>';
+            } elseif ($ok<45) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">'.
+                    number_format($ok,2).'%</div></div>';
+            } elseif ($ok<70) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">'.
+                    number_format($ok,2).'%</div></div>';
+            } else {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">'.
+                    number_format($ok,2).'%</div></div>';
             }
             $oCnt0++;
         }

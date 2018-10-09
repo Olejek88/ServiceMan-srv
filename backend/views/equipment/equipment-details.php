@@ -24,7 +24,7 @@ $photo = PhotoEquipment::find()
 $categories = "[";
 $values="name: 'Значения', data: [";
 $zero = 0;
-
+$num = rand(0,1000);
 $counts=0;
 foreach ($measures as $measure) {
     if ($counts > 0) {
@@ -72,11 +72,11 @@ $categories .= "]";
                         <table class="table table-bordered table-condensed table-hover small kv-table">
                             <tr class="danger">
                                 <td class="text-center">
-                                    <div id="container" style="height: 250px; width: 430px"></div>
+                                    <div id="container<?php echo $num ?>" style="height: 250px; width: 430px"></div>
                                     <script src="/js/vendor/lib/HighCharts/highcharts.js"></script>
                                     <script src="/js/vendor/lib/HighCharts/modules/exporting.js"></script>
                                     <script type="text/javascript">
-                                        Highcharts.chart('container', {
+                                        Highcharts.chart('container<?php echo $num ?>', {
                                             data: {
                                                 table: 'data_table'
                                             },
@@ -116,7 +116,7 @@ $categories .= "]";
                                             },
                                             series: [{
                                                 <?php
-                                                echo $values;
+                                                    echo $values;
                                                 ?>
                                             }]
                                         });

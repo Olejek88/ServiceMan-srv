@@ -16,6 +16,7 @@ use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\Defect;
+use common\models\Equipment;
 use common\models\Flat;
 use common\models\Gpstrack;
 use common\models\Journal;
@@ -251,14 +252,34 @@ class UsersController extends Controller
             $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->all();
             $user_property[$count]['houses'] = $user_houses;
             $user_flats=0;
+            $visited=0;
             foreach ($user_houses as $user_house) {
-                $user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
+                //$user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
+                $flats = Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->all();
+                foreach ($flats as $flat) {
+                    $user_flats++;
+                    $equipment = Equipment::find()->where(['flatUuid' => $flat['uuid']])->orderBy('createdAt DESC')->one();
+                    if ($equipment) {
+                        $user_measure = Measure::find()->where(['equipmentUuid' => $equipment['uuid']])->
+                        andWhere('date > NOW() - INTERVAL 14 DAY')->count();
+                        if ($user_measure>0)
+                            $visited++;
+                        else {
+                            $user_message = Message::find()->where(['flatUuid' => $flat['uuid']])->
+                            andWhere('date > NOW() - INTERVAL 14 DAY')->count();
+                            if ($user_message>0)
+                                $visited++;
+                        }
+                    }
+                }
             }
             $user_property[$count]['objects'] = $user_flats;
+            $user_property[$count]['visited'] = $visited;
 
             $user_property[$count]['complete'] = 0;
             if ($user_flats>0) {
-                $user_property[$count]['complete'] = number_format($user_measure * 100 / $user_flats,2);
+                $user_property[$count]['complete'] = number_format($user_property[$count]['measure'] * 100 / $user_flats,2);
+                $user_property[$count]['visited_total'] = number_format($visited * 100 / $user_flats,2);
             }
 
             $count++;

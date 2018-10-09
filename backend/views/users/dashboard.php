@@ -41,6 +41,9 @@ $this->title = Yii::t('app', 'Пользователи');
                             <span class="pull-right badge bg-orange">'.count($user_property[$count]['houses']).' / '.
                                 $user_property[$count]['objects'].'</span></a>
                             </li>
+                            <li><a href="#">Посещено 
+                            <span class="pull-right badge bg-green">'.$user_property[$count]['visited'].' / '.
+                                $user_property[$count]['visited_total'].'%</span></a></li>
                             <li><a href="#">Измерений (%) 
                                 <span class="pull-right badge bg-red">'.$user_property[$count]['measure'].' / '.
                                     $user_property[$count]['complete'].'%</span></a></li>
