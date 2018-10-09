@@ -160,4 +160,15 @@ class Measure extends ActiveRecord
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
+
+    public static function getLastMeasureBetweenDates($equipmentUuid, $startDate, $endDate)
+    {
+        $model = Measure::find()->where(["equipmentUuid" => $equipmentUuid])
+            ->andWhere('date >= "'.$startDate.'"')
+            ->andWhere('date < "'.$endDate.'"')
+            ->orderBy('date DESC')
+            ->one();
+        return $model;
+    }
+
 }

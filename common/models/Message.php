@@ -157,4 +157,13 @@ class Message extends ActiveRecord
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
+
+    public static function getLastMessage($flatUuid)
+    {
+        $model = Message::find()->where(["flatUuid" => $flatUuid])->orderBy('date DESC')->one();
+        if(!empty($model)){
+            return $model['message'];
+        }
+        return null;
+    }
 }

@@ -101,6 +101,27 @@ class EquipmentController extends Controller
         );
     }
 
+
+    /**
+     * Lists all Equipment models.
+     *
+     * @return mixed
+     */
+    public function actionTable()
+    {
+        $searchModel = new EquipmentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 1000;
+
+        return $this->render(
+            'table',
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
     /**
      * Displays a single Equipment model.
      *

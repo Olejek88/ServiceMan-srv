@@ -106,4 +106,14 @@ class Subject extends ActiveRecord
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
     }
+
+    public static function getSubjectName($flatUuid)
+    {
+        $model = Subject::find()->where(["flatUuid" => $flatUuid])->one();
+        if(!empty($model)){
+            return $model['owner'];
+        }
+        return null;
+    }
+
 }

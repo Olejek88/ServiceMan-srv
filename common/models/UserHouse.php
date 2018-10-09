@@ -82,4 +82,13 @@ class UserHouse extends ActiveRecord
     {
         return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
+
+    public static function getUserName($houseUuid)
+    {
+        $model = UserHouse::find()->where(["houseUuid" => $houseUuid])->one();
+        if(!empty($model)){
+            return $model['user']->name;
+        }
+        return null;
+    }
 }
