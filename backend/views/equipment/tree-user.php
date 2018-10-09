@@ -9,19 +9,18 @@ $this->title = 'Дерево моделей оборудования';
 <table id="tree">
     <colgroup>
         <col width="*">
-        <col width="100px">
-        <col width="120px">
-        <col width="130px">
-        <col width="140px">
         <col width="120px">
         <col width="130px">
         <col width="120px">
+        <col width="120px">
+        <col width="130px">
+        <col width="70px">
         <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr><th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
-        <th>Серийный</th> <th>Статус</th>
+        <th>Статус</th>
         <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
         <th>Дата фото</th><th>Фото</th><th>Сообщение</th></tr>
     </thead>
@@ -35,7 +34,6 @@ $this->title = 'Дерево моделей оборудования';
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
-        <td class="center"></td>
     </tr>
     </tbody>
 </table>
@@ -62,26 +60,24 @@ $this->title = 'Дерево моделей оборудования';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "serialColumnIdx" => "2",
-            "statusColumnIdx" => "3",
-            "dateMeasureColumnIdx" => "4",
-            "valueColumnIdx" => "5",
-            "userColumnIdx" => "6",
-            "datePhotoColumnIdx" => "7",
-            "photoColumnIdx" => "8",
-            "messageColumnIdx" => "9"
+            "statusColumnIdx" => "2",
+            "dateMeasureColumnIdx" => "3",
+            "valueColumnIdx" => "4",
+            "userColumnIdx" => "5",
+            "datePhotoColumnIdx" => "6",
+            "photoColumnIdx" => "7",
+            "messageColumnIdx" => "8"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.serial);
-            $tdList.eq(2).html(node.data.status);
-            $tdList.eq(3).html(node.data.measure_date);
-            $tdList.eq(4).text(node.data.measure_value);
-            $tdList.eq(5).html(node.data.measure_user);
-            $tdList.eq(6).html(node.data.photo_date);
-            $tdList.eq(7).html(node.data.photo);
-            $tdList.eq(8).html(node.data.message);
+            $tdList.eq(1).html(node.data.status);
+            $tdList.eq(2).html(node.data.measure_date);
+            $tdList.eq(3).text(node.data.measure_value);
+            $tdList.eq(4).html(node.data.measure_user);
+            $tdList.eq(5).html(node.data.photo_date);
+            $tdList.eq(6).html(node.data.photo);
+            $tdList.eq(7).html(node.data.message);
         }')
     ]
 ]);

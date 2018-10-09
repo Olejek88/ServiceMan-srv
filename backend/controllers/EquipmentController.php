@@ -334,7 +334,7 @@ class EquipmentController extends Controller
                         UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
                     )]))]);
             //$query->with('house');
-            $equipments = $query->all();
+            $equipments = $query->orderBy('changedAt')->groupBy('flatUuid')->all();
 
             $oCnt1 = 0;
             $measure_count=0;
@@ -347,20 +347,6 @@ class EquipmentController extends Controller
                     'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
                     ['equipment/view', 'id' => $equipment['_id']]
                 );
-
-                if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                    $class = 'critical1';
-                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                    $class = 'critical2';
-                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
-                    $class = 'critical4';
-                } else {
-                    $class = 'critical3';
-                }
-                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
-                    . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
-                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
-                $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
 
                 $measure = Measure::find()
                     ->select('*')
@@ -377,6 +363,29 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
                 }
+
+                if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
+                    $class = 'critical1';
+                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
+                    $class = 'critical2';
+                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
+                    $class = 'critical4';
+                } else {
+                    $class = 'critical3';
+                }
+
+                $status = $equipment['equipmentStatus']->title;
+                if ($measure)
+                    if (time() - strtotime($measure['date'])<(3600*24*1000*5)) {
+                        $class = 'critical2';
+                        $status = 'Посещался';
+                    }
+
+                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
+                    . $class . '">' . $status . '</div></div>';
+
+                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
+                $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
 
                 $message = Message::find()
                     ->select('*')
