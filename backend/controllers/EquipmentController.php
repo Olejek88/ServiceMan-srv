@@ -270,7 +270,7 @@ class EquipmentController extends Controller
             foreach ($equipments as $equipment) {
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
-                    'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                    'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
                     ['equipment/view', 'id' => $equipment['_id']]
                 );
                 if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
@@ -397,7 +397,7 @@ class EquipmentController extends Controller
                             $message_text .= substr($message['message'], 0, 150);
                             $message_count++;
                         }
-                        $fullTree[$oCnt0][$c][$oCnt1]['message'] = $message_text;
+                        $fullTree[$oCnt0][$c][$oCnt1]['message'] = mb_convert_encoding($message_text, 'UTF-8', 'UTF-8');
 
                         $photo = PhotoEquipment::find()
                             ->select('*')
@@ -543,7 +543,7 @@ class EquipmentController extends Controller
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1]['title']
                             = Html::a(
-                            'ул.' . $equipment['house']['street']->title . ', д.' . $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
@@ -592,7 +592,8 @@ class EquipmentController extends Controller
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
                         if ($message != null) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['message'] = substr($message['message'], 0, 150);
+                            $fullTree[$oCnt0][$c][$oCnt1]['message'] =
+                                mb_convert_encoding(substr($message['message'], 0, 150), 'UTF-8', 'UTF-8');
                             if ($visited==0)
                                 $visited=1;
                                 $house_visited++;

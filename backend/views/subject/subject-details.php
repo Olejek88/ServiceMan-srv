@@ -40,7 +40,7 @@ foreach ($equipments as $next_equipment) {
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
-                            <img src="../<?php echo Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])) ?>" style="padding:2px;width:100%">
+                            <img src="<?php echo Html::encode(MainFunctions::getImagePath('flat', $photoFlat['uuid'])) ?>" style="padding:2px;width:100%">
                             <div class="small text-muted"><?php echo $photoFlat['createdAt'] ?></div>
                         </div>
                     </div>

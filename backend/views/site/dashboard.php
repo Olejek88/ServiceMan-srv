@@ -255,7 +255,7 @@ $this->title = Yii::t('app', 'Сводная');
                                 if (!$path || !$user['image']) {
                                     $path='/images/unknown.png';
                                 }
-                                print '<li><img src="'.Html::encode($path).'" alt="User Image" width="150px">';
+                                print '<li style="width:23%"><img src="'.Html::encode($path).'" alt="User Image" width="150px">';
                                 echo Html::a(Html::encode($user['name']),
                                     ['/users/view', '_id' => Html::encode($user['_id'])],['class' => 'users-list-name']);
                                 echo '<span class="users-list-date">'.$user['createdAt'].'</span></li>';
