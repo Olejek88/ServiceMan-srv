@@ -251,7 +251,10 @@ $this->title = Yii::t('app', 'Сводная');
                             <?php
                             $count=0;
                             foreach ($users as $user) {
-                                $path='/images/unknown2.png';
+                                $path = $user->getPhotoUrl();
+                                if (!$path || !$user['image']) {
+                                    $path='/images/unknown.png';
+                                }
                                 print '<li><img src="'.Html::encode($path).'" alt="User Image" width="150px">';
                                 echo Html::a(Html::encode($user['name']),
                                     ['/users/view', '_id' => Html::encode($user['_id'])],['class' => 'users-list-name']);

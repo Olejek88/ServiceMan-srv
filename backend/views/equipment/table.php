@@ -22,7 +22,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '180px',
         'value' => function ($data) {
-            return $data['flat']['house']['street']->title;
+            return $data['flat']['house']['street']['title'];
         },
         'header' => 'Улица',
         'format' => 'raw',
@@ -33,7 +33,7 @@ $gridColumns = [
         'width' => '80px',
         'header' => 'Дом',
         'value' => function ($data) {
-            return $data['flat']['house']->number;
+            return $data['flat']['house']['number'];
         },
     ],
     [
@@ -42,7 +42,7 @@ $gridColumns = [
         'width' => '80px',
         'header' => 'Пом.',
         'value' => function ($data) {
-            return $data['flat']->number;
+            return $data['flat']['number'];
         },
     ],
     [

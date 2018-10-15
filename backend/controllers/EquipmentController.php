@@ -111,7 +111,7 @@ class EquipmentController extends Controller
     {
         $searchModel = new EquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 1000;
+        $dataProvider->pagination->pageSize = 500;
 
         return $this->render(
             'table',
@@ -335,6 +335,7 @@ class EquipmentController extends Controller
      */
     public function actionTreeUser()
     {
+        ini_set('memory_limit', '-1');
         $c = 'children';
         $fullTree = array();
         $users = Users::find()
@@ -508,6 +509,7 @@ class EquipmentController extends Controller
      */
     public function actionTreeStreet()
     {
+        ini_set('memory_limit', '-1');
         $c = 'children';
         $fullTree = array();
         $streets = Street::find()
