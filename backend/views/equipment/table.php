@@ -6,6 +6,7 @@ use common\models\EquipmentType;
 use common\models\Flat;
 use common\models\Measure;
 use common\models\Message;
+use common\models\PhotoEquipment;
 use common\models\Subject;
 use common\models\UserHouse;
 use kartik\datecontrol\DateControl;
@@ -65,7 +66,7 @@ $gridColumns = [
         'header' => 'Измерение #1',
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-09-27 00:00:00',
-                '2018-10-03 00:00:00');
+                '2018-10-12 00:00:00');
             if ($measure!=null)
                 return $measure['value'];
             else
@@ -79,7 +80,7 @@ $gridColumns = [
         'header' => 'Дата #1',
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-09-27 00:00:00',
-                '2018-10-03 00:00:00');
+                '2018-10-12 00:00:00');
             if ($measure!=null)
                 return $measure['date'];
             else
@@ -92,8 +93,8 @@ $gridColumns = [
         'width' => '80px',
         'header' => 'Измерение #2',
         'value' => function ($data) {
-            $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-04 00:00:00',
-                '2018-10-11 00:00:00');
+            $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-12 00:00:00',
+                '2018-10-20 00:00:00');
             if ($measure!=null)
                 return $measure['value'];
             else
@@ -106,8 +107,8 @@ $gridColumns = [
         'width' => '130px',
         'header' => 'Дата #2',
         'value' => function ($data) {
-            $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-04 00:00:00',
-                '2018-10-11 00:00:00');
+            $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-12 00:00:00',
+                '2018-10-20 00:00:00');
             if ($measure!=null)
                 return $measure['date'];
             else
@@ -140,7 +141,21 @@ $gridColumns = [
                 return '';
         },
     ],
-
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'vAlign' => 'middle',
+        'width' => '80px',
+        'header' => '№Пос.',
+        'value' => function ($data) {
+            $message_flat_count = Message::find()
+                ->where(['flatUuid' => $data['flat']['uuid']])
+                ->count();
+            $photo_flat_count = PhotoEquipment::find()
+                ->where(['equipmentUuid' => $data['uuid']])
+                ->count();
+            return '['.$photo_flat_count.'/'.$message_flat_count.']';
+        },
+    ],
     ];
 
 echo GridView::widget([
