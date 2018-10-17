@@ -9,14 +9,14 @@ $this->title = 'Дерево моделей оборудования';
 
 ?>
 <script type="text/javascript">
-    $("modalDefects").on("click", function(e) {
+    $("modalDefects").on("click", function (e) {
         //var detailId;
 
         e.preventDefault();
 
         // we can use jQuery's built in .data() method to retrieve the detail-id
         //detailId = $(this).data("data-id");
-        $('#modalDefects').load('index.php?id=1', function(){
+        $('#modalDefects').load('index.php?id=1', function () {
             // call some kind of overlay code that displays the popup?
             // this way the popup will show then the content from popup.php has
             // finished loading.
@@ -36,11 +36,19 @@ $this->title = 'Дерево моделей оборудования';
         <col width="120px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
-    <tr><th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
-    <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
-        <th>Серийный</th> <th>Статус</th>
-        <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
-        <th>Дата фото</th><th>Фото</th></tr>
+    <tr>
+        <th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
+    </tr>
+    <tr style="background-color: #3c8dbc; color: whitesmoke">
+        <th align="center">Оборудование</th>
+        <th>Серийный</th>
+        <th>Статус</th>
+        <th>Дата обхода</th>
+        <th>Показания</th>
+        <th>Пользователь</th>
+        <th>Дата фото</th>
+        <th>Фото</th>
+    </tr>
     </thead>
     <tbody>
     <tr>
@@ -55,8 +63,8 @@ $this->title = 'Дерево моделей оборудования';
     </tr>
     </tbody>
 </table>
-<?php  echo FancytreeWidget::widget([
-    'options' =>[
+<?php echo FancytreeWidget::widget([
+    'options' => [
         'id' => 'tree',
         'source' => $equipment,
         'extensions' => ['dnd', "glyph", "table"],
@@ -120,10 +128,10 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-<!--                    <?php /*foreach ($defects as $defect): */?>
+                    <!--                    <?php /*foreach ($defects as $defect): */ ?>
                         <tr>
                         </tr>
-                    --><?php /*endforeach; */?>
+                    --><?php /*endforeach; */ ?>
                     </tbody>
                 </table>
             </div>
@@ -150,15 +158,15 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-<!--                    <?php /*foreach ($operations as $operation): */?>
+                    <!--                    <?php /*foreach ($operations as $operation): */ ?>
                         <tr>
-                            <td><?/*= $operation['id'] */?></td>
-                            <td><?/*= $operation['user'] */?></td>
-                            <td><?/*= $operation['title'] */?></td>
-                            <td><?/*= $operation['date'] */?></td>
-                            <td><?/*= $operation['verdict'] */?></td>
+                            <td><? /*= $operation['id'] */ ?></td>
+                            <td><? /*= $operation['user'] */ ?></td>
+                            <td><? /*= $operation['title'] */ ?></td>
+                            <td><? /*= $operation['date'] */ ?></td>
+                            <td><? /*= $operation['verdict'] */ ?></td>
                         </tr>
-                    --><?php /*endforeach; */?>
+                    --><?php /*endforeach; */ ?>
                     </tbody>
                 </table>
             </div>
@@ -183,14 +191,14 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-<!--                    <?php /*foreach ($registers as $register): */?>
+                    <!--                    <?php /*foreach ($registers as $register): */ ?>
                         <tr>
-                            <td><?/*= $register['uuid'] */?></td>
-                            <td><?/*= $register['user'] */?></td>
-                            <td><?/*= $register['type'] */?></td>
-                            <td><?/*= $register['date'] */?></td>
+                            <td><? /*= $register['uuid'] */ ?></td>
+                            <td><? /*= $register['user'] */ ?></td>
+                            <td><? /*= $register['type'] */ ?></td>
+                            <td><? /*= $register['date'] */ ?></td>
                         </tr>
-                    --><?php /*endforeach; */?>
+                    --><?php /*endforeach; */ ?>
                     </tbody>
                 </table>
             </div>

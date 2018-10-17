@@ -18,11 +18,19 @@ $this->title = 'Дерево моделей оборудования';
         <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
-    <tr><th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th></tr>
-    <tr style="background-color: #3c8dbc; color: whitesmoke"><th align="center">Оборудование</th>
+    <tr>
+        <th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
+    </tr>
+    <tr style="background-color: #3c8dbc; color: whitesmoke">
+        <th align="center">Оборудование</th>
         <th>Статус</th>
-        <th>Дата обхода</th><th>Показания</th><th>Пользователь</th>
-        <th>Дата фото</th><th>Фото</th><th>Сообщение</th></tr>
+        <th>Дата обхода</th>
+        <th>Показания</th>
+        <th>Пользователь</th>
+        <th>Дата фото</th>
+        <th>Фото</th>
+        <th>Сообщение</th>
+    </tr>
     </thead>
     <tbody>
     <tr>
@@ -37,8 +45,8 @@ $this->title = 'Дерево моделей оборудования';
     </tr>
     </tbody>
 </table>
-<?php  echo FancytreeWidget::widget([
-    'options' =>[
+<?php echo FancytreeWidget::widget([
+    'options' => [
         'id' => 'tree',
         'source' => $equipment,
         'extensions' => ['dnd', "glyph", "table"],
@@ -101,14 +109,14 @@ $this->title = 'Дерево моделей оборудования';
                     </tr>
                     </thead>
                     <tbody>
-<!--                    <?php /*foreach ($registers as $register): */?>
+                    <!--                    <?php /*foreach ($registers as $register): */ ?>
                         <tr>
-                            <td><?/*= $register['uuid'] */?></td>
-                            <td><?/*= $register['user'] */?></td>
-                            <td><?/*= $register['type'] */?></td>
-                            <td><?/*= $register['date'] */?></td>
+                            <td><? /*= $register['uuid'] */ ?></td>
+                            <td><? /*= $register['user'] */ ?></td>
+                            <td><? /*= $register['type'] */ ?></td>
+                            <td><? /*= $register['date'] */ ?></td>
                         </tr>
-                    --><?php /*endforeach; */?>
+                    --><?php /*endforeach; */ ?>
                     </tbody>
                 </table>
             </div>

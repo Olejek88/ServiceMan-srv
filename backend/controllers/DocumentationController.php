@@ -219,7 +219,7 @@ class DocumentationController extends Controller
             $entityType->load(Yii::$app->request->post());
             // не проверяется момент когда установлены оба поля, в качестве
             // основного используем модель оборудования
-            $t =  $entityType['entityType'];
+            $t = $entityType['entityType'];
             if ($t == 'm' && $model->equipmentModelUuid != '') {
                 $modelUuidNew = $model->equipmentModelUuid;
                 $model->equipmentUuid = null;
@@ -338,7 +338,7 @@ class DocumentationController extends Controller
      * Сохраняем файл согласно нашим правилам.
      *
      * @param Documentation $model Документация
-     * @param UploadedFile  $file  Файл
+     * @param UploadedFile $file Файл
      *
      * @return string | null
      */

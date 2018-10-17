@@ -19,10 +19,10 @@ return [
         'queue'
     ],
     'modules' => [
-        'gridview' =>  [
-        'class' => '\kartik\grid\Module'
+        'gridview' => [
+            'class' => '\kartik\grid\Module'
         ],
-        'datecontrol' =>  [
+        'datecontrol' => [
             'class' => '\kartik\datecontrol\Module',
             // format settings for displaying each date attribute (ICU format example)
             'displaySettings' => [
@@ -66,11 +66,11 @@ return [
             'name' => 'advanced-backend',
         ],
         'view' => [
-             'theme' => [
-                 'pathMap' => [
+            'theme' => [
+                'pathMap' => [
                     '@app/views' => '@backend/views/yii2-app'
-                 ],
-             ],
+                ],
+            ],
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

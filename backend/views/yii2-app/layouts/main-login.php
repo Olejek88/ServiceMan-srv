@@ -1,4 +1,5 @@
 <?php
+
 use backend\assets\AppAsset;
 use yii\helpers\Html;
 
@@ -18,7 +19,7 @@ AppAsset::register($this);
 
 <?php $this->beginBody() ?>
 
-    <?= $content ?>
+<?= $content ?>
 
 <?php $this->endBody() ?>
 </body>

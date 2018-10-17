@@ -1,14 +1,12 @@
 <?php
 
-use common\models\AttributeType;
+use app\commands\MainFunctions;
 use common\models\House;
 use common\models\Users;
-use dosamigos\datetimepicker\DateTimePicker;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\UserHouse */
@@ -59,8 +57,8 @@ use yii\helpers\ArrayHelper;
 
     <?php
     $houses = House::find()->all();
-    $items = ArrayHelper::map($houses, 'uuid', function($model) {
-        return $model['street']->title.', '.$model['number'];
+    $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+        return $model['street']->title . ', ' . $model['number'];
     });
     echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [

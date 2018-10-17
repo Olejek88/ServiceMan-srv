@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $searchModel backend\models\UserHouseSearch */
 
@@ -69,9 +69,9 @@ $this->title = Yii::t('app', 'Пользователи - дома');
                                             'class' => 'text-center'
                                         ],
                                         'value' => function ($data) {
-                                            return 'ул.'.$data['house']['street']->title.', '.
+                                            return 'ул.' . $data['house']['street']->title . ', ' .
                                                 $data['house']->number;
-                                            }
+                                        }
                                     ],
                                     [
                                         'class' => 'yii\grid\ActionColumn',

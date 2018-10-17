@@ -19,6 +19,7 @@ class LoginCest
             ]
         ]);
     }
+
     /**
      * @param FunctionalTester $I
      */

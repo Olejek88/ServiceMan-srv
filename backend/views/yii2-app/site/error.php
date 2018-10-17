@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use yii\helpers\Html;
 
 $this->title = $name;
@@ -25,7 +24,7 @@ $this->title = $name;
 
                             <p>
                                 Возникла ошибка, когда веб-сервер обрабатывал ваш запрос.
-                                <br />Вернуться к <a href='<?= Yii::$app-> homeUrl?> '> главной странице</a>
+                                <br/>Вернуться к <a href='<?= Yii::$app->homeUrl ?> '> главной странице</a>
                             </p>
 
                         </div>

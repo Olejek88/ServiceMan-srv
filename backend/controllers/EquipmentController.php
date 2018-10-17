@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use app\commands\MainFunctions;
@@ -12,7 +13,6 @@ use common\models\Measure;
 use common\models\Message;
 use common\models\PhotoEquipment;
 use common\models\Street;
-use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
@@ -173,7 +173,7 @@ class EquipmentController extends Controller
     public function actionNew()
     {
         $equipments = array();
-        $equipment_count=0;
+        $equipment_count = 0;
         $flats = Flat::find()
             ->select('*')
             ->all();
@@ -182,7 +182,7 @@ class EquipmentController extends Controller
                 ->select('*')
                 ->where(['flatUuid' => $flat['uuid']])
                 ->one();
-            if ($equipment==null) {
+            if ($equipment == null) {
                 $equipment = new Equipment();
                 $equipment->uuid = MainFunctions::GUID();
                 $equipment->houseUuid = $flat['house']->uuid;
@@ -196,8 +196,7 @@ class EquipmentController extends Controller
                 $equipment->save();
                 $equipments[$equipment_count] = $equipment;
                 $equipment_count++;
-            }
-            else {
+            } else {
                 if ($equipment['equipmentTypeUuid'] != EquipmentType::EQUIPMENT_HVS) {
                     $equipment['equipmentTypeUuid'] = EquipmentType::EQUIPMENT_HVS;
                     $equipment['changedAt'] = date('Y-m-d H:i:s');
@@ -308,12 +307,11 @@ class EquipmentController extends Controller
                 if ($photo) {
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
                     $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a(
-                        '<img width="100px" src="/storage/equipment/'.$photo['uuid'].'.jpg" />',
-                        ['storage/equipment/'.$photo['uuid'].'.jpg']
+                        '<img width="100px" src="/storage/equipment/' . $photo['uuid'] . '.jpg" />',
+                        ['storage/equipment/' . $photo['uuid'] . '.jpg']
                     );
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                }
-                else {
+                } else {
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
                     $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
                     $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
@@ -350,14 +348,14 @@ class EquipmentController extends Controller
                 $user['name'],
                 ['user/view', 'id' => $user['_id']]
             );
-/*            $query = Equipment::find()
-                ->select('*')
-                ->where(['flatUuid' => (
-                    Flat::find()->select('uuid')->where(['houseUuid' => (
-                        UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
-                    )]))]);
-            //$query->with('house');
-            $equipments = $query->orderBy('changedAt')->groupBy('flatUuid')->all();*/
+            /*            $query = Equipment::find()
+                            ->select('*')
+                            ->where(['flatUuid' => (
+                                Flat::find()->select('uuid')->where(['houseUuid' => (
+                                    UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
+                                )]))]);
+                        //$query->with('house');
+                        $equipments = $query->orderBy('changedAt')->groupBy('flatUuid')->all();*/
             $oCnt1 = 0;
             $measure_total_count = 0;
             $measure_count = 0;
@@ -392,7 +390,7 @@ class EquipmentController extends Controller
                             ->orderBy('date DESC')
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
-                        $message_text = '['.$photo_flat_count.'/'.$message_flat_count.'] ';
+                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] ';
                         if ($message != null) {
                             $message_text .= substr($message['message'], 0, 150);
                             $message_count++;
@@ -456,7 +454,7 @@ class EquipmentController extends Controller
                                 $class = 'critical4';
                                 $status = 'Не попали';
                             } else {
-                                if ($photo==null) {
+                                if ($photo == null) {
                                     $class = 'critical1';
                                     $status = 'Не посещался';
                                 } else {
@@ -518,27 +516,27 @@ class EquipmentController extends Controller
             ->all();
         $oCnt0 = 0;
         foreach ($streets as $street) {
-            $last_user='';
-            $last_date='';
-            $house_count=0;
-            $house_visited=0;
-            $photo_count=0;
+            $last_user = '';
+            $last_date = '';
+            $house_count = 0;
+            $house_visited = 0;
+            $photo_count = 0;
             $fullTree[$oCnt0]['title'] = Html::a(
                 $street['title'],
                 ['street/view', 'id' => $street['_id']]
             );
             $oCnt1 = 0;
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
-                orderBy('number')->all();
+            orderBy('number')->all();
             foreach ($houses as $house) {
                 $user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
                 $user = Users::find()->where(['uuid' =>
-                        UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
+                    UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
                 $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($flats as $flat) {
                     $house_count++;
-                    $visited=0;
+                    $visited = 0;
                     $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1]['title']
@@ -594,9 +592,9 @@ class EquipmentController extends Controller
                         if ($message != null) {
                             $fullTree[$oCnt0][$c][$oCnt1]['message'] =
                                 mb_convert_encoding(substr($message['message'], 0, 150), 'UTF-8', 'UTF-8');
-                            if ($visited==0)
-                                $visited=1;
-                                $house_visited++;
+                            if ($visited == 0)
+                                $visited = 1;
+                            $house_visited++;
                         }
 
                         $photo = PhotoEquipment::find()
@@ -607,17 +605,16 @@ class EquipmentController extends Controller
                         if ($photo) {
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
                             $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
-                                ['storage/equipment/'.$photo['uuid'].'.jpg']
+                                ['storage/equipment/' . $photo['uuid'] . '.jpg']
                             );
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
                             $last_user = $photo['user']->name;
                             $photo_count++;
-                            if ($visited==0) {
-                                $visited=1;
+                            if ($visited == 0) {
+                                $visited = 1;
                                 $house_visited++;
                             }
-                        }
-                        else {
+                        } else {
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
                             $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
@@ -631,22 +628,22 @@ class EquipmentController extends Controller
             $fullTree[$oCnt0]['photo_user'] = $last_user;
             $fullTree[$oCnt0]['photo_date'] = $last_date;
             $fullTree[$oCnt0]['photo'] = $photo_count;
-            $ok=0;
-            if ($house_count>0)
-                $ok = $house_visited*100/$house_count;
-            if ($ok>100) $ok=100;
-            if ($ok<20) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">'.
-                    number_format($ok,2).'%</div></div>';
-            } elseif ($ok<45) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">'.
-                    number_format($ok,2).'%</div></div>';
-            } elseif ($ok<70) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">'.
-                    number_format($ok,2).'%</div></div>';
+            $ok = 0;
+            if ($house_count > 0)
+                $ok = $house_visited * 100 / $house_count;
+            if ($ok > 100) $ok = 100;
+            if ($ok < 20) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">' .
+                    number_format($ok, 2) . '%</div></div>';
+            } elseif ($ok < 45) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">' .
+                    number_format($ok, 2) . '%</div></div>';
+            } elseif ($ok < 70) {
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">' .
+                    number_format($ok, 2) . '%</div></div>';
             } else {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">'.
-                    number_format($ok,2).'%</div></div>';
+                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">' .
+                    number_format($ok, 2) . '%</div></div>';
             }
             $oCnt0++;
         }
@@ -677,9 +674,9 @@ class EquipmentController extends Controller
         }
 
         $measures = Measure::find()
-                ->select('*')
-                ->where(['equipmentUuid' => $equipment['uuid']])
-                ->all();
+            ->select('*')
+            ->where(['equipmentUuid' => $equipment['uuid']])
+            ->all();
         foreach ($measures as $measure) {
             $measure->delete();
         }

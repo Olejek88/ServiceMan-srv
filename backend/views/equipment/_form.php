@@ -1,16 +1,15 @@
 <?php
 
+use app\commands\MainFunctions;
+use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Flat;
 use common\models\House;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use common\models\EquipmentStatus;
-use yii\helpers\ArrayHelper;
-use dosamigos\datetimepicker\DateTimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Equipment */
@@ -48,7 +47,7 @@ use dosamigos\datetimepicker\DateTimePicker;
     $equipmentType = EquipmentType::find()->all();
     $items = ArrayHelper::map($equipmentType, 'uuid', 'title');
     echo $form->field($model, 'equipmentTypeUuid',
-        ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-type/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
         </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
@@ -69,7 +68,7 @@ use dosamigos\datetimepicker\DateTimePicker;
     $equipmentStatus = EquipmentStatus::find()->all();
     $items = ArrayHelper::map($equipmentStatus, 'uuid', 'title');
     echo $form->field($model, 'equipmentStatusUuid',
-        ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-status/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
         </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
@@ -105,9 +104,9 @@ use dosamigos\datetimepicker\DateTimePicker;
     </div>
 
     <?php
-    $house  = House::find()->all();
-    $items = ArrayHelper::map($house, 'uuid', function($model) {
-        return $model['street']->title.', '.$model['number'];
+    $house = House::find()->all();
+    $items = ArrayHelper::map($house, 'uuid', function ($model) {
+        return $model['street']->title . ', ' . $model['number'];
     });
     echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [
@@ -124,9 +123,9 @@ use dosamigos\datetimepicker\DateTimePicker;
     ?>
 
     <?php
-    $flat  = Flat::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function($model) {
-        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    $flat = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });
     echo $form->field($model, 'flatUuid')->widget(Select2::class,
         [

@@ -46,7 +46,7 @@ use yii\widgets\ActiveForm;
     $alarmType = AlarmType::find()->all();
     $items = ArrayHelper::map($alarmType, 'uuid', 'title');
     echo $form->field($model, 'alarmTypeUuid',
-        ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/alarm-type/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
         </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
@@ -69,7 +69,7 @@ use yii\widgets\ActiveForm;
     $alarmStatus = AlarmStatus::find()->all();
     $items = ArrayHelper::map($alarmStatus, 'uuid', 'title');
     echo $form->field($model, 'alarmStatusUuid',
-        ['template'=>"{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-status/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
         </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),

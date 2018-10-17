@@ -1,18 +1,12 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
-use common\models\EquipmentStatus;
-use common\models\EquipmentType;
-use common\models\Flat;
 use common\models\Measure;
 use common\models\Message;
 use common\models\PhotoEquipment;
 use common\models\Subject;
 use common\models\UserHouse;
-use kartik\datecontrol\DateControl;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Таблица для анализа');
@@ -53,8 +47,8 @@ $gridColumns = [
         'header' => 'Субъект',
         'value' => function ($data) {
             $subject = Subject::getSubjectName($data['flatUuid']);
-            if ($subject!=null)
-                return substr ($subject,0,80);
+            if ($subject != null)
+                return substr($subject, 0, 80);
             else
                 return '';
         },
@@ -67,7 +61,7 @@ $gridColumns = [
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-09-27 00:00:00',
                 '2018-10-12 00:00:00');
-            if ($measure!=null)
+            if ($measure != null)
                 return $measure['value'];
             else
                 return '';
@@ -81,7 +75,7 @@ $gridColumns = [
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-09-27 00:00:00',
                 '2018-10-12 00:00:00');
-            if ($measure!=null)
+            if ($measure != null)
                 return $measure['date'];
             else
                 return '';
@@ -95,7 +89,7 @@ $gridColumns = [
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-12 00:00:00',
                 '2018-10-20 00:00:00');
-            if ($measure!=null)
+            if ($measure != null)
                 return $measure['value'];
             else
                 return '';
@@ -109,7 +103,7 @@ $gridColumns = [
         'value' => function ($data) {
             $measure = Measure::getLastMeasureBetweenDates($data['uuid'], '2018-10-12 00:00:00',
                 '2018-10-20 00:00:00');
-            if ($measure!=null)
+            if ($measure != null)
                 return $measure['date'];
             else
                 return '';
@@ -122,7 +116,7 @@ $gridColumns = [
         'header' => 'Сообщение',
         'value' => function ($data) {
             $message = Message::getLastMessage($data['flatUuid']);
-            if ($message!=null)
+            if ($message != null)
                 return $message;
             else
                 return '';
@@ -135,7 +129,7 @@ $gridColumns = [
         'header' => 'Пользователь',
         'value' => function ($data) {
             $user = UserHouse::getUserName($data['flat']['houseUuid']);
-            if ($user!=null)
+            if ($user != null)
                 return $user;
             else
                 return '';
@@ -153,10 +147,10 @@ $gridColumns = [
             $photo_flat_count = PhotoEquipment::find()
                 ->where(['equipmentUuid' => $data['uuid']])
                 ->count();
-            return '['.$photo_flat_count.'/'.$message_flat_count.']';
+            return '[' . $photo_flat_count . '/' . $message_flat_count . ']';
         },
     ],
-    ];
+];
 
 echo GridView::widget([
     'id' => 'equipment-table',
@@ -184,7 +178,7 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => false,

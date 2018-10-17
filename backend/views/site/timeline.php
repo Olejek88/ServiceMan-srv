@@ -27,12 +27,12 @@ $this->title = Yii::t('app', 'ТОИРУС::Новости');
                     </li>
                     <?php
                     if (count($events)) {
-                        $date=$events[0]['date'];
+                        $date = $events[0]['date'];
                         foreach ($events as $event) {
                             if ($event['date'] != $date) {
                                 $date = $event['date'];
-                                echo '<li class="time-label"><span class="bg-aqua btn-xs">'.
-                                    date("d-m-Y", strtotime($date)).'</span></li>';
+                                echo '<li class="time-label"><span class="bg-aqua btn-xs">' .
+                                    date("d-m-Y", strtotime($date)) . '</span></li>';
                             }
                             echo $event['event'];
                         }

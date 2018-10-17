@@ -1,11 +1,11 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\Flat;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Resident */
@@ -39,9 +39,9 @@ use yii\helpers\ArrayHelper;
     ?>
 
     <?php
-    $flat  = Flat::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function($model) {
-        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    $flat = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });
     echo $form->field($model, 'flatUuid')->widget(Select2::classname(),
         [

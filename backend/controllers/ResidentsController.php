@@ -13,7 +13,6 @@ namespace backend\controllers;
 
 use backend\models\ResidentSearch;
 use common\models\Equipment;
-use common\models\EquipmentStatus;
 use common\models\Flat;
 use common\models\FlatStatus;
 use common\models\House;
@@ -201,7 +200,7 @@ class ResidentsController extends Controller
     /**
      * Вспомогательный метод для постройки дерева.
      *
-     * @param Resident   $resident    Абонент
+     * @param Resident $resident Абонент
      * @param Equipment $equipment Оборудование
      *
      * @return mixed
@@ -265,7 +264,7 @@ class ResidentsController extends Controller
             foreach ($houses as $house) {
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
-                    $house['street']->title.', '.$house['number'],
+                    $house['street']->title . ', ' . $house['number'],
                     ['house/view', 'id' => $house['_id']]
                 );
                 $fullTree[$oCnt0][$c][$oCnt1]['date'] = $house['createdAt'];
@@ -296,11 +295,11 @@ class ResidentsController extends Controller
                     ->orderBy('number')
                     ->all();
                 $oCnt2 = 0;
-                $sum_status=1;
+                $sum_status = 1;
                 foreach ($flats as $flat) {
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['title']
                         = Html::a(
-                        $street['title'].', '.$house['number'].'-'.$flat['number'],
+                        $street['title'] . ', ' . $house['number'] . '-' . $flat['number'],
                         ['flat/view', 'id' => $flat['_id']]
                     );
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['date'] = $flat['createdAt'];
@@ -355,31 +354,31 @@ class ResidentsController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['serial'] = $equipment['serial'];
                         $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['street'] = $street['title'];
 
-/*                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                            $class = 'critical1';
-                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                            $class = 'critical2';
-                        } else {
-                            $class = 'critical3';
-                        }
-                        $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] = '<div class="progress"><div class="'
-                            . $class . '">' . $flat['flatStatus']->title . '</div></div>';*/
+                        /*                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
+                                                    $class = 'critical1';
+                                                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
+                                                    $class = 'critical2';
+                                                } else {
+                                                    $class = 'critical3';
+                                                }
+                                                $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] = '<div class="progress"><div class="'
+                                                    . $class . '">' . $flat['flatStatus']->title . '</div></div>';*/
 
                         $measure = Measure::find()
                             ->select('*')
                             ->orderBy('date DESC')
                             ->where(['equipmentUuid' => $equipment['uuid']])
                             ->one();
-                        if ($measure!=null) {
+                        if ($measure != null) {
                             $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2][$c][$eCnt]['status'] =
                                 '<div class="progress"><div class="critical3">Снято</div></div>';
-                            if ($house['houseStatusUuid']!=HouseStatus::HOUSE_STATUS_OK) {
+                            if ($house['houseStatusUuid'] != HouseStatus::HOUSE_STATUS_OK) {
                                 $house['houseStatusUuid'] = HouseStatus::HOUSE_STATUS_OK;
                                 $house['changedAt'] = date('Y-m-d H:i:s');
                                 $house->save();
                             }
                         } else {
-                            if ($house['houseStatusUuid']!=HouseStatus::HOUSE_STATUS_DEFAULT) {
+                            if ($house['houseStatusUuid'] != HouseStatus::HOUSE_STATUS_DEFAULT) {
                                 $house['houseStatusUuid'] = HouseStatus::HOUSE_STATUS_DEFAULT;
                                 $house['changedAt'] = date('Y-m-d H:i:s');
                                 $house->save();

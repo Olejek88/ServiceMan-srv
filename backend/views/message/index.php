@@ -32,61 +32,61 @@ $this->title = Yii::t('app', 'Сообщения');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'userUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'userUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'user.name',
+                                    'value' => 'user.name',
                                 ],
                                 [
-                                    'attribute'=>'flatUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'flatUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'flat.number',
-                                    'content'=>function($data){
-                                        return 'ул.'.$data['flat']['house']['street']->title.', '.
-                                            $data['flat']['house']->number.', '.$data['flat']['number'];
+                                    'value' => 'flat.number',
+                                    'content' => function ($data) {
+                                        return 'ул.' . $data['flat']['house']['street']->title . ', ' .
+                                            $data['flat']['house']->number . ', ' . $data['flat']['number'];
                                     }
                                 ],
                                 [
-                                    'attribute'=>'date',
-                                    'contentOptions' =>[
+                                    'attribute' => 'date',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->date;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'message',
-                                    'contentOptions' =>[
+                                    'attribute' => 'message',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return substr($data->message,0,150);
+                                    'content' => function ($data) {
+                                        return substr($data->message, 0, 150);
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

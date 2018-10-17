@@ -2,6 +2,7 @@
 /*  @var $model \common\models\PhotoEquipment */
 
 use yii\helpers\Html;
+
 ?>
 <div class="critical-type-update box-padding">
 

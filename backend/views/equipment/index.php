@@ -3,7 +3,6 @@
 
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Flat;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -47,10 +46,10 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '180px',
         'value' => function ($data) {
-            return $data['flat']['house']['street']->title.', '.$data['flat']['house']->number.'-'.$data['flat']->number;
+            return $data['flat']['house']['street']->title . ', ' . $data['flat']['house']->number . '-' . $data['flat']->number;
         },
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Объект '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/flat/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filterInputOptions' => ['placeholder' => 'Любой'],
@@ -64,7 +63,7 @@ $gridColumns = [
         'width' => '180px',
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Тип '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Тип ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/equipment-type/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
@@ -77,7 +76,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'editableOptions'=> function ($model, $key, $index, $widget) {
+        'editableOptions' => function ($model, $key, $index, $widget) {
             $models = ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
                 'header' => 'Тип оборудования',
@@ -91,7 +90,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'equipmentStatusUuid',
-        'header' => 'Статус '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Статус ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/equipment-status/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'contentOptions' => [
@@ -101,21 +100,21 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
-        'editableOptions'=> function () {
-            $status=[];
-            $list=[];
+        'editableOptions' => function () {
+            $status = [];
+            $list = [];
             $statuses = EquipmentStatus::find()->orderBy('title')->all();
             foreach ($statuses as $stat) {
-                $color='background-color: white';
-                if ($stat['uuid']==EquipmentStatus::UNKNOWN ||
-                    $stat['uuid']==EquipmentStatus::NOT_MOUNTED)
-                    $color='background-color: gray';
-                if ($stat['uuid']==EquipmentStatus::NOT_WORK)
-                    $color='background-color: lightred';
-                if ($stat['uuid']==EquipmentStatus::WORK)
-                    $color='background-color: green';
+                $color = 'background-color: white';
+                if ($stat['uuid'] == EquipmentStatus::UNKNOWN ||
+                    $stat['uuid'] == EquipmentStatus::NOT_MOUNTED)
+                    $color = 'background-color: gray';
+                if ($stat['uuid'] == EquipmentStatus::NOT_WORK)
+                    $color = 'background-color: lightred';
+                if ($stat['uuid'] == EquipmentStatus::WORK)
+                    $color = 'background-color: green';
                 $list[$stat['uuid']] = $stat['title'];
-                $status[$stat['uuid']] = "<span class='badge' style='".$color."; height: 12px; margin-top: -3px'> </span>&nbsp;".
+                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;" .
                     $stat['title'];
             }
             return [
@@ -151,7 +150,7 @@ $gridColumns = [
             'header' => 'Дата поверки',
             'size' => 'md',
             'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATE,
                 'displayFormat' => 'dd.MM.yyyy',
@@ -184,8 +183,8 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-/*            Html::a('Добавить недостающие', ['/equipment/new'], ['class'=>'btn btn-success']),*/
-            Html::a('Новое', ['/equipment/create'], ['class'=>'btn btn-success']),
+        /*            Html::a('Добавить недостающие', ['/equipment/new'], ['class'=>'btn btn-success']),*/
+            Html::a('Новое', ['/equipment/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -199,7 +198,7 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => false,

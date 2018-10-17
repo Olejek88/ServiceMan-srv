@@ -22,17 +22,17 @@ $photo = PhotoEquipment::find()
     ->one();
 
 $categories = "[";
-$values="name: 'Значения', data: [";
+$values = "name: 'Значения', data: [";
 $zero = 0;
-$num = rand(0,1000);
-$counts=0;
+$num = rand(0, 1000);
+$counts = 0;
 foreach ($measures as $measure) {
     if ($counts > 0) {
         $values .= ",";
         $categories .= ",";
     }
     $values .= $measure['value'];
-    $categories .= "'".date_format(date_create($measure['date']), 'Y-m-d')."'";
+    $categories .= "'" . date_format(date_create($measure['date']), 'Y-m-d') . "'";
     $counts++;
 }
 $values .= "]";
@@ -40,17 +40,18 @@ $categories .= "]";
 ?>
 <div class="kv-expand-row kv-grid-demo">
     <div class="kv-expand-detail skip-export kv-grid-demo">
-        <div class="skip-export kv-expanded-row kv-grid-demo" data-index="0" data-key="1"><div class="kv-detail-content">
+        <div class="skip-export kv-expanded-row kv-grid-demo" data-index="0" data-key="1">
+            <div class="kv-detail-content">
                 <h3><?php echo $equipment['equipmentType']->title ?></h3>
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
                             <?php
-                                if ($photo!=null) {
-                                    echo '<img src="'.
-                                        Html::encode(MainFunctions::getImagePath('equipment', $photo['uuid'])).'
+                            if ($photo != null) {
+                                echo '<img src="' .
+                                    Html::encode(MainFunctions::getImagePath('equipment', $photo['uuid'])) . '
                                         " style="padding:2px;width:100%">';
-                                }
+                            }
                             ?>
                             <div class="small text-muted"><?php echo $equipment['serial'] ?></div>
                         </div>
@@ -61,10 +62,10 @@ $categories .= "]";
                                 <th colspan="2" class="text-center text-danger">Последние показания</th>
                             </tr>
                             <?php
-                                foreach ($measures as $measure) {
-                                    echo '<tr><td>'.$measure['date'].'</td>
-                                          <td class="text-right">'.$measure['value'].'</td></tr>';
-                                }
+                            foreach ($measures as $measure) {
+                                echo '<tr><td>' . $measure['date'] . '</td>
+                                          <td class="text-right">' . $measure['value'] . '</td></tr>';
+                            }
                             ?>
                         </table>
                     </div>
@@ -91,9 +92,9 @@ $categories .= "]";
                                             },
                                             xAxis: {
                                                 categories:
-                                                    <?php
-                                                        echo $categories;
-                                                    ?>
+                                                <?php
+                                                echo $categories;
+                                                ?>
                                             },
                                             tooltip: {
                                                 headerFormat: '<b>{point.x}</b><br/>',
@@ -116,7 +117,7 @@ $categories .= "]";
                                             },
                                             series: [{
                                                 <?php
-                                                    echo $values;
+                                                echo $values;
                                                 ?>
                                             }]
                                         });

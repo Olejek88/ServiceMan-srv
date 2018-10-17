@@ -1,4 +1,5 @@
 <?php
+
 namespace app\commands;
 
 
@@ -25,4 +26,5 @@ class MainFunctions
         return $localPath;
     }
 }
+
 ?>

@@ -1,8 +1,6 @@
 <?php
 
 use app\commands\MainFunctions;
-use common\models\TaskTemplate;
-use common\models\TaskVerdict;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 

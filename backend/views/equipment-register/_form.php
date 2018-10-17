@@ -1,13 +1,13 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\EquipmentRegisterType;
-use yii\helpers\ArrayHelper;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\EquipmentRegister */
@@ -27,29 +27,29 @@ use dosamigos\datetimepicker\DateTimePicker;
 
     <?php
 
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-        }
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+    }
 
     ?>
     <?php
-        $registerTypes = EquipmentRegisterType::find()->orderBy("title")->all();
-        $items = ArrayHelper::map($registerTypes,'uuid','title');
-        echo $form->field($model, 'registerTypeUuid')->dropDownList($items);
+    $registerTypes = EquipmentRegisterType::find()->orderBy("title")->all();
+    $items = ArrayHelper::map($registerTypes, 'uuid', 'title');
+    echo $form->field($model, 'registerTypeUuid')->dropDownList($items);
 
-        $equipment = Equipment::find()->orderBy("title")->all();
-        $items = ArrayHelper::map($equipment,'uuid','title');
-        echo $form->field($model, 'equipmentUuid')->dropDownList($items);
+    $equipment = Equipment::find()->orderBy("title")->all();
+    $items = ArrayHelper::map($equipment, 'uuid', 'title');
+    echo $form->field($model, 'equipmentUuid')->dropDownList($items);
 
-        $user  = Users::find()->all();
-        $items = ArrayHelper::map($user,'uuid','name');
-        echo $form->field($model, 'userUuid')->dropDownList($items);
+    $user = Users::find()->all();
+    $items = ArrayHelper::map($user, 'uuid', 'name');
+    echo $form->field($model, 'userUuid')->dropDownList($items);
     ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px;">
-    <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <p style="width: 0; margin-bottom: 0;">Дата</p>
         <?= DateTimePicker::widget([
             'model' => $model,
             'attribute' => 'date',
@@ -60,7 +60,7 @@ use dosamigos\datetimepicker\DateTimePicker;
                 'linkFormat' => 'yyyy-mm-dd H:ii:ss',
                 'todayBtn' => true
             ]
-            ]);
+        ]);
         ?>
     </div>
 

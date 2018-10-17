@@ -30,7 +30,8 @@ class EquipmentRegisterTypeController extends Controller
         ];
     }
 
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
@@ -44,7 +45,7 @@ class EquipmentRegisterTypeController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel  = new EquipmentRegisterTypeSearch();
+        $searchModel = new EquipmentRegisterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 

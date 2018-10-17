@@ -178,13 +178,13 @@ class SiteController extends Controller
         if (count($userList) >= 1) {
             // В случаи, если геоданные не были отправлены,
             // ответ на запрос будет null
-/*            $gps = Gpstrack::find()
-                ->select('userUuid, latitude, longitude, date')
-                ->where('date  >= CURDATE()')
-                ->orderBy('date DESC')
-                ->asArray()
-                ->limit(30000)
-                ->all();*/
+            /*            $gps = Gpstrack::find()
+                            ->select('userUuid, latitude, longitude, date')
+                            ->where('date  >= CURDATE()')
+                            ->orderBy('date DESC')
+                            ->asArray()
+                            ->limit(30000)
+                            ->all();*/
             $gpsStatus = true;
         }
 
@@ -197,7 +197,7 @@ class SiteController extends Controller
         $cnt = 0;
         $photosGroup = 'var photos=L.layerGroup([';
         $photosList = '';
-        $photoHouses  = PhotoHouse::find()
+        $photoHouses = PhotoHouse::find()
             ->select('*')
             //->groupBy('houseUuid')
             //->asArray()
@@ -210,8 +210,8 @@ class SiteController extends Controller
                     . '= L.marker([' . $photoHouse["latitude"]
                     . ',' . $photoHouse["longitude"]
                     . '], {icon: houseIcon}).bindPopup("<b>'
-                    . $photoHouse["house"]["street"]->title.', '.$photoHouse["house"]->number. '</b><br/>'
-                    . $photoHouse["user"]->name . '['.$photoHouse['createdAt'].']").openPopup();';
+                    . $photoHouse["house"]["street"]->title . ', ' . $photoHouse["house"]->number . '</b><br/>'
+                    . $photoHouse["user"]->name . '[' . $photoHouse['createdAt'] . ']").openPopup();';
                 if ($cnt > 0) {
                     $photosGroup .= ',';
                 }
@@ -241,12 +241,12 @@ class SiteController extends Controller
          * Журнал событий
          */
 
-/*        // В случаи, если геоданные не были отправлены, ответ на запрос будет null
-        $journal = Journal::find()
-            ->select('userUuid, description, date')
-            ->where('date  >= NOW() - INTERVAL 1 DAY')
-            ->asArray()
-            ->all();*/
+        /*        // В случаи, если геоданные не были отправлены, ответ на запрос будет null
+                $journal = Journal::find()
+                    ->select('userUuid, description, date')
+                    ->where('date  >= NOW() - INTERVAL 1 DAY')
+                    ->asArray()
+                    ->all();*/
 
         $userUuid = Users::find()
             ->select('uuid, name')
@@ -255,13 +255,13 @@ class SiteController extends Controller
 
         // $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
 
-/*        foreach ($userUuid as $i => $user) {
-            foreach ($journal as $j => $jrnl) {
-                if ($userUuid[$i]['uuid'] === $journal[$j]['userUuid']) {
-                    $journal[$j]['userUuid'] = $userUuid[$i]['name'];
-                }
-            }
-        }*/
+        /*        foreach ($userUuid as $i => $user) {
+                    foreach ($journal as $j => $jrnl) {
+                        if ($userUuid[$i]['uuid'] === $journal[$j]['userUuid']) {
+                            $journal[$j]['userUuid'] = $userUuid[$i]['name'];
+                        }
+                    }
+                }*/
 
         $cnt = 0;
         $usersGroup = 'var users=L.layerGroup([';
@@ -358,9 +358,9 @@ class SiteController extends Controller
         $last_measures = Measure::find()
             ->where('createdAt > (NOW()-(4*24*3600000));')
             ->count();
-        $complete=0;
-        if ($flatCount>0)
-            $complete = number_format($last_measures*100/$flatCount,2);
+        $complete = 0;
+        if ($flatCount > 0)
+            $complete = number_format($last_measures * 100 / $flatCount, 2);
 
         $measures = Measure::find()
             ->orderBy('date')
@@ -387,49 +387,49 @@ class SiteController extends Controller
         $bar = "{ name: 'измерений',";
         $bar .= "data: [";
         foreach ($users as $current_user) {
-            if ($count>0) {
+            if ($count > 0) {
                 $categories .= ',';
                 $bar .= ",";
             }
-            $categories .= '"'.$current_user['name'].'"';
+            $categories .= '"' . $current_user['name'] . '"';
             $values[$count] = Measure::find()
                 ->where('createdAt > (NOW()-(5*24*3600000))')
                 ->andWhere(['userUuid' => $current_user['uuid']])
                 ->count();
-            $bar.= $values[$count];
+            $bar .= $values[$count];
             $count++;
         }
         $bar .= "]},";
 
         $bar .= "{ name: 'объектов',";
         $bar .= "data: [";
-        $count=0;
+        $count = 0;
         foreach ($users as $current_user) {
-            if ($count>0)
+            if ($count > 0)
                 $bar .= ",";
             $houses = UserHouse::find()
                 ->where(['userUuid' => $current_user['uuid']])
                 ->count();
-            $bar.= $houses;
+            $bar .= $houses;
             $count++;
         }
         $bar .= "]},";
 
         $bar .= "{ name: 'фотографий',";
         $bar .= "data: [";
-        $count=0;
+        $count = 0;
         foreach ($users as $current_user) {
-            if ($count>0)
+            if ($count > 0)
                 $bar .= ",";
             $photos = PhotoEquipment::find()
                 ->where(['userUuid' => $current_user['uuid']])
                 ->count();
-            $bar.= $photos;
+            $bar .= $photos;
             $count++;
         }
         $bar .= "]}";
 
-        $count=0;
+        $count = 0;
         foreach ($users as $current_user) {
             $gps = Gpstrack::find()
                 ->select('latitude, longitude, date')
@@ -458,7 +458,7 @@ class SiteController extends Controller
             $usersList .= 'var user' . $user["id"] . '= L.marker(['
                 . $user["latitude"] . ',' . $user["longitude"]
                 . '], {icon: userIcon}).bindPopup("<b>' . $user["name"]
-                . '</b><br/> '  . $user["contact"] . '").openPopup();';
+                . '</b><br/> ' . $user["contact"] . '").openPopup();';
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
@@ -584,9 +584,9 @@ class SiteController extends Controller
             $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
             if ($path == null)
                 $path = 'images/no-image-icon-4.png';
-            $text = '<a href="/storage/equipment/'.$photo['uuid'].'.jpg"><img src="' . Html::encode($path) . '" class="margin" 
+            $text = '<a href="/storage/equipment/' . $photo['uuid'] . '.jpg"><img src="' . Html::encode($path) . '" class="margin" 
                         style="width:50px; margin: 2px; float:left" alt=""></a>';
-            $text .= '<a class="btn btn-default btn-xs">'.
+            $text .= '<a class="btn btn-default btn-xs">' .
                 $measure['equipment']['equipmentType']->title . ' [' .
                 $measure['equipment']['flat']['house']['street']->title . ', ' .
                 $measure['equipment']['flat']['house']->number . ', ' .
@@ -605,7 +605,7 @@ class SiteController extends Controller
         foreach ($alarms as $alarm) {
             //$path = $alarm['user']->getImageUrl();
             //if ($path == null)
-                $path = '/images/p1.jpg';
+            $path = '/images/p1.jpg';
             $text = '<img src="' . Html::encode($path) . '" class="img-circle" style="width:50px; margin: 2; float:left" alt="">';
             $text .= '<i class="fa fa-cogs"></i>&nbsp;
                 <a class="btn btn-default btn-xs">' . $alarm['alarmType']->title . '</a><br/>
@@ -613,12 +613,12 @@ class SiteController extends Controller
                 . $alarm['user']->name . '</span><br/>
                 <i class="fa fa-clipboard"></i>&nbsp;Статус: <a class="btn btn-default btn-xs">'
                 . $alarm['alarmStatus']->title . '</a>&nbsp;&gt;&nbsp;
-                    <a class="btn btn-default btn-xs">[' . $alarm['longitude'] .'</a> | <a class="btn btn-default btn-xs">'. $alarm['longitude'] . ']</a>';
+                    <a class="btn btn-default btn-xs">[' . $alarm['longitude'] . '</a> | <a class="btn btn-default btn-xs">' . $alarm['longitude'] . ']</a>';
             $events[] = ['date' => $alarm['date'], 'event' => self::formEvent($alarm['date'],
                 'alarm', 0, '', $text, $alarm['user']->name)];
         }
 
-        $sort_events = MainFunctions::array_msort($events, ['date'=>SORT_DESC]);
+        $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
         $today = date("j-m-Y h:m");
 
         return $this->render(
@@ -653,14 +653,14 @@ class SiteController extends Controller
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
         if ($type == 'measure')
             $event .= '<span class="timeline-header" style="vertical-align: middle">
-                        <span class="btn btn-primary btn-xs">' . $user .'</span>&nbsp;'.
+                        <span class="btn btn-primary btn-xs">' . $user . '</span>&nbsp;' .
                 Html::a('Снято показание &nbsp;',
                     ['/measure/view', 'id' => Html::encode($id)]) . $title . '</span>';
 
         if ($type == 'alarm')
-            $event .= '&nbsp;<span class="btn btn-primary btn-xs">'.$user.'</span>&nbsp;
+            $event .= '&nbsp;<span class="btn btn-primary btn-xs">' . $user . '</span>&nbsp;
                     <span class="timeline-header" style="vertical-align: middle">' .
-                    Html::a('Зафиксировано событие &nbsp;',
+                Html::a('Зафиксировано событие &nbsp;',
                     ['/alarm/view', 'id' => Html::encode($id)]) . $title . '</span>';
 
         $event .= '<div class="timeline-body">' . $text . '</div>';

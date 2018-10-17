@@ -1,5 +1,6 @@
 <?php
 /* @var $model common\models\User */
+
 /* @var $searchModel backend\models\UserSearch */
 
 use yii\grid\GridView;
@@ -38,51 +39,51 @@ $this->title = Yii::t('app', 'Пользователи');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'email',
-                                    'contentOptions' =>[
+                                    'attribute' => 'email',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->email;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'username',
-                                    'contentOptions' =>[
+                                    'attribute' => 'username',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->username;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'auth_key',
-                                    'contentOptions' =>[
+                                    'attribute' => 'auth_key',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->auth_key;
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

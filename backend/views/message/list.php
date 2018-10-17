@@ -1,6 +1,7 @@
 <?php
 /* @var $messages \common\models\Message[] */
 /* @var $income \common\models\Message[] */
+
 /* @var $sent \common\models\Message[] */
 
 use yii\helpers\Html;
@@ -21,12 +22,13 @@ $this->title = Yii::t('app', 'Сообщения');
     <section class="content">
         <div class="row">
             <div class="col-md-3">
-                <?php echo Html::a('Новое','create', ['class' => 'btn btn-primary btn-block margin-bottom']) ?>
+                <?php echo Html::a('Новое', 'create', ['class' => 'btn btn-primary btn-block margin-bottom']) ?>
                 <div class="box box-solid">
                     <div class="box-header with-border">
                         <h3 class="box-title">Папки</h3>
                         <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i>
                             </button>
                         </div>
                     </div>
@@ -36,7 +38,8 @@ $this->title = Yii::t('app', 'Сообщения');
                     <div class="box-header with-border">
                         <h3 class="box-title">Ярлыки</h3>
                         <div class="box-tools">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                        class="fa fa-minus"></i>
                             </button>
                         </div>
                     </div>
@@ -67,11 +70,14 @@ $this->title = Yii::t('app', 'Сообщения');
                     <div class="box-body no-padding">
                         <div class="mailbox-controls">
                             <!-- Check all button -->
-                            <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                            <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i
+                                        class="fa fa-square-o"></i>
                             </button>
                             <div class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
+                                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i>
+                                </button>
+                                <button type="button" class="btn btn-default btn-sm"><i class="fa fa-reply"></i>
+                                </button>
                             </div>
                             <button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
                             <!-- /.pull-right -->
@@ -80,16 +86,16 @@ $this->title = Yii::t('app', 'Сообщения');
                             <table class="table table-hover table-striped">
                                 <tbody>
                                 <?php
-                                if (isset($_GET['type']) && $_GET['type']=='sent')
+                                if (isset($_GET['type']) && $_GET['type'] == 'sent')
                                     $messages = $sent;
                                 foreach ($messages as $message) {
                                     print '<tr><td><input type="checkbox"></td>';
                                     print '<td class="mailbox-star"><i class="fa fa-star text-yellow"></i></td>';
                                     print '<td class="mailbox-name">
-                                    <a href="/users/view?id='.$message['user']->_id.'">'.$message['user']->name.'</a></td>';
-                                    print '<td class="mailbox-subject">'.$message['message'].'</td>';
-                                    print '<td class="mailbox-attachment">'.$message['flat']->number.'</td>';
-                                    print '<td class="mailbox-date">'.$message['date'].'</td></tr>';
+                                    <a href="/users/view?id=' . $message['user']->_id . '">' . $message['user']->name . '</a></td>';
+                                    print '<td class="mailbox-subject">' . $message['message'] . '</td>';
+                                    print '<td class="mailbox-attachment">' . $message['flat']->number . '</td>';
+                                    print '<td class="mailbox-date">' . $message['date'] . '</td></tr>';
                                 }
                                 ?>
                                 </tbody>

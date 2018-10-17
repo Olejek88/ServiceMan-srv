@@ -1,12 +1,12 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\AttributeType;
 use common\models\Equipment;
 use dosamigos\datetimepicker\DateTimePicker;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\EquipmentAttribute */
@@ -39,17 +39,17 @@ use yii\helpers\ArrayHelper;
     ?>
 
     <?php
-        $types = AttributeType::find()->orderBy('name')->all();
-        $items = ArrayHelper::map($types, 'uuid', 'name');
-        unset($types);
-        echo $form->field($model, 'attributeTypeUuid')->dropDownList($items);
-        unset($items);
+    $types = AttributeType::find()->orderBy('name')->all();
+    $items = ArrayHelper::map($types, 'uuid', 'name');
+    unset($types);
+    echo $form->field($model, 'attributeTypeUuid')->dropDownList($items);
+    unset($items);
     ?>
 
     <?php
-        $equipment = Equipment::find()->orderBy(["changedAt" => SORT_DESC])->all();
-        $items    = ArrayHelper::map($equipment,'uuid','title');
-        echo $form->field($model, 'equipmentUuid')->dropDownList($items);
+    $equipment = Equipment::find()->orderBy(["changedAt" => SORT_DESC])->all();
+    $items = ArrayHelper::map($equipment, 'uuid', 'title');
+    echo $form->field($model, 'equipmentUuid')->dropDownList($items);
     ?>
 
     <?php echo $form->field($model, 'value')->textInput(['maxlength' => true]) ?>

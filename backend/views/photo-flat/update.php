@@ -1,5 +1,5 @@
 <?php
-/*  @var $model \common\models\MeasureType */
+/*  @var $model \common\models\PhotoFlat */
 
 use yii\helpers\Html;
 

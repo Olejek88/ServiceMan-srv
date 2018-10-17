@@ -1,6 +1,7 @@
 <?php
-use yii\helpers\Html;
+
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = 'Sign In';
 
@@ -44,7 +45,7 @@ $fieldOptions2 = [
                     <div class="row">
                         <div class="col-xs-8">
                             <?= $form->field($model, 'rememberMe')
-                                    ->checkbox(['label' => 'Запомнить',]) ?>
+                                ->checkbox(['label' => 'Запомнить',]) ?>
                         </div>
 
                         <div class="col-xs-4">

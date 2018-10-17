@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'uuid') ?>
 
     <?php echo $form->field($model, 'flatUuid') ?>
-    
+
     <?php echo $form->field($model, 'houseUuid') ?>
 
     <?php echo $form->field($model, 'owner') ?>

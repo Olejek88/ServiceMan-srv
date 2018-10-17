@@ -1,11 +1,12 @@
 <?php
+
 use yii\helpers\Html;
 
 /* @var $model common\models\EquipmentRegisterType */
 
 $this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Типы записей в журнал оборудования',
-]) . $model['title'];
+        'modelClass' => 'Типы записей в журнал оборудования',
+    ]) . $model['title'];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы записей в журнал оборудования'), 'url' => ['index']];
 ?>
 <div class="equipment-type-update box-padding">

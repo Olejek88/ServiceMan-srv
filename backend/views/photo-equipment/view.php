@@ -1,9 +1,8 @@
 <?php
-/*  @var $model \common\models\PhotoEquipment  */
+/*  @var $model \common\models\PhotoEquipment */
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use common\components\MyHelpers;
 
 $this->title = 'Фото';
 ?>
@@ -28,7 +27,7 @@ $this->title = 'Фото';
                     <p class="text-center">
                         <?= Html::a(Yii::t('app', 'Обновить'), ['update', 'id' => $model->_id],
                             ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Yii::t('app', 'Удалить'), ['delete', 'id' => $model-> _id], [
+                        <?= Html::a(Yii::t('app', 'Удалить'), ['delete', 'id' => $model->_id], [
                             'class' => 'btn btn-danger',
                             'data' => [
                                 'confirm' => Yii::t('app', 'Вы действительно хотите удалить данный элемент?'),

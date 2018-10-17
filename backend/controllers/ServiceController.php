@@ -73,7 +73,7 @@ class ServiceController extends Controller
     {
         $services = Service::find()->all();
         foreach ($services as $service) {
-            if (strtotime("now")>(strtotime($service['last_start_date'])+5*$service['delay']))
+            if (strtotime("now") > (strtotime($service['last_start_date']) + 5 * $service['delay']))
                 $service->setAttribute('status', 0);
             else
                 $service->setAttribute('status', 1);
@@ -84,20 +84,20 @@ class ServiceController extends Controller
             $model = Service::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
-            if ($_POST['editableAttribute']=='title') {
-                $model['title']=$_POST['Service'][$_POST['editableIndex']]['title'];
+            if ($_POST['editableAttribute'] == 'title') {
+                $model['title'] = $_POST['Service'][$_POST['editableIndex']]['title'];
             }
-            if ($_POST['editableAttribute']=='service_name') {
-                $model['service_name']=$_POST['Service'][$_POST['editableIndex']]['service_name'];
+            if ($_POST['editableAttribute'] == 'service_name') {
+                $model['service_name'] = $_POST['Service'][$_POST['editableIndex']]['service_name'];
             }
-            if ($_POST['editableAttribute']=='status') {
-                $model['status']=$_POST['Service'][$_POST['editableIndex']]['status'];
+            if ($_POST['editableAttribute'] == 'status') {
+                $model['status'] = $_POST['Service'][$_POST['editableIndex']]['status'];
             }
-            if ($_POST['editableAttribute']=='delay') {
-                $model['delay']=$_POST['Service'][$_POST['editableIndex']]['delay'];
+            if ($_POST['editableAttribute'] == 'delay') {
+                $model['delay'] = $_POST['Service'][$_POST['editableIndex']]['delay'];
             }
-            if ($_POST['editableAttribute']=='active') {
-                $model['active']=$_POST['Service'][$_POST['editableIndex']]['active'];
+            if ($_POST['editableAttribute'] == 'active') {
+                $model['active'] = $_POST['Service'][$_POST['editableIndex']]['active'];
             }
             $model->save();
             return json_encode('');

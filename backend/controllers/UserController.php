@@ -29,26 +29,27 @@ class UserController extends Controller
         ];
     }
 
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
     }
-    
+
     /**
      * Lists all Users models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel  = new UserSearch();
+        $searchModel = new UserSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
         return $this->render('index', [
-            'searchModel'  => $searchModel,
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

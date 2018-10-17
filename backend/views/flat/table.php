@@ -1,15 +1,10 @@
 <?php
 /* @var $searchModel backend\models\FlatSearch */
 
-use common\models\EquipmentStatus;
-use common\models\EquipmentType;
-use common\models\Flat;
 use common\models\FlatStatus;
 use common\models\FlatType;
-use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
-use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -35,7 +30,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '220px',
         'value' => function ($data) {
-            return 'ул.'.$data['house']['street']->title.', д.'.$data['house']->number;
+            return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
         },
         'header' => 'Адрес',
         'format' => 'raw',
@@ -60,15 +55,15 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '180px',
         'value' => function ($model, $key, $index, $widget) {
-                $color='background-color: yellow';
-                if ($model['flatStatusUuid']==FlatStatus::FLAT_STATUS_DEFAULT)
-                    $color='background-color: gray';
-                if ($model['flatStatusUuid']==FlatStatus::FLAT_STATUS_NO_ENTRANCE ||
-                    FlatStatus::FLAT_STATUS_ABSENT)
-                    $color='background-color: lightred';
-                if ($model['flatStatusUuid']==FlatStatus::FLAT_STATUS_OK)
-                    $color='background-color: green';
-                return "<span class='badge' style='".$color."; height: 12px; margin-top: -3px'> </span>&nbsp;  
+            $color = 'background-color: yellow';
+            if ($model['flatStatusUuid'] == FlatStatus::FLAT_STATUS_DEFAULT)
+                $color = 'background-color: gray';
+            if ($model['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE ||
+                FlatStatus::FLAT_STATUS_ABSENT)
+                $color = 'background-color: lightred';
+            if ($model['flatStatusUuid'] == FlatStatus::FLAT_STATUS_OK)
+                $color = 'background-color: green';
+            return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;  
                         " . $model['flatStatus']->title;
         },
         'filterType' => GridView::FILTER_SELECT2,
@@ -98,7 +93,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'editableOptions'=> function ($model, $key, $index, $widget) {
+        'editableOptions' => function ($model, $key, $index, $widget) {
             $models = ArrayHelper::map(FlatType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
                 'header' => 'Тип квартиры',
@@ -138,7 +133,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новая', ['/flat/create'], ['class'=>'btn btn-success']),
+            Html::a('Новая', ['/flat/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -152,7 +147,7 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => false,

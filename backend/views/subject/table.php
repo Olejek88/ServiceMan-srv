@@ -1,8 +1,6 @@
 <?php
 /* @var $searchModel backend\models\SubjectSearch */
 
-use common\models\OrderStatus;
-use common\models\OrderVerdict;
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
@@ -73,7 +71,7 @@ $gridColumns = [
             'header' => 'Дата',
             'size' => 'md',
             'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => \kartik\datecontrol\DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd.MM.yyyy',
@@ -94,13 +92,13 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'header' => 'Квартира '.Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Квартира ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/flat/create?from=residents/table', [
                     'title' => Yii::t('app', 'Добавить')]),
         'content' => function ($data) {
-            return 'ул.'.$data['flat']['house']['street']->title.', '.
-            $data['flat']['house']->number.', '.
-            $data['flat']->number;
+            return 'ул.' . $data['flat']['house']['street']->title . ', ' .
+                $data['flat']['house']->number . ', ' .
+                $data['flat']->number;
         }
     ],
     [
@@ -112,7 +110,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->changedAt)>0)
+            if (strtotime($data->changedAt) > 0)
                 return date("Y-m-d h:m", strtotime($data->changedAt));
             else
                 return 'не открыт';
@@ -137,7 +135,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/subject/create'], ['class'=>'btn btn-success']).' '.
+            Html::a('Новый', ['/subject/create'], ['class' => 'btn btn-success']) . ' ' .
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['/subject/table'], ['data-pjax' => 0,
                 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -150,7 +148,7 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => true,

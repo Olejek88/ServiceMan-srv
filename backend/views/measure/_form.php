@@ -28,19 +28,19 @@ use yii\widgets\ActiveForm;
 
     <?php
 
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-        }
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+    }
     ?>
 
     <?php
     $equipments = Equipment::find()->all();
-    $items = ArrayHelper::map($equipments, 'uuid', function($model) {
-        return $model['equipmentType']->title.' ('.$model['flat']['house']['street']->title.', '.
-            $model['flat']['house']->number.', '.
-            $model['flat']->number.')';
+    $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
+        return $model['equipmentType']['title'] . ' (' . $model['flat']['house']['street']['title'] . ', ' .
+            $model['flat']['house']['number'] . ', ' .
+            $model['flat']['number'] . ')';
     });
     echo $form->field($model, 'equipmentUuid')->widget(Select2::classname(),
         [

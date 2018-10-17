@@ -47,12 +47,12 @@ $this->title = Yii::t('app', 'Сводная');
 <div class="row">
     <div class="col-md-3 col-sm-6 col-xs-12">
         <div class="info-box">
-            <a href="/orders/table"><span class="info-box-icon bg-aqua"><i class="fa fa-calendar"></i></span></a>
+            <a href="/city"><span class="info-box-icon bg-aqua"><i class="fa fa-calendar"></i></span></a>
 
             <div class="info-box-content">
                 <span>Городов <?= $cityCount; ?> / Улиц <?= $streetCount; ?></span><br/>
                 <span>Квартир <?= $flatCount; ?> / Абонентов <?= $subjectCount; ?></span><br/>
-                <span>Выполнено <?= $last_measures; ?> [<?= $complete;?> %]</span><br/>
+                <span>Выполнено <?= $last_measures; ?> [<?= $complete; ?> %]</span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -149,7 +149,7 @@ $this->title = Yii::t('app', 'Сводная');
                                     xAxis: {
                                         categories: [
                                             <?php
-                                                echo $categories;
+                                            echo $categories;
                                             ?>
                                         ]
                                     },
@@ -184,7 +184,7 @@ $this->title = Yii::t('app', 'Сводная');
                                     },
                                     series: [
                                         <?php
-                                            echo $bar;
+                                        echo $bar;
                                         ?>
                                     ]
                                 });
@@ -249,17 +249,17 @@ $this->title = Yii::t('app', 'Сводная');
                     <div class="box-body no-padding">
                         <ul class="users-list clearfix">
                             <?php
-                            $count=0;
+                            $count = 0;
                             foreach ($users as $user) {
                                 $path = $user->getPhotoUrl();
                                 if (!$path || !$user['image']) {
-                                    $path='/images/unknown.png';
+                                    $path = '/images/unknown.png';
                                 }
-                                print '<li style="width:23%"><img src="'.Html::encode($path).'" alt="User Image" width="145px">';
+                                print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
                                 echo Html::a(Html::encode($user['name']),
-                                    ['/users/view', '_id' => Html::encode($user['_id'])],['class' => 'users-list-name']);
-                                echo '<span class="users-list-date">'.$user['createdAt'].'</span></li>';
-                                }
+                                    ['/users/view', '_id' => Html::encode($user['_id'])], ['class' => 'users-list-name']);
+                                echo '<span class="users-list-date">' . $user['createdAt'] . '</span></li>';
+                            }
                             ?>
                         </ul>
                         <!-- /.users-list -->
@@ -305,17 +305,17 @@ $this->title = Yii::t('app', 'Сводная');
                         </thead>
                         <tbody>
                         <?php
-                            $count=0;
-                            foreach ($measures as $measure) {
-                                print '<tr><td><a href="/measure/view?id='.$measure["_id"].'">'.$measure["_id"].'</a></td>
-                                        <td>'.$measure["date"].'</td>
-                                        <td>'.$measure["equipment"]["house"]["street"]->title.','.$measure["equipment"]["house"]->number.', '.$measure["equipment"]["flat"]->number.'</td>
-                                        <td>'.$measure["equipment"]["equipmentType"]->title.'</td>
-                                        <td>'.$measure["value"].'</td>';
-                                print '<td><div class="sparkbar" data-color="#00a65a" data-height="20">'.$measure['user']->name.'</div></td></tr>';
-                                $count++;
-                                if ($count>7) break;
-                            }
+                        $count = 0;
+                        foreach ($measures as $measure) {
+                            print '<tr><td><a href="/measure/view?id=' . $measure["_id"] . '">' . $measure["_id"] . '</a></td>
+                                        <td>' . $measure["date"] . '</td>
+                                        <td>' . $measure["equipment"]["house"]["street"]->title . ',' . $measure["equipment"]["house"]->number . ', ' . $measure["equipment"]["flat"]->number . '</td>
+                                        <td>' . $measure["equipment"]["equipmentType"]->title . '</td>
+                                        <td>' . $measure["value"] . '</td>';
+                            print '<td><div class="sparkbar" data-color="#00a65a" data-height="20">' . $measure['user']->name . '</div></td></tr>';
+                            $count++;
+                            if ($count > 7) break;
+                        }
                         ?>
                         </tbody>
                     </table>
@@ -353,12 +353,12 @@ $this->title = Yii::t('app', 'Сводная');
                         $path = '/images/no-image-icon-4.png';
                         print '<li class="item">
                                 <div class="product-img">
-                                    <img src="'.Html::encode($path).'" alt="'.$equipment['equipmentType']->title.'">
+                                    <img src="' . Html::encode($path) . '" alt="' . $equipment['equipmentType']->title . '">
                                 </div>
                                 <div class="product-info">
-                                    <a href="/equipment/view?id='.$equipment["_id"].'" class="product-title">'.$equipment["serial"].'
-                                    <span class="label label-warning pull-right">'.$equipment['equipmentType']->title.'</span></a>
-                                    <span class="product-description">'.$equipment["equipmentType"]->title.'</span>
+                                    <a href="/equipment/view?id=' . $equipment["_id"] . '" class="product-title">' . $equipment["serial"] . '
+                                    <span class="label label-warning pull-right">' . $equipment['equipmentType']->title . '</span></a>
+                                    <span class="product-description">' . $equipment["equipmentType"]->title . '</span>
                                 </div></li>';
                     }
                     ?>
@@ -378,7 +378,7 @@ $this->title = Yii::t('app', 'Сводная');
 </div>
 <!-- /.content-wrapper -->
 
-<footer class="main-footer" style="margin-left: 0px !important;">
+<footer class="main-footer" style="margin-left: 0 !important;">
     <div class="pull-right hidden-xs">
         <b>Version</b> 0.0.2
     </div>
@@ -400,23 +400,22 @@ $this->title = Yii::t('app', 'Сводная');
     echo $usersGroup;
     ?>
 
-    var overlayMapsA = {
-    };
+    var overlayMapsA = {};
     var overlayMapsB = {
         "Пользователи": users
     };
-    var map = L.map('mapid',{zoomControl: false, layers: [users]}).setView([55.2969, 61.5157], 13);
+    var map = L.map('mapid', {zoomControl: false, layers: [users]}).setView([55.2969, 61.5157], 13);
     L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
         maxZoom: 18,
         id: 'mapbox.streets'
     }).addTo(map);
 
     L.control.layers(overlayMapsA, overlayMapsB, {
-        position:'bottomleft'
+        position: 'bottomleft'
     }).addTo(map);
 
     L.control.zoom({
-        position:'bottomleft'
+        position: 'bottomleft'
     }).addTo(map);
 
 </script>

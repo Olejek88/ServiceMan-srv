@@ -2,9 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\MeasureSearch;
 use backend\models\PhotoEquipmentSearch;
-use common\models\Measure;
 use common\models\PhotoEquipment;
 use Yii;
 use yii\filters\VerbFilter;
@@ -32,7 +30,8 @@ class PhotoEquipmentController extends Controller
         ];
     }
 
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();

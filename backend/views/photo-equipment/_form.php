@@ -1,13 +1,12 @@
 <?php
 
+use app\commands\MainFunctions;
 use common\models\Equipment;
-use common\models\Flat;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\PhotoEquipment */
@@ -26,11 +25,11 @@ use app\commands\MainFunctions;
     ?>
 
     <?php
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-        }
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+    }
     ?>
 
     <?php echo $form->field($model, 'longitude')->textInput(['maxlength' => true]) ?>
@@ -54,10 +53,10 @@ use app\commands\MainFunctions;
     ?>
 
     <?php
-    $equipment  = Equipment::find()->all();
-    $items = ArrayHelper::map($equipment, 'uuid', function($model) {
-        return $model['flat']['house']['street']->title.', '.$model['flat']['house']->number.', '.
-            $model['flat']['number'].' '.$model['equipmentType']->title;
+    $equipment = Equipment::find()->all();
+    $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
+        return $model['flat']['house']['street']->title . ', ' . $model['flat']['house']->number . ', ' .
+            $model['flat']['number'] . ' ' . $model['equipmentType']->title;
     });
     echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
         [

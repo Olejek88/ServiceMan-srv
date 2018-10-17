@@ -12,14 +12,15 @@ use yii\web\UnauthorizedHttpException;
  */
 class UserArmController extends Controller
 {
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
     }
-    
+
     /**
      * Lists all Users models.
      * @return mixed

@@ -1,5 +1,6 @@
 <?php
 /* @var $model \common\models\Message */
+
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;

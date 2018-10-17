@@ -11,7 +11,8 @@ $this->title = Yii::t('app', 'Помощь');
                 <span class="input-group-addon" id="basic-addon1" style="border: 1px solid #fff;">
                     <i class="fa fa-search" aria-hidden="true"></i>
                 </span>
-                <input type="text" class="form-control" placeholder="Введите Ваш вопрос" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" placeholder="Введите Ваш вопрос"
+                       aria-describedby="basic-addon1">
             </div>
         </div>
     </div>

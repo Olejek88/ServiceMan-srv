@@ -37,8 +37,8 @@ $this->title = $model->owner;
                                     'inn',
                                     [
                                         'label' => 'Квартира',
-                                        'value' => $model['flat']['house']['street']->title.', '.
-                                            $model['flat']['house']->number.', '.
+                                        'value' => $model['flat']['house']['street']->title . ', ' .
+                                            $model['flat']['house']->number . ', ' .
                                             $model['flat']->number
                                     ],
                                     'createdAt',

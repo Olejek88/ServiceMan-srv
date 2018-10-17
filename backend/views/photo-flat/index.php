@@ -1,8 +1,8 @@
 <?php
-/* @var $searchModel backend\models\PhotoFlat */
+/* @var $searchModel common\models\PhotoFlat */
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Типы измерений');
 ?>
@@ -37,31 +37,31 @@ $this->title = Yii::t('app', 'Типы измерений');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'title',
-                                    'contentOptions' =>[
+                                    'attribute' => 'title',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->title;
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

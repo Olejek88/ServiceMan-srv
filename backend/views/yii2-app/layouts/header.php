@@ -1,6 +1,5 @@
 <?php
 
-use common\components\MyHelpers;
 use yii\helpers\Html;
 
 /* @var $this \yii\web\View */
@@ -46,11 +45,11 @@ $userImage = Yii::$app->view->params['userImage'];
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <?php
-                            echo '<img src="'.$userImage.'" class="user-image" alt="User Image">';
+                        echo '<img src="' . $userImage . '" class="user-image" alt="User Image">';
                         ?>
                         <span class="hidden-xs">
                             <?php
-                                if ($currentUser) echo $currentUser['name'];
+                            if ($currentUser) echo $currentUser['name'];
                             ?>
                         </span>
                     </a>
@@ -58,12 +57,12 @@ $userImage = Yii::$app->view->params['userImage'];
                         <!-- User image -->
                         <li class="user-header">
                             <?php
-                            echo '<img src="'.$userImage.'" class="img-circle" alt="User Image">';
+                            echo '<img src="' . $userImage . '" class="img-circle" alt="User Image">';
                             ?>
                             <p>
                                 <?php
-                                    if ($currentUser) echo $currentUser['name'];
-                                    if ($currentUser) echo '<small>моб.тел.'.$currentUser['contact'].'</small>';
+                                if ($currentUser) echo $currentUser['name'];
+                                if ($currentUser) echo '<small>моб.тел.' . $currentUser['contact'] . '</small>';
                                 ?>
                             </p>
                         </li>
@@ -74,16 +73,16 @@ $userImage = Yii::$app->view->params['userImage'];
                                     ['class' => 'btn btn-default btn-flat']) ?>
                             </div>
                             <div class="pull-right">
-                            <?= $menuItems[] = Html::beginForm(['/logout'], 'post')
-                                . Html::submitButton(
-                                    'Выйти',
-                                    [
-                                        'class'       => 'btn btn-default btn-flat',
-                                        'style'       => 'padding: 6px 16px 6px 16px;'
-                                    ]
-                                )
-                                . Html::endForm();
-                            ?>
+                                <?= $menuItems[] = Html::beginForm(['/logout'], 'post')
+                                    . Html::submitButton(
+                                        'Выйти',
+                                        [
+                                            'class' => 'btn btn-default btn-flat',
+                                            'style' => 'padding: 6px 16px 6px 16px;'
+                                        ]
+                                    )
+                                    . Html::endForm();
+                                ?>
                             </div>
                         </li>
                     </ul>

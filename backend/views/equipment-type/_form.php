@@ -1,11 +1,8 @@
 <?php
 
-use kartik\widgets\Select2;
+use app\commands\MainFunctions;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use common\models\EquipmentType;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\EquipmentType */

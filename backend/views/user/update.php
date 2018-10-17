@@ -4,8 +4,8 @@
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'пользователя',
-]) . $model->username;
+        'modelClass' => 'пользователя',
+    ]) . $model->username;
 
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Пользователи АРМ'), 'url' => ['index']];
 ?>

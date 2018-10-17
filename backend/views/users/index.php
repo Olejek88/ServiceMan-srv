@@ -1,5 +1,6 @@
 <?php
 /* @var $searchModel backend\models\UsersSearch */
+
 /* @var $dataProvider */
 
 use yii\grid\GridView;
@@ -43,61 +44,61 @@ $this->title = Yii::t('app', 'Пользователи');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'name',
-                                    'contentOptions' =>[
+                                    'attribute' => 'name',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return Html::a(Html::encode($data->name), Url::to(['view', 'id' => $data->_id]));
                                     }
                                 ],
                                 [
-                                    'attribute'=>'pin',
-                                    'contentOptions' =>[
+                                    'attribute' => 'pin',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         $data->pin;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'user_id',
-                                    'contentOptions' =>[
+                                    'attribute' => 'user_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->user_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'contact',
-                                    'contentOptions' =>[
+                                    'attribute' => 'contact',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->contact;
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

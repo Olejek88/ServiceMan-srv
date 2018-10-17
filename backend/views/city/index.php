@@ -40,29 +40,29 @@ $this->title = Yii::t('app', 'Город');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'title',
-                                    'contentOptions' =>[
+                                    'attribute' => 'title',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'title',
+                                    'value' => 'title',
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

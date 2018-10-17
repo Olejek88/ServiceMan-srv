@@ -66,7 +66,7 @@ class FlatSearch extends Flat
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-/*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
+            /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
             ->andFilterWhere(['like', 'number', $this->number]);
 
         return $dataProvider;

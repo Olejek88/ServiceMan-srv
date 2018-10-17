@@ -152,27 +152,27 @@ class UsersController extends Controller
             $user_property['tracks'] = $user_attributes;
             $user_property['location'] = MainFunctions::getLocationByUser($user, true);
 
-            $events=[];
+            $events = [];
             $measures = Measure::find()
-                ->where(['=','userUuid', $user['uuid']])
+                ->where(['=', 'userUuid', $user['uuid']])
                 ->all();
             foreach ($measures as $measure) {
-                $text = '<a class="btn btn-default btn-xs">'.$measure['equipment']['equipmentType']->title.'</a><br/>
+                $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
-                $events[]=['date' => $measure['date'],'event' => self::formEvent($measure['date'],'measure',
+                $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
                     $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
             }
             $journals = Journal::find()
-                ->where(['=','userUuid', $user['uuid']])
+                ->where(['=', 'userUuid', $user['uuid']])
                 ->limit(5)
                 ->all();
             foreach ($journals as $journal) {
                 $text = $journal['description'];
-                $events[]=['date' => $journal['date'],'event' => self::formEvent($journal['date'],'journal', 0,
+                $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], 'journal', 0,
                     $journal['description'], $text)];
             }
 
-            $sort_events = MainFunctions::array_msort($events, ['date'=>SORT_DESC]);
+            $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
             return $this->render(
                 'view',
                 [
@@ -230,17 +230,17 @@ class UsersController extends Controller
     public function actionDashboard()
     {
         $users = Users::find()->where('name!="sUser"')->orderBy('createdAt DESC')->all();
-        $user_property[][]='';
-        $count=0;
+        $user_property[][] = '';
+        $count = 0;
         foreach ($users as $user) {
             $user_photo_flat = PhotoFlat::find()->where(['userUuid' => $user['uuid']])->count();
             $user_photo_equipment = PhotoEquipment::find()->where(['userUuid' => $user['uuid']])->count();
             $user_photo_house = PhotoHouse::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['photos']=$user_photo_house+$user_photo_flat+$user_photo_equipment;
+            $user_property[$count]['photos'] = $user_photo_house + $user_photo_flat + $user_photo_equipment;
             $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['alarms']=$user_alarms;
+            $user_property[$count]['alarms'] = $user_alarms;
             $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['messages']=$user_messages;
+            $user_property[$count]['messages'] = $user_messages;
 
             $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->
             andWhere('date > NOW() - INTERVAL 7 DAY')->count();
@@ -251,8 +251,8 @@ class UsersController extends Controller
 
             $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->all();
             $user_property[$count]['houses'] = $user_houses;
-            $user_flats=0;
-            $visited=0;
+            $user_flats = 0;
+            $visited = 0;
             foreach ($user_houses as $user_house) {
                 //$user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
                 $flats = Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->all();
@@ -262,12 +262,12 @@ class UsersController extends Controller
                     if ($equipment) {
                         $user_measure = Measure::find()->where(['equipmentUuid' => $equipment['uuid']])->
                         andWhere('date > NOW() - INTERVAL 14 DAY')->count();
-                        if ($user_measure>0)
+                        if ($user_measure > 0)
                             $visited++;
                         else {
                             $user_message = Message::find()->where(['flatUuid' => $flat['uuid']])->
                             andWhere('date > NOW() - INTERVAL 14 DAY')->count();
-                            if ($user_message>0)
+                            if ($user_message > 0)
                                 $visited++;
                         }
                     }
@@ -277,16 +277,16 @@ class UsersController extends Controller
             $user_property[$count]['visited'] = $visited;
 
             $user_property[$count]['complete'] = 0;
-            if ($user_flats>0) {
-                $user_property[$count]['complete'] = number_format($user_property[$count]['measure'] * 100 / $user_flats,2);
-                $user_property[$count]['visited_total'] = number_format($visited * 100 / $user_flats,2);
+            if ($user_flats > 0) {
+                $user_property[$count]['complete'] = number_format($user_property[$count]['measure'] * 100 / $user_flats, 2);
+                $user_property[$count]['visited_total'] = number_format($visited * 100 / $user_flats, 2);
             }
 
             $count++;
         }
         return $this->render('dashboard', [
-            'users'  => $users,
-            'user_property'  => $user_property
+            'users' => $users,
+            'user_property' => $user_property
         ]);
     }
 
@@ -399,8 +399,8 @@ class UsersController extends Controller
     /**
      * Сохраняем файл согласно нашим правилам.
      *
-     * @param Users        $model Пользователь
-     * @param UploadedFile $file  Файл
+     * @param Users $model Пользователь
+     * @param UploadedFile $file Файл
      *
      * @return string | null
      */

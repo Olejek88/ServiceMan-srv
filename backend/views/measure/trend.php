@@ -1,5 +1,6 @@
 <?php
 /*  @var $values */
+
 /*  @var $name string */
 
 use backend\assets\AdminLteAsset;
@@ -30,11 +31,11 @@ AdminLteAsset::register($this);
             categories: [
                 <?php
                 $first = 0;
-                $bar='';
+                $bar = '';
                 foreach ($values as $value) {
                     if ($first > 0)
                         $bar .= "," . PHP_EOL;
-                    $bar .= '\''.$value->date.'\'';
+                    $bar .= '\'' . $value->date . '\'';
                     $first++;
                 }
                 echo $bar;
@@ -50,7 +51,7 @@ AdminLteAsset::register($this);
         series: [{
             <?php
             $first = 0;
-            $bar = "name: '".$name."',";
+            $bar = "name: '" . $name . "',";
             $bar .= "data: [";
             foreach ($values as $value) {
                 if ($first > 0)

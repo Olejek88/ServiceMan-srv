@@ -4,8 +4,6 @@ use app\commands\MainFunctions;
 use common\models\FlatStatus;
 use common\models\FlatType;
 use common\models\House;
-use common\models\TaskTemplate;
-use common\models\TaskVerdict;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -36,8 +34,8 @@ use yii\widgets\ActiveForm;
 
     <?php
     $houses = House::find()->all();
-    $items = ArrayHelper::map($houses, 'uuid', function($model) {
-        return $model['street']->title.', '.$model['number'];
+    $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+        return $model['street']->title . ', ' . $model['number'];
     });
     echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [

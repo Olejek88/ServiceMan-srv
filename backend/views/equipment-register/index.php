@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $searchModel */
 
@@ -40,64 +40,64 @@ $this->title = Yii::t('app', 'Журнал оборудования');
                             'layout' => "{summary}\n{items}\n<div align='center'>{pager}</div>",
                             'columns' => [
                                 [
-                                    'attribute'=>'registerTypeUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'registerTypeUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'registerType.title',
+                                    'value' => 'registerType.title',
                                 ],
                                 [
-                                    'attribute'=>'userUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'userUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'user.name',
+                                    'value' => 'user.name',
                                 ],
                                 [
-                                    'attribute'=>'equipmentUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'equipmentUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'equipment.title',
+                                    'value' => 'equipment.title',
                                 ],
                                 [
-                                    'attribute'=>'date',
-                                    'contentOptions' =>[
+                                    'attribute' => 'date',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->date;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'fromParameterUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'fromParameterUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->fromParameterUuid;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'toParameterUuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'toParameterUuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->toParameterUuid;
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}',

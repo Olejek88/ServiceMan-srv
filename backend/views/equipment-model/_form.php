@@ -1,12 +1,12 @@
 <?php
 
-use kartik\widgets\Select2;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
 use common\models\EquipmentType;
-use yii\helpers\ArrayHelper;
 use kartik\file\FileInput;
+use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\EquipmentModel */
@@ -43,22 +43,22 @@ use kartik\file\FileInput;
     $items = ArrayHelper::map($types, 'uuid', 'title');
     unset($types);
     echo $form->field($model, 'equipmentTypeUuid',
-        ['template'=>'{label}<div class="input-group">{input}<span class="input-group-btn" style="padding-left: 5px">
+        ['template' => '{label}<div class="input-group">{input}<span class="input-group-btn" style="padding-left: 5px">
         <a href="/equipment-type/create">
         <button class="btn btn-success" type="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
         </button></a></span></div>{hint}{error}'])
         ->widget(Select2::classname(),
-        [
-        'data' => $items,
-        'language' => 'ru',
-        'options' => [
-            'placeholder' => 'Выберите тип..',
-            'style' => ['height' => '42px', 'padding-top' => '10px']
-        ],
-        'pluginOptions' => [
-            'allowClear' => true
-        ],
-    ]);
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите тип..',
+                    'style' => ['height' => '42px', 'padding-top' => '10px']
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
     unset($items);
     ?>
 

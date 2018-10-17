@@ -40,61 +40,61 @@ $this->title = Yii::t('app', 'Квартира');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'number',
-                                    'contentOptions' =>[
+                                    'attribute' => 'number',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'number',
+                                    'value' => 'number',
                                 ],
                                 [
-                                    'attribute'=>'Улица',
-                                    'contentOptions' =>[
+                                    'attribute' => 'Улица',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'house.street.title',
+                                    'value' => 'house.street.title',
                                 ],
                                 [
-                                    'attribute'=>'house',
-                                    'contentOptions' =>[
+                                    'attribute' => 'house',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'house.number',
+                                    'value' => 'house.number',
                                 ],
                                 [
-                                    'attribute'=>'flatStatus',
-                                    'contentOptions' =>[
+                                    'attribute' => 'flatStatus',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'flatStatus.title',
+                                    'value' => 'flatStatus.title',
                                 ],
                                 [
-                                    'attribute'=>'flatType',
-                                    'contentOptions' =>[
+                                    'attribute' => 'flatType',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'flatType.title',
+                                    'value' => 'flatType.title',
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

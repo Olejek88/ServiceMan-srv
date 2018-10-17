@@ -38,71 +38,71 @@ $this->title = Yii::t('app', 'Сообщения');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center;'
+                                        'style' => 'width: 50px; text-align: center;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'user',
-                                    'contentOptions' =>[
+                                    'attribute' => 'user',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'user.name',
+                                    'value' => 'user.name',
                                 ],
                                 [
-                                    'attribute'=>'date',
-                                    'contentOptions' =>[
+                                    'attribute' => 'date',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->date;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'alarmType',
-                                    'contentOptions' =>[
+                                    'attribute' => 'alarmType',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'alarmType.title',
+                                    'value' => 'alarmType.title',
                                 ],
                                 [
-                                    'attribute'=>'alarmStatus',
-                                    'contentOptions' =>[
+                                    'attribute' => 'alarmStatus',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'alarmStatus.title',
+                                    'value' => 'alarmStatus.title',
                                 ],
                                 [
-                                    'attribute'=>'latitude',
-                                    'contentOptions' =>[
+                                    'attribute' => 'latitude',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'latitude',
+                                    'value' => 'latitude',
                                 ],
                                 [
-                                    'attribute'=>'longitude',
-                                    'contentOptions' =>[
+                                    'attribute' => 'longitude',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'longitude',
+                                    'value' => 'longitude',
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

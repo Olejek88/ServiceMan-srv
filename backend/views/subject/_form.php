@@ -41,9 +41,9 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $flat  = Flat::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function($model) {
-        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    $flat = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });
     echo $form->field($model, 'flatUuid')->widget(Select2::classname(),
         [
@@ -59,9 +59,9 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $house  = House::find()->all();
-    $items = ArrayHelper::map($house, 'uuid', function($model) {
-        return $model['street']->title.', '.$model->number;
+    $house = House::find()->all();
+    $items = ArrayHelper::map($house, 'uuid', function ($model) {
+        return $model['street']->title . ', ' . $model->number;
     });
     echo $form->field($model, 'houseUuid')->widget(Select2::class,
         [

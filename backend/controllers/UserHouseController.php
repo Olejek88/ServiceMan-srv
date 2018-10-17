@@ -27,7 +27,7 @@ class UserHouseController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['POST','GET'],
+                    'delete' => ['POST', 'GET'],
                 ],
             ],
         ];
@@ -111,7 +111,7 @@ class UserHouseController extends Controller
             $userHouse = UserHouse::find()
                 ->where(['houseUuid' => $house['uuid']])
                 ->all();
-            if ($userHouse==null) {
+            if ($userHouse == null) {
                 $model = new UserHouse();
                 $model->uuid = MainFunctions::GUID();
                 $model->userUuid = $currentUser['uuid'];

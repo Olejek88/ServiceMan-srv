@@ -1,11 +1,12 @@
 <?php
+
 use yii\helpers\Html;
 
 /* @var $model common\models\AlarmType */
 
 $this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Типы уведомлений',
-]) . $model['title'];
+        'modelClass' => 'Типы уведомлений',
+    ]) . $model['title'];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', ' Уведомления'), 'url' => ['index']];
 ?>
 <div class="alert-type-update box-padding">

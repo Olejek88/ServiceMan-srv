@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $searchModel */
 
@@ -39,45 +39,45 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
+                                        'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'uuid',
-                                    'contentOptions' =>[
+                                    'attribute' => 'uuid',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'padding: 5px 10px 5px 10px;'
+                                        'style' => 'padding: 5px 10px 5px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->uuid;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'title',
-                                    'contentOptions' =>[
+                                    'attribute' => 'title',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'padding: 5px 10px 5px 10px;'
+                                        'style' => 'padding: 5px 10px 5px 10px;'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->title;
                                     }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center',
-                                        'style'=>'padding: 5px 10px 5px 10px;'
+                                        'style' => 'padding: 5px 10px 5px 10px;'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

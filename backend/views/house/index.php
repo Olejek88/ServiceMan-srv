@@ -41,60 +41,60 @@ $this->title = Yii::t('app', 'Дом');
                             ],
                             'columns' => [
                                 [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute'=>'number',
-                                    'contentOptions' =>[
+                                    'attribute' => 'number',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
+                                    'content' => function ($data) {
                                         $userHouseId = UserHouse::find()
                                             ->select('_id')
                                             ->where(['houseUuid' => $data['uuid']])
                                             ->one();
                                         return Html::a($data->number,
-                                            '/user-house/update?id='.$userHouseId['_id']);
+                                            '/user-house/update?id=' . $userHouseId['_id']);
                                     }
                                 ],
                                 [
-                                    'attribute'=>'street',
-                                    'contentOptions' =>[
+                                    'attribute' => 'street',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'street.title',
+                                    'value' => 'street.title',
                                 ],
                                 [
-                                    'attribute'=>'houseStatus',
-                                    'contentOptions' =>[
+                                    'attribute' => 'houseStatus',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'houseStatus.title',
+                                    'value' => 'houseStatus.title',
                                 ],
                                 [
-                                    'attribute'=>'houseType',
-                                    'contentOptions' =>[
+                                    'attribute' => 'houseType',
+                                    'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value'     => 'houseType.title',
+                                    'value' => 'houseType.title',
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
                                         'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',

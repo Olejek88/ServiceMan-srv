@@ -1,8 +1,8 @@
 <?php
 
+use app\commands\MainFunctions;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\AlarmType */
@@ -15,11 +15,11 @@ use app\commands\MainFunctions;
 
     <?php
 
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-        }
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+    }
 
     ?>
 

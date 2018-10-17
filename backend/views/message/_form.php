@@ -26,25 +26,25 @@ use yii\widgets\ActiveForm;
 
     <?php
 
-        $model->load(Yii::$app->request->post());
+    $model->load(Yii::$app->request->post());
 
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-        }
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+    }
 
     ?>
     <?php
-    $user  = Users::find()->all();
-    $items = ArrayHelper::map($user,'uuid','name');
+    $user = Users::find()->all();
+    $items = ArrayHelper::map($user, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->dropDownList($items);
     ?>
 
     <?php
-    $flat  = Flat::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function($model) {
-        return $model['house']['street']->title.', '.$model['house']->number.', '.$model['number'];
+    $flat = Flat::find()->all();
+    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });
     echo $form->field($model, 'flatUuid')->widget(Select2::class,
         [

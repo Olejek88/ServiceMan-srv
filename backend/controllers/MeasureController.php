@@ -30,7 +30,8 @@ class MeasureController extends Controller
         ];
     }
 
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
@@ -96,7 +97,7 @@ class MeasureController extends Controller
                 ->where(['equipmentUuid' => $_GET["equipment"]])
                 ->orderBy('date')
                 ->all();
-            if ($measure[0]!=null)
+            if ($measure[0] != null)
                 $name = $measure[0]['equipment']['equipmentType']->title;
         }
         return $this->render('trend', [

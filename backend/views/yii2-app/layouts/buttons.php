@@ -1,5 +1,7 @@
 <?php
+
 use yii\helpers\Html;
+
 /* @var $model */
 
 echo Html::a(Yii::t('app', 'Список'),

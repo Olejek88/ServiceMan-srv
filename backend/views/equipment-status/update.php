@@ -5,8 +5,8 @@ use yii\helpers\Html;
 /* @var $model common\models\EquipmentStatus */
 
 $this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Статусы оборудования',
-]) . $model['title'];
+        'modelClass' => 'Статусы оборудования',
+    ]) . $model['title'];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оборудования'), 'url' => ['index']];
 ?>
 <div class="equipment-status-update box-padding">

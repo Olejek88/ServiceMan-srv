@@ -1,10 +1,8 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
-use common\components\TypeTreeHelper;
-use common\models\EquipmentType;
 use common\models\EquipmentTypeTree;
+use yii\grid\GridView;
+use yii\helpers\Html;
 
 /* @var $model common\models\EquipmentType */
 /* @var $searchModel backend\models\EquipmentSearchType */

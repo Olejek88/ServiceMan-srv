@@ -30,7 +30,8 @@ class HouseTypeController extends Controller
         ];
     }
 
-    public function init() {
+    public function init()
+    {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
