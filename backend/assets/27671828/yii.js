@@ -197,7 +197,7 @@ window.yii = (function ($) {
                     }
                 } else if ($e.is(':submit') && $form.length) {
                     if (pjax !== undefined && $.support.pjax) {
-                        $form.on('submit',function(e){
+                        $form.on('submit', function (e) {
                             $.pjax.submit(e, pjaxOptions);
                         })
                     }
@@ -250,7 +250,7 @@ window.yii = (function ($) {
                 $form.attr('action', action);
             }
             if (pjax !== undefined && $.support.pjax) {
-                $form.on('submit',function(e){
+                $form.on('submit', function (e) {
                     $.pjax.submit(e, pjaxOptions);
                 })
             }

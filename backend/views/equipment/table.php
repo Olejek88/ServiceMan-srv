@@ -150,6 +150,18 @@ $gridColumns = [
             return '[' . $photo_flat_count . '/' . $message_flat_count . ']';
         },
     ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'vAlign' => 'middle',
+        'width' => '80px',
+        'header' => '№Изм.',
+        'value' => function ($data) {
+            $measure_count = Measure::find()
+                ->where(['equipmentUuid' => $data['uuid']])
+                ->count();
+            return $measure_count;
+        },
+    ],
 ];
 
 echo GridView::widget([

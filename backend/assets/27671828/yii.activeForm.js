@@ -107,7 +107,7 @@
          *     function (event)
          * where
          *  - event: an Event object.
-         */        
+         */
         afterInit: 'afterInit'
     };
 
@@ -172,14 +172,14 @@
 
     var submitDefer;
 
-    var setSubmitFinalizeDefer = function($form) {
+    var setSubmitFinalizeDefer = function ($form) {
         submitDefer = $.Deferred();
         $form.data('yiiSubmitFinalizePromise', submitDefer.promise());
     };
 
     // finalize yii.js $form.submit
-    var submitFinalize = function($form) {
-        if(submitDefer) {
+    var submitFinalize = function ($form) {
+        if (submitDefer) {
             submitDefer.resolve();
             submitDefer = undefined;
             $form.removeData('yiiSubmitFinalizePromise');
@@ -344,7 +344,7 @@
             });
 
             // ajax validation
-            $.when.apply(this, deferreds).always(function() {
+            $.when.apply(this, deferreds).always(function () {
                 // Remove empty message arrays
                 for (var i in messages) {
                     if (0 === messages[i].length) {
@@ -439,8 +439,8 @@
                     var $container = $form.find(this.container);
                     $container.removeClass(
                         data.settings.validatingCssClass + ' ' +
-                            data.settings.errorCssClass + ' ' +
-                            data.settings.successCssClass
+                        data.settings.errorCssClass + ' ' +
+                        data.settings.successCssClass
                     );
                     $container.find(this.error).html('');
                 });
@@ -471,7 +471,7 @@
          * @param id attribute ID
          * @param messages array with error messages
          */
-        updateAttribute: function(id, messages) {
+        updateAttribute: function (id, messages) {
             var attribute = methods.find.call(this, id);
             if (attribute != undefined) {
                 var msg = {};
@@ -498,7 +498,7 @@
         }
         if (attribute.validateOnType) {
             $input.on('keyup.yiiActiveForm', function (e) {
-                if ($.inArray(e.which, [16, 17, 18, 37, 38, 39, 40]) !== -1 ) {
+                if ($.inArray(e.which, [16, 17, 18, 37, 38, 39, 40]) !== -1) {
                     return;
                 }
                 if (attribute.value !== getValue($form, attribute)) {
@@ -552,7 +552,7 @@
      */
     var deferredArray = function () {
         var array = [];
-        array.add = function(callback) {
+        array.add = function (callback) {
             this.push(new $.Deferred(callback));
         };
         return array;
@@ -626,7 +626,7 @@
 
             if (errorAttributes.length) {
                 if (data.settings.scrollToError) {
-                    var top = $form.find($.map(errorAttributes, function(attribute) {
+                    var top = $form.find($.map(errorAttributes, function (attribute) {
                         return attribute.input;
                     }).join(',')).first().closest(':visible').offset().top;
                     var wtop = $(window).scrollTop();
