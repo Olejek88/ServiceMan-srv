@@ -27,6 +27,7 @@ use common\models\OrderStatus;
 use common\models\PhotoEquipment;
 use common\models\PhotoFlat;
 use common\models\PhotoHouse;
+use common\models\Subject;
 use common\models\Token;
 use common\models\UserHouse;
 use common\models\Users;
@@ -315,12 +316,20 @@ class UsersController extends Controller
             foreach ($user_houses as $user_house) {
                 $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
+                    $subject = Subject::find()
+                        ->where(['flatUuid' => $flat['uuid']])
+                        ->one();
                     $equipment = Equipment::find()
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
                         ->orderBy('changedAt desc')
                         ->one();
                     if ($equipment) {
+                        $address = 'ул.' . $equipment['house']['street']->title . ', д.' .
+                            $equipment['house']->number . ', кв.' . $equipment['flat']->number;
+                        if ($subject)
+                            $address.=' ['.$subject['owner'].']';
+
                         $gut=0;
                         $object_count++;
                         $prev_date = 0;
@@ -334,9 +343,7 @@ class UsersController extends Controller
                         foreach ($measures as $measure) {
                             $fullTree[$oCnt1]['title']
                                 = Html::a(
-                                'ул.' . $equipment['house']['street']->title . ', д.' .
-                                $equipment['house']->number . ', кв.' . $equipment['flat']->number,
-                                ['equipment/view', 'id' => $equipment['_id']]
+                                $address, ['equipment/view', 'id' => $equipment['_id']]
                             );
                             $fullTree[$oCnt1]['measure_date'] = $measure['date'];
                             $fullTree[$oCnt1]['measure'] = $measure['value'];
@@ -357,10 +364,11 @@ class UsersController extends Controller
                             $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
                                 . $class . '">' . $status . '</div></div>';
 
-                            if (strtotime($measure['date'])>($prev_date+3600))
+                            if (strtotime($measure['date'])>($prev_date+3600)) {
+                                $gut++;
                                 $oCnt1++;
+                            }
                             $prev_date = strtotime($measure['date']);
-                            $gut=1;
                         }
 
                         // есть комментарий,  нет измерения, есть/нет фото
@@ -386,9 +394,7 @@ class UsersController extends Controller
                                 $fullTree[$oCnt1]['measure'] = 'есть сообщение';
                                 $fullTree[$oCnt1]['title']
                                     = Html::a(
-                                    'ул.' . $equipment['house']['street']->title . ', д.' .
-                                    $equipment['house']->number . ', кв.' . $equipment['flat']->number,
-                                    ['equipment/view', 'id' => $equipment['_id']]
+                                    $address, ['equipment/view', 'id' => $equipment['_id']]
                                 );
 
                                 $class = 'critical3';
@@ -396,7 +402,7 @@ class UsersController extends Controller
                                 $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
                                     . $class . '">Б.' . $status . '</div></div>';
                                 $oCnt1++;
-                                $gut=1;
+                                $gut++;
                             }
                         }
 
@@ -406,16 +412,13 @@ class UsersController extends Controller
                             $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
                                 . $class . '">А.' . $status . '</div></div>';
                             $fullTree[$oCnt1]['title']
-                                = Html::a(
-                                'ул.' . $equipment['house']['street']->title . ', д.' .
-                                $equipment['house']->number . ', кв.' . $equipment['flat']->number,
-                                ['equipment/view', 'id' => $equipment['_id']]
+                                = Html::a($address, ['equipment/view', 'id' => $equipment['_id']]
                             );
                             $fullTree[$oCnt1]['measure_date'] = '-';
                             $fullTree[$oCnt1]['measure'] = '-';
                             $oCnt1++;
                         } else
-                            $gut_total_count++;
+                            $gut_total_count+=$gut;
                     }
                 }
             }
