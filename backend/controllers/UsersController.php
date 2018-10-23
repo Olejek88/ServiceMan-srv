@@ -371,14 +371,14 @@ class UsersController extends Controller
                         foreach ($messages as $message) {
                             $measure_count = Measure::find()
                                 ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->andWhere(['date' >= ($message['date'] - 1200)])
-                                ->andWhere(['date' < ($message['date'] + 1200)])
+                                ->andWhere('date > DATE_SUB(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
+                                ->andWhere('date < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
                                 ->count();
 
                             $photo_flat_count = PhotoEquipment::find()
                                 ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->andWhere(['date' >= ($message['date'] - 1200)])
-                                ->andWhere(['date' < ($message['date'] + 1200)])
+                                ->andWhere('createdAt > DATE_SUB(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
+                                ->andWhere('createdAt < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
                                 ->count();
 
                             if ($measure_count==0 && $photo_flat_count>0) {
