@@ -315,6 +315,7 @@ class UsersController extends Controller
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
                 $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flat_gut=0;
                 foreach ($flats as $flat) {
                     $subject = Subject::find()
                         ->where(['flatUuid' => $flat['uuid']])
@@ -406,7 +407,7 @@ class UsersController extends Controller
                             }
                         }
 
-                        if ($gut==0) {
+                        if ($gut==0 && $flat_gut!=1) {
                             $class = 'critical1';
                             $status = 'Не удовлетворительное';
                             $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
@@ -417,8 +418,10 @@ class UsersController extends Controller
                             $fullTree[$oCnt1]['measure_date'] = '-';
                             $fullTree[$oCnt1]['measure'] = '-';
                             $oCnt1++;
-                        } else
-                            $gut_total_count+=$gut;
+                        } else {
+                            $flat_gut = 1;
+                            $gut_total_count += $gut;
+                        }
                     }
                 }
             }
