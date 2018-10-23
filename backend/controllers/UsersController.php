@@ -319,12 +319,12 @@ class UsersController extends Controller
                     $subject = Subject::find()
                         ->where(['flatUuid' => $flat['uuid']])
                         ->one();
-                    $equipment = Equipment::find()
+                    $equipments = Equipment::find()
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
                         ->orderBy('changedAt desc')
-                        ->one();
-                    if ($equipment) {
+                        ->all();
+                    foreach ($equipments as $equipment) {
                         $address = 'ул.' . $equipment['house']['street']->title . ', д.' .
                             $equipment['house']->number . ', кв.' . $equipment['flat']->number;
                         if ($subject)
