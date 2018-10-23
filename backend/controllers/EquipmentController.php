@@ -101,27 +101,6 @@ class EquipmentController extends Controller
         );
     }
 
-
-    /**
-     * Lists all Equipment models.
-     *
-     * @return mixed
-     */
-    public function actionTable()
-    {
-        $searchModel = new EquipmentSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 500;
-
-        return $this->render(
-            'table',
-            [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]
-        );
-    }
-
     /**
      * Displays a single Equipment model.
      *
@@ -322,6 +301,130 @@ class EquipmentController extends Controller
         }
         return $this->render(
             'tree',
+            ['equipment' => $fullTree]
+        );
+    }
+
+    /**
+     * Build tree of equipment by user
+     *
+     * @param integer $id Id
+     * @param $date_start
+     * @param $date_end
+     * @return mixed
+     */
+    public function actionTable($id, $date_start, $date_end)
+    {
+        ini_set('memory_limit', '-1');
+        $c = 'children';
+        $fullTree = array();
+        $user = Users::find()
+            ->select('*')
+            ->where(['id' => $id])
+            ->one();
+        if ($user) {
+            $oCnt1 = 0;
+            $gut_total_count = 0;
+            $object_count = 0;
+            $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
+            foreach ($user_houses as $user_house) {
+                $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                foreach ($flats as $flat) {
+                    $equipment = Equipment::find()
+                        ->select('*')
+                        ->where(['flatUuid' => $flat['uuid']])
+                        ->orderBy('changedAt desc')
+                        ->one();
+                    if ($equipment) {
+                        $gut=0;
+                        $object_count++;
+                        $fullTree[$oCnt1]['title']
+                            = Html::a(
+                            'ул.' . $equipment['house']['street']->title . ', д.' .
+                            $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                            ['equipment/view', 'id' => $equipment['_id']]
+                        );
+
+                        $measures = Measure::find()
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->orderBy('date DESC')
+                            ->all();
+                        $oCnt2=0;
+                        // есть измерение, есть/нет фото
+                        foreach ($measures as $measure) {
+                            $fullTree[$oCnt1][$c][$oCnt2]
+                                ['measure_date'] = $measure['date'];
+                            $fullTree[$oCnt1][$c][$oCnt2]
+                                ['measure'] = $measure['value'];
+                            $photo_flat_count = PhotoEquipment::find()
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->andWhere(['date' >= ($measure['date']-3600)])
+                                ->andWhere(['date' < ($measure['date']+3600)])
+                                ->count();
+
+                            if ($photo_flat_count>0) {
+                                $class = 'critical3';
+                                $status = 'А. Отличное';
+                            } else {
+                                $class = 'critical2';
+                                $status = 'Б. Удовлетворительное';
+                            }
+                            $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
+                                . $class . '">' . $status . '</div></div>';
+                            $gut=1;
+                            $oCnt2++;
+                        }
+
+                        // есть комментарий,  нет измерения, есть/нет фото
+                        $messages = Message::find()
+                            ->where(['flatUuid' => $equipment['flat']['uuid']])
+                            ->orderBy('date DESC')
+                            ->all();
+                        foreach ($messages as $message) {
+                            $measure_count = Measure::find()
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->andWhere(['date' >= ($message['date'] - 1200)])
+                                ->andWhere(['date' < ($message['date'] + 1200)])
+                                ->count();
+
+                            $photo_flat_count = PhotoEquipment::find()
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->andWhere(['date' >= ($message['date'] - 1200)])
+                                ->andWhere(['date' < ($message['date'] + 1200)])
+                                ->count();
+
+                            if ($measure_count==0 && $photo_flat_count>0) {
+                                $fullTree[$oCnt1][$c][$oCnt2]
+                                ['measure_date'] = $message['date'];
+                                $fullTree[$oCnt1][$c][$oCnt2]
+                                ['measure'] = 'есть сообщение';
+                                $class = 'critical3';
+                                $status = 'Отличное';
+                                $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
+                                    . $class . '">Б.' . $status . '</div></div>';
+                                $oCnt2++;
+                                $gut=1;
+                            }
+                        }
+
+                        if ($gut==0) {
+                            $class = 'critical1';
+                            $status = 'Не удовлетворительное';
+                            $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
+                                . $class . '">А.' . $status . '</div></div>';
+                        } else
+                            $gut_total_count++;
+                    }
+                }
+                $fullTree[$oCnt1]['title'] = 'Всего';
+                $percent = 0;
+                if ($object_count>0)
+                    $percent = number_format($gut_total_count*100/$object_count,2);
+                $fullTree[$oCnt1]['measure_date'] = 'Показаний: ' . $gut_total_count . '[' . $percent . ']';
+            }
+        }
+        return $this->render(
+            'tree-user',
             ['equipment' => $fullTree]
         );
     }

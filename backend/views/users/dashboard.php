@@ -42,14 +42,25 @@ $this->title = Yii::t('app', 'Пользователи');
                             <span class="pull-right badge bg-orange">' . count($user_property[$count]['houses']) . ' / ' .
             $user_property[$count]['objects'] . '</span></a>
                             </li>
-                            <li><a href="#">Посещено 
-                            <span class="pull-right badge bg-green">' . $user_property[$count]['visited'] . ' / ' .
-            $user_property[$count]['visited_total'] . '%</span></a></li>
-                            <li><a href="#">Измерений (%) 
-                                <span class="pull-right badge bg-red">' . $user_property[$count]['measure'] . ' / ' .
-            $user_property[$count]['complete'] . '%</span></a></li>
+                            <li>'.Html::a('Посещено <span class="pull-right badge bg-green">' . $user_property[$count]['visited'] . ' / ' .
+                            $user_property[$count]['visited_total'] . '%</span>',
+                            ['/users/table', 'id' => Html::encode($user['_id']),
+                                'date_start' => '2018-09-27 00:00:00',
+                                'date_end' => '2018-10-07 00:00:00']).' 
+                            </li>
                             <li><a href="#">Треков передвижения 
                             <span class="pull-right badge bg-yellow">' . $user_property[$count]['tracks'] . '</span></a></li>
+                            <li>'.Html::a('Обход №1 2018/09/27 - 2018/10/03',
+                ['/users/table', 'id' => Html::encode($user['_id']),
+                    'date_start' => '2018-09-27 00:00:00',
+                    'date_end' => '2018-10-03 23:50:00']).' 
+                            </li>
+                            <li>'.Html::a('Обход №2 2018/10/04 - 2018/10/18',
+                ['/users/table', 'id' => Html::encode($user['_id']),
+                    'date_start' => '2018-10-04 00:00:00',
+                    'date_end' => '2018-10-18 00:00:00']).' 
+                            </li>
+                            
                         </ul>
                     </div>
                     </div>
