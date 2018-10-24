@@ -326,8 +326,8 @@ class UsersController extends Controller
                         ->orderBy('changedAt desc')
                         ->all();
                     foreach ($equipments as $equipment) {
-                        $address = 'ул.' . $equipment['house']['street']->title . ', д.' .
-                            $equipment['house']->number . ', кв.' . $equipment['flat']->number;
+                        $address = 'ул.' . $equipment['house']['street']['title'] . ', д.' .
+                            $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'];
                         if ($subject)
                             $address.=' ['.$subject['owner'].']';
 

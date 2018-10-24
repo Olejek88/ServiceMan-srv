@@ -340,8 +340,8 @@ class EquipmentController extends Controller
                         $object_count++;
                         $fullTree[$oCnt1]['title']
                             = Html::a(
-                            'ул.' . $equipment['house']['street']->title . ', д.' .
-                            $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                            'ул.' . $equipment['house']['street']['title'] . ', д.' .
+                            $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
@@ -476,8 +476,8 @@ class EquipmentController extends Controller
                     if ($equipment) {
                         $fullTree[$oCnt0][$c][$oCnt1]['title']
                             = Html::a(
-                            'ул.' . $equipment['house']['street']->title . ', д.' .
-                            $equipment['house']->number . ', кв.' . $equipment['flat']->number,
+                            'ул.' . $equipment['house']['street']['title'] . ', д.' .
+                            $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
