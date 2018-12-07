@@ -256,7 +256,7 @@ class ExportController extends Controller
     {
         echo ('[' . self::LOG_ID . '] start user house redefinition') . PHP_EOL;
         $count = 1;
-        $user2 = Users::find()->where(['_id' => 2])->one();
+        $user3 = Users::find()->where(['_id' => 3])->one();
         $user7 = Users::find()->where(['_id' => 7])->one();
         $user17 = Users::find()->where(['_id' => 17])->one();
         $user8 = Users::find()->where(['_id' => 8])->one();
@@ -265,36 +265,47 @@ class ExportController extends Controller
         $user11 = Users::find()->where(['_id' => 11])->one();
         $user12 = Users::find()->where(['_id' => 12])->one();
         $user13 = Users::find()->where(['_id' => 13])->one();
+        $user14 = Users::find()->where(['_id' => 14])->one();
+        $user15 = Users::find()->where(['_id' => 15])->one();
+
+	$user_uuid='';
         $userHouses = UserHouse::find()->all();
         foreach ($userHouses as $userHouse) {
-            if ($userHouse != null) {
-                if ($userHouse['userUuid'] == $user8)
-                    $userHouse['userUuid'] = $user2['uuid'];
-                if ($userHouse['userUuid'] == $user9)
-                    $userHouse['userUuid'] = $user2['uuid'];
+		$user_uuid='';
+                if ($userHouse['userUuid'] == $user10['uuid']) {
+		    $user_uuid=$user10['uuid'];
+                    $userHouse['userUuid'] = $user3['uuid'];
+		}
+                if ($userHouse['userUuid'] == $user11['uuid']) {
+		    $user_uuid=$user11['uuid'];
+                    $userHouse['userUuid'] = $user3['uuid'];
+		}
 
-                if ($userHouse['userUuid'] == $user10)
-                    $userHouse['userUuid'] = $user7['uuid'];
-                if ($userHouse['userUuid'] == $user13)
-                    $userHouse['userUuid'] = $user7['uuid'];
+                if ($userHouse['userUuid'] == $user12['uuid']) {
+		    $user_uuid=$user12['uuid'];
+                    $userHouse['userUuid'] = $user9['uuid'];
+		}
+                if ($userHouse['userUuid'] == $user15['uuid']) {
+		    $user_uuid=$user15['uuid'];
+                    $userHouse['userUuid'] = $user9['uuid'];
+		}
 
-                if ($userHouse['userUuid'] == $user11)
+                if ($userHouse['userUuid'] == $user13['uuid']) {
+		    $user_uuid=$user13['uuid'];
                     $userHouse['userUuid'] = $user17['uuid'];
-                if ($userHouse['userUuid'] == $user12)
+		}
+                if ($userHouse['userUuid'] == $user14['uuid']) {
+		    $user_uuid=$user14['uuid'];
                     $userHouse['userUuid'] = $user17['uuid'];
+		}
 
-                if ($userHouse['userUuid'] == $user8 ||
-                    $userHouse['userUuid'] == $user9 ||
-                    $userHouse['userUuid'] == $user10 ||
-                    $userHouse['userUuid'] == $user11 ||
-                    $userHouse['userUuid'] == $user12 ||
-                    $userHouse['userUuid'] == $user13) {
-                    $userHouse['userUuid'] = $user2['uuid'];
-                    echo('[' . $count . '] update user house: ' . $userHouse['uuid'] . ' [' . $userHouse['userUuid'] . ']' . PHP_EOL);
-                    $count++;
-                    //$userHouse->save();
-                }
-            }
+                if ($user_uuid!='') {
+	            echo('[' . $count . '] update ['.$userHouse['user']['name'].']: ' . $userHouse['house']['street']['title'].','.$userHouse['house']['number'] . ' [' . $userHouse['userUuid'] . ' < '.$user_uuid.']' . PHP_EOL);
+	            $count++;
+    	            $userHouse->save();
+                } else {
+    	            $userHouse->delete();
+		}
         }
     }
 
