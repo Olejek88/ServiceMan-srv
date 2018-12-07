@@ -25,6 +25,91 @@ class ExportController extends Controller
 {
     const LOG_ID = 'export';
 
+    public function actionAddData()
+    {
+        echo ('[' . self::LOG_ID . '] start add new object') . PHP_EOL;
+        echo ('[' . self::LOG_ID . '] [' . Yii::$app->db->dsn . '] user/pass ' . Yii::$app->db->username) . PHP_EOL;
+        $reader = new Xls();
+        $file_name = \Yii::$app->basePath . "/export-data/data/new_objects.xls";
+        echo ('[' . self::LOG_ID . '] ' . $file_name) . PHP_EOL;
+        $file = $reader->load($file_name);
+        $sheet = $file->getActiveSheet();
+
+        $cityFirst = City::find()->one();
+        $houseStatus = '9127B1A3-D0C1-4F96-8026-B597600FC9CD';
+        $flatStatus = '9D86D530-1910-488E-87D9-FD2FE06CA5E7';
+        $flatTypeInput = 'F68A562B-8F61-476F-A3E7-5666F9CEAFA1';
+
+        $houseTypeSchool = HouseType::find()->where(['title' => 'Школа'])->one();
+        $houseTypeMDOU = HouseType::find()->where(['title' => 'Детский сад'])->one();
+        $houseTypeCommercial = HouseType::find()->where(['title' => 'Коммерческая организация'])->one();
+        $houseTypeBudget = HouseType::find()->where(['title' => 'Бюджетное учереждение'])->one();
+        $houseTypeOther = HouseType::find()->where(['title' => 'Другой'])->one();
+        $houseTypePrivate = HouseType::find()->where(['title' => 'Частный дом'])->one();
+        $houseTypeMKD = HouseType::find()->where(['title' => 'Многоквартирный дом'])->one();
+
+        foreach ($sheet->getRowIterator() as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(FALSE);
+            $cell_num = 0;
+            $userValue = '';
+            $streetValue = '';
+            $flat = '';
+            $type = 1;
+            $house = '';
+            $houseType = '';
+            $subject = '';
+
+            foreach ($cellIterator as $cell) {
+                switch ($cell_num) {
+                    case 0:
+                        $userValue = $cell->getValue();
+                        break;
+                    case 1:
+                        $streetValue = $cell->getValue();
+                        break;
+                    case 2:
+                        $house = ''.$cell->getValue();
+                        break;
+                    case 3:
+                        $flat = ''.$cell->getValue();
+                        break;
+                    case 4:
+                        $houseTypeValue = $cell->getValue();
+                        $houseType = $houseTypeOther['uuid'];
+                        if ($houseTypeValue == 'Коммерческий')
+                            $houseType = $houseTypeCommercial['uuid'];
+                        if ($houseTypeValue == 'МДОУ')
+                            $houseType = $houseTypeMDOU['uuid'];
+                        if ($houseTypeValue == 'Школа')
+                            $houseType = $houseTypeSchool['uuid'];
+                        if ($houseTypeValue == 'Бюджет')
+                            $houseType = $houseTypeBudget['uuid'];
+                        if ($houseTypeValue == 'МКД')
+                            $houseType = $houseTypeMKD['uuid'];
+                        if ($houseTypeValue == 'Частный')
+                            $houseType = $houseTypePrivate['uuid'];
+                        break;
+                    case 5:
+                        $subject = $cell->getValue();
+                        if ($subject!='')
+                            $type=2;
+                        else
+                            $type=1;
+                        break;
+                }
+                $cell_num++;
+            }
+            echo $streetValue .' '. $userValue.PHP_EOL;
+            if ($streetValue != '' && $userValue != '') {
+                if ($flat=='') $flat="Вводной";
+                echo 'Store2House'.PHP_EOL;
+                $this->Store2House($type, $subject, $streetValue, $house, $cityFirst, $flat, $houseStatus,
+                                             $houseType, $flatStatus, $flatTypeInput, $userValue);
+            }
+        }
+    }
+
     public function actionLoadData()
     {
         echo ('[' . self::LOG_ID . '] start load flats') . PHP_EOL;
@@ -116,7 +201,7 @@ class ExportController extends Controller
         echo ('[' . self::LOG_ID . '] ' . $file_name) . PHP_EOL;
         $file = $reader->load($file_name);
         $sheet = $file->getActiveSheet();
-
+        $count = 1;
         $row_num = 0;
         foreach ($sheet->getRowIterator() as $row) {
             $cellIterator = $row->getCellIterator();
@@ -141,16 +226,22 @@ class ExportController extends Controller
                 if ($street != null && $user != null) {
                     $houses = House::find()->where(['streetUuid' => $street['uuid']])->all();
                     foreach ($houses as $house) {
-                        $userHouse = UserHouse::find()->where(['userUuid' => $user['uuid']])->andWhere(['houseUuid' => $house['uuid']])->one();
+                        $userHouse = UserHouse::find()->where(['houseUuid' => $house['uuid']])->one();
                         if ($userHouse == null) {
-                            $userHouse = new UserHouse();
+/*                            $userHouse = new UserHouse();
                             $userHouse->uuid = MainFunctions::GUID();
                             $userHouse->userUuid = $user['uuid'];
                             $userHouse->houseUuid = $house['uuid'];
                             $userHouse->changedAt = date('Y-m-d H:i:s');
                             $userHouse->createdAt = date('Y-m-d H:i:s');
-                            echo('store user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);
+                            echo('store user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);*/
                             //$userHouse->save();
+                        }
+                        else {
+                            $userHouse->userUuid = $user['uuid'];
+                            echo('['.$count.'] update user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);
+                            $count++;
+                            $userHouse->save();
                         }
                     }
                 }
@@ -158,6 +249,52 @@ class ExportController extends Controller
                 echo 'cannot find street=' . $streetValue . ' | user=' . $userValue;
             }
             $row_num++;
+        }
+    }
+
+    public function actionUserRe()
+    {
+        echo ('[' . self::LOG_ID . '] start user house redefinition') . PHP_EOL;
+        $count = 1;
+        $user2 = Users::find()->where(['_id' => 2])->one();
+        $user7 = Users::find()->where(['_id' => 7])->one();
+        $user17 = Users::find()->where(['_id' => 17])->one();
+        $user8 = Users::find()->where(['_id' => 8])->one();
+        $user9 = Users::find()->where(['_id' => 9])->one();
+        $user10 = Users::find()->where(['_id' => 10])->one();
+        $user11 = Users::find()->where(['_id' => 11])->one();
+        $user12 = Users::find()->where(['_id' => 12])->one();
+        $user13 = Users::find()->where(['_id' => 13])->one();
+        $userHouses = UserHouse::find()->all();
+        foreach ($userHouses as $userHouse) {
+            if ($userHouse != null) {
+                if ($userHouse['userUuid'] == $user8)
+                    $userHouse['userUuid'] = $user2['uuid'];
+                if ($userHouse['userUuid'] == $user9)
+                    $userHouse['userUuid'] = $user2['uuid'];
+
+                if ($userHouse['userUuid'] == $user10)
+                    $userHouse['userUuid'] = $user7['uuid'];
+                if ($userHouse['userUuid'] == $user13)
+                    $userHouse['userUuid'] = $user7['uuid'];
+
+                if ($userHouse['userUuid'] == $user11)
+                    $userHouse['userUuid'] = $user17['uuid'];
+                if ($userHouse['userUuid'] == $user12)
+                    $userHouse['userUuid'] = $user17['uuid'];
+
+                if ($userHouse['userUuid'] == $user8 ||
+                    $userHouse['userUuid'] == $user9 ||
+                    $userHouse['userUuid'] == $user10 ||
+                    $userHouse['userUuid'] == $user11 ||
+                    $userHouse['userUuid'] == $user12 ||
+                    $userHouse['userUuid'] == $user13) {
+                    $userHouse['userUuid'] = $user2['uuid'];
+                    echo('[' . $count . '] update user house: ' . $userHouse['uuid'] . ' [' . $userHouse['userUuid'] . ']' . PHP_EOL);
+                    $count++;
+                    //$userHouse->save();
+                }
+            }
         }
     }
 
@@ -261,9 +398,9 @@ class ExportController extends Controller
                     $house = House::find()->where(['streetUuid' => $street['uuid']])->andWhere(['number' => $homeValue])->one();
                     if ($house != null) {
                         $flats = Flat::find()->where(['houseUuid' => $house['uuid']])->all();
-                        $main_counter=0;
+                        $main_counter = 0;
                         foreach ($flats as $flat) {
-                            if (strlen($flat['number'])<4) {
+                            if (strlen($flat['number']) < 4) {
                                 echo($street['title'] . ',' . $house['number'] . ', ' . $flat['number'] . PHP_EOL);
 
                                 $messages = Message::find()->where(['flatUuid' => $flat['uuid']])->all();
@@ -300,10 +437,9 @@ class ExportController extends Controller
                                 }
                                 echo('delete flat: ' . $street['title'] . ',' . $house['number'] . ' [' . $flat['number'] . ']' . PHP_EOL);
                                 $flat->delete();
-                            }
-                            else $main_counter=1;
+                            } else $main_counter = 1;
                         }
-                        if ($main_counter==0) {
+                        if ($main_counter == 0) {
                             $flatValue = "Котельная";
                             $flat = new Flat();
                             $flat->uuid = MainFunctions::GUID();
@@ -472,6 +608,82 @@ class ExportController extends Controller
                 $subject->createdAt = date('Y-m-d H:i:s');
                 echo('store subject: ' . $subject->owner . ' ' . $subject->contractNumber . ' [' . $subject->uuid . ']' . PHP_EOL);
                 $subject->save();
+            }
+        }
+    }
+
+    private function Store2House($type, $title, $streetValue, $houseValue, $cityFirst, $flatValue, $houseStatus,
+                                 $houseType, $flatStatus, $flatType, $userValue)
+    {
+        $street = Street::find()->where(['title' => $streetValue])->one();
+        if ($street != null && $cityFirst != null) {
+            $house = House::find()->where(['number' => $houseValue])->andWhere(['streetUuid' => $street['uuid']])->one();
+            if ($house == null) {
+                $house = new House();
+                $house->uuid = MainFunctions::GUID();
+                $house->streetUuid = $street['uuid'];
+                $house->number = $houseValue;
+                $house->houseStatusUuid = $houseStatus;
+                $house->houseTypeUuid = $houseType;
+                $house->changedAt = date('Y-m-d H:i:s');
+                $house->createdAt = date('Y-m-d H:i:s');
+                echo('store house: ' . $street['uuid'].' '.$street['title'] . ',' . $house->number . ' [' . $house->uuid . ']' . PHP_EOL);
+                $house->save();
+                //echo json_encode($house->errors);
+            }
+
+            if ($flatValue == '' || $flatValue == null) $flatValue = "Котельная";
+            $flat = Flat::find()->where(['number' => $flatValue])->andWhere(['houseUuid' => $house->uuid])->one();
+            if ($flat == null) {
+                $flat = new Flat();
+                $flat->uuid = MainFunctions::GUID();
+                $flat->houseUuid = $house->uuid;
+                $flat->number = $flatValue;
+                $flat->flatStatusUuid = $flatStatus;
+                $flat->flatTypeUuid = $flatType;
+                $flat->changedAt = date('Y-m-d H:i:s');
+                $flat->createdAt = date('Y-m-d H:i:s');
+                echo('store flat: ' . $flat->number . ' [' . $flat->uuid . ']' . PHP_EOL);
+                $flat->save();
+            }
+
+            if ($type == 1) {
+                $resident = new Resident();
+                $resident->uuid = MainFunctions::GUID();
+                $resident->flatUuid = $flat->uuid;
+                $resident->owner = "Ф.И.О.";
+                $resident->inn = '111'.random_int(1000000, 9999999);
+                $resident->changedAt = date('Y-m-d H:i:s');
+                $resident->createdAt = date('Y-m-d H:i:s');
+                echo('store resident: ' . $resident->owner . ' [' . $resident->uuid . ']' . PHP_EOL);
+                $resident->save();
+            } else {
+                $subject = new Subject();
+                $subject->uuid = MainFunctions::GUID();
+                $subject->owner = $title;
+                $subject->flatUuid = $flat->uuid;
+                $subject->houseUuid = $house->uuid;
+                $subject->contractDate = date('Y-m-d H:i:s');
+                $subject->contractNumber = '111'.random_int(1000000, 9999999);
+                $subject->changedAt = date('Y-m-d H:i:s');
+                $subject->createdAt = date('Y-m-d H:i:s');
+                echo('store subject: ' . $subject->owner . ' ' . $subject->contractNumber . ' [' . $subject->uuid . ']' . PHP_EOL);
+                $subject->save();
+            }
+
+            $user = Users::find()->where(['name' => $userValue])->one();
+            if ($user!=null) {
+                $userHouse = UserHouse::find()->where(['userUuid' => $user['uuid']])->andWhere(['houseUuid' => $house['uuid']])->one();
+                if ($userHouse == null) {
+                    $userHouse = new UserHouse();
+                    $userHouse->uuid = MainFunctions::GUID();
+                    $userHouse->userUuid = $user['uuid'];
+                    $userHouse->houseUuid = $house['uuid'];
+                    $userHouse->changedAt = date('Y-m-d H:i:s');
+                    $userHouse->createdAt = date('Y-m-d H:i:s');
+                    echo('store user house: ' . $street['title'] . ',' . $house['number'] . ' [' . $user['name'] . ']' . PHP_EOL);
+                    $userHouse->save();
+                }
             }
         }
     }
