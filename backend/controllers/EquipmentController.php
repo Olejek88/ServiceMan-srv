@@ -493,7 +493,7 @@ class EquipmentController extends Controller
                             ->orderBy('date DESC')
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
-                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] ';
+                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] ['.$message['date'].']';
                         if ($message != null) {
                             $message_text .= substr($message['message'], 0, 150);
                             $message_count++;
@@ -506,32 +506,40 @@ class EquipmentController extends Controller
                             ->orderBy('createdAt DESC')
                             ->one();
                         if ($photo) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
+                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a($photo['createdAt'],
                                 ['storage/equipment/' . $photo['uuid'] . '.jpg']
                             );
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
                             $photo_count++;
                         } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
                             $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
                             $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
                         }
 
-                        $measure = Measure::find()
+                        $measures = Measure::find()
                             ->select('*')
                             ->where(['equipmentUuid' => $equipment['uuid']])
                             ->orderBy('date DESC')
-                            ->one();
-                        if ($measure) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
+                            ->all();
+                        $measure_count_column=0;
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date0'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value0'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date1'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value1'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date2'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value2'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date3'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value3'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = '';
+
+
+                        foreach ($measures as $measure) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'.$measure_count_column] = $measure['date'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'.$measure_count_column] = $measure['value'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                            $measure_count_column++;
+                            if ($measure_count_column>3) break;
                             $measure_total_count++;
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
                         }
 
                         if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
@@ -589,8 +597,8 @@ class EquipmentController extends Controller
                             $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">Хорошо</div></div>';
                         }
                     }
-                    $fullTree[$oCnt0]['measure_date'] = 'Показаний: ' . $measure_count . '[' . $measure_total_count . ']';
-                    $fullTree[$oCnt0]['measure_value'] = $measure_count . '[' . number_format($measure_count * 100 / $oCnt1, 2) . '%]';
+                    $fullTree[$oCnt0]['measure_date0'] = 'Показаний: ' . $measure_count . '[' . $measure_total_count . ']';
+                    $fullTree[$oCnt0]['measure_value0'] = $measure_count . '[' . number_format($measure_count * 100 / $oCnt1, 2) . '%]';
                     $fullTree[$oCnt0]['photo'] = $photo_count . '[' . number_format($photo_count * 100 / $oCnt1, 2) . '%]';
                     $fullTree[$oCnt0]['message'] = $message_count . '[' . number_format($message_count * 100 / $oCnt1, 2) . '%]';
                 }

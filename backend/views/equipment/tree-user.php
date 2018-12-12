@@ -19,15 +19,20 @@ $this->title = 'Дерево моделей оборудования';
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
+        <th align="center" colspan="13" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke">
         <th align="center">Оборудование</th>
         <th>Статус</th>
-        <th>Дата обхода</th>
-        <th>Показания</th>
+        <th>Дата #1</th>
+        <th>Показание</th>
+        <th>Дата #2</th>
+        <th>Показание</th>
+        <th>Дата #3</th>
+        <th>Показание</th>
+        <th>Дата #4</th>
+        <th>Показание</th>
         <th>Пользователь</th>
-        <th>Дата фото</th>
         <th>Фото</th>
         <th>Сообщение</th>
     </tr>
@@ -35,6 +40,12 @@ $this->title = 'Дерево моделей оборудования';
     <tbody>
     <tr>
         <td></td>
+        <td class="alt"></td>
+        <td class="center"></td>
+        <td class="alt"></td>
+        <td class="center"></td>
+        <td class="alt"></td>
+        <td class="center"></td>
         <td class="alt"></td>
         <td class="center"></td>
         <td class="alt"></td>
@@ -71,21 +82,31 @@ $this->title = 'Дерево моделей оборудования';
             "statusColumnIdx" => "2",
             "dateMeasureColumnIdx" => "3",
             "valueColumnIdx" => "4",
-            "userColumnIdx" => "5",
-            "datePhotoColumnIdx" => "6",
-            "photoColumnIdx" => "7",
-            "messageColumnIdx" => "8"
+            "dateMeasure2ColumnIdx" => "5",
+            "value2ColumnIdx" => "6",
+            "dateMeasure3ColumnIdx" => "7",
+            "value3ColumnIdx" => "8",
+            "dateMeasure4ColumnIdx" => "9",
+            "value4ColumnIdx" => "10",
+            "userColumnIdx" => "11",
+            "photoColumnIdx" => "12",
+            "messageColumnIdx" => "13"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
             $tdList.eq(1).html(node.data.status);
-            $tdList.eq(2).html(node.data.measure_date);
-            $tdList.eq(3).text(node.data.measure_value);
-            $tdList.eq(4).html(node.data.measure_user);
-            $tdList.eq(5).html(node.data.photo_date);
-            $tdList.eq(6).html(node.data.photo);
-            $tdList.eq(7).html(node.data.message);
+            $tdList.eq(2).html(node.data.measure_date0);
+            $tdList.eq(3).text(node.data.measure_value0);
+            $tdList.eq(4).html(node.data.measure_date1);
+            $tdList.eq(5).text(node.data.measure_value1);
+            $tdList.eq(6).html(node.data.measure_date2);
+            $tdList.eq(7).text(node.data.measure_value2);
+            $tdList.eq(8).html(node.data.measure_date3);
+            $tdList.eq(9).text(node.data.measure_value3);
+            $tdList.eq(10).html(node.data.measure_user);
+            $tdList.eq(11).html(node.data.photo);
+            $tdList.eq(12).html(node.data.message);
         }')
     ]
 ]);
