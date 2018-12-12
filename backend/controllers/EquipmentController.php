@@ -519,7 +519,7 @@ class EquipmentController extends Controller
                         $measures = Measure::find()
                             ->select('*')
                             ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('date DESC')
+                            ->orderBy('date')
                             ->all();
                         $measure_count_column=0;
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_date0'] = '';
@@ -760,6 +760,124 @@ class EquipmentController extends Controller
         }
         return $this->render(
             'tree-street',
+            ['equipment' => $fullTree]
+        );
+    }
+
+    /**
+     * Build tree of equipment by user
+     *
+     * @return mixed
+     */
+    public function actionTreeMeasure()
+    {
+        ini_set('memory_limit', '-1');
+        $c = 'children';
+        $fullTree = array();
+        $streets = Street::find()
+            ->select('*')
+            ->orderBy('title')
+            ->all();
+        $oCnt0 = 0;
+        foreach ($streets as $street) {
+            $last_user = '';
+            $last_date = '';
+            $house_count = 0;
+            $house_visited = 0;
+            $photo_count = 0;
+            $fullTree[$oCnt0]['title'] = Html::a(
+                $street['title'],
+                ['street/view', 'id' => $street['_id']]
+            );
+            $oCnt1 = 0;
+            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
+            orderBy('number')->all();
+            foreach ($houses as $house) {
+                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
+                foreach ($flats as $flat) {
+                    $house_count++;
+                    $visited = 0;
+                    $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
+                    foreach ($equipments as $equipment) {
+                        $fullTree[$oCnt0][$c][$oCnt1]['title']
+                            = Html::a(
+                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
+                            ['equipment/view', 'id' => $equipment['_id']]
+                        );
+
+                        $measures = Measure::find()
+                            ->select('*')
+                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->orderBy('date')
+                            ->all();
+
+                        $measure_count_column=0;
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date0'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value0'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date1'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value1'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date2'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value2'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date3'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value3'] = '';
+                        $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = '';
+                        $measure_first=0;
+                        $measure_last=0;
+                        $measure_date_first=0;
+                        $measure_date_last=0;
+                        foreach ($measures as $measure) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'.$measure_count_column] = $measure['date'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'.$measure_count_column] = $measure['value'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
+                            if ($measure_count_column==0) {
+                                $measure_first = $measure['value'];
+                                $measure_date_first = $measure['date'];
+                            }
+                            else {
+                                $measure_last=$measure['value'];
+                                $measure_date_last = $measure['date'];
+                            }
+                            $measure_count_column++;
+                            if ($measure_count_column>3) break;
+                        }
+
+                        $datetime1 = date_create($measure_date_first);
+                        $datetime2 = date_create($measure_date_last);
+                        if ($datetime2 && $datetime1) {
+                            $interval = date_diff($datetime1, $datetime2)->format("%H");
+                            $value = $measure_last-$measure_first;
+                        }
+                        else {
+                            $interval = 0;
+                            $value=0;
+                        }
+                        $fullTree[$oCnt0][$c][$oCnt1]['interval'] = $interval;
+                        $fullTree[$oCnt0][$c][$oCnt1]['value'] = $value;
+                        if ($interval>0)
+                            $fullTree[$oCnt0][$c][$oCnt1]['relative'] = $value/$interval;
+
+                        $message = Message::find()
+                            ->select('*')
+                            ->orderBy('date DESC')
+                            ->where(['flatUuid' => $equipment['flat']['uuid']])
+                            ->one();
+                        if ($message != null) {
+                            $fullTree[$oCnt0][$c][$oCnt1]['message'] =
+                                mb_convert_encoding(substr($message['message'], 0, 150), 'UTF-8', 'UTF-8');
+                            if ($visited == 0)
+                                $visited = 1;
+                            $house_visited++;
+                        }
+                        $oCnt1++;
+                    }
+                }
+            }
+            $fullTree[$oCnt0]['measure_user'] = $last_user;
+            $fullTree[$oCnt0]['measure_date'] = $last_date;
+            $oCnt0++;
+        }
+        return $this->render(
+            'tree-measure',
             ['equipment' => $fullTree]
         );
     }
