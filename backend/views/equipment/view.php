@@ -30,6 +30,7 @@ $this->title = $model['equipmentType']->title;
                                 'model' => $model,
                                 'attributes' => [
                                     'serial',
+                                    'tag',
                                     'uuid',
                                     [
                                         'label' => 'Квартира',

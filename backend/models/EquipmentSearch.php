@@ -18,7 +18,7 @@ class EquipmentSearch extends Equipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentTypeUuid', 'flatUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'equipmentTypeUuid', 'flatUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 

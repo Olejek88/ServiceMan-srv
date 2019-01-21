@@ -75,6 +75,9 @@ class EquipmentController extends Controller
             if ($_POST['editableAttribute'] == 'serial') {
                 $model['serial'] = $_POST['Equipment'][$_POST['editableIndex']]['serial'];
             }
+            if ($_POST['editableAttribute'] == 'tag') {
+                $model['tag'] = $_POST['Equipment'][$_POST['editableIndex']]['tag'];
+            }
             if ($_POST['editableAttribute'] == 'equipmentTypeUuid') {
                 $model['equipmentTypeUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentTypeUuid'];
             }
@@ -169,6 +172,7 @@ class EquipmentController extends Controller
                 $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
                 $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
                 $equipment->serial = '222222';
+                $equipment->tag = '111111';
                 $equipment->testDate = date('Y-m-d H:i:s');
                 $equipment->changedAt = date('Y-m-d H:i:s');
                 $equipment->createdAt = date('Y-m-d H:i:s');

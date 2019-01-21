@@ -86,6 +86,8 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
+    <?php echo $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
+
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
         <?php echo DatePicker::widget(

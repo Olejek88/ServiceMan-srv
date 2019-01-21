@@ -13,6 +13,7 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $equipmentTypeUuid
  * @property string $serial
+ * @property string $tag
  * @property string $equipmentStatusUuid
  * @property string $testDate
  * @property string $houseUuid
@@ -80,7 +81,7 @@ class Equipment extends ActiveRecord
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'serial', 'testDate',
+            'serial', 'testDate', 'tag',
             'createdAt', 'changedAt'
         ];
     }
@@ -109,6 +110,7 @@ class Equipment extends ActiveRecord
                     'equipmentTypeUuid',
                     'equipmentStatusUuid',
                     'serial',
+                    'tag',
                     'houseUuid',
                     'flatUuid'
                 ],
@@ -134,6 +136,7 @@ class Equipment extends ActiveRecord
             'flatUuid' => Yii::t('app', 'Квартира'),
             'houseUuid' => Yii::t('app', 'Дом'),
             'flat' => Yii::t('app', 'Квартира'),
+            'tag' => Yii::t('app', 'Метка'),
             'house' => Yii::t('app', 'Дом'),
             'serial' => Yii::t('app', 'Серийный номер'),
             'createdAt' => Yii::t('app', 'Создан'),
