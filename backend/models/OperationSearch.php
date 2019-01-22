@@ -18,7 +18,7 @@ class OperationSearch extends Operation
     {
         return [
             [['_id', 'flowOrder'], 'integer'],
-            [['uuid', 'taskUuid', 'operationStatusUuid', 'operationTemplateUuid', 'startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'taskUuid', 'operationStatusUuid', 'operationTemplateUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -59,8 +59,6 @@ class OperationSearch extends Operation
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'startDate' => $this->startDate,
-            'endDate' => $this->endDate,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

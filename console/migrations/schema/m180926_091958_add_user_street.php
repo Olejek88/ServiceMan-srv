@@ -50,7 +50,6 @@ class m180926_091958_add_user_street extends Migration
             self::FK_RESTRICT,
             self::FK_CASCADE
         );
-
     }
 
     /**

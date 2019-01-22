@@ -3,15 +3,12 @@
 namespace backend\controllers;
 
 use common\components\MainFunctions;
-use common\models\Equipment;
 use common\models\Operation;
 use common\models\WorkStatus;
 use common\models\OperationTemplate;
 use common\models\Task;
 use common\models\Users;
-use inpassor\daemon\Worker;
 use yii\filters\VerbFilter;
-use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\UnauthorizedHttpException;
 

@@ -11,11 +11,9 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $stageUuid
+ * @property string $taskUuid
  * @property string $workStatusUuid
  * @property string $operationTemplateUuid
- * @property string $startDate
- * @property string $endDate
  * @property string $createdAt
  * @property string $changedAt
  */
@@ -69,7 +67,7 @@ class Operation extends ActiveRecord
                 ],
                 'required'
             ],
-            [['startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['createdAt', 'changedAt'], 'safe'],
             [
                 [
                     'uuid',
@@ -97,7 +95,7 @@ class Operation extends ActiveRecord
             'operationTemplateUuid',
             'operationTemplate' => function ($model) {
                 return $model->operationTemplate;
-            }, 'startDate', 'endDate',
+            },
             'createdAt', 'changedAt'
         ];
     }
@@ -119,8 +117,6 @@ class Operation extends ActiveRecord
             'workStatus' => Yii::t('app', 'Статус'),
             'operationTemplateUuid' => Yii::t('app', 'Uuid шаблона'),
             'operationTemplate' => Yii::t('app', 'Шаблон'),
-            'startDate' => Yii::t('app', 'Начальная дата'),
-            'endDate' => Yii::t('app', 'Конечная дата'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
         ];

@@ -7,6 +7,9 @@ use yii\db\Migration;
  */
 class m190121_112918_add_equipment_register extends Migration
 {
+    const EQUIPMENT_REGISTER_TYPE = '{{%equipment_register_type}}';
+    const EQUIPMENT_REGISTER = '{{%equipment_register}}';
+
     /**
      * {@inheritdoc}
      */
@@ -17,29 +20,26 @@ class m190121_112918_add_equipment_register extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
-        $createdAt = 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP';
-        $changedAt = 'TIMESTAMP NOT NULL DEFAULT "0000-00-00 00:00:00"';
+        $this->createTable(self::EQUIPMENT_REGISTER_TYPE, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'title' => $this->string()->notNull(),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
-        $this->createTable('{{%equipment_register_type}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'title' => 'VARCHAR(100) NOT NULL',
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt,
-        ], $tableOptions);
-
-        $this->createTable('{{%equipment_register}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'equipmentUuid' => 'VARCHAR(45) NOT NULL',
-            'registerTypeUuid' => 'VARCHAR(45) NOT NULL',
-            'userUuid' => 'VARCHAR(45) NOT NULL',
-            'date' => 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ',
-            'fromParameterUuid' => 'VARCHAR(45) NOT NULL',
-            'toParameterUuid' => 'VARCHAR(45) NOT NULL',
-        ], $tableOptions);
+        $this->createTable(self::EQUIPMENT_REGISTER, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'equipmentUuid' => $this->string()->notNull(),
+            'registerTypeUuid' => $this->string()->notNull(),
+            'userUuid' => $this->string()->notNull(),
+            'fromParameterUuid' => $this->string()->notNull(),
+            'toParameterUuid' => $this->string()->notNull(),
+            'date' => $this->dateTime()->notNull(),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
         $this->createIndex(
             'idx-equipment_register_type-uuid',
@@ -105,9 +105,6 @@ class m190121_112918_add_equipment_register extends Migration
         $this->insertIntoRegisterType(1, '2D3AD301-FD41-4A45-A18B-6CD13526CFDD', 'Смена статуса', $currentTime, $currentTime);
         $this->insertIntoRegisterType(2, 'BE1D4149-2563-4771-88DC-2EB8B3DA684F', 'Смена местоположения', $currentTime, $currentTime);
         $this->insertIntoRegisterType(3, '4C74019F-45A9-43Ab-9B97-4D077F8BF3FA', 'Изменение свойств', $currentTime, $currentTime);
-        $this->insertIntoRegisterType(4, '0063E563-9277-4D06-897D-65261BB2D4AB', 'Вердикт по оборудованию', $currentTime, $currentTime);
-        $this->insertIntoRegisterType(5, '885E8388-8205-43CA-B55E-3B61D01019AD', 'Изменение модели', $currentTime, $currentTime);
-
     }
 
     /**

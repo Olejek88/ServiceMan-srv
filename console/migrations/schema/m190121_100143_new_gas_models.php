@@ -7,6 +7,11 @@ use yii\db\Migration;
  */
 class m190121_100143_new_gas_models extends Migration
 {
+    const OPERATION = '{{%operation}}';
+    const OPERATION_TEMPLATE = '{{%operation_template}}';
+    const TASK = '{{%task}}';
+    const WORK_STATUS = '{{%work_status}}';
+
     /**
      * {@inheritdoc}
      */
@@ -17,55 +22,48 @@ class m190121_100143_new_gas_models extends Migration
             // http://stackoverflow.com/questions/766809/whats-the-difference-between-utf8-general-ci-and-utf8-unicode-ci
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
+        $currentTime = date('Y-m-d\TH:i:s');
 
-        $createdAt = 'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP';
-        $changedAt = 'TIMESTAMP NOT NULL DEFAULT "0000-00-00 00:00:00"';
+        $this->createTable(self::OPERATION, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'taskUuid' => $this->string()->notNull(),
+            'workStatusUuid' => $this->string()->notNull(),
+            'operationTemplateUuid' => $this->string()->notNull(),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
-        $this->createTable('{{%operation}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'taskUuid' => 'VARCHAR(50) NOT NULL',
-            'taskStatusUuid' => 'VARCHAR(50) NOT NULL',
-            'operationTemplateUuid' => 'VARCHAR(50) NOT NULL',
-            'startDate' => 'TIMESTAMP NULL',
-            'endDate' => 'TIMESTAMP NULL',
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt
-        ], $tableOptions);
+        $this->createTable(self::OPERATION_TEMPLATE, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'title' => $this->string()->notNull(),
+            'description' => $this->string()->defaultValue(''),
+            'normative' => $this->integer()->defaultValue(0),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
-        $this->createTable('{{%task_status}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'title' => 'VARCHAR(200) NOT NULL',
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt
-        ], $tableOptions);
+        $this->createTable(self::WORK_STATUS, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'title' => $this->string()->notNull(),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
-        $this->createTable('{{%operation_template}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'title' => 'VARCHAR(200) NOT NULL',
-            'description' => 'TEXT NOT NULL',
-            'normative' => 'INT(10) UNSIGNED NOT NULL',
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt
-        ], $tableOptions);
-
-        $this->createTable('{{%task}}', [
-            '_id' => 'INT(10) UNSIGNED NOT NULL AUTO_INCREMENT',
-            0 => 'PRIMARY KEY (`_id`)',
-            'uuid' => 'VARCHAR(50) NOT NULL',
-            'comment' => 'TEXT NOT NULL',
-            'flatUuid' => 'VARCHAR(50) NOT NULL',
-            'taskStatusUuid' => 'VARCHAR(45) NOT NULL',
-            'startDate' => 'TIMESTAMP NULL',
-            'endDate' => 'TIMESTAMP NULL',
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt,
-        ], $tableOptions);
+        $this->createTable(self::TASK, [
+            '_id' => $this->primaryKey(),
+            'uuid' => $this->string()->notNull()->unique(),
+            'comment' => $this->string()->defaultValue(''),
+            'flatUuid' => $this->string(),
+            'equipmentUuid' => $this->string(),
+            'workStatusUuid' => $this->string()->notNull(),
+            'startDate' => $this->dateTime()->notNull(),
+            'endDate' => $this->dateTime()->notNull(),
+            'createdAt' => $this->dateTime()->notNull(),
+            'changedAt' => $this->dateTime()->notNull(),
+        ],$tableOptions);
 
         $this->createIndex(
             'idx-operation-uuid',
@@ -99,32 +97,32 @@ class m190121_100143_new_gas_models extends Migration
         );
 
         $this->addForeignKey(
-            'fk-operation-taskStatusUuid',
+            'fk-operation-workStatusUuid',
             'operation',
-            'taskStatusUuid',
-            'task_status',
+            'workStatusUuid',
+            'work_status',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
         );
 
         // статусы задач и операций
-        $this->insertIntoType('task_status', 1, '1E9B4D73-044C-471B-A08D-26F32EBB22B0', 'Новая', $createdAt, $changedAt);
-        $this->insertIntoType('task_status', 2, '31179027-8416-47E4-832F-2A94D7804A4F', 'В работе', $createdAt, $changedAt);
-        $this->insertIntoType('task_status', 3, 'F1576F3E-ACB6-4EEB-B8AF-E34E4D345CE9', 'Выполнена', $createdAt, $changedAt);
-        $this->insertIntoType('task_status', 4, 'EFDE80D2-D00E-413B-B430-0A011056C6EA', 'Не выполнена', $createdAt, $changedAt);
-        $this->insertIntoType('task_status', 5, 'C2FA4A7B-0D7C-4407-A449-78FA70A11D47', 'Отменена', $createdAt, $changedAt);
+        $this->insertIntoType('work_status', 1, '1E9B4D73-044C-471B-A08D-26F32EBB22B0', 'Новая', $currentTime, $currentTime);
+        $this->insertIntoType('work_status', 2, '31179027-8416-47E4-832F-2A94D7804A4F', 'В работе', $currentTime, $currentTime);
+        $this->insertIntoType('work_status', 3, 'F1576F3E-ACB6-4EEB-B8AF-E34E4D345CE9', 'Выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('work_status', 4, 'EFDE80D2-D00E-413B-B430-0A011056C6EA', 'Не выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('work_status', 5, 'C2FA4A7B-0D7C-4407-A449-78FA70A11D47', 'Отменена', $currentTime, $currentTime);
 
         $this->createIndex(
-            'idx-task-taskStatusUuid',
+            'idx-task-workStatusUuid',
             'task',
-            'taskStatusUuid'
+            'workStatusUuid'
         );
         $this->addForeignKey(
-            'fk-task-taskStatusUuid',
+            'fk-task-workStatusUuid',
             'task',
-            'taskStatusUuid',
-            'task_status',
+            'workStatusUuid',
+            'work_status',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
