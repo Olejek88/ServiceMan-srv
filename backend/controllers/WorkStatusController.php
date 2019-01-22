@@ -2,18 +2,20 @@
 
 namespace backend\controllers;
 
-use backend\models\EquipmentRegisterSearch;
-use common\models\EquipmentRegister;
 use Yii;
-use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
 
+use common\models\WorkStatus;
+
+use backend\models\WorkSearchStatus;
+
 /**
- * EquipmentRegisterController implements the CRUD actions for EquipmentRegister model.
+ * WorkStatusController implements the CRUD actions for WorkStatus model.
  */
-class EquipmentRegisterController extends Controller
+class WorkStatusController extends Controller
 {
     /**
      * @inheritdoc
@@ -30,22 +32,21 @@ class EquipmentRegisterController extends Controller
         ];
     }
 
-    public function init()
-    {
+    public function init() {
 
         if (\Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
     }
-
+    
     /**
-     * Lists all EquipmentRegister models.
+     * Lists all WorkStatus models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EquipmentRegisterSearch();
+        $searchModel = new WorkSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -56,7 +57,7 @@ class EquipmentRegisterController extends Controller
     }
 
     /**
-     * Displays a single EquipmentRegister model.
+     * Displays a single WorkStatus model.
      * @param integer $id
      * @return mixed
      */
@@ -68,15 +69,16 @@ class EquipmentRegisterController extends Controller
     }
 
     /**
-     * Creates a new EquipmentRegister model.
+     * Creates a new WorkStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new EquipmentRegister();
+        $model = new WorkStatus();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -85,7 +87,7 @@ class EquipmentRegisterController extends Controller
     }
 
     /**
-     * Updates an existing EquipmentRegister model.
+     * Updates an existing WorkStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -95,7 +97,7 @@ class EquipmentRegisterController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['index']);
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -104,7 +106,7 @@ class EquipmentRegisterController extends Controller
     }
 
     /**
-     * Deletes an existing EquipmentRegister model.
+     * Deletes an existing WorkStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -117,15 +119,15 @@ class EquipmentRegisterController extends Controller
     }
 
     /**
-     * Finds the EquipmentRegister model based on its primary key value.
+     * Finds the WorkStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return EquipmentRegister the loaded model
+     * @return WorkStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = EquipmentRegister::findOne($id)) !== null) {
+        if (($model = WorkStatus::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
