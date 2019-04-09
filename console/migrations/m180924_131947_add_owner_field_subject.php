@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180924_131947_add_owner_field_delete_title_from_house
  */
-class m180924_131947_add_owner_field_subject extends Migration
+class m180924_131947_add_owner_field_subject extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

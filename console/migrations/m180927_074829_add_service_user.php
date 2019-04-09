@@ -2,12 +2,11 @@
 
 use common\models\User;
 use common\models\Users;
-use yii\db\Migration;
 
 /**
  * Class m180927_074829_add_service_user
  */
-class m180927_074829_add_service_user extends Migration
+class m180927_074829_add_service_user extends \console\yii2\Migration
 {
     const AUTH_KEY = 'K4g2d-bTENTHzzAJp22G1yF6otaUj9EF';
     const USERS_PIN_MD5 = '303f8364456898f50c877766f2f1f5ae';

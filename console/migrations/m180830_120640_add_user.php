@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180830_120640_add_user
  */
-class m180830_120640_add_user extends Migration
+class m180830_120640_add_user extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

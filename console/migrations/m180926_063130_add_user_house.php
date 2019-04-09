@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180926_063130_add_user_house
  */
-class m180926_063130_add_user_house extends Migration
+class m180926_063130_add_user_house extends \console\yii2\Migration
 {
     const USER_HOUSE = '{{%user_house}}';
     const FK_RESTRICT = 'RESTRICT';

@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180926_043459_add_messages_and_photo
  */
-class m180926_043459_add_messages_and_photo extends Migration
+class m180926_043459_add_messages_and_photo extends \console\yii2\Migration
 {
     const MESSAGE = '{{%message}}';
     const PHOTO_MESSAGE = '{{%photo_message}}';

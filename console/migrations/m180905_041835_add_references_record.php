@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180905_041835_add_references_record
  */
-class m180905_041835_add_references_record extends Migration
+class m180905_041835_add_references_record extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

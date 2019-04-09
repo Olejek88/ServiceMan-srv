@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180904_060808_add_field_alarm
  */
-class m180904_060808_add_field_alarm extends Migration
+class m180904_060808_add_field_alarm extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

@@ -1,8 +1,5 @@
 <?php
 
-use \common\models\FlatType;
-use common\models\HouseType;
-
 /**
  * Class m180918_111640_add_lost_tables
  */

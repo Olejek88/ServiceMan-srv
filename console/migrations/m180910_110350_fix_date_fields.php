@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180910_110350_fix_date_fields
  */
-class m180910_110350_fix_date_fields extends Migration
+class m180910_110350_fix_date_fields extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

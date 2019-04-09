@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180926_091958_add_user_street
  */
-class m180926_091958_add_user_street extends Migration
+class m180926_091958_add_user_street extends \console\yii2\Migration
 {
     const USER_STREET = '{{%user_street}}';
     const FK_RESTRICT = 'RESTRICT';
