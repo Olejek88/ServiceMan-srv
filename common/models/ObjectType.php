@@ -8,7 +8,7 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "flat_type".
+ * This is the model class for table "object_type".
  *
  * @property integer $_id
  * @property string $uuid
@@ -18,9 +18,9 @@ use yii\db\Expression;
  */
 class ObjectType extends ActiveRecord
 {
-    const FLAT_TYPE_GENERAL = "42686CFC-34D0-45FF-95A4-04B0D865EC35";
-    const FLAT_TYPE_COMMERCE = "587B526B-A5C2-4B30-92DD-C63F796333A6";
-    const FLAT_TYPE_INPUT = "F68A562B-8F61-476F-A3E7-5666F9CEAFA1";
+    const OBJECT_TYPE_GENERAL = "42686CFC-34D0-45FF-95A4-04B0D865EC35";
+    const OBJECT_TYPE_COMMERCE = "587B526B-A5C2-4B30-92DD-C63F796333A6";
+    const OBJECT_TYPE_INPUT = "F68A562B-8F61-476F-A3E7-5666F9CEAFA1";
 
     public function behaviors()
     {
@@ -39,7 +39,7 @@ class ObjectType extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%flat_type}}';
+        return '{{%object_type}}';
     }
 
     /**

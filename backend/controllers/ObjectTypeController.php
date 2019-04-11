@@ -11,7 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * ObjectTypeController implements the CRUD actions for FlatType model.
+ * ObjectTypeController implements the CRUD actions for ObjectType model.
  */
 class ObjectTypeController extends Controller
 {
@@ -22,7 +22,7 @@ class ObjectTypeController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -40,7 +40,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Lists all FlatType models.
+     * Lists all ObjectType models.
      * @return mixed
      */
     public function actionIndex()
@@ -56,7 +56,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Displays a single FlatType model.
+     * Displays a single ObjectType model.
      * @param integer $id
      * @return mixed
      */
@@ -68,7 +68,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Creates a new FlatType model.
+     * Creates a new ObjectType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -86,7 +86,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Updates an existing FlatType model.
+     * Updates an existing ObjectType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -105,7 +105,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Deletes an existing FlatType model.
+     * Deletes an existing ObjectType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,7 +118,7 @@ class ObjectTypeController extends Controller
     }
 
     /**
-     * Finds the FlatType model based on its primary key value.
+     * Finds the ObjectType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return ObjectType the loaded model

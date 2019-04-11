@@ -18,7 +18,7 @@ class MessageSearch extends Message
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'flatUuid', 'userUuid', 'date', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'fromUserUuid', 'toUserUuid', 'date', 'text', 'status', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -65,9 +65,9 @@ class MessageSearch extends Message
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
-            ->andFilterWhere(['like', 'message', $this->message])
-            ->andFilterWhere(['like', 'userUuid', $this->userUuid]);
+            ->andFilterWhere(['like', 'flatUuid', $this->toUserUuid])
+            ->andFilterWhere(['like', 'message', $this->fromUserUuid])
+            ->andFilterWhere(['like', 'userUuid', $this->text]);
 
         return $dataProvider;
     }

@@ -62,7 +62,7 @@ class Operation extends ActiveRecord
                 [
                     'uuid',
                     'taskUuid',
-                    'taskStatusUuid',
+                    'workStatusUuid',
                     'operationTemplateUuid'
                 ],
                 'required'

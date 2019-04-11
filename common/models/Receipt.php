@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "receipt".
  *
  * @property integer $_id
+ * @property string $uuid
  * @property string $contragentUuid
  * @property string $userUuid
  * @property string $requestUuid
@@ -15,6 +16,8 @@ use yii\db\ActiveRecord;
  * @property string $result
  * @property boolean $closed
  * @property string $date
+ * @property string $createdAt
+ * @property string $changedAt
  *
  * @property Request $request
  * @property Contragent $contragent

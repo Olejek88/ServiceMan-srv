@@ -67,7 +67,7 @@ class AlarmSearch extends Alarm
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
-        $query->andFilterWhere(['like', 'uuid', $this->uuid]);
+        $query->andFilterWhere(['like', 'comment', $this->comment]);
 
         return $dataProvider;
     }

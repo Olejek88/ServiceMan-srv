@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model common\models\AlarmStatus */
 
-$this->title = Yii::t('app', 'Обновить {modelClass}: ', [
+$this->title = Yii::t('app', 'Обновить статус: ', [
         'modelClass' => 'Статусы',
     ]) . $model['title'];
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', ' Уведомления'), 'url' => ['index']];

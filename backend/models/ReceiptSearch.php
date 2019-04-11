@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
-use common\models\Object;
+use common\models\Receipt;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ObjectSearch represents the model behind the search form about `common\models\Object`.
+ * ReceiptSearch represents the model behind the search form about `common\models\Receipt`.
  */
-class ObjectSearch extends Object
+class ReceiptSearch extends Receipt
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class ObjectSearch extends Object
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'title', 'houseUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'contragentUuid', 'date', 'userUuid', 'requestUuid', 'description', 'result', 'closed', 'latitude', 'longitude', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class ObjectSearch extends Object
      */
     public function search($params)
     {
-        $query = Object::find();
+        $query = Receipt::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +59,13 @@ class ObjectSearch extends Object
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'houseUuid' => $this->houseUuid,
-            'objectStatusUuid' => $this->objectStatusUuid,
-            'createdAt' => $this->createdAt,
-            'changedAt' => $this->changedAt,
+            'userUuid' => $this->userUuid,
+            'contragentUuid' => $this->contragentUuid,
+            'requestUuid' => $this->requestUuid,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
-            ->andFilterWhere(['like', 'number', $this->title]);
+            ->orderBy(['changedAt' => SORT_DESC]);
 
         return $dataProvider;
     }

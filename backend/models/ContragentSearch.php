@@ -2,15 +2,15 @@
 
 namespace backend\models;
 
-use common\models\EventAttributeType;
-use common\models\PhotoEquipment;
+use common\models\City;
+use common\models\Contragent;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * PhotoEquipmentSearch represents the model behind the search form about `common\models\PhotoEquipment`.
+ * ContragentSearch represents the model behind the search form about `common\models\Contragent`.
  */
-class PhotoEquipmentSearch extends PhotoEquipment
+class ContragentSearch extends Contragent
 {
     /**
      * @inheritdoc
@@ -19,7 +19,8 @@ class PhotoEquipmentSearch extends PhotoEquipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentUuid', 'userUuid', 'latitude', 'longitude', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'address', 'phone', 'inn', 'director', 'email',
+                'status', 'contragentType', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -41,7 +42,7 @@ class PhotoEquipmentSearch extends PhotoEquipment
      */
     public function search($params)
     {
-        $query = PhotoEquipment::find();
+        $query = Contragent::find();
 
         // add conditions that should always apply here
 
@@ -60,16 +61,15 @@ class PhotoEquipmentSearch extends PhotoEquipment
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'userUuid' => $this->userUuid,
-            'equipmentUuid' => $this->equipmentUuid,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->orderBy(['changedAt' => SORT_DESC]);
+            ->andFilterWhere(['like', 'title', $this->title])
+            ->andFilterWhere(['like', 'title', $this->address])
+            ->andFilterWhere(['like', 'title', $this->phone])
+            ->andFilterWhere(['like', 'title', $this->inn]);
 
         return $dataProvider;
     }

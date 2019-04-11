@@ -2,8 +2,9 @@
 
 namespace backend\controllers;
 
-use backend\models\DocumentationSearchType;
-use common\models\DocumentationType;
+use backend\models\CitySearch;
+use common\models\City;
+use common\models\Contragent;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -11,9 +12,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * DocumentationTypeController implements the CRUD actions for DocumentationType model.
+ * ContragentController implements the CRUD actions for Contragent model.
  */
-class DocumentationTypeController extends Controller
+class ContragentController extends Controller
 {
     /**
      * @inheritdoc
@@ -40,12 +41,12 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Lists all DocumentationType models.
+     * Lists all City models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new DocumentationSearchType();
+        $searchModel = new ContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -56,7 +57,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Displays a single DocumentationType model.
+     * Displays a single Contragent model.
      * @param integer $id
      * @return mixed
      */
@@ -68,16 +69,22 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Creates a new DocumentationType model.
+     * Creates a new Contragent model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new DocumentationType();
+        $model = new Contragent();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            $searchModel = new ContragentSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 15;
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -86,7 +93,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Updates an existing DocumentationType model.
+     * Updates an existing Contragent model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -105,7 +112,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Deletes an existing DocumentationType model.
+     * Deletes an existing Contragent model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,15 +125,15 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Finds the DocumentationType model based on its primary key value.
+     * Finds the Contragent model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return DocumentationType the loaded model
+     * @return Contragent the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = DocumentationType::findOne($id)) !== null) {
+        if (($model = Contragent::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

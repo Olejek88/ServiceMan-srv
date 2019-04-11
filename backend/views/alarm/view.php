@@ -44,6 +44,10 @@ $this->title = "Предупреждение / авария / событие";
                                         'label' => 'Статус',
                                         'value' => $model['alarmStatus']->title
                                     ],
+                                    [
+                                        'label' => 'Объект',
+                                        'value' => $model['object']->title
+                                    ],
                                     'date',
                                     'createdAt',
                                     'changedAt',

@@ -11,7 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * FlatStatusController implements the CRUD actions for FlatStatus model.
+ * ObjectStatusController implements the CRUD actions for ObjectStatus model.
  */
 class ObjectStatusController extends Controller
 {
@@ -22,7 +22,7 @@ class ObjectStatusController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -40,7 +40,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Lists all FlatStatus models.
+     * Lists all ObjectStatus models.
      * @return mixed
      */
     public function actionIndex()
@@ -56,7 +56,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Displays a single FlatStatus model.
+     * Displays a single ObjectStatus model.
      * @param integer $id
      * @return mixed
      */
@@ -68,7 +68,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Creates a new FlatStatus model.
+     * Creates a new ObjectStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
@@ -86,7 +86,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Updates an existing FlatStatus model.
+     * Updates an existing ObjectStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -105,7 +105,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Deletes an existing FlatStatus model.
+     * Deletes an existing ObjectStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,7 +118,7 @@ class ObjectStatusController extends Controller
     }
 
     /**
-     * Finds the FlatStatus model based on its primary key value.
+     * Finds the ObjectStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
      * @return ObjectStatus the loaded model

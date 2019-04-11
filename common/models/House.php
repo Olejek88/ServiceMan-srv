@@ -18,10 +18,11 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  * @property string $houseTypeUuid
+ * @property integer $status
  *
  * @property Street $street
  * @property HouseStatus $houseStatus
- * @property PhotoHouse $photoHouse
+ * @property Photo $photo
  * @property HouseType $houseType
  */
 class House extends ActiveRecord
@@ -53,7 +54,7 @@ class House extends ActiveRecord
     {
         return [
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
-            [['createdAt', 'changedAt'], 'safe'],
+            [['createdAt', 'changedAt', 'status'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
         ];
     }
@@ -114,9 +115,9 @@ class House extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPhotoHouse()
+    public function getPhoto()
     {
-        return $this->hasMany(PhotoHouse::class, ['houseUuid' => 'uuid']);
+        return $this->hasMany(Photo::class, ['houseUuid' => 'uuid']);
     }
 
     /**

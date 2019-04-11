@@ -3,17 +3,18 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+
 /**
- * This is the model class for table "measuretype".
+ * This is the model class for table "measure_type"
  *
  * @property integer $_id
  * @property string $uuid
  * @property string $title
- * @property string $icon
  * @property string $createdAt
  * @property string $changedAt
  */
-class MeasureType extends ToirusModel
+class MeasureType extends ActiveRecord
 {
     const NONE = "E9ADE49A-3C31-42F8-A751-AAEB890C2190";
     const FREQUENCY = "481C2E40-421E-41AB-8BC1-5FB0D01A4CC3";
@@ -36,7 +37,6 @@ class MeasureType extends ToirusModel
     {
         return [
             [['uuid', 'title'], 'required'],
-            [['icon'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 100],
@@ -66,7 +66,6 @@ class MeasureType extends ToirusModel
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
-            'icon' => Yii::t('app', 'Иконка'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -16,7 +17,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class ExportLink extends ToirusModel
+class ExportLink extends ActiveRecord
 {
     /**
      * Behaviors.

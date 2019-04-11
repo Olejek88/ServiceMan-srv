@@ -2,16 +2,14 @@
 
 namespace common\models;
 
-use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
-use yii\web\IdentityInterface;
 
 /**
  * Contragent model
  *
  * @property integer $_id
+ * @property string $uuid
  * @property string $title
  * @property string $address
  * @property string $phone
@@ -23,9 +21,8 @@ use yii\web\IdentityInterface;
  * @property string $createdAt
  * @property string $changedAt
  *
- *
  */
-class Contragent extends ActiveRecord implements IdentityInterface
+class Contragent extends ActiveRecord
 {
     /**
      * Table name.

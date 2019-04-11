@@ -2,14 +2,16 @@
 
 namespace backend\models;
 
-use common\models\Object;
+use common\models\EventAttributeType;
+use common\models\Photo;
+use common\models\PhotoEquipment;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ObjectSearch represents the model behind the search form about `common\models\Object`.
+ * PhotoSearch represents the model behind the search form about `common\models\Photo`.
  */
-class ObjectSearch extends Object
+class PhotoSearch extends Photo
 {
     /**
      * @inheritdoc
@@ -18,7 +20,7 @@ class ObjectSearch extends Object
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'title', 'houseUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'objectUuid', 'userUuid', 'latitude', 'longitude', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +42,7 @@ class ObjectSearch extends Object
      */
     public function search($params)
     {
-        $query = Object::find();
+        $query = Photo::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +61,16 @@ class ObjectSearch extends Object
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'houseUuid' => $this->houseUuid,
-            'objectStatusUuid' => $this->objectStatusUuid,
+            'userUuid' => $this->userUuid,
+            'objectUuid' => $this->objectUuid,
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
-            ->andFilterWhere(['like', 'number', $this->title]);
+            ->orderBy(['changedAt' => SORT_DESC]);
 
         return $dataProvider;
     }

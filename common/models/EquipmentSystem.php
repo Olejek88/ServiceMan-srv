@@ -59,7 +59,6 @@ class EquipmentSystem extends ActiveRecord
         return [
             [['uuid', 'titleUser', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['image'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],
             [['uuid', 'titleUser'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 100],
         ];

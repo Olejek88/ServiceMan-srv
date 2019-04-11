@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
-use common\models\ObjectsAttribute;
+use common\models\ContragentRegister;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ObjectsAttributeSearch represents the model behind the search form about `common\models\ObjectsAttribute`.
+ * ContragentRegisterSearch represents the model behind the search form about `common\models\ContragentRegister`.
  */
-class ObjectsAttributeSearch extends ObjectsAttribute
+class ContragentRegisterSearch extends ContragentRegister
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class ObjectsAttributeSearch extends ObjectsAttribute
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'attributeTypeUuid', 'objectUuid', 'date', 'value', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'description', 'date', 'contragentUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class ObjectsAttributeSearch extends ObjectsAttribute
      */
     public function search($params)
     {
-        $query = ObjectsAttribute::find();
+        $query = ContragentRegister::find();
 
         // add conditions that should always apply here
 
@@ -58,17 +58,12 @@ class ObjectsAttributeSearch extends ObjectsAttribute
 
         // grid filtering conditions
         $query->andFilterWhere([
-            '_id' => $this->_id,
-            'date' => $this->date,
-            'value' => $this->value,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'attributeTypeUuid', $this->attributeTypeUuid])
-            ->andFilterWhere(['like', 'objectUuid', $this->objectUuid])
-            ->orderBy(['changedAt' => SORT_DESC]);
+            ->andFilterWhere(['like', 'title', $this->description]);
 
         return $dataProvider;
     }

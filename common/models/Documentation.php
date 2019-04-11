@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -17,16 +18,16 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  * @property string $path
- * @property string $equipmentModelUuid
- * @property string $required
+ * @property string $equipmentTypeUuid
  *
  * @property Equipment $equipment
  * @property string $docDir
  * @property string $docUrl
  * @property DocumentationType $documentationType
- * @property EquipmentModel $equipmentModel
+ * @property EquipmentType $equipmentType
  */
-class Documentation extends ToirusModel
+
+class Documentation extends ActiveRecord
 {
     private static $_IMAGE_ROOT = 'doc';
 
@@ -77,13 +78,12 @@ class Documentation extends ToirusModel
                 'extensions' => 'png, jpg,  pdf, doc, docx, txt',
                 'maxSize' => 1024 * 1024 * 10
             ],
-            [['required'], 'integer'],
             [
                 [
                     'uuid',
                     'equipmentUuid',
                     'documentationTypeUuid',
-                    'equipmentModelUuid'
+                    'equipmentTypeUuid'
                 ],
                 'string', 'max' => 45
             ],
@@ -107,18 +107,16 @@ class Documentation extends ToirusModel
             'documentationType' => function ($model) {
                 return $model->documentationType;
             }, 'title','path',
-            'required' => function ($model) {
-                return $model->required == 0 ? false : true;
-            }, 'createdAt', 'changedAt',
+            'createdAt', 'changedAt',
             'equipmentModelUuid',
-            'equipmentModel' => function ($model) {
-                return $model->equipmentModel;
+            'equipmentType' => function ($model) {
+                return $model->equipmentType;
             },
         ];
     }
 
     /**
-     * Названия отрибутов
+     * Названия атрибутов
      *
      * @inheritdoc
      *
@@ -131,12 +129,11 @@ class Documentation extends ToirusModel
             'uuid' => Yii::t('app', 'Uuid'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
             'equipment' => Yii::t('app', 'Оборудование'),
-            'equipmentModelUuid' => Yii::t('app', 'Модель оборудования'),
-            'equipmentModel' => Yii::t('app', 'Модель оборудования'),
+            'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
+            'equipmentType' => Yii::t('app', 'Тип оборудования'),
             'documentationTypeUuid' => Yii::t('app', 'Тип документации'),
             'documentationType' => Yii::t('app', 'Тип документации'),
             'title' => Yii::t('app', 'Название'),
-            'required' => Yii::t('app', 'Требуется'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
             'path' => Yii::t('app', 'Путь'),
@@ -162,10 +159,10 @@ class Documentation extends ToirusModel
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getEquipmentModel()
+    public function getEquipmentType()
     {
         return $this->hasOne(
-            EquipmentModel::class, ['uuid' => 'equipmentModelUuid']
+            EquipmentType::class, ['uuid' => 'equipmentTypeUuid']
         );
     }
 
@@ -199,10 +196,10 @@ class Documentation extends ToirusModel
     public function getDocUrl()
     {
         $dbName = \Yii::$app->session->get('user.dbname');
-        if ($this->equipmentModelUuid != null) {
-            $typeUuid = $this->equipmentModelUuid;
-        } else if ($this->equipment->equipmentModelUuid != null) {
-            $typeUuid = $this->equipment->equipmentModelUuid;
+        if ($this->equipmentTypeUuid != null) {
+            $typeUuid = $this->equipmentTypeUuid;
+        } else if ($this->equipment->equipmentTypeUuid != null) {
+            $typeUuid = $this->equipment->equipmentTypeUuid;
         } else {
             return null;
         }
@@ -230,10 +227,10 @@ class Documentation extends ToirusModel
      */
     public function getDocDir()
     {
-        if ($this->equipmentModelUuid != null) {
-            $typeUuid = $this->equipmentModelUuid;
-        } else if ($this->equipment->equipmentModelUuid != null) {
-            $typeUuid = $this->equipment->equipmentModelUuid;
+        if ($this->equipmentTypeUuid != null) {
+            $typeUuid = $this->equipmentTypeUuid;
+        } else if ($this->equipment->equipmentTypeUuid != null) {
+            $typeUuid = $this->equipment->equipmentTypeUuid;
         } else {
             return null;
         }
@@ -248,7 +245,7 @@ class Documentation extends ToirusModel
      * Возвращает каталог в котором должен находится файл изображения,
      * относительно папки web.
      *
-     * @param string $typeUuid Uuid модели оборудования
+     * @param string $typeUuid Uuid типа оборудования
      *
      * @return string
      */

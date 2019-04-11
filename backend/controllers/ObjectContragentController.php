@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use backend\models\PhotoEquipmentSearch;
-use common\models\PhotoEquipment;
+use backend\models\ObjectContragentSearch;
+use common\models\ObjectContragent;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -11,9 +11,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * PhotoEquipment implements the CRUD actions for PhotoEquipment model.
+ * ObjectContragentController implements the CRUD actions for ObjectContragent model.
  */
-class PhotoEquipmentController extends Controller
+class ObjectContragentController extends Controller
 {
     /**
      * @inheritdoc
@@ -24,7 +24,7 @@ class PhotoEquipmentController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'delete' => ['POST'],
+                    'delete' => ['POST', 'GET'],
                 ],
             ],
         ];
@@ -40,14 +40,14 @@ class PhotoEquipmentController extends Controller
     }
 
     /**
-     * Lists all PhotoEquipment models.
+     * Lists all ObjectContragent models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new PhotoEquipmentSearch();
+        $searchModel = new ObjectContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 150;
+        $dataProvider->pagination->pageSize = 100;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -56,7 +56,7 @@ class PhotoEquipmentController extends Controller
     }
 
     /**
-     * Displays a single PhotoEquipment model.
+     * Displays a single ObjectContragent model.
      * @param integer $id
      * @return mixed
      */
@@ -68,15 +68,22 @@ class PhotoEquipmentController extends Controller
     }
 
     /**
-     * Creates a new PhotoEquipment model
+     * Creates a new ObjectContragent model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new PhotoEquipment();
+        $model = new ObjectContragent();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            $searchModel = new ObjectContragentSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 100;
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -85,7 +92,7 @@ class PhotoEquipmentController extends Controller
     }
 
     /**
-     * Updates an existing PhotoEquipment model.
+     * Updates an existing ObjectContragent model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -93,6 +100,7 @@ class PhotoEquipmentController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -103,7 +111,7 @@ class PhotoEquipmentController extends Controller
     }
 
     /**
-     * Deletes an existing PhotoEquipment model.
+     * Deletes an existing ObjectContragent model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -111,20 +119,19 @@ class PhotoEquipmentController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Measure model based on its primary key value.
+     * Finds the ObjectContragent model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return PhotoEquipment the loaded model
+     * @return ObjectContragent the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = PhotoEquipment::findOne($id)) !== null) {
+        if (($model = ObjectContragent::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

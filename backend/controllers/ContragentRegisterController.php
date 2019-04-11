@@ -1,18 +1,11 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace backend\controllers;
 
-use backend\models\EquipmentAttributeSearch;
-use common\models\EquipmentAttribute;
+use backend\models\CitySearch;
+use common\models\City;
+use common\models\Contragent;
+use common\models\ContragentRegister;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -20,28 +13,18 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * EquipmentAttributeController implements the CRUD actions for EquipmentAttribute model.
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Олег Иванов
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
+ * ContragentRegisterController implements the CRUD actions for ContragentRegister model.
  */
-class EquipmentAttributeController extends Controller
+class ContragentRegisterController extends Controller
 {
     /**
-     * Behaviors
-     *
      * @inheritdoc
-     *
-     * @return array
      */
     public function behaviors()
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -49,12 +32,6 @@ class EquipmentAttributeController extends Controller
         ];
     }
 
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
     public function init()
     {
 
@@ -65,56 +42,50 @@ class EquipmentAttributeController extends Controller
     }
 
     /**
-     * Lists all EquipmentAttribute models.
-     *
+     * Lists all ContragentRegister models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new EquipmentAttributeSearch();
+        $searchModel = new ContragentRegisterSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
-        return $this->render(
-            'index',
-            [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]
-        );
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
-     * Displays a single EquipmentAttribute model.
-     *
-     * @param integer $id Id
-     *
+     * Displays a single ContragentRegister model.
+     * @param integer $id
      * @return mixed
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
-
-        return $this->render(
-            'view',
-            [
-                'model' => $model,
-            ]
-        );
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     /**
-     * Creates a new EquipmentAttribute model.
+     * Creates a new ContragentRegister model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new EquipmentAttribute();
+        $model = new ContragentRegister();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            $searchModel = new ContragentRegisterSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 15;
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -123,16 +94,15 @@ class EquipmentAttributeController extends Controller
     }
 
     /**
-     * Updates an existing EquipmentAttribute model.
+     * Updates an existing ContragentRegister model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     *
-     * @param integer $id Id
-     *
+     * @param integer $id
      * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -143,11 +113,9 @@ class EquipmentAttributeController extends Controller
     }
 
     /**
-     * Deletes an existing EquipmentAttribute model.
+     * Deletes an existing ContragentRegister model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     *
-     * @param integer $id Id
-     *
+     * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
@@ -158,17 +126,15 @@ class EquipmentAttributeController extends Controller
     }
 
     /**
-     * Finds the EquipmentAttribute model based on its primary key value.
+     * Finds the ContragentRegister model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     *
-     * @param integer $id Id
-     *
-     * @return EquipmentAttribute the loaded model
+     * @param integer $id
+     * @return ContragentRegister the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = EquipmentAttribute::findOne($id)) !== null) {
+        if (($model = ContragentRegister::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

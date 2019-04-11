@@ -13,9 +13,9 @@ use yii\db\ActiveRecord;
  * @property string $registerType
  * @property string $userUuid
  * @property string $date
- * @property string $fromParameterUuid
- * @property string $toParameterUuid
- * @property User $userId0
+ * @property string $description
+ *
+ * @property User $user
  */
 class EquipmentRegister extends ActiveRecord
 {
@@ -35,7 +35,8 @@ class EquipmentRegister extends ActiveRecord
         return [
             [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid', 'date'], 'required'],
             [['data'], 'safe'],
-            [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid', 'fromParameterUuid', 'toParameterUuid'], 'string', 'max' => 50],
+            [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
+            [['description'], 'string', 'max' => 250],
         ];
     }
 
@@ -51,9 +52,10 @@ class EquipmentRegister extends ActiveRecord
         return [
             'uuid' => Yii::t('app', 'Uuid'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
+            'equipment' => Yii::t('app', 'Оборудование'),
             'userUuid' => Yii::t('app', 'Пользователь'),
-            'fromParameterUuid' => Yii::t('app', 'С параметра'),
-            'toParameterUuid' => Yii::t('app', 'В параметр'),
+            'user' => Yii::t('app', 'Пользователь'),
+            'description' => Yii::t('app', 'Запись'),
             'date' => Yii::t('app', 'Дата'),
             'registerTypeUuid' => Yii::t('app', 'Тип события'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -66,7 +68,7 @@ class EquipmentRegister extends ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(Users::className(), ['uuid' => 'userUuid']);
+        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
     /**
@@ -77,7 +79,7 @@ class EquipmentRegister extends ActiveRecord
     public function getRegisterType()
     {
         return $this->hasOne(
-            EquipmentRegisterType::className(), ['uuid' => 'registerTypeUuid']
+            EquipmentRegisterType::class, ['uuid' => 'registerTypeUuid']
         );
     }
 
@@ -89,7 +91,7 @@ class EquipmentRegister extends ActiveRecord
     public function getEquipment()
     {
         return $this->hasOne(
-            Equipment::className(), ['uuid' => 'equipmentUuid']
+            Equipment::class, ['uuid' => 'equipmentUuid']
         );
     }
 
@@ -104,7 +106,7 @@ class EquipmentRegister extends ActiveRecord
             },
             'registerType' => function ($model) {
                 return $model->registerType;
-            }, 'date', 'fromParameterUuid', 'toParameterUuid', 'createdAt', 'changedAt'
+            }, 'date', 'description', 'createdAt', 'changedAt'
         ];
     }
 }

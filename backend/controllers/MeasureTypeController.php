@@ -9,7 +9,6 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
-use yii\web\UploadedFile;
 
 /**
  * MeasureTypeController implements the CRUD actions for MeasureType model.
@@ -23,7 +22,7 @@ class MeasureTypeController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -76,35 +75,6 @@ class MeasureTypeController extends Controller
     public function actionCreate()
     {
         $model = new MeasureType();
-        if ($model->load(Yii::$app->request->post())) {
-            $file = UploadedFile::getInstance($model, 'icon');
-            if ($file && $file->tempName) {
-                $model->icon = $file;
-
-                if ($model->upload()) {
-                    $uuidFile = $model->uuid;
-                    $dbName = \Yii::$app->session->get('user.dbname');
-                    $imageFile = 'storage/' . $dbName . '/' . $uuidFile . '/';
-                    $fileName = $model->uuid . '.' . $model->icon->extension;
-
-                    if (!is_dir($imageFile)) {
-                        mkdir($imageFile, 0755, true);
-                    }
-
-                    $dir = Yii::getAlias($imageFile);
-                    $model->icon->saveAs($dir . $fileName);
-                    $model->icon = $fileName;
-
-                    if ($model->save(false)) {
-                        return $this->redirect('index');
-                    }
-                } else {
-                    return $model->icon;
-                }
-            }
-        }
-
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -123,40 +93,6 @@ class MeasureTypeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $baseImage = $model->icon;
-
-        if ($model->load(Yii::$app->request->post())) {
-            $file = UploadedFile::getInstance($model, 'icon');
-            if ($file && $file->tempName) {
-                $model->icon = $file;
-                if ($model->upload()) {
-                    $uuidFile = $model->uuid;
-                    $dbName = \Yii::$app->session->get('user.dbname');
-                    $imageFile = 'storage/' . $dbName . '/' . $uuidFile . '/';
-                    $fileName = $model->uuid . '.' . $model->icon->extension;
-
-                    if (!is_dir($imageFile)) {
-                        mkdir($imageFile, 0755, true);
-                    }
-
-                    $dir = Yii::getAlias($imageFile);
-                    $model->icon->saveAs($dir . $fileName);
-                    $model->icon = $fileName;
-
-                    if ($model->save(false)) {
-                        return $this->redirect('index');
-                    }
-                } else {
-                    return $model->icon;
-                }
-            } else {
-                $model->icon = $baseImage;
-                if ($model->save(false)) {
-                    return $this->redirect('index');
-                }
-            }
-        }
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {

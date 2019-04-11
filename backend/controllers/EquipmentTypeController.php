@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use backend\models\EquipmentSearchType;
-use common\models\DefectType;
 use common\models\EquipmentType;
 use Yii;
 use yii\filters\VerbFilter;
@@ -27,7 +26,7 @@ class EquipmentTypeController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],

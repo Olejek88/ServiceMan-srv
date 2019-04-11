@@ -1,18 +1,9 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Common\models
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -25,7 +16,8 @@ use yii\db\Expression;
  * @property string $changedAt
  * @property string $icon
  */
-class DocumentationType extends ToirusModel
+
+class DocumentationType extends ActiveRecord
 {
     /**
      * Behaviors

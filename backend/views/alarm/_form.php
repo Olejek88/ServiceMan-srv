@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
+use common\models\Object;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
@@ -49,7 +50,24 @@ use yii\widgets\ActiveForm;
         ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/alarm-type/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+
+    <?php
+
+    $object = Object::find()->all();
+    $items = ArrayHelper::map($object, 'uuid', 'title');
+    echo $form->field($model, 'objectUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -72,7 +90,7 @@ use yii\widgets\ActiveForm;
         ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
         <a href=\"/equipment-status/create\">
         <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -84,6 +102,8 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
+
+    <?php echo $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата</p>
@@ -105,7 +125,7 @@ use yii\widgets\ActiveForm;
     <?php
     $users = Users::find()->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
-    echo $form->field($model, 'userUuid')->widget(Select2::classname(),
+    echo $form->field($model, 'userUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -116,7 +136,6 @@ use yii\widgets\ActiveForm;
                 'allowClear' => true
             ],
         ]);
-
     ?>
 
     <div class="form-group text-center">

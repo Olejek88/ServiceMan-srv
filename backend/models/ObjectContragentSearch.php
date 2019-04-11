@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
-use common\models\Resident;
+use common\models\ObjectContragent;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ResidentSearch represents the model behind the search form about `common\models\Resident`.
+ * ObjectContragentSearch represents the model behind the search form about `common\models\ObjectContragent`.
  */
-class ResidentSearch extends Resident
+class ObjectContragentSearch extends ObjectContragent
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class ResidentSearch extends Resident
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'flatUuid', 'owner', 'inn', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'objectUuid', 'contragentUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class ResidentSearch extends Resident
      */
     public function search($params)
     {
-        $query = Resident::find();
+        $query = ObjectContragent::find();
 
         // add conditions that should always apply here
 
@@ -64,9 +64,9 @@ class ResidentSearch extends Resident
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
-            ->andFilterWhere(['like', 'inn', $this->inn])
-            ->andFilterWhere(['like', 'owner', $this->owner]);
+            ->andFilterWhere(['like', 'houseUuid', $this->objectUuid])
+            ->andFilterWhere(['like', 'userUuid', $this->contragentUuid])
+            ->orderBy(['changedAt' => SORT_DESC]);
 
         return $dataProvider;
     }

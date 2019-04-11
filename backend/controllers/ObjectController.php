@@ -11,7 +11,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * FlatController implements the CRUD actions for Flat model.
+ * ObjectController implements the CRUD actions for Object model.
  */
 class ObjectController extends Controller
 {
@@ -22,7 +22,7 @@ class ObjectController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -40,7 +40,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Lists all Flat models.
+     * Lists all Object models.
      * @return mixed
      */
     public function actionIndex()
@@ -56,7 +56,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Lists all Flat models.
+     * Lists all Object models.
      * @return mixed
      */
     public function actionTable()
@@ -72,7 +72,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Displays a single Flat model.
+     * Displays a single Object model.
      * @param integer $id
      * @return mixed
      */
@@ -108,7 +108,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Updates an existing Flat model.
+     * Updates an existing Object model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -127,7 +127,7 @@ class ObjectController extends Controller
     }
 
     /**
-     * Deletes an existing Flat model.
+     * Deletes an existing Object model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -140,10 +140,10 @@ class ObjectController extends Controller
     }
 
     /**
-     * Finds the Flat model based on its primary key value.
+     * Finds the Object model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Object the loaded model
+     * @return Object
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)

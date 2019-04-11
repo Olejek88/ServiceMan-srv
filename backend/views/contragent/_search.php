@@ -4,11 +4,11 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\PhotoSearch */
+/* @var $model backend\models\ContragentSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="critical-type-search box-padding">
+<div class="task-search box-padding">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -19,17 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'uuid') ?>
 
-    <?= $form->field($model, 'latitude') ?>
-
-    <?= $form->field($model, 'longitude') ?>
-
-    <?= $form->field($model, 'flatUuid') ?>
-
-    <?= $form->field($model, 'userUuid') ?>
-
-    <?= $form->field($model, 'createdAt') ?>
-
-    <?= $form->field($model, 'changedAt') ?>
+    <?= $form->field($model, 'title') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

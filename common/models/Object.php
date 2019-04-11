@@ -8,21 +8,22 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "flat".
+ * This is the model class for table "object".
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $number
- * @property string $flatStatusUuid
+ * @property string $title
+ * @property string $objectStatusUuid
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
- * @property string $flatTypeUuid
+ * @property string $objectTypeUuid
+ * @property integer $status
  *
  * @property House $house
- * @property ObjectStatus $flatStatus
- * @property PhotoFlat $photoFlat
- * @property ObjectType $flatType
+ * @property ObjectStatus $objectStatus
+ * @property Photo $photo
+ * @property ObjectType $objectType
  */
 class Object extends ActiveRecord
 {
@@ -43,7 +44,7 @@ class Object extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'flat';
+        return 'object';
     }
 
     /**
@@ -52,9 +53,9 @@ class Object extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'flatStatusUuid', 'houseUuid'], 'required'],
+            [['uuid', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'number', 'flatStatusUuid', 'houseUuid'], 'string', 'max' => 50],
+            [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -63,14 +64,14 @@ class Object extends ActiveRecord
         return [
             '_id',
             'uuid',
-            'number',
-            'flatStatusUuid',
-            'flatStatus' => function ($model) {
-                return $model->flatStatus;
+            'title',
+            'objectStatusUuid',
+            'objectStatus' => function ($model) {
+                return $model->objectStatus;
             },
-            'flatTypeUuid',
-            'flatType' => function($model) {
-                return $model->flatType;
+            'objectTypeUuid',
+            'objectType' => function($model) {
+                return $model->objectType;
             },
             'houseUuid',
             'house' => function ($model) {
@@ -99,11 +100,11 @@ class Object extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'number' => Yii::t('app', 'Номер квартиры'),
-            'flatStatusUuid' => Yii::t('app', 'Статус квартиры'),
-            'flatStatus' => Yii::t('app', 'Статус квартиры'),
-            'flatTypeUuid' => Yii::t('app', 'Тип квартиры'),
-            'flatType' => Yii::t('app', 'Тип квартиры'),
+            'title' => Yii::t('app', 'Название'),
+            'objectStatusUuid' => Yii::t('app', 'Статус объекта'),
+            'objectStatus' => Yii::t('app', 'Статус объекта'),
+            'objectTypeUuid' => Yii::t('app', 'Тип объекта'),
+            'objectType' => Yii::t('app', 'Тип объекта'),
             'houseUuid' => Yii::t('app', 'Дом'),
             'house' => Yii::t('app', 'Дом'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -114,15 +115,15 @@ class Object extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPhotoFlat() {
-        return $this->hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
+    public function getPhoto() {
+        return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getFlatType() {
-        return $this->hasOne(ObjectType::class, ['uuid' => 'flatTypeUuid']);
+    public function getObjectType() {
+        return $this->hasOne(ObjectType::class, ['uuid' => 'objectTypeUuid']);
     }
 
     public function getFullTitle() {

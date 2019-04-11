@@ -1,17 +1,17 @@
 <?php
+/* @var $model common\models\City */
 
 use yii\helpers\Html;
 
-/* @var $model \common\models\Alarm */
-
-$this->title = Yii::t('app', 'Создать предупреждение');
+$this->title = Yii::t('app', 'Создать контрагента');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Города'), 'url' => ['index']];
 ?>
-<div class="equipment-create box-padding">
+<div class="task-create box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
-                <?php echo Html::encode($this->title) ?>
+                <?= Html::encode($this->title) ?>
             </h3>
         </div>
         <div class="panel-body">
@@ -19,15 +19,14 @@ $this->title = Yii::t('app', 'Создать предупреждение');
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
                     <h6>
-                        <?php echo $this->render(
-                            '_form',
-                            [
-                                'model' => $model,
-                            ]
-                        ) ?>
+                        <?= $this->render('_form', [
+                            'model' => $model,
+                        ]) ?>
                     </h6>
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>

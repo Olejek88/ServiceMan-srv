@@ -3,9 +3,9 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-/* @var $searchModel  backend\models\CitySearch */
+/* @var $searchModel  backend\models\ContragentSearch */
 
-$this->title = Yii::t('app', 'Город');
+$this->title = Yii::t('app', 'Контрагенты');
 ?>
 <div class="orders-index box-padding-index">
 
@@ -14,13 +14,6 @@ $this->title = Yii::t('app', 'Город');
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 305px; margin: 0 auto;">
-                <li class="active"><a href="/city">Города</a></li>
-                <li class=""><a href="/street">Улицы</a></li>
-                <li class=""><a href="/house">Дома</a></li>
-                <li class=""><a href="/object">Объекты</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 

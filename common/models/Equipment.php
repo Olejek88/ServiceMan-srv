@@ -12,20 +12,21 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $uuid
  * @property string $equipmentTypeUuid
+ * @property string $equipmentSystemUuid
  * @property string $serial
  * @property string $tag
  * @property string $equipmentStatusUuid
  * @property string $testDate
- * @property string $houseUuid
- * @property string $flatUuid
+ * @property string $objectUuid
  * @property string $createdAt
  * @property string $changedAt
+ * @property integer $status
  *
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
- * @property House $house
- * @property Object $flat
- * @property PhotoEquipment $photoEquipment
+ * @property EquipmentSystem $equipmentSystem
+ * @property Object $object
+ * @property Photo $photo
  */
 class Equipment extends ActiveRecord
 {
@@ -65,13 +66,13 @@ class Equipment extends ActiveRecord
     public function fields()
     {
         return ['_id', 'uuid',
-            'houseUuid',
-            'house' => function ($model) {
-                return $model->house;
+            'objectUuid',
+            'object' => function ($model) {
+                return $model->object;
             },
-            'flatUuid',
-            'flat' => function ($model) {
-                return $model->flat;
+            'equipmentSystemUuid',
+            'equipmentSystem' => function ($model) {
+                return $model->equipmentSystem;
             },
             'equipmentTypeUuid',
             'equipmentType' => function ($model) {
@@ -81,7 +82,7 @@ class Equipment extends ActiveRecord
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'serial', 'testDate', 'tag',
+            'serial', 'testDate', 'tag', 'status',
             'createdAt', 'changedAt'
         ];
     }
@@ -98,21 +99,23 @@ class Equipment extends ActiveRecord
                 [
                     'uuid',
                     'equipmentTypeUuid',
+                    'equipmentSystemUuid',
                     'equipmentStatusUuid',
                     'serial',
                 ],
                 'required'
             ],
             [['testDate', 'createdAt', 'changedAt'], 'safe'],
+            [['status'], 'integer'],
             [
                 [
                     'uuid',
                     'equipmentTypeUuid',
+                    'equipmentSystemUuid',
                     'equipmentStatusUuid',
                     'serial',
                     'tag',
-                    'houseUuid',
-                    'flatUuid'
+                    'objectUuid'
                 ],
                 'string', 'max' => 50
             ],
@@ -131,13 +134,14 @@ class Equipment extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип'),
+            'equipmentSystemUuid' => Yii::t('app', 'Тип системы'),
+            'equipmentSystem' => Yii::t('app', 'Тип системы'),
             'testDate' => Yii::t('app', 'Дата последней поверки'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
-            'flatUuid' => Yii::t('app', 'Квартира'),
-            'houseUuid' => Yii::t('app', 'Дом'),
-            'flat' => Yii::t('app', 'Квартира'),
+            'equipmentStatus' => Yii::t('app', 'Статус'),
+            'objectUuid' => Yii::t('app', 'Объект'),
+            'object' => Yii::t('app', 'Объект'),
             'tag' => Yii::t('app', 'Метка'),
-            'house' => Yii::t('app', 'Дом'),
             'serial' => Yii::t('app', 'Серийный номер'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
@@ -163,10 +167,10 @@ class Equipment extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getHouse()
+    public function getEquipmentSystem()
     {
         return $this->hasOne(
-            House::class, ['uuid' => 'houseUuid']
+            EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']
         );
     }
 
@@ -199,12 +203,12 @@ class Equipment extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFlat()
+    public function getObject()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Object::class, ['uuid' => 'objectUuid']);
     }
 
-    public function getPhotoEquipment() {
-        return $this->hasMany(PhotoEquipment::class, ['equipmentUuid' => 'uuid']);
+    public function getPhoto() {
+        return $this->hasMany(Photo::class, ['equipmentUuid' => 'uuid']);
     }
 }

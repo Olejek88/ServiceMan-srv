@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use backend\models\DocumentationSearchType;
-use common\models\DocumentationType;
+use backend\models\PhotoSearch;
+use common\models\Photo;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -11,9 +11,9 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * DocumentationTypeController implements the CRUD actions for DocumentationType model.
+ * Photo implements the CRUD actions for Photo model.
  */
-class DocumentationTypeController extends Controller
+class PhotoController extends Controller
 {
     /**
      * @inheritdoc
@@ -40,14 +40,14 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Lists all DocumentationType models.
+     * Lists all Photo models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new DocumentationSearchType();
+        $searchModel = new PhotoSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->pagination->pageSize = 150;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -56,7 +56,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Displays a single DocumentationType model.
+     * Displays a single Photo model.
      * @param integer $id
      * @return mixed
      */
@@ -68,14 +68,13 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Creates a new DocumentationType model.
+     * Creates a new Photo model
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new DocumentationType();
-
+        $model = new Photo();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -86,7 +85,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Updates an existing DocumentationType model.
+     * Updates an existing Photo model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,7 +93,6 @@ class DocumentationTypeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -105,7 +103,7 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Deletes an existing DocumentationType model.
+     * Deletes an existing Photo model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -118,15 +116,15 @@ class DocumentationTypeController extends Controller
     }
 
     /**
-     * Finds the DocumentationType model based on its primary key value.
+     * Finds the Measure model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return DocumentationType the loaded model
+     * @return Photo the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = DocumentationType::findOne($id)) !== null) {
+        if (($model = Photo::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
