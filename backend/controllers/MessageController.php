@@ -2,42 +2,19 @@
 
 namespace backend\controllers;
 
-use backend\models\MessageSearch;
-use common\models\Message;
+use common\components\MainFunctions;
+use common\models\Users;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
+use common\models\Message;
+use backend\models\MessageSearch;
 
 /**
  * MessageController implements the CRUD actions for Message model.
  */
-class MessageController extends Controller
+class MessageController extends ToirusController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
+    protected $modelClass = Message::class;
 
     /**
      * Lists all Message models.
@@ -47,7 +24,7 @@ class MessageController extends Controller
     {
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 200;
+        $dataProvider->pagination->pageSize = 25;
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -59,11 +36,55 @@ class MessageController extends Controller
      * Displays a single Message model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Displays a messagebox
+     * @return mixed
+     */
+    public function actionList()
+    {
+        $accountUser = Yii::$app->user->identity;
+        $currentUser = Users::find()
+            ->where(['userId' => $accountUser['id']])
+            ->asArray()
+            ->one();
+
+        $messages = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
+            ->orWhere(['toUserUuid' => $currentUser['uuid']])
+            ->orderBy('date DESC')
+            ->all();
+        $income = Message::find()->where(['toUserUuid' => $currentUser['uuid']])
+            ->orderBy('date DESC')
+            ->all();
+        $sent = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
+            ->orderBy('date DESC')
+            ->all();
+
+        return $this->render('list', [
+            'messages' => $messages,
+            'income' => $income,
+            'sent' => $sent
+        ]);
+    }
+
+    public function actionSearch()
+    {
+        /**
+         * [Базовые определения]
+         * @var [type]
+         */
+        $model             = 'Test';
+
+        return $this->render('search', [
+            'model'            => $model,
         ]);
     }
 
@@ -75,6 +96,7 @@ class MessageController extends Controller
     public function actionCreate()
     {
         $model = new Message();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -85,26 +107,52 @@ class MessageController extends Controller
     }
 
     /**
-     * Displays a messagebox
-     * @return mixed
+     * @param $action
+     * @return bool
+     * @throws \yii\web\BadRequestHttpException
      */
-    public function actionList()
+    public function beforeAction($action)
     {
-        $messages = Message::find()->all();
-        return $this->render('list', [
-            'messages' => $messages
-        ]);
+        $this->enableCsrfValidation = false;
+        if ($action->id === 'index' || $action->id === 'create'
+            || $action->id === 'update' || $action->id === 'delete') {
+            $this->enableCsrfValidation = true;
+        }
+        return parent::beforeAction($action);
     }
 
     /**
+     * Creates a new Message model in chat for all users
+     * @throws NotFoundHttpException
+     * @return mixed
+     */
+    public function actionSend()
+    {
+        $this->enableCsrfValidation = false;
+        $model = new Message();
+        $model->uuid = MainFunctions::GUID();
+        $accountUser = Yii::$app->user->identity;
+        $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+        $model->fromUserUuid = $currentUser['uuid'];
+        $model->text = $_POST["message"];
+        $model->toUserUuid = $model->fromUserUuid;
+        $model->status = 0;
+        $model->date = date("Ymd");
+        $model->save();
+        return $this->redirect(['/site/dashboard']);
+    }
+
+/**
      * Updates an existing Message model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
@@ -119,6 +167,10 @@ class MessageController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Exception
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -142,4 +194,33 @@ class MessageController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
+     *
+     * @return mixed
+     */
+    public
+    function actionNew()
+    {
+        $message = new Message();
+        return $this->renderAjax('_add_form', [
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * Creates a new Equipment model.
+     * @return mixed
+     */
+    public
+    function actionSave()
+    {
+        $model = new Message();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect('list');
+        }
+        return false;
+    }
+
 }

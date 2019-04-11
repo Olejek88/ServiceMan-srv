@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\MessageSearch */
+/* @var $model backend\models\ToolSearchType */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -19,11 +19,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'uuid') ?>
 
-    <?= $form->field($model, 'userUuid') ?>
+    <?= $form->field($model, 'fromUserUuid') ?>
 
-    <?= $form->field($model, 'flatUuid') ?>
+    <?= $form->field($model, 'toUserUuid') ?>
 
-    <?= $form->field($model, 'message') ?>
+    <?= $form->field($model, 'text') ?>
+
+    <?= $form->field($model, 'status') ?>
 
     <?= $form->field($model, 'createdAt') ?>
 

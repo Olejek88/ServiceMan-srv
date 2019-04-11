@@ -7,7 +7,7 @@ use backend\models\EquipmentSearch;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Flat;
+use common\models\Object;
 use common\models\House;
 use common\models\Measure;
 use common\models\Message;
@@ -156,7 +156,7 @@ class EquipmentController extends Controller
     {
         $equipments = array();
         $equipment_count = 0;
-        $flats = Flat::find()
+        $flats = Object::find()
             ->select('*')
             ->all();
         foreach ($flats as $flat) {
@@ -332,7 +332,7 @@ class EquipmentController extends Controller
             $object_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $equipment = Equipment::find()
                         ->select('*')
@@ -470,7 +470,7 @@ class EquipmentController extends Controller
             $message_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $equipment = Equipment::find()
                         ->select('*')
@@ -648,7 +648,7 @@ class EquipmentController extends Controller
                 $user = Users::find()->where(['uuid' =>
                     UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
-                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
+                $flats = Object::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($flats as $flat) {
                     $house_count++;
                     $visited = 0;
@@ -792,7 +792,7 @@ class EquipmentController extends Controller
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
             orderBy('number')->all();
             foreach ($houses as $house) {
-                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
+                $flats = Object::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($flats as $flat) {
                     $house_count++;
                     $visited = 0;

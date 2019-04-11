@@ -13,8 +13,8 @@ namespace backend\controllers;
 
 use backend\models\ResidentSearch;
 use common\models\Equipment;
-use common\models\Flat;
-use common\models\FlatStatus;
+use common\models\Object;
+use common\models\ObjectStatus;
 use common\models\House;
 use common\models\HouseStatus;
 use common\models\Measure;
@@ -289,7 +289,7 @@ class ResidentsController extends Controller
                 $fullTree[$oCnt0][$c][$oCnt1]['resident'] = $subject['owner'];
                 $fullTree[$oCnt0][$c][$oCnt1]['inn'] = $subject['contractNumber'];
 
-                $flats = Flat::find()
+                $flats = Object::find()
                     ->select('*')
                     ->where(['houseUuid' => $house['uuid']])
                     ->orderBy('number')
@@ -307,13 +307,13 @@ class ResidentsController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['street'] = $street['title'];
                     $fullTree[$oCnt0][$c][$oCnt1][$c][$oCnt2]['flat'] = $flat['number'];
 
-                    if ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_ABSENT) {
+                    if ($flat['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_ABSENT) {
                         $class = 'critical2';
                         $sum_status = 0;
-                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_NO_ENTRANCE) {
+                    } elseif ($flat['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_NO_ENTRANCE) {
                         $class = 'critical1';
                         $sum_status = 0;
-                    } elseif ($flat['flatStatusUuid'] == FlatStatus::FLAT_STATUS_DEFAULT) {
+                    } elseif ($flat['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_DEFAULT) {
                         $class = 'critical4';
                     } else {
                         $class = 'critical3';

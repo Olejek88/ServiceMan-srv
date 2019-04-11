@@ -1,0 +1,132 @@
+<?php
+
+namespace common\models;
+
+use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
+
+/**
+ * This is the model class for table "flat".
+ *
+ * @property integer $_id
+ * @property string $uuid
+ * @property string $number
+ * @property string $flatStatusUuid
+ * @property string $houseUuid
+ * @property string $createdAt
+ * @property string $changedAt
+ * @property string $flatTypeUuid
+ *
+ * @property House $house
+ * @property ObjectStatus $flatStatus
+ * @property PhotoFlat $photoFlat
+ * @property ObjectType $flatType
+ */
+class Object extends ActiveRecord
+{
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'changedAt',
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'flat';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['uuid', 'flatStatusUuid', 'houseUuid'], 'required'],
+            [['createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'number', 'flatStatusUuid', 'houseUuid'], 'string', 'max' => 50],
+        ];
+    }
+
+    public function fields()
+    {
+        return [
+            '_id',
+            'uuid',
+            'number',
+            'flatStatusUuid',
+            'flatStatus' => function ($model) {
+                return $model->flatStatus;
+            },
+            'flatTypeUuid',
+            'flatType' => function($model) {
+                return $model->flatType;
+            },
+            'houseUuid',
+            'house' => function ($model) {
+                return $model->house;
+            },
+            'createdAt',
+            'changedAt',
+        ];
+    }
+
+    public function getFlatStatus()
+    {
+        return $this->hasOne(ObjectStatus::class, ['uuid' => 'flatStatusUuid']);
+    }
+
+    public function getHouse()
+    {
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            '_id' => Yii::t('app', '№'),
+            'uuid' => Yii::t('app', 'Uuid'),
+            'number' => Yii::t('app', 'Номер квартиры'),
+            'flatStatusUuid' => Yii::t('app', 'Статус квартиры'),
+            'flatStatus' => Yii::t('app', 'Статус квартиры'),
+            'flatTypeUuid' => Yii::t('app', 'Тип квартиры'),
+            'flatType' => Yii::t('app', 'Тип квартиры'),
+            'houseUuid' => Yii::t('app', 'Дом'),
+            'house' => Yii::t('app', 'Дом'),
+            'createdAt' => Yii::t('app', 'Создан'),
+            'changedAt' => Yii::t('app', 'Изменен'),
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPhotoFlat() {
+        return $this->hasMany(PhotoFlat::class, ['flatUuid' => 'uuid']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFlatType() {
+        return $this->hasOne(ObjectType::class, ['uuid' => 'flatTypeUuid']);
+    }
+
+    public function getFullTitle() {
+        return 'ул.'.$this->house['street']['title'].', д.'.$this->house['number'];
+    }
+
+}

@@ -7,7 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
 /**
- * This is the model class for table "task".
+ * This is the model class for table "alarm".
  *
  * @property integer $_id
  * @property string $uuid
@@ -90,7 +90,7 @@ class Task extends ActiveRecord
 
     public function getFlat()
     {
-        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
     }
 
     public function getWorkStatus()

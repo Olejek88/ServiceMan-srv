@@ -21,7 +21,7 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property House $house
- * @property Flat $flat
+ * @property Object $flat
  */
 class Subject extends ActiveRecord
 {
@@ -86,7 +86,7 @@ class Subject extends ActiveRecord
 
     public function getFlat()
     {
-        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
     }
 
     /**

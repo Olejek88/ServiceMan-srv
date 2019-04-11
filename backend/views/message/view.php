@@ -1,6 +1,5 @@
 <?php
 /* @var $model \common\models\Message */
-
 /* @var $this yii\web\View */
 
 use yii\helpers\Html;
@@ -36,10 +35,11 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Сообщения')
                             'attributes' => [
                                 '_id',
                                 'uuid',
-                                'user.name',
-                                'message',
+                                'fromUser.name',
+                                'toUser.name',
+                                'text',
                                 'date',
-                                'flat.number',
+                                'status',
                                 'createdAt',
                                 'changedAt',
                             ],

@@ -3,7 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Flat;
+use common\models\Object;
 use common\models\House;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
@@ -125,7 +125,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $flat = Flat::find()->all();
+    $flat = Object::find()->all();
     $items = ArrayHelper::map($flat, 'uuid', function ($model) {
         return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });

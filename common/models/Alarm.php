@@ -25,7 +25,7 @@ use yii\db\Expression;
  * @property Users $user
  * @property AlarmStatus $alarmStatus
  * @property AlarmType $alarmType
- * @property PhotoAlarm $photoAlarm
+ * @property Photo $photo
  */
 class Alarm extends ActiveRecord
 {
@@ -103,7 +103,7 @@ class Alarm extends ActiveRecord
     }
 
     public function getPhotoAlarm() {
-        return $this->hasMany(PhotoAlarm::class, ['alarmUuid' => 'uuid']);
+        return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
     /**

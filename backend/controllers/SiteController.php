@@ -7,7 +7,7 @@ use common\models\Alarm;
 use common\models\City;
 use common\models\Equipment;
 use common\models\EquipmentType;
-use common\models\Flat;
+use common\models\Object;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
@@ -325,7 +325,7 @@ class SiteController extends Controller
 
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
-        $flatCount = Flat::find()->count();
+        $flatCount = Object::find()->count();
         $equipmentCount = Equipment::find()->count();
         $subjectCount = Subject::find()->count();
         $residentCount = Resident::find()->count();

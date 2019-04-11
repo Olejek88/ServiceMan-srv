@@ -3,11 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\FlatType;
+use common\models\ObjectType;
 use yii\db\ActiveRecord;
 
 class FlatTypeController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = FlatType::class;
+    public $modelClass = ObjectType::class;
 }

@@ -13,7 +13,6 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $title
  * @property string $description
- * @property integer $normative
  * @property string $createdAt
  * @property string $changedAt
  */
@@ -62,13 +61,11 @@ class OperationTemplate extends ActiveRecord
                 [
                     'uuid',
                     'title',
-                    'description',
-                    'normative'
+                    'description'
                 ],
                 'required'
             ],
             [['description'], 'string'],
-            [['normative'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
             [
                 ['uuid'], 'string', 'max' => 45
@@ -86,7 +83,6 @@ class OperationTemplate extends ActiveRecord
     {
         return ['_id', 'uuid',
             'title', 'description',
-            'normative',
             'createdAt', 'changedAt'
         ];
     }
@@ -106,7 +102,6 @@ class OperationTemplate extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
             'description' => Yii::t('app', 'Описание'),
-            'normative' => Yii::t('app', 'Норматив'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

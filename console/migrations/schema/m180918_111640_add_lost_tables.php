@@ -1,6 +1,6 @@
 <?php
 
-use \common\models\FlatType;
+use \common\models\ObjectType;
 use common\models\HouseType;
 
 /**
@@ -35,7 +35,7 @@ class m180918_111640_add_lost_tables extends \console\yii2\Migration
         ]);
 
         $this->addColumn(self::FLAT, 'flatTypeUuid', $this->string()->notNull()
-            ->defaultValue(\common\models\FlatType::FLAT_TYPE_GENERAL));
+            ->defaultValue(\common\models\ObjectType::FLAT_TYPE_GENERAL));
         $this->addColumn(self::FLAT, 'title', $this->string()->notNull()->defaultValue(''));
 
         $this->addColumn(self::HOUSE, 'houseTypeUuid', $this->string()->notNull()

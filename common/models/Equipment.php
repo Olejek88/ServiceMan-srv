@@ -24,7 +24,7 @@ use yii\db\Expression;
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
  * @property House $house
- * @property Flat $flat
+ * @property Object $flat
  * @property PhotoEquipment $photoEquipment
  */
 class Equipment extends ActiveRecord
@@ -201,7 +201,7 @@ class Equipment extends ActiveRecord
      */
     public function getFlat()
     {
-        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
     }
 
     public function getPhotoEquipment() {

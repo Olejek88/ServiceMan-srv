@@ -8,8 +8,8 @@ use common\models\AlarmType;
 use common\models\City;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\FlatStatus;
-use common\models\FlatType;
+use common\models\ObjectStatus;
+use common\models\ObjectType;
 use common\models\HouseStatus;
 use common\models\HouseType;
 use common\models\Users;
@@ -88,8 +88,8 @@ class BaseController extends Controller
             case AlarmStatus::class :
             case HouseType::class :
             case HouseStatus::class :
-            case FlatType::class :
-            case FlatStatus::class :
+            case ObjectType::class :
+            case ObjectStatus::class :
             case EquipmentType::class :
             case EquipmentStatus::class :
             case Users::class :
