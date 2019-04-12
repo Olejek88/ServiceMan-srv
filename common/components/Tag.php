@@ -53,7 +53,7 @@ class Tag
      */
     public static function getTagId($tag)
     {
-        if (preg_match('/(.*):(.*)/', $tag, $match)) {
+        if (preg_match('/([a-z]*):([a-z0-9-]*)/i', $tag, $match)) {
             return $match[2];
         } else {
             return null;
@@ -68,7 +68,7 @@ class Tag
     {
         $tagTypes = self::getTagTypes();
 
-        if (preg_match('/(.*):(.*)/', $tag, $match)) {
+        if (preg_match('/([a-z]*):([a-z0-9-]*)/i', $tag, $match)) {
             $type = $match[1];
             if (in_array($type, $tagTypes)) {
                 return $type;
