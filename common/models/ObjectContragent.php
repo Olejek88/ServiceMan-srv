@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "object_contragent".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $objectUuid
  * @property string $contragentUuid

@@ -5,17 +5,17 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "user_house".
+ * This is the model class for table "task_user".
  *
  * @property integer $_id
  * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $userUuid
- * @property string $houseUuid
+ * @property string $taskUuid
  * @property string $createdAt
  * @property string $changedAt
  */
-class UserHouse extends ActiveRecord
+class TaskUser extends ActiveRecord
 {
     /**
      * Название таблицы.
@@ -24,7 +24,7 @@ class UserHouse extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'user_house';
+        return 'task_user';
     }
 
     /**
@@ -37,9 +37,9 @@ class UserHouse extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'userUuid', 'houseUuid'], 'required'],
+            [['uuid', 'userUuid', 'taskUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'userUuid', 'houseUuid'], 'string', 'max' => 50],
+            [['uuid', 'userUuid', 'taskUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -56,10 +56,9 @@ class UserHouse extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'user' => Yii::t('app', 'Пользователь'),
-            'house' => Yii::t('app', 'Дом'),
+            'task' => Yii::t('app', 'Задача'),
             'userUuid' => Yii::t('app', 'Пользователь'),
-            'houseUuid' => Yii::t('app', 'Дом'),
-            'fileName' => Yii::t('app', 'Имя файла'),
+            'taskUuid' => Yii::t('app', 'Задача'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -79,17 +78,8 @@ class UserHouse extends ActiveRecord
      * Объект связанного поля.
      * @return \yii\db\ActiveQuery
      */
-    public function getHouse()
+    public function getTask()
     {
-        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
-    }
-
-    public static function getUserName($houseUuid)
-    {
-        $model = UserHouse::find()->where(["houseUuid" => $houseUuid])->one();
-        if(!empty($model)){
-            return $model['user']->name;
-        }
-        return null;
+        return $this->hasOne(Task::class, ['uuid' => 'taskUuid']);
     }
 }

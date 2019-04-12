@@ -12,6 +12,8 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
+ * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
  * @property string $createdAt
  * @property string $changedAt

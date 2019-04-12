@@ -8,6 +8,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "receipt".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $contragentUuid
  * @property string $userUuid

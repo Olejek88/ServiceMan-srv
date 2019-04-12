@@ -12,6 +12,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid
  * @property string $alarmTypeUuid
  * @property string $alarmStatusUuid
  * @property string $objectUuid

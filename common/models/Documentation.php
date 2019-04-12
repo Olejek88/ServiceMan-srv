@@ -12,6 +12,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
  * @property string $equipmentUuid
  * @property string $documentationTypeUuid
  * @property string $title

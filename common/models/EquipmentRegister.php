@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "equipment_register".
  *
  * @property string $uuid
+ * @property string $oid идентификатор организации
  * @property string $equipmentUuid
  * @property string $registerType
  * @property string $userUuid

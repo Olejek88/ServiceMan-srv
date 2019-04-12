@@ -10,6 +10,7 @@ use yii\db\Expression;
  * This is the model class for table "{{%user_token}}".
  *
  * @property int $id
+ * @property string $oid идентификатор организации
  * @property int $user_id
  * @property string $token
  * @property string $valid_till
