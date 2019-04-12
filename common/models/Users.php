@@ -20,11 +20,15 @@ use yii\db\Expression;
  * @property integer $changedAt
  * @property string $image
  *
+ * @property integer $id
+ * @property string $photoUrl
+ * @property null|string $imageDir
  * @property User $user
  */
 class Users extends ActiveRecord
 {
     private static $_IMAGE_ROOT = 'users';
+    public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
 
     /**
      * Behaviors.
@@ -181,5 +185,4 @@ class Users extends ActiveRecord
 
         return $url;
     }
-    public const USER_SERVICE_UUID = '00000000-9bf0-4542-b127-f4ecefce49da';
 }
