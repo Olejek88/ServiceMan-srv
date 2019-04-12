@@ -29,21 +29,6 @@ return [
             'class' => 'yii\console\controllers\FixtureController',
             'namespace' => 'common\fixtures',
         ],
-        'migrate' => [
-            'class' => 'console\controllers\MigrateController',
-            'migrationPath' => '@app/migrations/schema',
-            'migrationTable' => '{{%migration}}',
-        ],
-        'migrate-rbac' => [
-            'class' => 'console\controllers\RbacMigrateController',
-            'migrationPath' => '@app/migrations/rbac',
-            'migrationTable' => '{{%migration_rbac}}',
-        ],
-        'migrate-content' => [
-            'class' => 'console\controllers\ContentMigrateController',
-            'migrationPath' => '@app/migrations/content',
-            'migrationTable' => '{{%migration_content}}',
-        ],
         'export' => [
             'class' => 'console\controllers\ExportController',
         ],

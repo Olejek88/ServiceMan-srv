@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180830_151215_add_journal
  */
-class m180830_151215_add_journal extends Migration
+class m180830_151215_add_journal extends \console\yii2\Migration
 {
     /**
      * {@inheritdoc}

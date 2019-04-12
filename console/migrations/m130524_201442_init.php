@@ -1,8 +1,6 @@
 <?php
 
-use yii\db\Migration;
-
-class m130524_201442_init extends Migration
+class m130524_201442_init extends \console\yii2\Migration
 {
     public function up()
     {

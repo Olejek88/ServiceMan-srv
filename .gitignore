@@ -41,3 +41,6 @@ phpunit.phar
 # config file by default
 common/config/conf.d/*
 !common/config/conf.d/db.php
+
+# dployer
+deploy.php

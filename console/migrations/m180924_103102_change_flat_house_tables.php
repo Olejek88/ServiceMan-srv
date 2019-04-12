@@ -1,11 +1,9 @@
 <?php
 
-use yii\db\Migration;
-
 /**
  * Class m180924_103102_change_flat_house_tables
  */
-class m180924_103102_change_flat_house_tables extends Migration
+class m180924_103102_change_flat_house_tables extends \console\yii2\Migration
 {
     const FK_RESTRICT = 'RESTRICT';
     const FK_CASCADE = 'CASCADE';
