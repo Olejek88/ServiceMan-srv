@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -17,7 +18,7 @@ use yii\db\Expression;
  *
  * @property RequestStatus $requestStatus
  */
-class RequestStatus extends ToirusModel
+class RequestStatus extends ActiveRecord
 {
     const NEW_REQUEST = "F45775D3-9876-4831-9781-92E00240D44F";
     const IN_WORK = "49085FF9-5223-404A-B98D-7B042BB571A3";

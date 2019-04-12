@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -11,21 +12,28 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $uuid
  * @property string $userUuid
+ * @property string $contragentUuid
+ * @property string $authorUuid
  * @property string $requestStatusUuid
+ * @property string $requestTypeUuid
  * @property string $comment
  * @property string $equipmentUuid
  * @property string $objectUuid
- * @property string $stageUuid
+ * @property string $taskUuid
  * @property string $closeDate
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property Objects $object
- * @property RequestStatus $requestStatus
  * @property Users $user
+ * @property Contragent $contragent
+ * @property Contragent $author
+ * @property RequestStatus $requestStatus
+ * @property RequestType $requestType
  * @property Equipment $equipment
+ * @property Object $object
+ * @property Task $task
  */
-class Request extends ToirusModel
+class Request extends ActiveRecord
 {
     /**
      * Behaviors
@@ -72,6 +80,13 @@ class Request extends ToirusModel
                     'userUuid',
                     'comment',
                     'requestStatusUuid',
+                    'requestTypeUuid',
+                    'contragentUuid',
+                    'authorUuid',
+                    'equipmentUuid',
+                    'objectUuid',
+                    'taskUuid',
+                    'comment'
                 ],
                 'required'
             ],
@@ -84,7 +99,11 @@ class Request extends ToirusModel
                     'equipmentUuid',
                     'stageUuid',
                     'objectUuid',
-                    'closeDate'
+                    'closeDate',
+                    'requestTypeUuid',
+                    'contragentUuid',
+                    'authorUuid',
+                    'taskUuid',
                 ],
                 'string',
                 'max' => 45
@@ -109,15 +128,30 @@ class Request extends ToirusModel
             'requestStatus' => function ($model) {
                 return $model->requestStatus;
             },
+            'requestTypeUuid',
+            'requestType' => function ($model) {
+                return $model->requestType;
+            },
+            'contragentUuid',
+            'contragent' => function ($model) {
+                return $model->contragent;
+            },
+            'authorUuid',
+            'author' => function ($model) {
+                return $model->author;
+            },
             'equipmentUuid',
             'equipment' => function ($model) {
                 return $model->equipment;
             },
             'objectUuid',
-            'stageUuid',
             'object' => function ($model) {
                 return $model->object;
             }, 'closeDate',
+            'taskUuid',
+            'task' => function ($model) {
+                return $model->task;
+            },
             'createdAt', 'changedAt'
         ];
     }
@@ -141,9 +175,14 @@ class Request extends ToirusModel
             'requestStatus' => Yii::t('app', 'Статус заявки'),
             'equipmentUuid' => Yii::t('app', 'Uuid оборудования'),
             'equipment' => Yii::t('app', 'Оборудование'),
-            'objectUuid' => Yii::t('app', 'Uuid объект'),
+            'objectUuid' => Yii::t('app', 'Объект'),
             'object' => Yii::t('app', 'Объект'),
-            'stageUuid' => Yii::t('app', 'Uuid этапа'),
+            'authorUuid' => Yii::t('app', 'Автор заявки'),
+            'author' => Yii::t('app', 'Автор заявки'),
+            'contragentUuid' => Yii::t('app', 'Исполнитель'),
+            'contragent' => Yii::t('app', 'Исполнитель'),
+            'taskUuid' => Yii::t('app', 'Задача'),
+            'task' => Yii::t('app', 'Задача'),
             'closeDate' => Yii::t('app', 'Дата закрытия заявки'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
@@ -168,10 +207,46 @@ class Request extends ToirusModel
      *
      * @return \yii\db\ActiveQuery
      */
+    public function getContragent()
+    {
+        return $this->hasOne(
+            Contragent::class, ['uuid' => 'contragentUuid']
+        );
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAuthor()
+    {
+        return $this->hasOne(
+            Contragent::class, ['uuid' => 'authorUuid']
+        );
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
     public function getRequestStatus()
     {
         return $this->hasOne(
             RequestStatus::class, ['uuid' => 'requestStatusUuid']
+        );
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRequestType()
+    {
+        return $this->hasOne(
+            RequestType::class, ['uuid' => 'requestTypeUuid']
         );
     }
 
@@ -195,7 +270,19 @@ class Request extends ToirusModel
     public function getObject()
     {
         return $this->hasOne(
-            Objects::class, ['uuid' => 'objectUuid']
+            Object::class, ['uuid' => 'objectUuid']
+        );
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTask()
+    {
+        return $this->hasOne(
+            Task::class, ['uuid' => 'taskUuid']
         );
     }
 }

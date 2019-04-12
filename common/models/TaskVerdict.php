@@ -13,12 +13,10 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $uuid
  * @property string $title
- * @property string $taskTypeUuid
  * @property string $createdAt
  * @property string $changedAt
  * @property string $icon
  *
- * @property TaskType $taskType
  */
 class TaskVerdict extends ActiveRecord
 {
@@ -51,9 +49,9 @@ class TaskVerdict extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'title', 'taskTypeUuid'], 'required'],
+            [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'taskTypeUuid'], 'string', 'max' => 45],
+            [['uuid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 100],
         ];
     }
@@ -61,9 +59,6 @@ class TaskVerdict extends ActiveRecord
     public function fields()
     {
         return ['_id','uuid', 'title',
-            'taskType' => function ($model) {
-                return $model->taskType;
-            },
             'createdAt', 'changedAt'
         ];
     }
@@ -77,14 +72,8 @@ class TaskVerdict extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
-            'taskTypeUuid' => Yii::t('app', 'Тип задачи'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
-    }
-
-    public function getTaskType()
-    {
-        return $this->hasOne(TaskType::class, ['uuid' => 'taskTypeUuid']);
     }
 }

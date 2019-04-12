@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -13,17 +14,14 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $title
  * @property string $description
- * @property string $image
  * @property integer $normative
  * @property string $taskTypeUuid
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property string $imageUrl
  * @property TaskType $taskType
- * @property string $imageDir
  */
-class TaskTemplate extends ToirusModel
+class TaskTemplate extends ActiveRecord
 {
     private static $_IMAGE_ROOT = 'ttype';
     const DEFAULT_TASK = "138C39D3-F0F0-443C-95E7-698A5CAC6E74";
@@ -116,7 +114,6 @@ class TaskTemplate extends ToirusModel
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
             'description' => Yii::t('app', 'Описание'),
-            'image' => Yii::t('app', 'Фотография'),
             'normative' => Yii::t('app', 'Норматив'),
             'taskTypeUuid' => Yii::t('app', 'Uuid типа задачи'),
             'taskType' => Yii::t('app', 'Тип задачи'),
@@ -158,18 +155,18 @@ class TaskTemplate extends ToirusModel
     {
         $noImage = '/storage/order-level/no-image-icon-4.png';
 
-        if ($this->image == '') {
+        if ($this['image'] == '') {
             return $noImage;
         }
 
         $dbName = \Yii::$app->session->get('user.dbname');
         $typeUuid = $this->taskTypeUuid;
         $localPath = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/' . $this->image;
+            . $typeUuid . '/' . $this['image'];
         if (file_exists(Yii::getAlias($localPath))) {
             $userName = \Yii::$app->user->identity->username;
             $dir = 'storage/' . $userName . '/' . self::$_IMAGE_ROOT . '/'
-                . $typeUuid . '/' . $this->image;
+                . $typeUuid . '/' . $this['image'];
             $url = Yii::$app->request->BaseUrl . '/' . $dir;
         } else {
             $url = $noImage;

@@ -7,18 +7,23 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
 /**
- * This is the model class for table "alarm".
+ * This is the model class for table "task".
  *
  * @property integer $_id
  * @property string $uuid
  * @property string $comment
  * @property string $workStatusUuid
- * @property string $flatUuid
  * @property string $equipmentUuid
+ * @property string $taskVerdictUuid
  * @property string $startDate
  * @property string $endDate
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property TaskVerdict $taskVerdict
+ * @property WorkStatus $workStatus
+ * @property Equipment $equipment
+ * @property Operation $operations
  */
 class Task extends ActiveRecord
 {
@@ -51,17 +56,26 @@ class Task extends ActiveRecord
             [['uuid', 'workStatusUuid'], 'required'],
             [['comment'], 'string'],
             [['startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'workStatusUuid', 'flatUuid', 'equipmentUuid'], 'string', 'max' => 45],
+            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'equipmentUuid'], 'string', 'max' => 45],
         ];
     }
 
     public function fields()
     {
         return ['_id','uuid', 'comment',
+            'workStatusUuid',
             'workStatus' => function ($model) {
                 return $model->workStatus;
             },
-            'flatUuid', 'equipmentUuid',
+            'taskVerdictUuid',
+            'taskVerdict' => function ($model) {
+                return $model->taskVerdict;
+            },
+            'equipmentUuid',
+            'comment',
+            'equipment' => function ($model) {
+                return $model->equipment;
+            },
             'startDate', 'endDate', 'createdAt', 'changedAt',
             'operations' => function ($model) {
                 return $model->operations;
@@ -78,9 +92,12 @@ class Task extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'comment' => Yii::t('app', 'Комментарий'),
-            'flatUuid' => Yii::t('app', 'Объект'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
+            'equipment' => Yii::t('app', 'Оборудование'),
             'workStatusUuid' => Yii::t('app', 'Статус'),
+            'workStatus' => Yii::t('app', 'Статус'),
+            'taskVerdictUuid' => Yii::t('app', 'Вердикт'),
+            'taskVerdict' => Yii::t('app', 'Вердикт'),
             'startDate' => Yii::t('app', 'Начало'),
             'endDate' => Yii::t('app', 'Окончание'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -88,9 +105,9 @@ class Task extends ActiveRecord
         ];
     }
 
-    public function getFlat()
+    public function getTaskVerdict()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Object::class, ['uuid' => 'taskVerdictUuid']);
     }
 
     public function getWorkStatus()
@@ -101,7 +118,7 @@ class Task extends ActiveRecord
     public function getEquipment()
     {
         return $this->hasOne(
-            Equipment::className(), ['uuid' => 'equipmentUuid']
+            Equipment::class, ['uuid' => 'equipmentUuid']
         );
     }
 

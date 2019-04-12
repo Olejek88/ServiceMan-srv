@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use backend\models\ShutdownSearch;
-use common\models\Shutdown;
+use backend\models\RequestTypeSearch;
+use common\models\RequestStatus;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -11,12 +11,16 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * ShutdownController implements the CRUD actions for Shutdown model.
+ * RequestTypeController implements the CRUD actions for RequestType model.
  */
-class ShutdownController extends Controller
+class RequestTypeController extends Controller
 {
     /**
+     * Behaviors
+     *
      * @inheritdoc
+     *
+     * @return array
      */
     public function behaviors()
     {
@@ -30,6 +34,12 @@ class ShutdownController extends Controller
         ];
     }
 
+    /**
+     * Init
+     *
+     * @return void
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
@@ -40,61 +50,49 @@ class ShutdownController extends Controller
     }
 
     /**
-     * Lists all Shutdown models.
+     * Lists all Group models.
+     *
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new ShutdownSearch();
+        $searchModel = new RequestTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 100;
 
-        return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
+        return $this->render(
+            'index',
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
     }
 
     /**
-     * Displays a single Shutdown model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    /**
-     * Creates a new Shutdown model.
+     * Creates a new RequestStatus model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     *
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Shutdown();
-
+        $model = new RequestStatus();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new ShutdownSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 15;
-            return $this->render('index', [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-            ]);
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
-                'model' => $model
+                'model' => $model,
             ]);
         }
     }
 
     /**
-     * Updates an existing Shutdown model.
+     * Updates an existing RequestStatus model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
+     *
+     * @param integer $id Id
+     *
      * @return mixed
      */
     public function actionUpdate($id)
@@ -111,31 +109,51 @@ class ShutdownController extends Controller
     }
 
     /**
-     * Deletes an existing Shutdown model.
+     * Deletes an existing RequestStatus model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
+     *
+     * @param integer $id Id
+     *
      * @return mixed
      */
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Shutdown model based on its primary key value.
+     * Finds the RequestStatus model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Shutdown the loaded model
+     *
+     * @param integer $id Id
+     *
+     * @return RequestStatus the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Shutdown::findOne($id)) !== null) {
+        if (($model = RequestStatus::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * Displays a single Service model.
+     *
+     * @param integer $id Id
+     *
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 }

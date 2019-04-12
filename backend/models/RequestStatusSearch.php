@@ -2,14 +2,14 @@
 
 namespace backend\models;
 
-use common\models\UsersAttribute;
+use common\models\RequestStatus;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * UsersAttributeSearch represents the model behind the search form about `common\models\UsersAttribute`.
+ * RequestStatusSearch represents the model behind the search form about `common\models\RequestStatus`.
  */
-class UsersAttributeSearch extends UsersAttribute
+class RequestStatusSearch extends RequestStatus
 {
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class UsersAttributeSearch extends UsersAttribute
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'attributeTypeUuid', 'userUuid', 'date', 'value', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class UsersAttributeSearch extends UsersAttribute
      */
     public function search($params)
     {
-        $query = UsersAttribute::find();
+        $query = RequestStatus::find();
 
         // add conditions that should always apply here
 
@@ -59,16 +59,12 @@ class UsersAttributeSearch extends UsersAttribute
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'date' => $this->date,
-            'value' => $this->value,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'attributeTypeUuid', $this->attributeTypeUuid])
-            ->andFilterWhere(['like', ' userUuid', $this->userUuid])
-            ->orderBy(['changedAt' => SORT_DESC]);
+            ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

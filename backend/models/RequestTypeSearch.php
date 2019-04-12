@@ -2,14 +2,16 @@
 
 namespace backend\models;
 
-use common\models\UserChannel;
+use common\models\Group;
+use common\models\RequestStatus;
+use common\models\RequestType;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * UserChannelSearch represents the model behind the search form about `backend\models\UserChannel`.
+ * RequestTypeSearch represents the model behind the search form about `common\models\RequestType`.
  */
-class UserChannelSearch extends UserChannel
+class RequestTypeSearch extends RequestType
 {
     /**
      * @inheritdoc
@@ -17,10 +19,8 @@ class UserChannelSearch extends UserChannel
     public function rules()
     {
         return [
-            [['_id', 'active'], 'integer'],
-            [['_id', 'createdAt', 'updatedAt'], 'safe'],
-            [['messageChannelUuid', 'messageTypeUuid', 'userUuid', 'channelId'], 'safe'],
-            [['messageChannelUuid', 'messageTypeUuid', 'userUuid', 'channelId'], 'string'],
+            [['_id'], 'integer'],
+            [['uuid', 'title', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -42,7 +42,7 @@ class UserChannelSearch extends UserChannel
      */
     public function search($params)
     {
-        $query = UserChannel::find();
+        $query = RequestType::find();
 
         // add conditions that should always apply here
 
@@ -57,6 +57,16 @@ class UserChannelSearch extends UserChannel
             // $query->where('0=1');
             return $dataProvider;
         }
+
+        // grid filtering conditions
+        $query->andFilterWhere([
+            '_id' => $this->_id,
+            'createdAt' => $this->createdAt,
+            'changedAt' => $this->changedAt,
+        ]);
+
+        $query->andFilterWhere(['like', 'uuid', $this->uuid])
+            ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;
     }

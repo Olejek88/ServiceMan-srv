@@ -3,15 +3,15 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\TaskVerdict;
-use common\models\TaskType;
 use backend\models\TaskSearchVerdict;
 
 /**
  * TaskVerdictController implements the CRUD actions for TaskVerdict model.
  */
-class TaskVerdictController extends ToirusController
+class TaskVerdictController extends Controller
 {
     protected $modelClass = TaskVerdict::class;
 
@@ -39,19 +39,14 @@ class TaskVerdictController extends ToirusController
      */
     public function actionView($id)
     {
-        $uuid    = TaskVerdict::find()
+        $taskVerdict   = TaskVerdict::find()
                             ->select('taskTypeUuid')
                             ->where(['_id' => $id])
                             ->asArray()
                             ->one();
-        $type    = TaskType::find()
-                            ->select('title')
-                            ->where(['uuid' => $uuid['taskTypeUuid']])
-                            ->asArray()
-                            ->one();
 
         return $this->render('view', [
-            'type'  => $type,
+            'taskVerdict' => $taskVerdict,
             'model' => $this->findModel($id),
         ]);
     }
@@ -101,7 +96,6 @@ class TaskVerdictController extends ToirusController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Exception
-     * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)

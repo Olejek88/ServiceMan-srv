@@ -2,7 +2,9 @@
 
 namespace backend\controllers;
 
+use backend\models\TaskOperationSearch;
 use backend\models\UserSearch;
+use common\models\TaskOperation;
 use common\models\User;
 use Yii;
 use yii\filters\VerbFilter;
@@ -10,9 +12,9 @@ use yii\web\Controller;
 use yii\web\UnauthorizedHttpException;
 
 /**
- * UsersController implements the CRUD actions for Users model.
+ * TaskOperationController implements the CRUD actions for TaskOperation model.
  */
-class UserController extends Controller
+class TaskOperationController extends Controller
 {
     /**
      * @inheritdoc
@@ -39,12 +41,12 @@ class UserController extends Controller
     }
 
     /**
-     * Lists all Users models.
+     * Lists all TaskOperation models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new UserSearch();
+        $searchModel = new TaskOperationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -55,7 +57,7 @@ class UserController extends Controller
     }
 
     /**
-     * Displays a single Users model.
+     * Displays a single TaskOperation model.
      * @param integer $id
      * @return mixed
      */
@@ -70,13 +72,13 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new Users model.
+     * Creates a new TaskOperation model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new User;
+        $model = new TaskOperation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', '_id' => $model->id]);
@@ -88,7 +90,7 @@ class UserController extends Controller
     }
 
     /**
-     * Updates an existing Users model.
+     * Updates an existing TaskOperation model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -105,7 +107,7 @@ class UserController extends Controller
 
     public function actionUpdate($id)
     {
-        $model = new User;
+        $model = new TaskOperation;
         $model = $model::find()->where(['_id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -118,14 +120,14 @@ class UserController extends Controller
     }
 
     /**
-     * Deletes an existing Users model.
+     * Deletes an existing TaskOperation model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $model = new User;
+        $model = new TaskOperation;
         $model = $model::find()->where(['_id' => $id])->one();
 
         $model->delete();

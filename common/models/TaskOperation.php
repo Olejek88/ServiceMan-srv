@@ -13,7 +13,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $taslTemplateUuid
+ * @property string $taskTemplateUuid
  * @property string $operationTemplateUuid
  * @property string $createdAt
  * @property string $changedAt

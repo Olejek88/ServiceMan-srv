@@ -1,14 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace backend\controllers;
 
 use common\components\TypeTreeHelper;
@@ -17,20 +7,15 @@ use common\models\TaskTypeTree;
 use common\models\TaskVerdict;
 use Yii;
 use yii\base\DynamicModel;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\TaskType;
 use backend\models\TaskSearchType;
 
 /**
  * TaskTypeController implements the CRUD actions for TaskType model.
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  */
-class TaskTypeController extends ToirusController
+class TaskTypeController extends Controller
 {
     protected $modelClass = TaskType::class;
 
@@ -102,7 +87,7 @@ class TaskTypeController extends ToirusController
             // сохраняем новый тип инструмента
             if ($model->save()) {
                 $parentId = $model->_id;
-                $parentUuid = $parentModel->parentUuid;
+                $parentUuid = $parentModel['parentUuid'];
                 if ($parentUuid === '00000000-0000-0000-0000-000000000000') {
                     // элемен будет в корне списка
                     $childId = $parentId;
@@ -111,7 +96,7 @@ class TaskTypeController extends ToirusController
                     $parentType = TaskType::find()
                         ->where(['uuid' => $parentUuid])
                         ->one();
-                    $childId = $parentType->_id;
+                    $childId = $parentType['_id'];
                 }
 
                 TypeTreeHelper::addTree($parentId, $childId, TaskTypeTree::class);
@@ -127,7 +112,7 @@ class TaskTypeController extends ToirusController
                 );
             }
         } else {
-            $parentModel->parentUuid = '00000000-0000-0000-0000-000000000000';
+            $parentModel['parentUuid'] = '00000000-0000-0000-0000-000000000000';
             return $this->render(
                 'create',
                 [
@@ -157,7 +142,7 @@ class TaskTypeController extends ToirusController
             $parentModel->addRule(['parentUuid'], 'string', ['max' => 45]);
             $parentModel->load(Yii::$app->request->post());
             TypeTreeHelper::moveTree(
-                $id, $parentModel->parentUuid, TaskType::class, TaskTypeTree::class
+                $id, $parentModel['parentUuid'], TaskType::class, TaskTypeTree::class
             );
             $model->save();
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -175,7 +160,7 @@ class TaskTypeController extends ToirusController
                 $parentUuid = '00000000-0000-0000-0000-000000000000';
             }
 
-            $parentModel->parentUuid = $parentUuid;
+            $parentModel['parentUuid'] = $parentUuid;
             return $this->render(
                 'update',
                 [
@@ -195,7 +180,6 @@ class TaskTypeController extends ToirusController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Exception
-     * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
