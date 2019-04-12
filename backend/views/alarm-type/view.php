@@ -6,7 +6,6 @@ use yii\widgets\DetailView;
 /* @var $model common\models\AlarmType */
 
 $this->title = $model['title'];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Предупреждения'), 'url' => ['index']];
 ?>
 <div class="order-status-view box-padding">
 

@@ -48,7 +48,6 @@ class m180926_091958_add_user_street extends \console\yii2\Migration
             self::FK_RESTRICT,
             self::FK_CASCADE
         );
-
     }
 
     /**

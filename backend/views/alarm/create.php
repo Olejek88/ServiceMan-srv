@@ -4,11 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model \common\models\Alarm */
 
-$this->title = Yii::t('app', 'Создать событие аварии');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Оборудование'),
-    'url' => ['index']
-];
+$this->title = Yii::t('app', 'Создать предупреждение');
 ?>
 <div class="equipment-create box-padding">
 
@@ -32,8 +28,6 @@ $this->params['breadcrumbs'][] = [
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>

@@ -7,11 +7,11 @@ use backend\models\EquipmentSearch;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Flat;
+use common\models\Object;
 use common\models\House;
 use common\models\Measure;
 use common\models\Message;
-use common\models\PhotoEquipment;
+use common\models\Photo;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
@@ -74,6 +74,9 @@ class EquipmentController extends Controller
                 ->one();
             if ($_POST['editableAttribute'] == 'serial') {
                 $model['serial'] = $_POST['Equipment'][$_POST['editableIndex']]['serial'];
+            }
+            if ($_POST['editableAttribute'] == 'tag') {
+                $model['tag'] = $_POST['Equipment'][$_POST['editableIndex']]['tag'];
             }
             if ($_POST['editableAttribute'] == 'equipmentTypeUuid') {
                 $model['equipmentTypeUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentTypeUuid'];
@@ -153,22 +156,23 @@ class EquipmentController extends Controller
     {
         $equipments = array();
         $equipment_count = 0;
-        $flats = Flat::find()
+        $objects = Object::find()
             ->select('*')
             ->all();
-        foreach ($flats as $flat) {
+        foreach ($objects as $object) {
             $equipment = Equipment::find()
                 ->select('*')
-                ->where(['flatUuid' => $flat['uuid']])
+                ->where(['objectUuid' => $object['uuid']])
                 ->one();
             if ($equipment == null) {
                 $equipment = new Equipment();
                 $equipment->uuid = MainFunctions::GUID();
-                $equipment->houseUuid = $flat['house']->uuid;
-                $equipment->flatUuid = $flat['uuid'];
+                $equipment->equipmentSystemUuid = $equipment['equipmentSystem']->uuid;
+                $equipment->objectUuid = $object['uuid'];
                 $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
                 $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
                 $equipment->serial = '222222';
+                $equipment->tag = '111111';
                 $equipment->testDate = date('Y-m-d H:i:s');
                 $equipment->changedAt = date('Y-m-d H:i:s');
                 $equipment->createdAt = date('Y-m-d H:i:s');
@@ -184,7 +188,7 @@ class EquipmentController extends Controller
                 }
             }
         }
-        //return $this->render('new', ['equipments' => $equipments]);
+        return $this->render('new', ['equipments' => $equipments]);
     }
 
 
@@ -278,9 +282,9 @@ class EquipmentController extends Controller
                     $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
                 }
 
-                $photo = PhotoEquipment::find()
+                $photo = Photo::find()
                     ->select('*')
-                    ->where(['equipmentUuid' => $equipment['uuid']])
+                    ->where(['objectUuid' => $equipment['uuid']])
                     ->orderBy('createdAt DESC')
                     ->one();
                 if ($photo) {
@@ -328,7 +332,7 @@ class EquipmentController extends Controller
             $object_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $equipment = Equipment::find()
                         ->select('*')
@@ -356,8 +360,8 @@ class EquipmentController extends Controller
                                 ['measure_date'] = $measure['date'];
                             $fullTree[$oCnt1][$c][$oCnt2]
                                 ['measure'] = $measure['value'];
-                            $photo_flat_count = PhotoEquipment::find()
-                                ->where(['equipmentUuid' => $equipment['uuid']])
+                            $photo_flat_count = Photo::find()
+                                ->where(['objectUuid' => $equipment['uuid']])
                                 ->andWhere(['date' >= ($measure['date']-3600)])
                                 ->andWhere(['date' < ($measure['date']+3600)])
                                 ->count();
@@ -387,8 +391,8 @@ class EquipmentController extends Controller
                                 ->andWhere(['date' < ($message['date'] + 1200)])
                                 ->count();
 
-                            $photo_flat_count = PhotoEquipment::find()
-                                ->where(['equipmentUuid' => $equipment['uuid']])
+                            $photo_flat_count = Photo::find()
+                                ->where(['objectUuid' => $equipment['uuid']])
                                 ->andWhere(['date' >= ($message['date'] - 1200)])
                                 ->andWhere(['date' < ($message['date'] + 1200)])
                                 ->count();
@@ -466,7 +470,7 @@ class EquipmentController extends Controller
             $message_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Flat::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $equipment = Equipment::find()
                         ->select('*')
@@ -484,8 +488,8 @@ class EquipmentController extends Controller
                         $message_flat_count = Message::find()
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->count();
-                        $photo_flat_count = PhotoEquipment::find()
-                            ->where(['equipmentUuid' => $equipment['uuid']])
+                        $photo_flat_count = Photo::find()
+                            ->where(['objectUuid' => $equipment['uuid']])
                             ->count();
 
                         $message = Message::find()
@@ -500,9 +504,9 @@ class EquipmentController extends Controller
                         }
                         $fullTree[$oCnt0][$c][$oCnt1]['message'] = mb_convert_encoding($message_text, 'UTF-8', 'UTF-8');
 
-                        $photo = PhotoEquipment::find()
+                        $photo = Photo::find()
                             ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->where(['objectUuid' => $equipment['uuid']])
                             ->orderBy('createdAt DESC')
                             ->one();
                         if ($photo) {
@@ -532,7 +536,7 @@ class EquipmentController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_value3'] = '';
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = '';
 
-
+                        $measure=null;
                         foreach ($measures as $measure) {
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_date'.$measure_count_column] = $measure['date'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_value'.$measure_count_column] = $measure['value'];
@@ -644,7 +648,7 @@ class EquipmentController extends Controller
                 $user = Users::find()->where(['uuid' =>
                     UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
-                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
+                $flats = Object::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($flats as $flat) {
                     $house_count++;
                     $visited = 0;
@@ -708,9 +712,9 @@ class EquipmentController extends Controller
                             $house_visited++;
                         }
 
-                        $photo = PhotoEquipment::find()
+                        $photo = Photo::find()
                             ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
+                            ->where(['objectuid' => $equipment['uuid']])
                             ->orderBy('createdAt DESC')
                             ->one();
                         if ($photo) {
@@ -772,7 +776,6 @@ class EquipmentController extends Controller
     public function actionTreeMeasure()
     {
         ini_set('memory_limit', '-1');
-        $c = 'children';
         $fullTree = array();
         $streets = Street::find()
             ->select('*')
@@ -780,23 +783,20 @@ class EquipmentController extends Controller
             ->all();
         $oCnt0 = 0;
         foreach ($streets as $street) {
-            $last_user = '';
-            $last_date = '';
             $house_count = 0;
             $house_visited = 0;
-            $oCnt1 = 0;
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
             orderBy('number')->all();
             foreach ($houses as $house) {
-                $flats = Flat::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
-                foreach ($flats as $flat) {
+                $objects = Object::find()->select('uuid,number')->where(['objectUuid' => $house['uuid']])->all();
+                foreach ($objects as $object) {
                     $house_count++;
                     $visited = 0;
-                    $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
+                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                     foreach ($equipments as $equipment) {
                         $fullTree[$oCnt0]['title']
                             = Html::a(
-                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
+                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['object']['number'],
                             ['equipment/view', 'id' => $equipment['_id']]
                         );
 
@@ -887,7 +887,7 @@ class EquipmentController extends Controller
     function actionDelete($id)
     {
         $equipment = $this->findModel($id);
-        $photos = PhotoEquipment::find()
+        $photos = Photo::find()
             ->select('*')
             ->where(['equipmentUuid' => $equipment['uuid']])
             ->all();

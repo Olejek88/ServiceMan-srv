@@ -1,5 +1,4 @@
 <?php
-
 namespace common\models;
 
 use Yii;
@@ -8,25 +7,25 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "message".
+ * This is the model class for table "messages".
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $flatUuid
- * @property string $userUuid
+ * @property string $fromUserUuid
+ * @property string $toUserUuid
+ * @property string $text
  * @property string $date
+ * @property integer $status
  * @property string $createdAt
  * @property string $changedAt
- * @property string $message
  *
- * @property Users $user
- * @property Flat $flat
+ * @property Users $fromUser
+ * @property Users $toUser
  */
 class Message extends ActiveRecord
 {
-
     /**
-     * Behaviors
+     * Behaviors.
      *
      * @return array
      */
@@ -43,21 +42,35 @@ class Message extends ActiveRecord
     }
 
     /**
-     * Название таблицы
-     *
-     * @inheritdoc
+     * Table name.
      *
      * @return string
      */
     public static function tableName()
     {
-        return '{{%message}}';
+        return 'messages';
     }
 
     /**
-     * Rules
+     * Свойства объекта со связанными данными.
      *
-     * @inheritdoc
+     * @return array
+     */
+    public function fields()
+    {
+        return ['_id', 'uuid', 'date', 'text', 'status',
+            'fromUserUuid' => function ($model) {
+                return $model->name;
+            },
+            'toUserUuid' => function ($model) {
+                return $model->name;
+            },
+            'createdAt', 'changedAt'
+        ];
+    }
+
+    /**
+     * Rules.
      *
      * @return array
      */
@@ -67,21 +80,31 @@ class Message extends ActiveRecord
             [
                 [
                     'uuid',
-                    'flatUuid',
-                    'userUuid',
+                    'fromUserUuid',
+                    'toUserUuid',
+                    'text',
+                    'status',
                     'date'
                 ],
                 'required'
             ],
-            [['uuid', 'flatUuid', 'userUuid', 'date'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
+            [
+                [
+                    'uuid',
+                    'fromUserUuid',
+                    'toUserUuid',
+                    'date'
+                ],
+                'string', 'max' => 50
+            ],
+            [['status'], 'integer'],
+            [['text'], 'string'],
         ];
     }
 
     /**
-     * Названия отрибутов
-     *
-     * @inheritdoc
+     * Метки для свойств.
      *
      * @return array
      */
@@ -90,37 +113,13 @@ class Message extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'flatUuid' => Yii::t('app', 'Квартира'),
-            'userUuid' => Yii::t('app', 'Пользователь'),
-            'flat' => Yii::t('app', 'Квартира'),
-            'user' => Yii::t('app', 'Пользователь'),
+            'fromUserUuid' => Yii::t('app', 'Отправитель'),
+            'toUserUuid' => Yii::t('app', 'Получатель'),
             'date' => Yii::t('app', 'Дата'),
+            'status' => Yii::t('app', 'Статус'),
+            'text' => Yii::t('app', 'Текст'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
-            'message' => Yii::t('app', 'Сообщение'),
-        ];
-    }
-
-    /**
-     * Fields
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return ['_id', 'uuid',
-            'flatUuid',
-            'flat' => function ($model) {
-                return $model->flat;
-            },
-            'userUuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'date',
-            'createdAt',
-            'changedAt',
-            'message',
         ];
     }
 
@@ -143,9 +142,11 @@ class Message extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getFlat()
+    public function getFromUser()
     {
-        return $this->hasOne(Flat::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(
+            Users::class, ['uuid' => 'fromUserUuid']
+        );
     }
 
     /**
@@ -153,17 +154,10 @@ class Message extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getUser()
+    public function getToUser()
     {
-        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
-    }
-
-    public static function getLastMessage($flatUuid)
-    {
-        $model = Message::find()->where(["flatUuid" => $flatUuid])->orderBy('date DESC')->one();
-        if(!empty($model)){
-            return $model['message'];
-        }
-        return null;
+        return $this->hasOne(
+            Users::class, ['uuid' => 'toUserUuid']
+        );
     }
 }

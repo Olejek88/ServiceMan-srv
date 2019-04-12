@@ -29,6 +29,8 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'serial') ?>
 
+    <?php echo $form->field($model, 'tag') ?>
+
     <?php echo $form->field($model, 'testDate') ?>
 
     <div class="form-group">

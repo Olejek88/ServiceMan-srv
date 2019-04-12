@@ -1,7 +1,7 @@
 <?php
 
 use \common\models\HouseType;
-use \common\models\FlatType;
+use \common\models\ObjectType;
 
 /**
  * Class m180918_113943_add_ref_data
@@ -22,19 +22,19 @@ class m180918_113943_add_ref_data extends \console\yii2\Migration
     {
         $date = date('Y-m-d\TH:i:s');
         $this->insert(self::FLAT_TYPE, [
-            'uuid' => FlatType::FLAT_TYPE_GENERAL,
+            'uuid' => ObjectType::FLAT_TYPE_GENERAL,
             'title' => 'Основная',
             'createdAt' => $date,
             'changedAt' => $date,
         ]);
         $this->insert(self::FLAT_TYPE, [
-            'uuid' => FlatType::FLAT_TYPE_COMMERCE,
+            'uuid' => ObjectType::FLAT_TYPE_COMMERCE,
             'title' => 'Комерческая',
             'createdAt' => $date,
             'changedAt' => $date,
         ]);
         $this->insert(self::FLAT_TYPE, [
-            'uuid' => FlatType::FLAT_TYPE_INPUT,
+            'uuid' => ObjectType::FLAT_TYPE_INPUT,
             'title' => 'Вводная',
             'createdAt' => $date,
             'changedAt' => $date,

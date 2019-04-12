@@ -3,7 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Типы предупреждений');
+$this->title = Yii::t('app', 'Статусы предупреждений');
 
 /**
  * @var $searchModel backend\models\AlarmSearchStatus

@@ -58,7 +58,7 @@ class Journal extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(
-            Users::className(), ['uuid' => 'userUuid']
+            Users::class, ['uuid' => 'userUuid']
         );
     }
 }

@@ -1,13 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace backend\controllers;
 
@@ -23,12 +14,6 @@ use yii\web\UploadedFile;
 
 /**
  * DocumentationController implements the CRUD actions for Documentation model.
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
  */
 class DocumentationController extends Controller
 {
@@ -43,7 +28,7 @@ class DocumentationController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -101,10 +86,10 @@ class DocumentationController extends Controller
                 'label' => 'Оборудование',
                 'title' => $model->equipment['title']
             ];
-        } else if ($model->equipmentModelUuid != null) {
+        } else if ($model->equipmentTypeUuid != null) {
             $entity = [
                 'label' => 'Модель',
-                'title' => $model->equipmentModel['title']
+                'title' => $model->equipmentType['title']
             ];
         } else {
             $entity = [
@@ -151,13 +136,11 @@ class DocumentationController extends Controller
                 $fileName = self::_saveFile($model, $file);
                 if ($fileName) {
                     $model->path = $fileName;
-                } else {
-                    // уведомить пользователя, админа о невозможности сохранить файл
                 }
             }
 
             if ($entityType['entityType'] == 'e') {
-                $model->equipmentModelUuid = null;
+                $model->equipmentTypeUuid = null;
             } else {
                 $model->equipmentUuid = null;
             }
@@ -198,11 +181,11 @@ class DocumentationController extends Controller
         // сохраняем старое значение image
         $oldPath = $model->path;
 
-        if ($model->equipmentModelUuid != '') {
-            $modelUuidOld = $model->equipmentModelUuid;
+        if ($model->equipmentTypeUuid != '') {
+            $modelUuidOld = $model->equipmentTypeUuid;
             $entityType['entityType'] = 'm';
         } else if ($model->equipmentUuid != '') {
-            $modelUuidOld = $model->equipment->equipmentModelUuid;
+            $modelUuidOld = $model->equipment->equipmentTypeUuid;
             $entityType['entityType'] = 'e';
         } else {
             // ошибка, такого не должно быть что не указана модель или оборудование
@@ -220,12 +203,12 @@ class DocumentationController extends Controller
             // не проверяется момент когда установлены оба поля, в качестве
             // основного используем модель оборудования
             $t = $entityType['entityType'];
-            if ($t == 'm' && $model->equipmentModelUuid != '') {
-                $modelUuidNew = $model->equipmentModelUuid;
+            if ($t == 'm' && $model->equipmentTypeUuid != '') {
+                $modelUuidNew = $model->equipmentTypeUuid;
                 $model->equipmentUuid = null;
             } else if ($t == 'e' && $model->equipmentUuid != '') {
-                $modelUuidNew = $model->equipment->equipmentModelUuid;
-                $model->equipmentModelUuid = null;
+                $modelUuidNew = $model->equipment->equipmentTypeUuid;
+                $model->equipmentTypeUuid = null;
             } else {
                 // такого не должно быть что не указана модель или оборудование
                 return $this->render(

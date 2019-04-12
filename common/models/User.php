@@ -309,7 +309,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by username or email
      *
      * @param string $login
-     * @return static|null
+     * @return array|User|null|ActiveRecord
      */
     public static function findByLogin($login)
     {
@@ -326,7 +326,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Finds user by Users->uuid
      *
      * @param string $usersUuid
-     * @return User|null
+     * @return array|User|null|ActiveRecord
      */
     public static function findByUuid($usersUuid)
     {

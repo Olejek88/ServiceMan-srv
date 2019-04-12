@@ -27,6 +27,10 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'userUuid') ?>
 
+    <?php echo $form->field($model, 'objectUuid') ?>
+
+    <?php echo $form->field($model, 'comment') ?>
+
     <?php echo $form->field($model, 'latitude') ?>
 
     <?php echo $form->field($model, 'longitude') ?>

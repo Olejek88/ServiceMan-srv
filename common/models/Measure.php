@@ -14,6 +14,7 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $equipmentUuid
  * @property string $userUuid
+ * @property string $measureTypeUuid
  * @property double $value
  * @property string $date
  * @property string $createdAt
@@ -69,12 +70,12 @@ class Measure extends ActiveRecord
                     'uuid',
                     'equipmentUuid',
                     'userUuid',
+                    'measureTypeUuid',
                     'value',
                     'date'
                 ],
                 'required'
             ],
-            /*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
             [['value'], 'number'],
             [['uuid', 'equipmentUuid', 'userUuid', 'date'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
@@ -94,6 +95,7 @@ class Measure extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
+            'measureTypeUuid' => Yii::t('app', 'Тип измерения'),
             'userUuid' => Yii::t('app', 'Пользователь'),
             'equipment' => Yii::t('app', 'Оборудование'),
             'user' => Yii::t('app', 'Пользователь'),
@@ -119,6 +121,10 @@ class Measure extends ActiveRecord
             'userUuid',
             'user' => function ($model) {
                 return $model->user;
+            },
+            'measureTypeUuid',
+            'measureType' => function ($model) {
+                return $model->measureType;
             },
             'value',
             'date',
@@ -159,6 +165,16 @@ class Measure extends ActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMeasureType()
+    {
+        return $this->hasOne(MeasureType::class, ['uuid' => 'measureTypeUuid']);
     }
 
     public static function getLastMeasureBetweenDates($equipmentUuid, $startDate, $endDate)

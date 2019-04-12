@@ -14,6 +14,7 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $alarmTypeUuid
  * @property string $alarmStatusUuid
+ * @property string $objectUuid
  * @property string $userUuid
  * @property double $longitude
  * @property double $latitude
@@ -23,9 +24,10 @@ use yii\db\Expression;
  * @property string $comment
  *
  * @property Users $user
+ * @property Object $object
  * @property AlarmStatus $alarmStatus
  * @property AlarmType $alarmType
- * @property PhotoAlarm $photoAlarm
+ * @property Photo $photo
  */
 class Alarm extends ActiveRecord
 {
@@ -57,8 +59,9 @@ class Alarm extends ActiveRecord
         return [
             [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid', 'latitude', 'longitude', 'date'], 'required'],
             [['createdAt', 'changedAt', 'date'], 'safe'],
-            [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid'], 'string', 'max' => 50],
+            [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'double'],
+            [['comment'], 'string', 'max' => 250],
         ];
     }
 
@@ -80,8 +83,13 @@ class Alarm extends ActiveRecord
             'alarmType' => function ($model) {
                 return $model->alarmType;
             },
+            'objectUuid',
+            'object' => function ($model) {
+                return $model->object;
+            },
             'longitude',
             'latitude',
+            'comment',
             'createdAt',
             'changedAt',
         ];
@@ -102,8 +110,8 @@ class Alarm extends ActiveRecord
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
-    public function getPhotoAlarm() {
-        return $this->hasMany(PhotoAlarm::class, ['alarmUuid' => 'uuid']);
+    public function getPhoto() {
+        return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
     /**
@@ -118,11 +126,12 @@ class Alarm extends ActiveRecord
             'user' => Yii::t('app', 'Пользователь'),
             'userUuid' => Yii::t('app', 'Пользователь'),
             'alarmStatus' => Yii::t('app', 'Статус'),
-            'alarmType' => Yii::t('app', 'Тип события'),
             'alarmStatusUuid' => Yii::t('app', 'Статус'),
+            'alarmType' => Yii::t('app', 'Тип события'),
             'alarmTypeUuid' => Yii::t('app', 'Тип события'),
             'longitude' => Yii::t('app', 'Долгота'),
             'latitude' => Yii::t('app', 'Широта'),
+            'comment' => Yii::t('app', 'Описание'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

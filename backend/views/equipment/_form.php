@@ -3,7 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Flat;
+use common\models\Object;
 use common\models\House;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
@@ -86,6 +86,8 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
+    <?php echo $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
+
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
         <?php echo DatePicker::widget(
@@ -123,7 +125,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $flat = Flat::find()->all();
+    $flat = Object::find()->all();
     $items = ArrayHelper::map($flat, 'uuid', function ($model) {
         return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });

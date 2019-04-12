@@ -1,45 +1,23 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
-
 namespace backend\controllers;
 
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\City;
-use common\models\CriticalType;
-use common\models\Defect;
 use common\models\Equipment;
-use common\models\EquipmentRegister;
 use common\models\EquipmentType;
-use common\models\ExternalEvent;
-use common\models\Flat;
+use common\models\Object;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
-use common\models\Operation;
-use common\models\OperationStatus;
-use common\models\Orders;
-use common\models\OrderStatus;
-use common\models\OrderVerdict;
 use common\models\PhotoEquipment;
 use common\models\PhotoHouse;
 use common\models\Resident;
-use common\models\Stage;
-use common\models\StageStatus;
 use common\models\Street;
 use common\models\Subject;
 use common\models\UserHouse;
 use common\models\Users;
-use common\models\UsersAttribute;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -62,7 +40,7 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'actions' => ['login', 'error'],
@@ -80,7 +58,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -347,7 +325,7 @@ class SiteController extends Controller
 
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
-        $flatCount = Flat::find()->count();
+        $flatCount = Object::find()->count();
         $equipmentCount = Equipment::find()->count();
         $subjectCount = Subject::find()->count();
         $residentCount = Resident::find()->count();

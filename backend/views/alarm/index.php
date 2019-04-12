@@ -4,7 +4,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Сообщения');
+$this->title = Yii::t('app', 'Предупреждения');
 ?>
 <div class="orders-index box-padding-index">
 
@@ -15,7 +15,7 @@ $this->title = Yii::t('app', 'Сообщения');
             </h3>
 
             <ul class="nav nav-tabs" style="width: 255px; margin: 0 auto;">
-                <li class="active"><a href="/alarm">Аварии</a></li>
+                <li class="active"><a href="/alarm">Предупреждения</a></li>
                 <li><a href="/alarm-type">Тип</a></li>
                 <li><a href="/alarm-status">Статус</a></li>
             </ul>

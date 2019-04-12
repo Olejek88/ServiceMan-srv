@@ -1,13 +1,11 @@
 <?php
 
-use app\commands\MainFunctions;
-use common\models\Flat;
-use common\models\Users;
-use dosamigos\datetimepicker\DateTimePicker;
-use kartik\widgets\Select2;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use app\commands\MainFunctions;
+use common\models\Users;
+use dosamigos\datetimepicker\DateTimePicker;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Message */
@@ -26,37 +24,25 @@ use yii\widgets\ActiveForm;
 
     <?php
 
-    $model->load(Yii::$app->request->post());
+        $model->load(Yii::$app->request->post());
 
-    if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-    } else {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
-    }
+        if (!$model->isNewRecord) {
+            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+        } else {
+            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+        }
 
     ?>
     <?php
-    $user = Users::find()->all();
-    $items = ArrayHelper::map($user, 'uuid', 'name');
-    echo $form->field($model, 'userUuid')->dropDownList($items);
+    $user  = Users::find()->all();
+    $items = ArrayHelper::map($user,'uuid','name');
+    echo $form->field($model, 'fromUserUuid')->dropDownList($items);
     ?>
 
     <?php
-    $flat = Flat::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
-        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
-    });
-    echo $form->field($model, 'flatUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите квартиру..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
+    $user  = Users::find()->all();
+    $items = ArrayHelper::map($user,'uuid','name');
+    echo $form->field($model, 'toUserUuid')->dropDownList($items);
     ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px;">
@@ -75,7 +61,9 @@ use yii\widgets\ActiveForm;
         ?>
     </div>
 
-    <?= $form->field($model, 'message')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'text')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'status')->checkbox() ?>
 
     <div class="form-group text-center">
 

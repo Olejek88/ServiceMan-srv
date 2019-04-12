@@ -12,6 +12,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $type
  * @property string $name
  * @property string $pin
  * @property string $contact
@@ -69,13 +70,14 @@ class Users extends ActiveRecord
                 [
                     'uuid',
                     'name',
+                    'type',
                     'pin',
                     'contact'
                 ],
                 'required'
             ],
             [['image'], 'file'],
-            [['user_id'], 'integer'],
+            [['user_id','type'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'pin'], 'string', 'max' => 50],
             [['name', 'contact'], 'string', 'max' => 100],
@@ -93,6 +95,7 @@ class Users extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'name' => Yii::t('app', 'Имя'),
+            'type' => Yii::t('app', 'Тип пользователя'),
             'pin' => Yii::t('app', 'Хеш пин кода'),
             'image' => Yii::t('app', 'Фото'),
             'contact' => Yii::t('app', 'Контакт'),
@@ -113,6 +116,7 @@ class Users extends ActiveRecord
             '_id',
             'uuid',
             'name',
+            'type',
             'pin',
             'user_id',
             'contact',
