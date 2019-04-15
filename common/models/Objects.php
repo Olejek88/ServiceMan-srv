@@ -27,7 +27,7 @@ use yii\db\Expression;
  * @property Photo $photo
  * @property ObjectType $objectType
  */
-class Object extends ActiveRecord
+class Objects extends ActiveRecord
 {
     public function behaviors()
     {

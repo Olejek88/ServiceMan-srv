@@ -1,6 +1,6 @@
 <?php
 
-use common\models\Object;
+use common\models\Objects;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\Html;
@@ -68,7 +68,7 @@ use common\models\requestStatus;
     ?>
 
     <?php
-    $objects  = Object::find()->all();
+    $objects  = Objects::find()->all();
     $items = ArrayHelper::map($objects,'uuid','title');
     echo $form->field($model, 'objectUuid')->dropDownList($items);
     ?>

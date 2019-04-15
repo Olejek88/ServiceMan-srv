@@ -2,8 +2,8 @@
 
 namespace backend\controllers;
 
-use backend\models\ObjectSearch;
-use common\models\Object;
+use backend\models\ObjectsSearch;
+use common\models\Objects;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -45,7 +45,7 @@ class ObjectController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new ObjectSearch();
+        $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 100;
 
@@ -61,7 +61,7 @@ class ObjectController extends Controller
      */
     public function actionTable()
     {
-        $searchModel = new ObjectSearch();
+        $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 1200;
 
@@ -90,10 +90,10 @@ class ObjectController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Object();
+        $model = new Objects();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new ObjectSearch();
+            $searchModel = new ObjectsSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 15;
             return $this->render('index', [
@@ -148,7 +148,7 @@ class ObjectController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Object::findOne($id)) !== null) {
+        if (($model = Objects::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

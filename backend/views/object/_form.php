@@ -10,7 +10,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Object */
+/* @var $model common\models\Objects */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

@@ -3,14 +3,14 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\Object;
+use common\models\Objects;
 use common\models\User;
 use yii\db\ActiveRecord;
 
 class FlatController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = Object::class;
+    public $modelClass = Objects::class;
 
     public function actionIndex()
     {

@@ -17,7 +17,7 @@ use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\Defect;
 use common\models\Equipment;
-use common\models\Object;
+use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
@@ -256,7 +256,7 @@ class UsersController extends Controller
             $visited = 0;
             foreach ($user_houses as $user_house) {
                 //$user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
-                $flats = Object::find()->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Objects::find()->where(['houseUuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $user_flats++;
                     $equipment = Equipment::find()->where(['flatUuid' => $flat['uuid']])->orderBy('createdAt DESC')->one();
@@ -314,7 +314,7 @@ class UsersController extends Controller
             $object_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Objects::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 $flat_gut=0;
                 foreach ($flats as $flat) {
                     $subject = Subject::find()

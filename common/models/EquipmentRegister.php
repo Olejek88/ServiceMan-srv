@@ -17,6 +17,8 @@ use yii\db\ActiveRecord;
  * @property string $description
  *
  * @property User $user
+ * @property Equipment $equipment
+ * @property RegisterType $registerType
  */
 class EquipmentRegister extends ActiveRecord
 {

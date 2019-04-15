@@ -2,7 +2,7 @@
 
 namespace backend\models;
 
-use common\models\Object;
+use common\models\Objects;
 use common\models\Shutdown;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -41,7 +41,7 @@ class ShutdownSearch extends Shutdown
      */
     public function search($params)
     {
-        $query = Object::find();
+        $query = Objects::find();
 
         // add conditions that should always apply here
 

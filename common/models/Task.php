@@ -108,7 +108,7 @@ class Task extends ActiveRecord
 
     public function getTaskVerdict()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'taskVerdictUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'taskVerdictUuid']);
     }
 
     public function getWorkStatus()

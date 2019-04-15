@@ -19,6 +19,9 @@ return [
         'queue'
     ],
     'modules' => [
+        'gii' => [
+            'class' => 'yii\gii\Module',
+        ],
         'gridview' => [
             'class' => '\kartik\grid\Module'
         ],

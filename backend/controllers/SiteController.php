@@ -7,12 +7,10 @@ use common\models\Alarm;
 use common\models\City;
 use common\models\Equipment;
 use common\models\EquipmentType;
-use common\models\Object;
+use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
-use common\models\PhotoEquipment;
-use common\models\PhotoHouse;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
@@ -325,7 +323,7 @@ class SiteController extends Controller
 
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
-        $flatCount = Object::find()->count();
+        $flatCount = Objects::find()->count();
         $equipmentCount = Equipment::find()->count();
         $subjectCount = Subject::find()->count();
         $residentCount = Resident::find()->count();

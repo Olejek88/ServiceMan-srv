@@ -80,7 +80,7 @@ class ObjectContragent extends ActiveRecord
      */
     public function getObject()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'objectUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
 }

@@ -1,7 +1,7 @@
 <?php
 namespace backend\controllers;
 
-use common\models\Object;
+use common\models\Objects;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -112,7 +112,7 @@ class TaskController extends Controller
             ->asArray()
             ->one();
 
-        $flat = Object::find()
+        $flat = Objects::find()
             ->select('title')
             ->where(['uuid' => $task['flatUuid']])
             ->asArray()

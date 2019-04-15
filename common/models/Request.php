@@ -271,7 +271,7 @@ class Request extends ActiveRecord
     public function getObject()
     {
         return $this->hasOne(
-            Object::class, ['uuid' => 'objectUuid']
+            Objects::class, ['uuid' => 'objectUuid']
         );
     }
 

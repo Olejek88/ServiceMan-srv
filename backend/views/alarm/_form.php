@@ -3,7 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
-use common\models\Object;
+use common\models\Objects;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
@@ -65,7 +65,7 @@ use yii\widgets\ActiveForm;
 
     <?php
 
-    $object = Object::find()->all();
+    $object = Objects::find()->all();
     $items = ArrayHelper::map($object, 'uuid', 'title');
     echo $form->field($model, 'objectUuid')->widget(Select2::class,
         [

@@ -7,7 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ObjectsSearch represents the model behind the search form about `common\models\Objects`.
+ * ObjectSearch represents the model behind the search form about `common\models\Object`.
  */
 class ObjectsSearch extends Objects
 {
@@ -18,8 +18,7 @@ class ObjectsSearch extends Objects
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'objectTypeUuid', 'parent', 'title', 'description', 'photo'], 'safe'],
-            [['latitude', 'longitude'], 'number'],
+            [['uuid', 'title', 'houseUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -60,16 +59,15 @@ class ObjectsSearch extends Objects
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
+            'houseUuid' => $this->houseUuid,
+            'objectStatusUuid' => $this->objectStatusUuid,
+            'createdAt' => $this->createdAt,
+            'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'objectTypeUuid', $this->objectTypeUuid])
-            ->andFilterWhere(['like', 'parent', $this->parent])
-            ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'photo', $this->photo]);
+            /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
+            ->andFilterWhere(['like', 'number', $this->title]);
 
         return $dataProvider;
     }

@@ -2,12 +2,7 @@
 
 namespace backend\controllers;
 
-use app\commands\MainFunctions;
-use backend\models\UserHouseSearch;
-use common\models\House;
 use common\models\TaskUser;
-use common\models\UserHouse;
-use common\models\Users;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;

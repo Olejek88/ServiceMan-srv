@@ -1,5 +1,5 @@
 <?php
-/* @var $searchModel backend\models\ObjectSearch */
+/* @var $searchModel backend\models\ObjectsSearch */
 
 use common\models\ObjectStatus;
 use common\models\ObjectType;
