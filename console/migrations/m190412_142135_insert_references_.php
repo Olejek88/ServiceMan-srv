@@ -87,6 +87,7 @@ class m190412_142135_insert_references_ extends Migration
             'uuid' => 'E788CF00-CDCF-4BB5-A53A-DCBC946B2325',
             'user_id' => 1,
             'name' => 'Олег Иванов',
+            'whoIs' => 'Ведущий инженер',
             'pin' => 'E20040008609006920603ED7',
             'contact' => '+79227000293 Олег',
             'createdAt' => $currentTime,
@@ -100,6 +101,7 @@ class m190412_142135_insert_references_ extends Migration
                 'name' => 'sUser',
                 'pin' => self::USERS_PIN_MD5,
                 'contact' => 'none',
+                'whoIs' => 'Сервисный',
                 'user_id' => $user['_id'],
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
@@ -113,17 +115,6 @@ class m190412_142135_insert_references_ extends Migration
         $this->insertIntoType('equipment_register_type', '4C74019F-45A9-43Ab-9B97-4D077F8BF3FA',
             'Изменение свойств', $currentTime, $currentTime);
 
-
-/*        $this->addForeignKey(
-            'fk-journal-userUuid',
-            'journal',
-            'userUuid',
-            'users',
-            'uuid',
-            $delete = 'RESTRICT',
-            $update = 'CASCADE'
-        );*/
-
         return true;
     }
 
@@ -134,7 +125,7 @@ class m190412_142135_insert_references_ extends Migration
     {
         echo "m190412_142135_insert_references_ cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
     private function insertIntoType($table, $uuid, $title, $createdAt, $changedAt) {

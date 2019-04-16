@@ -15,6 +15,7 @@ use yii\db\Expression;
  * @property string $uuid
  * @property string $type
  * @property string $name
+ * @property string $whoIs
  * @property string $pin
  * @property string $contact
  * @property integer $user_id
@@ -82,7 +83,7 @@ class Users extends ActiveRecord
             [['user_id','type'], 'integer'],
             [['deleted'], 'boolean'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin'], 'string', 'max' => 50],
+            [['uuid', 'pin', 'whoIs'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
         ];
     }
