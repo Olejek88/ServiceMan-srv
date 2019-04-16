@@ -1,6 +1,6 @@
 <?php
 
-use yii\db\Migration;
+use console\yii2\Migration;
 
 /**
  * Class m190412_104112_init_new
@@ -68,6 +68,12 @@ class m190412_104112_init_new extends Migration
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
+
+        $this->createIndex(
+            'idx-users-uuid',
+            'users',
+            'uuid'
+        );
 
         $this->createTable('{{%city}}', [
             '_id' => $this->primaryKey(),
@@ -272,8 +278,8 @@ class m190412_104112_init_new extends Migration
             'uuid' => $this->string()->notNull()->unique(),
             'objectUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
-            'longitude' => $this->double(),
-            'latitude' => $this->double(),
+            'longitude' => $this->double()->defaultValue('55'),
+            'latitude' => $this->double()->defaultValue('55'),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
@@ -294,7 +300,6 @@ class m190412_104112_init_new extends Migration
             $update = 'CASCADE'
         );
 
-
         //--------------------------------------------------------------------------------------------------------------
         $this->createTable('{{%alarm_type}}', [
             '_id' => $this->primaryKey(),
@@ -313,7 +318,7 @@ class m190412_104112_init_new extends Migration
         ], $tableOptions);
 
         $this->createTable(
-            '{{%alarms}}',
+            '{{%alarm}}',
             [
                 '_id' => $this->primaryKey()->comment("Id"),
                 'uuid' => $this->string(45)->unique()->notNull(),
@@ -324,8 +329,8 @@ class m190412_104112_init_new extends Migration
                 'objectUuid' => $this->string(45)->unique()->notNull(),
                 'userUuid' => $this->string(45)->unique()->notNull(),
                 'comment' => $this->string(512)->unique()->notNull(),
-                'longitude' => $this->double(),
-                'latitude' => $this->double(),
+                'longitude' => $this->double()->defaultValue('55'),
+                'latitude' => $this->double()->defaultValue('55'),
                 'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
                 'changedAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             ], $tableOptions
@@ -381,13 +386,13 @@ class m190412_104112_init_new extends Migration
 
         $this->createIndex(
             'idx-alarm-objectUuid',
-            'object',
+            'alarm',
             'objectUuid'
         );
 
         $this->addForeignKey(
             'fk-alarm-objectUuid',
-            'object',
+            'alarm',
             'objectUuid',
             'object',
             'uuid',
@@ -421,9 +426,10 @@ class m190412_104112_init_new extends Migration
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
 
+
         $this->createIndex(
             'idx-contragentTypeUuid',
-            'contragent_type',
+            'contragent',
             'contragentTypeUuid'
         );
 
@@ -499,8 +505,8 @@ class m190412_104112_init_new extends Migration
             'equipmentStatusUuid' => $this->string()->notNull(),
             'equipmentSystemUuid' => $this->string()->notNull(),
             'tag' => $this->string(),
-            'serial' => $this->string()->notNull(),
-            'testDate' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
+            'serial' => $this->string(),
+            'testDate' => $this->timestamp()->defaultValue('2019-01-01'),
             'deleted' => $this->smallInteger()->defaultValue(0),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -703,7 +709,7 @@ class m190412_104112_init_new extends Migration
 
         $this->createTable('{{%gps_track}}', [
             'userUuid' => $this->string()->notNull(),
-            'date' => $this->timestamp()->defaultValue('0000-00-00 00:00:00')->notNull(),
+            'date' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'longitude' => $this->double(),
             'latitude' => $this->double(),
             'sent' => $this->boolean(),
@@ -750,6 +756,7 @@ class m190412_104112_init_new extends Migration
             $delete = 'RESTRICT',
             $update = 'CASCADE'
         );
+
         //--------------------------------------------------------------------------------------------------------------
 
         $this->createTable('{{%measure_type}}', [
@@ -877,16 +884,32 @@ class m190412_104112_init_new extends Migration
         ], $tableOptions);
 
         $this->createIndex(
-            'idx-equipmentUuid',
-            'measure',
-            'equipmentUuid'
+            'idx-objectUuid',
+            'object_contragent',
+            'objectUuid'
         );
 
         $this->addForeignKey(
-            'fk-measure-equipmentUuid',
-            'measure',
-            'equipmentUuid',
-            'equipment',
+            'fk-object_contragent-objectUuid',
+            'object_contragent',
+            'objectUuid',
+            'object',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );
+
+        $this->createIndex(
+            'idx-contragentUuid',
+            'object_contragent',
+            'contragentUuid'
+        );
+
+        $this->addForeignKey(
+            'fk-object_contragent-contragentUuid',
+            'object_contragent',
+            'contragentUuid',
+            'contragent',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -923,8 +946,8 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string()->notNull()->unique(),
             'oid' => $this->string(45)->unique()->notNull(),
-            'userUuid' => $this->string(45)->notNull(),
-            'contragentUuid' => $this->string(45)->notNull(),
+            'userUuid' => $this->string(45),
+            'contragentUuid' => $this->string(45),
             'authorUuid' => $this->string(45)->notNull(),
             'requestStatusUuid' => $this->string(45)->notNull(),
             'requestTypeUuid' => $this->string(45)->notNull(),
@@ -936,54 +959,6 @@ class m190412_104112_init_new extends Migration
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
-
-        $this->createIndex(
-            'idx-userUuid',
-            'request',
-            'userUuid'
-        );
-
-        $this->addForeignKey(
-            'fk-request-userUuid',
-            'request',
-            'userUuid',
-            'users',
-            'uuid',
-            $delete = 'RESTRICT',
-            $update = 'CASCADE'
-        );
-
-        $this->createIndex(
-            'idx-contragentUuid',
-            'request',
-            'contragentUuid'
-        );
-
-        $this->addForeignKey(
-            'fk-request-contragentUuid',
-            'request',
-            'contragentUuid',
-            'contragent',
-            'uuid',
-            $delete = 'RESTRICT',
-            $update = 'CASCADE'
-        );
-
-        $this->createIndex(
-            'idx-authorUuid',
-            'request',
-            'authorUuid'
-        );
-
-        $this->addForeignKey(
-            'fk-request-authorUuid',
-            'request',
-            'authorUuid',
-            'contragent',
-            'uuid',
-            $delete = 'RESTRICT',
-            $update = 'CASCADE'
-        );
 
         $this->createIndex(
             'idx-requestStatusUuid',
@@ -1053,16 +1028,6 @@ class m190412_104112_init_new extends Migration
             'idx-taskUuid',
             'request',
             'taskUuid'
-        );
-
-        $this->addForeignKey(
-            'fk-request-taskUuid',
-            'request',
-            'taskUuid',
-            'task',
-            'uuid',
-            $delete = 'RESTRICT',
-            $update = 'CASCADE'
         );
 
         $this->createTable('{{%shutdown}}', [
@@ -1155,7 +1120,7 @@ class m190412_104112_init_new extends Migration
             'task_type_tree',
             'parent',
             'task_type',
-            'uuid',
+            '_id',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
         );
@@ -1171,7 +1136,7 @@ class m190412_104112_init_new extends Migration
             'task_type_tree',
             'child',
             'task_type',
-            'uuid',
+            '_id',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
         );
@@ -1192,8 +1157,8 @@ class m190412_104112_init_new extends Migration
             'equipmentUuid' => $this->string()->notNull(),
             'workStatusUuid' => $this->string()->notNull(),
             'taskVerdictUuid' => $this->string()->notNull(),
-            'startDate' => $this->dateTime()->notNull()->defaultExpression('0000-00-00 00:00:00'),
-            'endDate' => $this->dateTime()->notNull()->defaultExpression('0000-00-00 00:00:00'),
+            'startDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
+            'endDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
@@ -1509,23 +1474,7 @@ class m190412_104112_init_new extends Migration
     public
     function safeDown()
     {
-        echo "m190412_104112_init_new cannot be reverted.\n";
 
-        return false;
+        return true;
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m190412_104112_init_new cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

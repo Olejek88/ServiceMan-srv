@@ -5,8 +5,7 @@
  * @var $subjectCount
  * @var $equipmentCount
  * @var $equipmentTypeCount
- * @var $residentCount
- * @var $subjectsCount
+ * @var $contragentCount
  * @var $measures
  * @var $equipments
  * @var $sumStageStatusCompleteCount
@@ -51,7 +50,7 @@ $this->title = Yii::t('app', 'Сводная');
 
             <div class="info-box-content">
                 <span>Городов <?= $cityCount; ?> / Улиц <?= $streetCount; ?></span><br/>
-                <span>Квартир <?= $flatCount; ?> / Абонентов <?= $subjectCount; ?></span><br/>
+                <span>Квартир <?= $flatCount; ?> / Абонентов <?= $contragentCount; ?></span><br/>
                 <span>Выполнено <?= $last_measures; ?> [<?= $complete; ?> %]</span><br/>
             </div>
             <!-- /.info-box-content -->
@@ -83,8 +82,7 @@ $this->title = Yii::t('app', 'Сводная');
 
             <div class="info-box-content">
                 <span class="info-box-text">Субъекты</span>
-                <span>Жители <?= $residentCount; ?> / Организации <?= $subjectCount; ?></span><br/>
-                <span class="info-box-number"><?= $subjectsCount ?></span>
+                <span>Организации <?= $contragentCount; ?></span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>

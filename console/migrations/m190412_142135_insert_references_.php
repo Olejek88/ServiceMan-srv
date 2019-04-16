@@ -57,6 +57,7 @@ class m190412_142135_insert_references_ extends Migration
         $this->insertIntoType('alarm_status','57CCC9A0-50F2-4432-BFF3-AE301CEBA50E',
             'Неизвестен', $currentTime, $currentTime);
 
+
         $this->insertIntoType('house_status','9236E1FF-D967-4080-9F42-59B03ADD25E8',
             'В порядке', $currentTime, $currentTime);
         $this->insertIntoType('house_status','559FBFE0-9543-4965-AC84-8919237EC317',
@@ -64,13 +65,12 @@ class m190412_142135_insert_references_ extends Migration
         $this->insertIntoType('house_status','9B6C8A1D-498E-40EE-B973-AA9ACC6322A0',
             'Отсутствует', $currentTime, $currentTime);
 
-        $this->insertIntoType('flat_status','32562AA9-DE1D-436D-A0ED-5F5789DB8712',
+        $this->insertIntoType('object_status','32562AA9-DE1D-436D-A0ED-5F5789DB8712',
             'В порядке', $currentTime, $currentTime);
-        $this->insertIntoType('flat_status','FEA3CC91-DD48-4264-AEF6-F91947A1B8EB',
+        $this->insertIntoType('object_status','FEA3CC91-DD48-4264-AEF6-F91947A1B8EB',
             'Не доступна', $currentTime, $currentTime);
-        $this->insertIntoType('flat_status','BB6E24F2-6FA5-4E9A-83C8-5E1F4D51789B',
+        $this->insertIntoType('object_status','BB6E24F2-6FA5-4E9A-83C8-5E1F4D51789B',
             'Отсутствует', $currentTime, $currentTime);
-
 
         $this->insert('{{%user}}', [
             'username' => 'sUser',
@@ -80,6 +80,17 @@ class m190412_142135_insert_references_ extends Migration
             'status' => '10',
             'created_at' => $currentTime,
             'updated_at' => $currentTime
+        ]);
+
+        $this->insert('{{%users}}', [
+            '_id' => '1',
+            'uuid' => 'E788CF00-CDCF-4BB5-A53A-DCBC946B2325',
+            'user_id' => 1,
+            'name' => 'Олег Иванов',
+            'pin' => 'E20040008609006920603ED7',
+            'contact' => '+79227000293 Олег',
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
         ]);
 
         $user = User::find()->where(['username' => 'sUser'])->one();
@@ -101,6 +112,17 @@ class m190412_142135_insert_references_ extends Migration
             'Смена местоположения', $currentTime, $currentTime);
         $this->insertIntoType('equipment_register_type', '4C74019F-45A9-43Ab-9B97-4D077F8BF3FA',
             'Изменение свойств', $currentTime, $currentTime);
+
+
+/*        $this->addForeignKey(
+            'fk-journal-userUuid',
+            'journal',
+            'userUuid',
+            'users',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );*/
 
         return true;
     }

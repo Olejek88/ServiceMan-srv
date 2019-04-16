@@ -1,6 +1,6 @@
 <?php
 
-use yii\db\Migration;
+use console\yii2\Migration;
 
 /**
  * Class m190412_055031_rbac_init

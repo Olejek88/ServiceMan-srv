@@ -5,12 +5,14 @@ use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\City;
+use common\models\Contragent;
 use common\models\Equipment;
 use common\models\EquipmentType;
 use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
+use common\models\Photo;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
@@ -173,7 +175,7 @@ class SiteController extends Controller
         $cnt = 0;
         $photosGroup = 'var photos=L.layerGroup([';
         $photosList = '';
-        $photoHouses = PhotoHouse::find()
+        $photoHouses = Photo::find()
             ->select('*')
             //->groupBy('houseUuid')
             //->asArray()
@@ -325,10 +327,8 @@ class SiteController extends Controller
         $streetCount = Street::find()->count();
         $flatCount = Objects::find()->count();
         $equipmentCount = Equipment::find()->count();
-        $subjectCount = Subject::find()->count();
-        $residentCount = Resident::find()->count();
+        $contragentCount = Contragent::find()->count();
         $equipmentTypeCount = EquipmentType::find()->count();
-        $subjectsCount = Subject::find()->count() + Resident::find()->count();
         $usersCount = Users::find()->count();
 
         $last_measures = Measure::find()
@@ -397,7 +397,7 @@ class SiteController extends Controller
         foreach ($users as $current_user) {
             if ($count > 0)
                 $bar .= ",";
-            $photos = PhotoEquipment::find()
+            $photos = Photo::find()
                 ->where(['userUuid' => $current_user['uuid']])
                 ->count();
             $bar .= $photos;
@@ -450,7 +450,6 @@ class SiteController extends Controller
             'dashboard',
             [
                 'cityCount' => $cityCount,
-                'subjectsCount' => $subjectsCount,
                 'streetCount' => $streetCount,
                 'usersCount' => $usersCount,
                 'flatCount' => $flatCount,
@@ -465,8 +464,7 @@ class SiteController extends Controller
                 'complete' => $complete,
                 'equipmentCount' => $equipmentCount,
                 'equipmentTypeCount' => $equipmentTypeCount,
-                'subjectCount' => $subjectCount,
-                'residentCount' => $residentCount,
+                'contragentCount' => $contragentCount,
                 'currentUser' => $currentUser,
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider
