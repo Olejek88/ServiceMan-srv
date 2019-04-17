@@ -1,19 +1,13 @@
 <?php
+
 namespace common\components;
+
 use common\models\Journal;
-use common\models\Objects;
+use common\models\TaskVerdict;
 use common\models\Users;
+use common\models\WorkStatus;
 use Yii;
 
-/**
- * Class MainFunctions
- *
- * @category Category
- * @package  Common\components
- * @author   Oleg Ivanov <olejek8@yandex.ru>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 class MainFunctions
 {
     /**
@@ -30,16 +24,17 @@ class MainFunctions
         // даты должны быть не из прошлого века
         // дата окончания старше даты начала
         // время выполнения не больше лимита
-        if (strtotime($endDate)>10000000 && strtotime($beginDate)>10000000 && strtotime($endDate)>strtotime($beginDate) && (strtotime($endDate)-strtotime($beginDate))<$limit) {
+        if (strtotime($endDate) > 10000000 && strtotime($beginDate) > 10000000 && strtotime($endDate) > strtotime($beginDate) && (strtotime($endDate) - strtotime($beginDate)) < $limit) {
             return strtotime($endDate) - strtotime($beginDate);
-        }
-        else
+        } else
             return 0;
     }
+
     static function random_color_part()
     {
         return str_pad(dechex(mt_rand(0, 255)), 2, '0', STR_PAD_LEFT);
     }
+
     /**
      * Возвращает  случайный цвет в hex формате.
      *
@@ -116,18 +111,18 @@ class MainFunctions
     public static function getLocationByUser($user, $full)
     {
         $location = 'не определено';
-/*        $gps = Gpstrack::find()->where(['userUuid' => $user['uuid']])->orderBy('date DESC')->one();
-        $objects = Objects::find()->all();
-        $max_distance=10;
-        foreach ($objects as $object) {
-            $distance=abs(sqrt(($object['latitude']-$gps['latitude'])^2+($object['longitude']-$gps['longitude'])^2));
-            if ($distance<$max_distance) {
-                $max_distance = $distance;
-                $location = $object['title'];
-                if ($full)
-                    $location .= ' ['.$gps['latitude'].', '.$gps['longitude'].']';
-            }
-        }*/
+        /*        $gps = Gpstrack::find()->where(['userUuid' => $user['uuid']])->orderBy('date DESC')->one();
+                $objects = Objects::find()->all();
+                $max_distance=10;
+                foreach ($objects as $object) {
+                    $distance=abs(sqrt(($object['latitude']-$gps['latitude'])^2+($object['longitude']-$gps['longitude'])^2));
+                    if ($distance<$max_distance) {
+                        $max_distance = $distance;
+                        $location = $object['title'];
+                        if ($full)
+                            $location .= ' ['.$gps['latitude'].', '.$gps['longitude'].']';
+                    }
+                }*/
         return $location;
     }
 
@@ -142,23 +137,46 @@ class MainFunctions
         $colarr = array();
         foreach ($cols as $col => $order) {
             $colarr[$col] = array();
-            foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
+            foreach ($array as $k => $row) {
+                $colarr[$col]['_' . $k] = strtolower($row[$col]);
+            }
         }
         $eval = 'array_multisort(';
         foreach ($cols as $col => $order) {
-            $eval .= '$colarr[\''.$col.'\'],'.$order.',';
+            $eval .= '$colarr[\'' . $col . '\'],' . $order . ',';
         }
-        $eval = substr($eval,0,-1).');';
+        $eval = substr($eval, 0, -1) . ');';
         eval($eval);
         $ret = array();
         foreach ($colarr as $col => $arr) {
             foreach ($arr as $k => $v) {
-                $k = substr($k,1);
+                $k = substr($k, 1);
                 if (!isset($ret[$k])) $ret[$k] = $array[$k];
                 $ret[$k][$col] = $array[$k][$col];
             }
         }
         return $ret;
+    }
+
+    public static function getColorLabelByStatus($status, $type)
+    {
+        $label = '<div class="progress"><div class="critical3">' . $status['title'] . '</div></div>';
+        if ($type=='task_status') {
+            if ($status["uuid"] == WorkStatus::NEW_OPERATION ||
+                $status["uuid"] == WorkStatus::IN_WORK)
+                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
+            if ($status["uuid"] == WorkStatus::CANCELED)
+                $label = '<div class="progress"><div class="critical2">' . $status['title'] . '</div></div>';
+            if ($status["uuid"] == WorkStatus::UN_COMPLETE)
+                $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
+        }
+        if ($type=='task_verdict') {
+            if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
+                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
+            if ($status["uuid"] == TaskVerdict::INSPECTED)
+                $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
+        }
+        return $label;
     }
 }
 

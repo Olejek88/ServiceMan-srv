@@ -1,14 +1,14 @@
 <?php
 
+use common\models\Equipment;
+use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 
 use app\commands\MainFunctions;
-use common\models\Orders;
 use common\models\TaskVerdict;
 use common\models\WorkStatus;
-use common\models\TaskTemplate;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */
@@ -32,15 +32,19 @@ use common\models\TaskTemplate;
     ?>
 
     <?php
-    $order = Orders::find()->all();
-    $items = ArrayHelper::map($order, 'uuid', 'title');
-
-    if (isset($_GET["order"])) {
-        $param = ['options' => [$_GET["order"] => ['Selected' => true]]];
-        echo $form->field($model, 'orderUuid')->dropDownList($items, $param);
-    } else {
-        echo $form->field($model, 'orderUuid')->dropDownList($items);
-    }
+    $equipment = Equipment::find()->orderBy(['changedAt' => SORT_DESC])->all();
+    $items = ArrayHelper::map($equipment, 'uuid', 'title');
+    echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите оборудование..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php
@@ -53,12 +57,6 @@ use common\models\TaskTemplate;
     $taskVerdict = TaskVerdict::find()->all();
     $items = ArrayHelper::map($taskVerdict, 'uuid', 'title');
     echo $form->field($model, 'taskVerdictUuid')->dropDownList($items);
-    ?>
-
-    <?php
-    $taskTemplate = TaskTemplate::find()->all();
-    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
-    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
     ?>
 
     <?php
