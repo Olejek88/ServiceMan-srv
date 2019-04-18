@@ -1,7 +1,10 @@
 <?php
 namespace backend\controllers;
 
-use common\models\Object;
+use ArrayObject;
+use common\models\EquipmentSystem;
+use common\models\EquipmentType;
+use common\models\TaskUser;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -10,9 +13,7 @@ use yii\web\UnauthorizedHttpException;
 
 use common\models\Task;
 use common\models\Equipment;
-use common\models\WorkStatus;
 use common\models\Operation;
-use common\models\OperationTemplate;
 use backend\models\TaskSearch;
 
 class TaskController extends Controller
@@ -80,90 +81,13 @@ class TaskController extends Controller
      */
     public function actionView($id)
     {
-        $model = task::findOne($id);
+        $model = Task::findOne($id);
         $task = Task::findOne(['uuid' => $model['taskUuid']]);
         return $this->render(
             'view',
             [
                 'task' => $task,
                 'model' => $model,
-            ]
-        );
-    }
-
-    /**
-     * Info
-     *
-     * @param integer $id Id
-     *
-     * @return string
-     */
-    public function actionInfo($id)
-    {
-        $task = Task::find()
-            ->select('uuid, taskUuid, equipmentUuid, workStatusUuid')
-            ->where(['_id' => $id])
-            ->asArray()
-            ->one();
-
-        $equipment = Equipment::find()
-            ->select('title')
-            ->where(['uuid' => $task['equipmentUuid']])
-            ->asArray()
-            ->one();
-
-        $flat = Object::find()
-            ->select('title')
-            ->where(['uuid' => $task['flatUuid']])
-            ->asArray()
-            ->one();
-
-        $statusTitle = WorkStatus::find()
-            ->select('title')
-            ->where(['uuid' => $task['taskStatusUuid']])
-            ->asArray()
-            ->one();
-        /**
-         * Выборка задач, этапов и операций для определенного наряда
-         */
-        $operationsFind = Operation::find()
-            ->where(['stageUuid' => $task['uuid']])
-            ->asArray()
-            ->all();
-
-        $operationTemp = OperationTemplate::find()
-            ->select('uuid, title')
-            ->asArray()
-            ->all();
-
-        $workStatus = WorkStatus::find()
-            ->select('uuid, title')
-            ->asArray()
-            ->all();
-
-        foreach ($operationsFind as $key => $operation) {
-            foreach ($operationTemp as $template) {
-                if ($operation['operationTemplateUuid'] === $template['uuid']) {
-                    $operationsFind[$key]['operationTemplateUuid'] = $template['title'];
-                }
-            }
-
-            foreach ($workStatus as $status) {
-                if ($operation['workStatusUuid'] === $status['uuid']) {
-                    $operationsFind[$key]['workStatusUuid'] = $status['title'];
-                }
-            }
-        }
-
-        return $this->render(
-            'info',
-            [
-                'task' => $task,
-                'flat' => $flat,
-                'equipment' => $equipment,
-                'status' => $statusTitle,
-                'operations' => $operationsFind,
-                'model' => $this->findModel($id),
             ]
         );
     }
@@ -191,27 +115,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Generate
-     *
-     * @return string|\yii\web\Response
-     */
-    public function actionGenerate()
-    {
-        $model = new task();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect('/task/generate');
-        } else {
-            return $this->render(
-                'generate',
-                [
-                    'model' => $model,
-                ]
-            );
-        }
-    }
-
-    /**
      * Creates a new task model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
@@ -219,7 +122,7 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
-        $model = new task();
+        $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -288,5 +191,61 @@ class TaskController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * Build tree of equipment
+     *
+     * @return mixed
+     */
+    public function actionTree()
+    {
+        $tree = new ArrayObject();
+        $systems = EquipmentSystem::find()->all();
+        foreach ($systems as $system) {
+            $tree['children'][] = ['title' => $system['title'], 'key' => $system['_id'] . "", 'folder' => true];
+            $childIdx = count($tree['children']) - 1;
+            $types = EquipmentType::find()->where(['equipmentSystemUuid' => $system['uuid']])->all();
+            foreach ($types as $type) {
+                $tree['children'][$childIdx]['children'][] =
+                    ['title' => $type['title'], 'key' => $type['_id'], 'folder' => true];
+                $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
+                $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+                foreach ($equipments as $equipment) {
+                    $tree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                        ['title' => $equipment['title'], 'key' => $equipment['_id'], 'folder' => true];
+                    $childIdx3 = count($tree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                    $tasks = Task::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
+                    foreach ($tasks as $task) {
+                        $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
+                            ['title' => $task['taskTemplate']['title'], 'key' => $task['_id'], 'folder' => true];
+                        $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+                        $user_names='';
+                        foreach ($taskUsers as $taskUser) {
+                             $user_names.=$taskUser['user']['title'];
+                            }
+                        $childIdx4 = count($tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
+                        $operations = Operation::find()->where(['taskUuid' => $task['uuid']])->all();
+                        foreach ($operations as $operation) {
+                            $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][$childIdx4]['children'][] =
+                                [
+                                    'title' => $operation['operationTemplate']['title'],
+                                    'key' => $operation['_id'],
+                                    'folder' => false,
+                                    'types' => '',
+                                    'info' => '',
+                                    'user' => $user_names,
+                                    'status' => $operation['workStatus']['title'],
+                                    'startDate' => $operation['startDate'],
+                                    'closeDate' => $operation['closeDate']
+                                ];
+                        }
+                    }
+                }
+            }
+        }
+        return $this->render('tree', [
+            'equipment' => $tree
+        ]);
     }
 }

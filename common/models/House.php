@@ -12,13 +12,15 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
+ * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $number
  * @property string $houseStatusUuid
  * @property string $streetUuid
  * @property string $createdAt
  * @property string $changedAt
  * @property string $houseTypeUuid
- * @property integer $status
+ * @property boolean $deleted
  *
  * @property Street $street
  * @property HouseStatus $houseStatus
@@ -54,7 +56,7 @@ class House extends ActiveRecord
     {
         return [
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
-            [['createdAt', 'changedAt', 'status'], 'safe'],
+            [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
         ];
     }

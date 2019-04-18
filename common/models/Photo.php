@@ -11,6 +11,7 @@ use yii\db\Expression;
  * This is the model class for table "photo".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $objectUuid
  * @property string $userUuid
@@ -144,7 +145,7 @@ class Photo extends ActiveRecord implements IPhoto
      */
     public function getObject()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'objectUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
     /**

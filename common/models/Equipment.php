@@ -11,6 +11,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
  * @property string $equipmentTypeUuid
  * @property string $equipmentSystemUuid
  * @property string $serial
@@ -20,7 +21,7 @@ use yii\db\Expression;
  * @property string $objectUuid
  * @property string $createdAt
  * @property string $changedAt
- * @property integer $status
+ * @property boolean $deleted
  *
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
@@ -82,7 +83,7 @@ class Equipment extends ActiveRecord
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'serial', 'testDate', 'tag', 'status',
+            'serial', 'testDate', 'tag', 'deleted',
             'createdAt', 'changedAt'
         ];
     }
@@ -106,7 +107,7 @@ class Equipment extends ActiveRecord
                 'required'
             ],
             [['testDate', 'createdAt', 'changedAt'], 'safe'],
-            [['status'], 'integer'],
+            [['deleted'], 'boolean'],
             [
                 [
                     'uuid',
@@ -205,7 +206,7 @@ class Equipment extends ActiveRecord
      */
     public function getObject()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'objectUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
     public function getPhoto() {

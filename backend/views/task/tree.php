@@ -1,244 +1,120 @@
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.2.3/jquery.contextMenu.min.css"/>
-
 <?php
 
+use kartik\select2\Select2;
 use wbraganca\fancytree\FancytreeWidget;
-use yii\helpers\Html;
 use yii\web\JsExpression;
 
-/* @var $equipmentTree array */
-/* @var $ordersTree array */
-/* @var $taskEquipmentStageTree array */
+$this->title = 'Дерево задач';
 
-$this->title = Yii::t('app', '[+] Создание задачи и назначение наряду');
+/* @var $fullTree */
+
 ?>
-<script src="/js/custom/modules/list/jquery.js"></script>
-<script src="/js/custom/modules/list/jquery-ui.custom.js"></script>
-<script>
-    var currentStage = '0';
-    var currentTemplate = '0';
-    var currentTaskES = '0';
-    var taskTemplate = 0;
-</script>
-
-<table style="width: 100%; vertical-align: top; background-color: white">
-    <tr style="background-color: #3c8dbc; text-align: center; color: white">
-        <td><?php
-            echo Html::a(' [3] Этапы операций',
-                ['/stage-operation/tree'], ['style' => 'color:white']);
-            ?>&nbsp;>&nbsp;<?php
-            echo Html::a(' [2] Этапы задач для оборудования',
-                ['/equipment-stage/tree'], ['style' => 'color:white']);
-            ?>&nbsp;>&nbsp;<?php
-            echo Html::a(' [1] Этапы задач для оборудования',
-                ['/task-equipment-stage/tree'], ['style' => 'color:white']);
-            ?>&nbsp;|&nbsp;<?php
-            echo Html::a(' [+] Создание задачи',
-                ['/task/tree'], ['style' => 'color:yellow']);
-            ?></td>
+<table id="tree" style="background-color: white; width: 100%">
+    <colgroup>
+        <col width="*">
+        <col width="120px">
+        <col width="*">
+        <col width="150px">
+        <col width="120px">
+        <col width="140px">
+        <col width="140px">
+    </colgroup>
+    <thead style="background-color: #337ab7; color: white">
+    <tr>
+        <th align="center" colspan="7" style="background-color: #3c8dbc; color: whitesmoke">Задачи системы</th>
     </tr>
+    <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
+        <th align="center" style="font-weight: normal">Задачи/Операции</th>
+        <th>Тип</th>
+        <th>Информация</th>
+        <th>Исполнитель</th>
+        <th>Статус</th>
+        <th>Начало</th>
+        <th>Конец</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td></td>
+        <td class="center"></td>
+        <td class="alt"></td>
+        <td class="center"></td>
+        <td class="center"></td>
+        <td class="center"></td>
+        <td class="center"></td>
+    </tr>
+    </tbody>
 </table>
-<table style="width: 100%; background-color: white; height: 1px">
-    <tr><td></td></tr>
-</table>
-
-<table style="width: 100%; vertical-align: top; background-color: white" cellpadding="5">
-    <thead><tr style="background-color: #3c8dbc; text-align: center; color: white">
-        <td><?php
-            echo Html::a('<span class="glyphicon glyphicon-list"></span> Шаблоны задач',
-                ['/task-template'], ['style' => 'color:white']);
-            ?></td>
-        <td><?php
-            echo '<span class="glyphicon glyphicon-menu-hamburger"></span> Состав задачи';
-            ?></td>
-        <td><?php
-            echo Html::a('<span class="glyphicon glyphicon-list"></span> Наряды',
-                ['/orders/table'], ['style' => 'color:white']);
-            ?></td>
-    </tr></thead>
-    <tr style="vertical-align: top">
-        <td style="width: 33%">
-            <?php
-            echo FancytreeWidget::widget([
-                'options' =>[
-                    'source' => $equipmentTree,
-                    'extensions' => ['contextMenu','edit'],
-                    'activate' => new JsExpression('function(event, data) {
-                                currentStage = data.node.key;
-                                $.ajax({
-                                    url: "check-task",
-                                    type: "post",
-                                    data: {
-                                        uuid: data.node.key                                            
-                                    }, success: function (data) {                                    
-                                        var tree = $("#fancyree_w1").fancytree("getTree");
-                                        if (data!=-1) {                                        
-                                            tree.reload(
-                                                JSON.parse(data)
-                                            ).done(function() {
-                                                var rootNode = $("#fancyree_w1").fancytree("getTree");
-                                                tree.visit(function(node){
-                                                    node.setExpanded(true);
-                                                });
-                                            });
-                                            tree.render();
-                                        }
-                                    }
+<div class="modal remote fade" id="modal_request">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+<div class="modal remote fade" id="modalChange">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+<?php
+    $this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js',['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
+    $this->registerJsFile('/js/custom/modules/list/jquery.contextMenu.min.js',
+                ['depends' => ['yii\jui\JuiAsset']]);
+    $this->registerCssFile('/css/custom/modules/list/ui.fancytree.css');
+    $this->registerCssFile('/css/custom/modules/list/jquery.contextMenu.min.css');
+    echo FancytreeWidget::widget([
+    'options' => [
+        'id' => 'tree',
+        'source' => $fullTree,
+        'checkbox' => true,
+        'selectMode' => 3,
+        'extensions' => ['table', 'contextMenu'],
+        'contextMenu' => [
+            'menu' => [
+                'delete' => [
+                    'name' => "Удалить",
+                    'icon' => "delete",
+                    'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                 $.ajax({
+                                      url: "remove",
+                                      type: "post",
+                                      data: {
+                                            level: data.data.level,  
+                                            selected_node: data.key,
+                                      },
+                                    error: function (result) {
+                                        console.log(result);                                 
+                                    },
+                                    success: function (result) {
+                                        data.remove();            
+                                    }                                    
+                                 });
                             });
-                        }'),
-                    'contextMenu' => [
-                        'menu' => [
-                            'add' => [
-                                'name' => "Добавить",
-                                'icon' => "add",
-                                'callback' =>new JsExpression('function(key, opt) {
-                                    var node = $.ui.fancytree.getNode(opt.$trigger);
-                                    window.location.replace("/task-equipment-stage/update?id="+node.key);                                
-                                }')
-                            ],
-                            'delete' => [
-                                'name' => "Удалить",
-                                'icon' => "delete",
-                                'callback' => new JsExpression('function(key, opt) {
-                                    var node = $.ui.fancytree.getNode(opt.$trigger);
-                                    $.ajax({
-                                        url: "delete-task",
-                                        type: "post",
-                                        data: {
-                                            uuid: node.key,
-                                            param: 0                                            
-                                        },
-                                        success: function (data) {
-                                            if(data == 0) 
-                                                node.remove();
-                                            else
-                                                alert (\'Этот элемент удалить нельзя\');
-                                        }
-                                   });
-                                }')
-                            ],
-                            'edit' => [
-                                'name' => 'Редактировать',
-                                'icon' => 'edit',
-                                'callback' =>new JsExpression('function(key, opt) {
-                                    var node = $.ui.fancytree.getNode(opt.$trigger);
-                                    window.location.replace("/task-equipment-stage/update?id="+node.key);                                
-                                }')
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
-            ?>
-        </td>
-        <td style="width: 33%">
-            <?php
-            echo FancytreeWidget::widget([
-                'options' =>[
-                    'source' => $taskEquipmentStageTree,
-                    'extensions' => ['dnd'],
-                    'activate' => new JsExpression('function(event, data) {
-                        if (data.node.folder) {
-                            currentTemplate = data.node.key;                            
-                            taskTemplate = 1;
-                        }
-                        else {
-                            currentTaskSE = data.node.key;
-                            taskTemplate = 0;
-                        }
-                    }'),
-
-                    'dnd' => [
-                        'preventVoidMoves' => true,
-                        'preventRecursiveMoves' => true,
-                        'autoExpandMS' => 400,
-                        'dragStart' => new JsExpression('function(node, data) {
-				            return true;
-			            }'),
-                        'dragEnter' => new JsExpression('function(node, data) {
-				            return true;
-			            }'),
-                        'dragDrop' => new JsExpression('function(node, data) {
-				            data.otherNode.moveTo(node, data.hitMode);
-			            }'),
-                    ],
-                ]
-            ]);
-            ?>
-        </td>
-        <td style="width: 33%">
-            <?php
-            echo FancytreeWidget::widget([
-                'options' =>[
-                    'source' => $ordersTree,
-                    'extensions' => ['dnd', 'contextMenu'],
-                    'dnd' => [
-                        'preventVoidMoves' => true,
-                        'preventRecursiveMoves' => true,
-                        'autoExpandMS' => 400,
-                        'dragStart' => new JsExpression('function(node, data) {
-				            return true;
-			            }'),
-                        'dragEnter' => new JsExpression('function(node, data) {
-				            return true;
-			            }'),
-                        'dragDrop' => new JsExpression('function(node, data) {
-				            if (currentStage>0) {
-				                if (data.node.folder==1 && data.node.data.order) {
-                                    var datas = data;
-				                    $.ajax({
-                                        url: "move-task",
-                                        type: "post",
-                                        data: {
-                                            uuidTemplate: currentTemplate,
-                                            uuidTask: currentTaskES,
-                                            taskTemplate: taskTemplate,
-                                            orderUuid: datas.node.key,
-                                            currentTS: currentStage
-                                        }, success: function (data) {
-                                            if (data == 0)
-                                                datas.otherNode.moveTo(node, datas.hitMode);
-                                            else
-                                                alert (\'Невозможно добавить задачу\');                                         
-                                            }
-                                    })
-                                }
-                                else alert (\'Нельзя добавить задачу в это место\');
-                            }
-                            else alert (\'Выберите задачу в левом дереве объектов\');                               
-			            }'),
-                    ],
-                    'contextMenu' => [
-                        'menu' => [
-                            'delete' => [
-                                'name' => "Удалить",
-                                'icon' => "delete",
-                                'callback' => new JsExpression('function(key, opt) {
-                                    var node = $.ui.fancytree.getNode(opt.$trigger);
-                                    if (node.folder) {
-                                        $.ajax({
-                                            url: "delete-task-stage",
-                                            type: "post",
-                                            data: {
-                                                uuid: node.key,
-                                                param: 0                                            
-                                            },
-                                            success: function (data) {
-                                                if(data == 0) 
-                                                    node.remove();
-                                                else
-                                                    alert (\'Этот элемент удалить нельзя\');
-                                            }
-                                        });
-                                    }
-                                }')
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
-            ?>
-        </td>
-    </tr>
-</table>
-
+                         }')
+                ],
+            ]
+        ],
+        'table' => [
+            'indentation' => 20,
+            "titleColumnIdx" => "1",
+            "typesColumnIdx" => "2",
+            "infoColumnIdx" => "3",
+            "userColumnIdx" => "4",
+            "statusColumnIdx" => "5",
+            "startDateColumnIdx" => "6",
+            "closeDateColumnIdx" => "7",
+        ],
+        'renderColumns' => new JsExpression('function(event, data) {
+            var node = data.node;
+            $tdList = $(node.tr).find(">td");
+            $tdList.eq(1).html(node.data.types);           
+            $tdList.eq(2).text(node.data.info);
+            $tdList.eq(3).html(node.data.user);
+            $tdList.eq(4).html(node.data.status);
+            $tdList.eq(5).html(node.data.startDate);
+            $tdList.eq(6).html(node.data.closeDate);
+        }')
+    ]
+]);
+?>

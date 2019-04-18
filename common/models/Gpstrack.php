@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "gps_track".
  *
  * @property string $userUuid
+ * @property string $oid идентификатор организации
  * @property double $latitude
  * @property double $longitude
  * @property string $date

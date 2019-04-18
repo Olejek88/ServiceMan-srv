@@ -72,7 +72,7 @@ class Resident extends ActiveRecord
 
     public function getFlat()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'flatUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'flatUuid']);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace console\controllers;
 use common\components\MainFunctions;
 use common\models\City;
 use common\models\Equipment;
-use common\models\Object;
+use common\models\Objects;
 use common\models\House;
 use common\models\HouseType;
 use common\models\Measure;
@@ -269,7 +269,7 @@ class ExportController extends Controller
                 if ($street != null) {
                     $house = House::find()->where(['streetUuid' => $street['uuid']])->andWhere(['number' => $homeValue])->one();
                     if ($house != null) {
-                        $flats = Object::find()->where(['houseUuid' => $house['uuid']])->all();
+                        $flats = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
                         $main_counter = 0;
                         foreach ($flats as $flat) {
                             if (strlen($flat['number']) < 4) {
@@ -313,7 +313,7 @@ class ExportController extends Controller
                         }
                         if ($main_counter == 0) {
                             $flatValue = "Котельная";
-                            $flat = new Object();
+                            $flat = new Objects();
                             $flat->uuid = MainFunctions::GUID();
                             $flat->houseUuid = $house['uuid'];
                             $flat->number = $flatValue;
@@ -439,9 +439,9 @@ class ExportController extends Controller
         }
 
         if ($flatValue == '' || $flatValue == null) $flatValue = "Котельная";
-        $flat = Object::find()->where(['number' => $flatValue])->andWhere(['houseUuid' => $house->uuid])->one();
+        $flat = Objects::find()->where(['number' => $flatValue])->andWhere(['houseUuid' => $house->uuid])->one();
         if ($flat == null) {
-            $flat = new Object();
+            $flat = new Objects();
             $flat->uuid = MainFunctions::GUID();
             $flat->houseUuid = $house->uuid;
             $flat->number = $flatValue;
@@ -505,9 +505,9 @@ class ExportController extends Controller
             }
 
             if ($flatValue == '' || $flatValue == null) $flatValue = "Котельная";
-            $flat = Object::find()->where(['number' => $flatValue])->andWhere(['houseUuid' => $house->uuid])->one();
+            $flat = Objects::find()->where(['number' => $flatValue])->andWhere(['houseUuid' => $house->uuid])->one();
             if ($flat == null) {
-                $flat = new Object();
+                $flat = new Objects();
                 $flat->uuid = MainFunctions::GUID();
                 $flat->houseUuid = $house->uuid;
                 $flat->number = $flatValue;

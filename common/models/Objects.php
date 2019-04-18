@@ -12,20 +12,22 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
+ * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
  * @property string $objectStatusUuid
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
  * @property string $objectTypeUuid
- * @property integer $status
+ * @property boolean $deleted
  *
  * @property House $house
  * @property ObjectStatus $objectStatus
  * @property Photo $photo
  * @property ObjectType $objectType
  */
-class Object extends ActiveRecord
+class Objects extends ActiveRecord
 {
     public function behaviors()
     {
@@ -55,6 +57,7 @@ class Object extends ActiveRecord
         return [
             [['uuid', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
+            [['deleted'], 'boolean'],
             [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'string', 'max' => 50],
         ];
     }

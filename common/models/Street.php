@@ -12,8 +12,11 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
+ * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
  * @property string $cityUuid
+ * @property boolean $deleted
  * @property string $createdAt
  * @property string $changedAt
  *
@@ -49,6 +52,7 @@ class Street extends ActiveRecord
         return [
             [['uuid', 'title', 'cityUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
+            [['deleted'], 'boolean'],
             [['uuid', 'title', 'cityUuid'], 'string', 'max' => 50],
         ];
     }

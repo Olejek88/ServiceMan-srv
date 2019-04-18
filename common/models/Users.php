@@ -11,15 +11,18 @@ use yii\db\Expression;
  * Class Users
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $type
  * @property string $name
+ * @property string $whoIs
  * @property string $pin
  * @property string $contact
  * @property integer $user_id
  * @property integer $createdAt
  * @property integer $changedAt
  * @property string $image
+ * @property boolean $deleted
  *
  * @property integer $id
  * @property string $photoUrl
@@ -78,8 +81,9 @@ class Users extends ActiveRecord
             ],
             [['image'], 'file'],
             [['user_id','type'], 'integer'],
+            [['deleted'], 'boolean'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin'], 'string', 'max' => 50],
+            [['uuid', 'pin', 'whoIs'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
         ];
     }

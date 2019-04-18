@@ -8,19 +8,18 @@ use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "alarm".
- *
- * @property integer $_id
- * @property string $uuid
+ * @property integer $_id @column pk|comment("Id")
+ * @property string $uuid @column string(45)|unique|notNull
+ * @property string $oid
  * @property string $alarmTypeUuid
  * @property string $alarmStatusUuid
  * @property string $objectUuid
  * @property string $userUuid
  * @property double $longitude
  * @property double $latitude
- * @property string $date
- * @property string $createdAt
- * @property string $changedAt
+ * @property string $date @column string(200)|notNull|expr('CURRENT_TIMESTAMP')
+ * @property string $createdAt @column string(200)|notNull|expr('CURRENT_TIMESTAMP')
+ * @property string $changedAt @column string(200)|notNull|expr('CURRENT_TIMESTAMP')
  * @property string $comment
  *
  * @property Users $user

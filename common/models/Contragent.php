@@ -10,6 +10,8 @@ use yii\db\ActiveRecord;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid идентификатор организации
+ * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
  * @property string $address
  * @property string $phone
@@ -17,7 +19,7 @@ use yii\db\ActiveRecord;
  * @property string $director
  * @property string $email
  * @property string $contragentTypeUuid
- * @property integer $status
+ * @property integer $deleted
  * @property string $createdAt
  * @property string $changedAt
  *
@@ -60,8 +62,8 @@ class Contragent extends ActiveRecord
     public function rules()
     {
         return [
-            ['status', 'default', 'value' => Status::STATUS_DEFAULT],
-            ['status', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
+            ['deleted', 'default', 'value' => Status::STATUS_DEFAULT],
+            ['deleted', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
         ];
     }
 
@@ -76,6 +78,6 @@ class Contragent extends ActiveRecord
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['_id' => $id, 'status' => Status::STATUS_DEFAULT]);
+        return static::findOne(['_id' => $id, 'deleted' => Status::STATUS_DEFAULT]);
     }
 }

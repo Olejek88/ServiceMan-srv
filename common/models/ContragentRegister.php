@@ -9,6 +9,7 @@ use yii\db\ActiveRecord;
  * This is the model class for table "contragent_register".
  *
  * @property string $uuid
+ * @property string $oid идентификатор организации
  * @property string $contragentUuid
  * @property string $date
  * @property string $description

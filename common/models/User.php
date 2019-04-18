@@ -12,6 +12,7 @@ use yii\web\IdentityInterface;
  * User model
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token

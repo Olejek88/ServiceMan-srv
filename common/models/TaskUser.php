@@ -5,17 +5,17 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "object_contragent".
+ * This is the model class for table "task_user".
  *
  * @property integer $_id
  * @property string $oid идентификатор организации
  * @property string $uuid
- * @property string $objectUuid
- * @property string $contragentUuid
+ * @property string $userUuid
+ * @property string $taskUuid
  * @property string $createdAt
  * @property string $changedAt
  */
-class ObjectContragent extends ActiveRecord
+class TaskUser extends ActiveRecord
 {
     /**
      * Название таблицы.
@@ -24,7 +24,7 @@ class ObjectContragent extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'object_contragent';
+        return 'task_user';
     }
 
     /**
@@ -37,9 +37,9 @@ class ObjectContragent extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'objectUuid', 'contragentUuid'], 'required'],
+            [['uuid', 'userUuid', 'taskUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'objectUuid', 'contragentUuid'], 'string', 'max' => 50],
+            [['uuid', 'userUuid', 'taskUuid'], 'string', 'max' => 50],
         ];
     }
 
@@ -55,10 +55,10 @@ class ObjectContragent extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'object' => Yii::t('app', 'Объект'),
-            'objectUuid' => Yii::t('app', 'Объект'),
-            'contragent' => Yii::t('app', 'Контрагент'),
-            'contragentUuid' => Yii::t('app', 'Контрагент'),
+            'user' => Yii::t('app', 'Пользователь'),
+            'task' => Yii::t('app', 'Задача'),
+            'userUuid' => Yii::t('app', 'Пользователь'),
+            'taskUuid' => Yii::t('app', 'Задача'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -69,18 +69,17 @@ class ObjectContragent extends ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getContragent()
+    public function getUser()
     {
-        return $this->hasOne(Contragent::class, ['uuid' => 'contragentUuid']);
+        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
     /**
      * Объект связанного поля.
      * @return \yii\db\ActiveQuery
      */
-    public function getObject()
+    public function getTask()
     {
-        return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
+        return $this->hasOne(Task::class, ['uuid' => 'taskUuid']);
     }
-
 }

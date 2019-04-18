@@ -10,6 +10,7 @@ use yii\db\Expression;
  * This is the model class for table "request".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $userUuid
  * @property string $contragentUuid
@@ -270,7 +271,7 @@ class Request extends ActiveRecord
     public function getObject()
     {
         return $this->hasOne(
-            Object::class, ['uuid' => 'objectUuid']
+            Objects::class, ['uuid' => 'objectUuid']
         );
     }
 

@@ -1,7 +1,7 @@
 <?php
 
 use app\commands\MainFunctions;
-use common\models\Object;
+use common\models\Objects;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -39,7 +39,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $flat = Object::find()->all();
+    $flat = Objects::find()->all();
     $items = ArrayHelper::map($flat, 'uuid', function ($model) {
         return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
     });

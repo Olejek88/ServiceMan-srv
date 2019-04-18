@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use yii\helpers\Html;
 
 /* @var $model \common\models\Users */
@@ -16,8 +17,8 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
             Профиль пользователя
         </h1>
         <ol class="breadcrumb">
-            <li><a href="/"><i class="fa fa-dashboard"></i> Главная</a></li>
-            <li class="active"><a href="/users/dashboard">Пользователи</a></li>
+            <li><?php echo Html::a('Главная', '/') ?></li>
+            <li><?php echo Html::a('Пользователи', '/users/dashboard') ?></li>
         </ol>
     </section>
 
@@ -36,6 +37,7 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                         echo '<img class="profile-user-img img-responsive img-circle" src="' . Html::encode($path) . '">';
                         ?>
                         <h3 class="profile-username text-center"><?php echo $model['name'] ?></h3>
+                        <p class="text-muted text-center"><?php echo $model['whoIs'] ?></p>
                         <ul class="list-group list-group-unbordered">
                             <li class="list-group-item">
                                 <b>Фотографий</b> <a class="pull-right"><?php echo $user_property['photo'] ?></a>
@@ -44,10 +46,12 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                                 <b>Измерений</b> <a class="pull-right"><?php echo $user_property['measure'] ?></a>
                             </li>
                             <li class="list-group-item">
-                                <b>Аварий</b> <a class="pull-right"><?php echo $user_property['alarms'] ?></a>
+                                <b>Предупреждений</b> <a class="pull-right"><?php echo $user_property['alarms'] ?></a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Собщений</b> <a class="pull-right"><?php echo $user_property['messages'] ?></a>
                             </li>
                         </ul>
-                        <!--                        <a href="#" class="btn btn-primary btn-block"><b>Аттрибуты</b></a> -->
                     </div>
                 </div>
 
@@ -63,7 +67,7 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                             <?php echo $model['contact'] ?>
                         </span>
                         <hr>
-                        <strong><i class="fa fa-tag margin-r-5"></i> Пин-код</strong>
+                        <strong><i class="fa fa-tag margin-r-5"></i> Код</strong>
                         <span class="text-muted">
                             <?php echo $model['pin'] ?>
                         </span>
@@ -82,10 +86,24 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                         <hr>
                         <strong><i class="fa fa-pencil margin-r-5"></i> Специализация</strong>
                         <p>
-                            <span class="label label-danger">Администратор</span>
-                            <span class="label label-success">Оператор</span>
-                            <span class="label label-info">Персонал</span>
-                            <span class="label label-warning">Техник</span>
+                            <?php
+                            if (\Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+                                echo '<span class="label label-danger">Администратор</span>';
+                            }
+                            ?>
+                            <?php
+                            if (\Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
+                                echo '<span class="label label-success">Оператор</span>';
+                            }
+                            ?>
+                            <?php
+                            echo '<span class="label label-info">Персонал</span>';
+                            ?>
+<!--                            --><?php
+/*                            if (\Yii::$app->user->can(User::PERMISSION_CONTRACTOR)) {
+                                echo '<span class="label label-warning">Заказчик</span>';
+                            }
+                            */?>
                         </p>
 
                     </div>

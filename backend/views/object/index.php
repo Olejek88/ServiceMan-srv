@@ -3,7 +3,7 @@
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-/* @var $searchModel  backend\models\ObjectSearch */
+/* @var $searchModel  backend\models\ObjectsSearch */
 
 $this->title = Yii::t('app', 'Квартира');
 ?>

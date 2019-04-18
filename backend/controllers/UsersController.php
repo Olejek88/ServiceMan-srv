@@ -1,13 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Backend\controllers
- * @author   Максим Шумаков <ms.profile.d@gmail.com>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace backend\controllers;
 
@@ -15,15 +6,18 @@ use api\controllers\TokenController;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
+use common\models\Contragent;
 use common\models\Defect;
 use common\models\Equipment;
-use common\models\Object;
+use common\models\ObjectContragent;
+use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
 use common\models\Message;
 use common\models\Orders;
 use common\models\OrderStatus;
+use common\models\Photo;
 use common\models\PhotoEquipment;
 use common\models\PhotoFlat;
 use common\models\PhotoHouse;
@@ -55,7 +49,7 @@ class UsersController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -141,14 +135,14 @@ class UsersController extends Controller
 
         $user = $this->findModel($id);
         if ($user) {
-            $user_photo = PhotoHouse::find()->where(['userUuid' => $user['uuid']])->count() +
-                PhotoEquipment::find()->where(['userUuid' => $user['uuid']])->count() +
-                PhotoFlat::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_photo = Photo::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property['photo'] = $user_photo;
             $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property['measure'] = $user_measure;
             $user_alarm = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property['alarms'] = $user_alarm;
+            $user_messages = Message::find()->where(['fromUserUuid' => $user['uuid']])->count();
+            $user_property['messages'] = $user_messages;
             $user_attributes = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property['tracks'] = $user_attributes;
             $user_property['location'] = MainFunctions::getLocationByUser($user, true);
@@ -234,10 +228,8 @@ class UsersController extends Controller
         $user_property[][] = '';
         $count = 0;
         foreach ($users as $user) {
-            $user_photo_flat = PhotoFlat::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_photo_equipment = PhotoEquipment::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_photo_house = PhotoHouse::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['photos'] = $user_photo_house + $user_photo_flat + $user_photo_equipment;
+            $user_photo = Photo::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['photos'] = $user_photo;
             $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['alarms'] = $user_alarms;
             $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
@@ -256,17 +248,17 @@ class UsersController extends Controller
             $visited = 0;
             foreach ($user_houses as $user_house) {
                 //$user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
-                $flats = Object::find()->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Objects::find()->where(['uuid' => $user_house['houseUuid']])->all();
                 foreach ($flats as $flat) {
                     $user_flats++;
-                    $equipment = Equipment::find()->where(['flatUuid' => $flat['uuid']])->orderBy('createdAt DESC')->one();
+                    $equipment = Equipment::find()->where(['objectUuid' => $flat['uuid']])->orderBy('createdAt DESC')->one();
                     if ($equipment) {
                         $user_measure = Measure::find()->where(['equipmentUuid' => $equipment['uuid']])->
                         andWhere('date > NOW() - INTERVAL 14 DAY')->count();
                         if ($user_measure > 0)
                             $visited++;
                         else {
-                            $user_message = Message::find()->where(['flatUuid' => $flat['uuid']])->
+                            $user_message = Message::find()->where(['objectUuid' => $flat['uuid']])->
                             andWhere('date > NOW() - INTERVAL 14 DAY')->count();
                             if ($user_message > 0)
                                 $visited++;
@@ -314,12 +306,16 @@ class UsersController extends Controller
             $object_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Object::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Objects::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
                 $flat_gut=0;
                 foreach ($flats as $flat) {
-                    $subject = Subject::find()
-                        ->where(['flatUuid' => $flat['uuid']])
+                    $objectContragent = ObjectContragent::find()
+                        ->where(['uuid' => $flat['uuid']])
                         ->one();
+                    if ($objectContragent)
+                        $contragent = $objectContragent['contragent']['title'];
+                    else
+                        $contragent = '';
                     $equipments = Equipment::find()
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
@@ -328,8 +324,8 @@ class UsersController extends Controller
                     foreach ($equipments as $equipment) {
                         $address = 'ул.' . $equipment['house']['street']['title'] . ', д.' .
                             $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'];
-                        if ($subject)
-                            $address.=' ['.$subject['owner'].']';
+                        if ($contragent)
+                            $address.=' ['.$contragent['address'].']';
 
                         $gut=0;
                         $object_count++;
@@ -349,8 +345,8 @@ class UsersController extends Controller
                             $fullTree[$oCnt1]['measure_date'] = $measure['date'];
                             $fullTree[$oCnt1]['measure'] = $measure['value'];
 
-                            $photo_flat_count = PhotoEquipment::find()
-                                ->where(['equipmentUuid' => $equipment['uuid']])
+                            $photo_flat_count = Photo::find()
+                                ->where(['objectUuid' => $equipment['uuid']])
                                 ->andWhere('createdAt > DATE_SUB(\''.$measure['date'].'\', INTERVAL 15 MINUTE)')
                                 ->andWhere('createdAt < DATE_ADD(\''.$measure['date'].'\', INTERVAL 15 MINUTE)')
                                 ->count();
@@ -384,8 +380,8 @@ class UsersController extends Controller
                                 ->andWhere('date < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
                                 ->count();
 
-                            $photo_flat_count = PhotoEquipment::find()
-                                ->where(['equipmentUuid' => $equipment['uuid']])
+                            $photo_flat_count = Photo::find()
+                                ->where(['objectUuid' => $equipment['uuid']])
                                 ->andWhere('createdAt > DATE_SUB(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
                                 ->andWhere('createdAt < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
                                 ->count();

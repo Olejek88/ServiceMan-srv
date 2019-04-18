@@ -21,23 +21,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'comment') ?>
 
-    <?= $form->field($model, 'orderUuid') ?>
-
     <?= $form->field($model, 'equipmentUuid') ?>
 
     <?php // echo $form->field($model, 'taskVerdictUuid') ?>
 
-    <?php // echo $form->field($model, 'taskStatusUuid') ?>
-
-    <?php // echo $form->field($model, 'taskTemplateUuid') ?>
-
-    <?php // echo $form->field($model, 'startDate') ?>
-
-    <?php // echo $form->field($model, 'endDate') ?>
-
-    <?php // echo $form->field($model, 'prevCode') ?>
-
-    <?php // echo $form->field($model, 'nextCode') ?>
+    <?= $form->field($model, 'taskStatusUuid') ?>
 
     <?php // echo $form->field($model, 'createdAt') ?>
 

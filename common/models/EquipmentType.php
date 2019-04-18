@@ -13,8 +13,11 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $uuid
  * @property string $title
+ * @property string $equipmentSystemUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property EquipmentSystem $equipmentSystem
  */
 class EquipmentType extends ActiveRecord
 {
@@ -51,7 +54,7 @@ class EquipmentType extends ActiveRecord
         return [
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'title'], 'string', 'max' => 50],
+            [['uuid', 'title', 'equipmentSystem'], 'string', 'max' => 45],
         ];
     }
 
@@ -75,6 +78,7 @@ class EquipmentType extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
+            'equipmentSystem' => Yii::t('app', 'Ин.Система'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

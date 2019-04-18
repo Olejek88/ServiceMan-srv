@@ -10,17 +10,20 @@ use yii\db\ActiveRecord;
  * This is the model class for table "task".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $comment
  * @property string $workStatusUuid
  * @property string $equipmentUuid
  * @property string $taskVerdictUuid
+ * @property string $taskTemplateUuid
  * @property string $startDate
  * @property string $endDate
  * @property string $createdAt
  * @property string $changedAt
  *
  * @property TaskVerdict $taskVerdict
+ * @property TaskTemplate $taskTemplate
  * @property WorkStatus $workStatus
  * @property Equipment $equipment
  * @property Operation $operations
@@ -56,7 +59,7 @@ class Task extends ActiveRecord
             [['uuid', 'workStatusUuid'], 'required'],
             [['comment'], 'string'],
             [['startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'equipmentUuid'], 'string', 'max' => 45],
+            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid'], 'string', 'max' => 45],
         ];
     }
 
@@ -70,6 +73,10 @@ class Task extends ActiveRecord
             'taskVerdictUuid',
             'taskVerdict' => function ($model) {
                 return $model->taskVerdict;
+            },
+            'taskTemplateUuid',
+            'taskTemplate' => function ($model) {
+                return $model->taskTemplate;
             },
             'equipmentUuid',
             'comment',
@@ -98,6 +105,8 @@ class Task extends ActiveRecord
             'workStatus' => Yii::t('app', 'Статус'),
             'taskVerdictUuid' => Yii::t('app', 'Вердикт'),
             'taskVerdict' => Yii::t('app', 'Вердикт'),
+            'taskTemplateUuid' => Yii::t('app', 'Шаблон'),
+            'taskTemplate' => Yii::t('app', 'Шаблон'),
             'startDate' => Yii::t('app', 'Начало'),
             'endDate' => Yii::t('app', 'Окончание'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -107,7 +116,12 @@ class Task extends ActiveRecord
 
     public function getTaskVerdict()
     {
-        return $this->hasOne(Object::class, ['uuid' => 'taskVerdictUuid']);
+        return $this->hasOne(Objects::class, ['uuid' => 'taskVerdictUuid']);
+    }
+
+    public function getTaskTemplate()
+    {
+        return $this->hasOne(TaskTemplate::class, ['uuid' => 'taskTemplateUuid']);
     }
 
     public function getWorkStatus()

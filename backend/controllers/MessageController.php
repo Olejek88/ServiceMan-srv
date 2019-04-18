@@ -5,6 +5,7 @@ namespace backend\controllers;
 use common\components\MainFunctions;
 use common\models\Users;
 use Yii;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\Message;
 use backend\models\MessageSearch;
@@ -12,7 +13,7 @@ use backend\models\MessageSearch;
 /**
  * MessageController implements the CRUD actions for Message model.
  */
-class MessageController extends ToirusController
+class MessageController extends Controller
 {
     protected $modelClass = Message::class;
 

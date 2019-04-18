@@ -10,6 +10,7 @@ use yii\db\Expression;
  * This is the model class for table "operation_template".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $title
  * @property string $description

@@ -12,6 +12,7 @@ use yii\db\Expression;
  * This is the model class for table "task_operation".
  *
  * @property integer $_id
+ * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $taskTemplateUuid
  * @property string $operationTemplateUuid

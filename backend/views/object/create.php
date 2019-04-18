@@ -1,5 +1,5 @@
 <?php
-/* @var $model common\models\Object */
+/* @var $model common\models\Objects */
 
 use yii\helpers\Html;
 
