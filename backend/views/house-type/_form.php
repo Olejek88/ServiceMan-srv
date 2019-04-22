@@ -1,6 +1,7 @@
 <?php
 
 use app\commands\MainFunctions;
+use common\models\Users;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -27,12 +28,12 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')
-            ->textInput(['maxlength' => true, 'value' => MainFunctions::GUID()]);
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
 
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <div class="form-group text-center">
 

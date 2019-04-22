@@ -69,6 +69,7 @@ $gridColumns = [
         }
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'workStatusUuid',
         'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
@@ -182,6 +183,7 @@ $gridColumns = [
         'attribute' => 'openDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Открыта задача',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
@@ -198,6 +200,7 @@ $gridColumns = [
         'attribute' => 'closeDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Закрыта задача',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
@@ -210,7 +213,21 @@ $gridColumns = [
                 return 'не закрыт';
         }
     ],
-];
+    [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Основание',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            // или автоматически по расписанию
+            return 'заявка';
+        }
+    ],
+ ];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -244,14 +261,14 @@ echo GridView::widget([
                 ]
             ]).'</div><div class="col-sm-2" style="width:12%">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']).'</div><div class="col-sm-2" style="width:12%">'.
-            Html::a('Новый', ['/orders/create'], ['class'=>'btn btn-success']).'</div>'.
+            Html::a('Новая', ['/task/create'], ['class'=>'btn btn-success']).'</div>'.
             '<div class="col-sm-1" style="width:8%">'.'{export}'.'</div></div></form>',
             'options' => ['style' => 'width:100%']
         ],
     ],
     'export' => [
         'target' => GridView::TARGET_BLANK,
-        'filename' => 'orders'
+        'filename' => 'tasks'
     ],
     'pjax' => true,
     'showPageSummary' => false,
@@ -265,7 +282,7 @@ echo GridView::widget([
     'floatHeader' => false,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Наряды',
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Задачи',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

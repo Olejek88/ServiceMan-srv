@@ -53,7 +53,7 @@ class Street extends ActiveRecord
             [['uuid', 'title', 'cityUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
-            [['uuid', 'title', 'cityUuid'], 'string', 'max' => 50],
+            [['uuid', 'title', 'cityUuid', 'oid'], 'string', 'max' => 50],
         ];
     }
 

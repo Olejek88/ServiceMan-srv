@@ -2,7 +2,9 @@
 
 namespace backend\controllers;
 
+use backend\models\HouseSearch;
 use backend\models\HouseSearchStatus;
+use common\models\House;
 use common\models\HouseStatus;
 use Yii;
 use yii\filters\VerbFilter;
@@ -75,12 +77,17 @@ class HouseStatusController extends Controller
     public function actionCreate()
     {
         $model = new HouseStatus();
+        $searchModel = new HouseSearchStatus();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }

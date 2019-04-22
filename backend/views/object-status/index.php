@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model common\models\ObjectStatus */
 /* @var $searchModel backend\models\ObjectSearchStatus */
 
-$this->title = Yii::t('app', ' Статусы квартир');
+$this->title = Yii::t('app', ' Статусы объектов');
 ?>
 <div class="orders-index box-padding-index">
 

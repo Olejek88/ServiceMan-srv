@@ -1,10 +1,10 @@
 <?php
 /* @var $model common\models\Street */
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Создать улицу');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Улица'), 'url' => ['index']];
 ?>
 <div class="task-create box-padding">
 
@@ -23,6 +23,44 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Улица'), 'url' 
                             'model' => $model,
                         ]) ?>
                     </h6>
+
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'tableOptions' => [
+                            'class' => 'table-striped table table-bordered table-hover table-condensed'
+                        ],
+                        'columns' => [
+                            [
+                                'attribute'=>'_id',
+                                'contentOptions' =>[
+                                    'class' => 'table_class',
+                                    'style'=>'width: 50px; text-align: center'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content'=>function($data){
+                                    return $data->_id;
+                                }
+                            ],
+                            [
+                                'attribute'=>'title',
+                                'contentOptions' =>[
+                                    'class' => 'table_class'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content'=>function($data){
+                                    return $data->title;
+                                }
+                            ],
+                            [
+                                'attribute' => 'cityUuid',
+                                'contentOptions' => [
+                                    'class' => 'table_class'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'value' => 'city.title',
+                            ]
+                        ],
+                    ]); ?>
                 </div>
             </div>
 

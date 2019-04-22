@@ -57,7 +57,7 @@ class House extends ActiveRecord
         return [
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
-            [['uuid', 'number', 'houseStatusUuid', 'streetUuid'], 'string', 'max' => 50],
+            [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
         ];
     }
 

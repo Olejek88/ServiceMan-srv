@@ -1,15 +1,12 @@
 <?php
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\HouseStatus */
 
 $this->title = Yii::t('app', 'Создать статус дома');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Статусы'),
-    'url' => ['index']
-];
 ?>
 <div class="stage-status-create box-padding">
 
@@ -23,14 +20,41 @@ $this->params['breadcrumbs'][] = [
 
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
-                    <h6>
-                        <?php echo $this->render(
-                            '_form',
+                    <?php echo $this->render(
+                        '_form',
+                        [
+                            'model' => $model,
+                        ]
+                    ) ?>
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'tableOptions' => [
+                            'class' => 'table-striped table table-bordered table-hover table-condensed'
+                        ],
+                        'columns' => [
                             [
-                                'model' => $model,
+                                'attribute' => '_id',
+                                'contentOptions' => [
+                                    'class' => 'table_class',
+                                    'style' => 'width: 50px; text-align: center'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->_id;
+                                }
+                            ],
+                            [
+                                'attribute' => 'title',
+                                'contentOptions' => [
+                                    'class' => 'table_class'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->title;
+                                }
                             ]
-                        ) ?>
-                    </h6>
+                        ],
+                    ]); ?>
                 </div>
             </div>
 

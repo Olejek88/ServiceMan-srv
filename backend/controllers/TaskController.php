@@ -64,7 +64,7 @@ class TaskController extends Controller
         $dataProvider->pagination->pageSize = 25;
 
         return $this->render(
-            'index',
+            'table',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

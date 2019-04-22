@@ -1,10 +1,10 @@
 <?php
 /* @var $model common\models\Objects */
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Создать квартиру');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Квартира'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Создать объект');
 ?>
 <div class="task-create box-padding">
 
@@ -23,6 +23,45 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Квартира'), 
                             'model' => $model,
                         ]) ?>
                     </h6>
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'tableOptions' => [
+                            'class' => 'table-striped table table-bordered table-hover table-condensed'
+                        ],
+                        'columns' => [
+                            [
+                                'attribute'=>'_id',
+                                'contentOptions' =>[
+                                    'class' => 'table_class',
+                                    'style'=>'width: 50px; text-align: center'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content'=>function($data){
+                                    return $data->_id;
+                                }
+                            ],
+                            [
+                                'attribute'=>'title',
+                                'contentOptions' =>[
+                                    'class' => 'table_class'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content'=>function($data){
+                                    return $data->title;
+                                }
+                            ],
+                            [
+                                'attribute' => 'house',
+                                'vAlign' => 'middle',
+                                'width' => '220px',
+                                'value' => function ($data) {
+                                    return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
+                                },
+                                'header' => 'Адрес',
+                                'format' => 'raw',
+                            ],
+                        ],
+                    ]); ?>
                 </div>
             </div>
 

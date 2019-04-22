@@ -4,6 +4,7 @@ use app\commands\MainFunctions;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\House;
+use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -23,14 +24,12 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')->textInput(
-            ['maxlength' => true,
-                'value' => (new MainFunctions)->GUID()]
-        );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
 
-    <?php echo $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?php
     $houses = House::find()->all();
@@ -42,7 +41,7 @@ use yii\widgets\ActiveForm;
             'data' => $items,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите квартиру..'
+                'placeholder' => 'Выберите объект..'
             ],
             'pluginOptions' => [
                 'allowClear' => true
@@ -53,7 +52,7 @@ use yii\widgets\ActiveForm;
     <?php
     $statuses = ObjectStatus::find()->all();
     $items = ArrayHelper::map($statuses, 'uuid', 'title');
-    echo $form->field($model, 'flatStatusUuid')->widget(Select2::class,
+    echo $form->field($model, 'objectStatusUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -69,7 +68,7 @@ use yii\widgets\ActiveForm;
     <?php
     $types = ObjectType::find()->all();
     $items = ArrayHelper::map($types, 'uuid', 'title');
-    echo $form->field($model, 'flatTypeUuid')->widget(Select2::class,
+    echo $form->field($model, 'objectTypeUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',

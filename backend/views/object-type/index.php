@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model common\models\ObjectType */
 /* @var $searchModel backend\models\ObjectSearchType */
 
-$this->title = Yii::t('app', ' Типы квартир');
+$this->title = Yii::t('app', ' Типы объектов');
 ?>
 <div class="orders-index box-padding-index">
 
