@@ -3,10 +3,7 @@
 
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Статусы операций',
-]) . $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы операции'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Обновить статус');
 ?>
 <div class="operation-status-update box-padding">
 
@@ -20,11 +17,9 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оп�
 
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
-                    <h6>
-                        <?= $this->render('_form', [
-                            'model' => $model,
-                        ]) ?>
-                    </h6>
+                    <?= $this->render('_form', [
+                        'model' => $model,
+                    ]) ?>
                 </div>
             </div>
 

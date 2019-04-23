@@ -1,10 +1,10 @@
 <?php
 /* @var $model common\models\AlarmType */
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Создать тип предупреждения');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы'), 'url' => ['index']];
 
 ?>
 <div class="alert-type-create box-padding">
@@ -19,11 +19,38 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы'), 'url' =>
 
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
-                    <h6>
-                        <?= $this->render('_form', [
-                            'model' => $model,
-                        ]) ?>
-                    </h6>
+                    <?= $this->render('_form', [
+                        'model' => $model,
+                    ]) ?>
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'tableOptions' => [
+                            'class' => 'table-striped table table-bordered table-hover table-condensed'
+                        ],
+                        'columns' => [
+                            [
+                                'attribute' => '_id',
+                                'contentOptions' => [
+                                    'class' => 'table_class',
+                                    'style' => 'width: 50px; text-align: center'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->_id;
+                                }
+                            ],
+                            [
+                                'attribute' => 'title',
+                                'contentOptions' => [
+                                    'class' => 'table_class'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->title;
+                                }
+                            ]
+                        ],
+                    ]); ?>
                 </div>
             </div>
 

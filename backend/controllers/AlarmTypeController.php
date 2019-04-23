@@ -75,18 +75,18 @@ class AlarmTypeController extends Controller
     public function actionCreate()
     {
         $model = new AlarmType();
+        $searchModel = new AlarmSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new AlarmSearchType();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 15;
             return $this->render('index', [
                 'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
+                'dataProvider' => $dataProvider
             ]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

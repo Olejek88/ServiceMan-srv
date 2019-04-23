@@ -77,49 +77,17 @@ class TaskTypeController extends Controller
     public function actionCreate()
     {
         $model = new TaskType();
-        $parentModel = new DynamicModel(['parentUuid']);
-        $parentModel->addRule(['parentUuid'], 'string', ['max' => 45]);
+        $searchModel = new TaskSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
 
-        if (Yii::$app->request->isPost) {
-            $model->load(Yii::$app->request->post());
-            $parentModel->load(Yii::$app->request->post());
-
-            // сохраняем новый тип инструмента
-            if ($model->save()) {
-                $parentId = $model->_id;
-                $parentUuid = $parentModel['parentUuid'];
-                if ($parentUuid === '00000000-0000-0000-0000-000000000000') {
-                    // элемен будет в корне списка
-                    $childId = $parentId;
-                } else {
-                    // находим id родительского типа
-                    $parentType = TaskType::find()
-                        ->where(['uuid' => $parentUuid])
-                        ->one();
-                    $childId = $parentType['_id'];
-                }
-
-                TypeTreeHelper::addTree($parentId, $childId, TaskTypeTree::class);
-
-                return $this->redirect(['view', 'id' => $model->_id]);
-            } else {
-                return $this->render(
-                    'create',
-                    [
-                        'model' => $model,
-                        'parentModel' => $parentModel,
-                    ]
-                );
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
-            $parentModel['parentUuid'] = '00000000-0000-0000-0000-000000000000';
-            return $this->render(
-                'create',
-                [
-                    'model' => $model,
-                    'parentModel' => $parentModel,
-                ]
-            );
+            return $this->render('create', [
+                'model' => $model,
+                'dataProvider' => $dataProvider
+            ]);
         }
     }
 

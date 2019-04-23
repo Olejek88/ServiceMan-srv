@@ -96,15 +96,12 @@ class OperationTemplateController extends Controller
     {
         $model = new OperationTemplate();
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             // проверяем все поля, если что-то не так показываем форму с ошибками
-            if (!$model->validate()) {
-                return $this->render('create', ['model' => $model]);
-            }
+            return self::actionIndex();
         } else {
             return $this->render('create', ['model' => $model]);
         }
-        return $this->render('create', ['model' => $model]);
     }
 
     /**

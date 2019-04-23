@@ -58,7 +58,7 @@ class Alarm extends ActiveRecord
         return [
             [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid', 'latitude', 'longitude', 'date'], 'required'],
             [['createdAt', 'changedAt', 'date'], 'safe'],
-            [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
+            [['uuid', 'alarmTypeUuid', 'oid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'double'],
             [['comment'], 'string', 'max' => 250],
         ];
@@ -109,6 +109,11 @@ class Alarm extends ActiveRecord
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
+    public function getObject()
+    {
+        return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
+    }
+
     public function getPhoto() {
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
@@ -130,6 +135,8 @@ class Alarm extends ActiveRecord
             'alarmTypeUuid' => Yii::t('app', 'Тип события'),
             'longitude' => Yii::t('app', 'Долгота'),
             'latitude' => Yii::t('app', 'Широта'),
+            'object' => Yii::t('app', 'Объект'),
+            'objectUuid' => Yii::t('app', 'Объект'),
             'comment' => Yii::t('app', 'Описание'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),

@@ -53,6 +53,7 @@ use yii\helpers\Html;
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['userId' => $accountUser['id']]);
     echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+    echo $form->field($message, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
     //echo $form->field($message, 'title')->textInput(['maxlength' => true]);
     echo $form->field($message, 'text')->textInput(['maxlength' => true]);

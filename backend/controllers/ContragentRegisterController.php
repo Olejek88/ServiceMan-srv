@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\CitySearch;
+use backend\models\ContragentRegisterSearch;
 use common\models\City;
 use common\models\Contragent;
 use common\models\ContragentRegister;

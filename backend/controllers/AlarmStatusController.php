@@ -75,11 +75,11 @@ class AlarmStatusController extends Controller
     public function actionCreate()
     {
         $model = new AlarmStatus();
+        $searchModel = new AlarmSearchStatus();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new AlarmSearchStatus();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 15;
 
             return $this->render('index', [
                 'searchModel' => $searchModel,
@@ -87,7 +87,7 @@ class AlarmStatusController extends Controller
             ]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

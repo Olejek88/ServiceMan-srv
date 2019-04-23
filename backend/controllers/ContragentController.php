@@ -2,8 +2,7 @@
 
 namespace backend\controllers;
 
-use backend\models\CitySearch;
-use common\models\City;
+use backend\models\ContragentSearch;
 use common\models\Contragent;
 use Yii;
 use yii\filters\VerbFilter;
@@ -41,16 +40,49 @@ class ContragentController extends Controller
     }
 
     /**
-     * Lists all City models.
      * @return mixed
      */
     public function actionIndex()
     {
+        return self::actionTable();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function actionTable()
+    {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Contragent::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'title') {
+                $model['title'] = $_POST['Contragent'][$_POST['editableIndex']]['title'];
+            }
+            if ($_POST['editableAttribute'] == 'inn') {
+                $model['inn'] = $_POST['Contragent'][$_POST['editableIndex']]['inn'];
+            }
+            if ($_POST['editableAttribute'] == 'contragentTypeUuid') {
+                $model['contragentTypeUuid'] = $_POST['Contragent'][$_POST['editableIndex']]['contragentTypeUuid'];
+            }
+            if ($_POST['editableAttribute'] == 'phone') {
+                $model['phone'] = $_POST['Contragent'][$_POST['editableIndex']]['phone'];
+            }
+            if ($_POST['editableAttribute'] == 'address') {
+                $model['address'] = $_POST['Contragent'][$_POST['editableIndex']]['address'];
+            }
+            if ($_POST['editableAttribute'] == 'email') {
+                $model['email'] = $_POST['Contragent'][$_POST['editableIndex']]['email'];
+            }
+            $model->save();
+            return json_encode('');
+        }
+
         $searchModel = new ContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
-        return $this->render('index', [
+        return $this->render('table', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -76,18 +108,19 @@ class ContragentController extends Controller
     public function actionCreate()
     {
         $model = new Contragent();
+        $searchModel = new ContragentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new ContragentSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 15;
-            return $this->render('index', [
+            return $this->render('table', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }
@@ -121,7 +154,7 @@ class ContragentController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['table']);
     }
 
     /**

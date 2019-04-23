@@ -2,8 +2,10 @@
 
 namespace common\models;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
  * Contragent model
@@ -38,17 +40,15 @@ class Contragent extends ActiveRecord
         return '{{%contragent}}';
     }
 
-    /**
-     * Behaviors.
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
     public function behaviors()
     {
         return [
-            TimestampBehavior::class,
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'createdAt',
+                'updatedAtAttribute' => 'changedAt',
+                'value' => new Expression('NOW()'),
+            ],
         ];
     }
 
@@ -64,7 +64,61 @@ class Contragent extends ActiveRecord
         return [
             ['deleted', 'default', 'value' => Status::STATUS_DEFAULT],
             ['deleted', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
+            [['uuid', 'title', 'inn', 'contragentTypeUuid', 'deleted'], 'required'],
+            [['createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
+            [['address'], 'string', 'max' => 250],
         ];
+    }
+
+    public function fields()
+    {
+        return [
+            '_id',
+            'oid',
+            'uuid',
+            'title',
+            'address',
+            'phone',
+            'inn',
+            'director',
+            'email',
+            'contragentTypeUuid',
+            'contragentType' => function ($model) {
+                return $model->contragentType;
+            },
+            'deleted',
+            'createdAt',
+            'changedAt',
+        ];
+    }
+    /**
+     * Метки для свойств.
+     *
+     * @return array
+     */
+    public function attributeLabels()
+    {
+        return [
+            '_id' => Yii::t('app', '№'),
+            'uuid' => Yii::t('app', 'Uuid'),
+            'title' => Yii::t('app', 'Контрагент'),
+            'address' => Yii::t('app', 'Адрес'),
+            'phone' => Yii::t('app', 'Телефон'),
+            'inn' => Yii::t('app', 'ИНН'),
+            'director' => Yii::t('app', 'Директор'),
+            'email' => Yii::t('app', 'Е-мэйл'),
+            'contragentTypeUuid' => Yii::t('app', 'Тип'),
+            'contragentType' => Yii::t('app', 'Тип'),
+            'deleted' => Yii::t('app', 'Удален'),
+            'createdAt' => Yii::t('app', 'Создан'),
+            'changedAt' => Yii::t('app', 'Изменен'),
+        ];
+    }
+
+    public function getContragentType()
+    {
+        return $this->hasOne(ContragentType::class, ['uuid' => 'contragentTypeUuid']);
     }
 
     /**

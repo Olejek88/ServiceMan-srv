@@ -34,7 +34,7 @@ class ContragentRegister extends ActiveRecord
     {
         return [
             [['uuid','contragentUuid', 'description', 'date'], 'required'],
-            [['data'], 'safe'],
+            [['data','oid'], 'safe'],
             [['uuid','contragentUuid', 'date'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 350],
         ];
@@ -53,7 +53,7 @@ class ContragentRegister extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'contragentUuid' => Yii::t('app', 'Контрагент'),
             'date' => Yii::t('app', 'Дата'),
-            'description' => Yii::t('app', 'Описанеи'),
+            'description' => Yii::t('app', 'Описание'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

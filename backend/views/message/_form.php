@@ -31,8 +31,9 @@ use dosamigos\datetimepicker\DateTimePicker;
         } else {
             echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
         }
-
     ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+
     <?php
     $user  = Users::find()->all();
     $items = ArrayHelper::map($user,'uuid','name');

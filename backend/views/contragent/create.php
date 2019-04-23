@@ -1,10 +1,9 @@
 <?php
-/* @var $model common\models\City */
+/* @var $model common\models\Contragent */
 
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Создать контрагента');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Города'), 'url' => ['index']];
 ?>
 <div class="task-create box-padding">
 

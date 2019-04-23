@@ -99,7 +99,7 @@ class MessageController extends Controller
         $model = new Message();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            return $this->redirect(['table']);
         } else {
             return $this->render('create', [
                 'model' => $model,
