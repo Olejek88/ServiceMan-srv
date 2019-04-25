@@ -42,15 +42,15 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'flatUuid',
+        'attribute' => 'objectUuid',
         'vAlign' => 'middle',
         'width' => '180px',
         'value' => function ($data) {
-            return $data['flat']['house']['street']->title . ', ' . $data['flat']['house']->number . '-' . $data['flat']->number;
+            return $data['object']['house']['street']->title . ', ' . $data['object']['house']->number . '-' . $data['object']->title;
         },
         'filterType' => GridView::FILTER_SELECT2,
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/flat/create?from=equipment/index',
+                '/object/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',

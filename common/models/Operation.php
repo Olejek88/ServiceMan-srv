@@ -113,11 +113,12 @@ class Operation extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'taskUuid' => Yii::t('app', 'Этап'),
-            'workStatusUuid' => Yii::t('app', 'Uuid статуса'),
+            'workStatusUuid' => Yii::t('app', 'Статус'),
             'workStatus' => Yii::t('app', 'Статус'),
-            'operationTemplateUuid' => Yii::t('app', 'Uuid шаблона'),
+            'operationTemplateUuid' => Yii::t('app', 'Шаблон'),
             'operationTemplate' => Yii::t('app', 'Шаблон'),
+            'taskUuid' => Yii::t('app', 'Задача'),
+            'task' => Yii::t('app', 'Задача'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
         ];

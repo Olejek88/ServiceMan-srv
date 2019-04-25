@@ -59,7 +59,7 @@ class Task extends ActiveRecord
             [['uuid', 'workStatusUuid'], 'required'],
             [['comment'], 'string'],
             [['startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid'], 'string', 'max' => 45],
+            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],
         ];
     }
 

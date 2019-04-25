@@ -134,17 +134,16 @@ class EquipmentController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             // проверяем все поля, если что-то не так показываем форму с ошибками
             if (!$model->validate()) {
+                echo json_encode($model->errors);
                 return $this->render('create', ['model' => $model]);
             }
             // сохраняем запись
             if ($model->save(false)) {
                 return $this->redirect(['view', 'id' => $model->_id]);
-            } else {
-                return $this->render('create', ['model' => $model]);
             }
-        } else {
-            return $this->render('create', ['model' => $model]);
+            echo json_encode($model->errors);
         }
+        return $this->render('create', ['model' => $model]);
     }
 
     /**

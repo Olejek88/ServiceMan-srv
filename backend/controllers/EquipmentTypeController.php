@@ -95,27 +95,23 @@ class EquipmentTypeController extends Controller
     public function actionCreate()
     {
         $model = new EquipmentType();
+        $searchModel = new EquipmentSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
 
         if (Yii::$app->request->isPost) {
             $model->load(Yii::$app->request->post());
             if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->_id]);
-            } else {
-                return $this->render(
-                    'create',
-                    [
-                        'model' => $model
-                    ]
-                );
             }
-        } else {
-            return $this->render(
-                'create',
-                [
-                    'model' => $model
-                ]
-            );
         }
+        return $this->render(
+            'create',
+            [
+                'model' => $model,
+                'dataProvider' => $dataProvider
+            ]
+        );
     }
 
     /**

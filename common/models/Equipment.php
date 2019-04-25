@@ -12,8 +12,8 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $uuid
  * @property string $oid идентификатор организации
+ * @property string $title
  * @property string $equipmentTypeUuid
- * @property string $equipmentSystemUuid
  * @property string $serial
  * @property string $tag
  * @property string $equipmentStatusUuid
@@ -25,7 +25,6 @@ use yii\db\Expression;
  *
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
- * @property EquipmentSystem $equipmentSystem
  * @property Object $object
  * @property Photo $photo
  */
@@ -66,14 +65,10 @@ class Equipment extends ActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid',
+        return ['_id', 'uuid', 'title',
             'objectUuid',
             'object' => function ($model) {
                 return $model->object;
-            },
-            'equipmentSystemUuid',
-            'equipmentSystem' => function ($model) {
-                return $model->equipmentSystem;
             },
             'equipmentTypeUuid',
             'equipmentType' => function ($model) {
@@ -99,8 +94,8 @@ class Equipment extends ActiveRecord
             [
                 [
                     'uuid',
+                    'title',
                     'equipmentTypeUuid',
-                    'equipmentSystemUuid',
                     'equipmentStatusUuid',
                     'serial',
                 ],
@@ -112,14 +107,21 @@ class Equipment extends ActiveRecord
                 [
                     'uuid',
                     'equipmentTypeUuid',
-                    'equipmentSystemUuid',
                     'equipmentStatusUuid',
                     'serial',
                     'tag',
+                    'oid',
                     'objectUuid'
                 ],
                 'string', 'max' => 50
             ],
+            [
+                [
+                    'title'
+                ],
+                'string', 'max' => 150
+            ],
+
         ];
     }
 
@@ -133,10 +135,9 @@ class Equipment extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
+            'title' => Yii::t('app', 'Название'),
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип'),
-            'equipmentSystemUuid' => Yii::t('app', 'Тип системы'),
-            'equipmentSystem' => Yii::t('app', 'Тип системы'),
             'testDate' => Yii::t('app', 'Дата последней поверки'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
             'equipmentStatus' => Yii::t('app', 'Статус'),
@@ -161,18 +162,6 @@ class Equipment extends ActiveRecord
         } else {
             return false;
         }
-    }
-
-    /**
-     * Объект связанного поля.
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getEquipmentSystem()
-    {
-        return $this->hasOne(
-            EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']
-        );
     }
 
     /**

@@ -33,8 +33,8 @@ $this->title = $model['equipmentType']->title;
                                     'tag',
                                     'uuid',
                                     [
-                                        'label' => 'Квартира',
-                                        'value' => $model['flat']->number
+                                        'label' => 'Объект',
+                                        'value' => $model['object']->title
                                     ],
                                     [
                                         'label' => 'Статус',

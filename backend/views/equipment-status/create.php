@@ -1,10 +1,10 @@
 <?php
 /* @var $model common\models\EquipmentStatus */
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Создать статус оборудования');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оборудования'), 'url' => ['index']];
 ?>
 <div class="equipment-status-create box-padding">
 
@@ -23,6 +23,53 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы об�
                             'model' => $model,
                         ]) ?>
                     </h6>
+                    <?php echo GridView::widget(
+                        [
+                            'dataProvider' => $dataProvider,
+                            'tableOptions' => [
+                                'class' => 'table-striped table table-bordered table-hover table-condensed'
+                            ],
+                            'columns' => [
+                                [
+                                    'attribute' => '_id',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 50px; text-align: center'
+                                    ],
+                                    'headerOptions' => [
+                                        'class' => 'text-center'
+                                    ],
+                                    'content' => function ($data) {
+                                        return $data->_id;
+                                    }
+                                ],
+                                [
+                                    'attribute' => 'uuid',
+                                    'contentOptions' => [
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => [
+                                        'class' => 'text-center'
+                                    ],
+                                    'content' => function ($data) {
+                                        return $data->uuid;
+                                    }
+                                ],
+                                [
+                                    'attribute' => 'title',
+                                    'contentOptions' => [
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => [
+                                        'class' => 'text-center'
+                                    ],
+                                    'content' => function ($data) {
+                                        return $data->title;
+                                    }
+                                ]
+                            ],
+                        ]
+                    ); ?>
                 </div>
             </div>
 

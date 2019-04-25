@@ -4,8 +4,8 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\EquipmentModel */
-/* @var $type \common\models\EquipmentType */
+/* @var $model common\models\EquipmentSystem */
+/* @var $System \common\models\EquipmentSystem */
 
 $this->title = $model->title;
 ?>
@@ -17,9 +17,6 @@ $this->title = $model->title;
             </h3>
         </div>
         <div class="panel-body">
-            <div class="user-image-photo">
-                <img src="<?php echo Html::encode($model->getImageUrl()) ?>" alt="">
-            </div>
             <h1 class="text-center"></h1>
 
             <div id="myTabContent" class="tab-content">
@@ -37,11 +34,8 @@ $this->title = $model->title;
                                 'attributes' => [
                                     '_id',
                                     'uuid',
-                                    [
-                                        'label' => 'Тип',
-                                        'value' => $type['title']
-                                    ],
                                     'title',
+                                    'titleUser',
                                     'createdAt',
                                     'changedAt',
                                 ],

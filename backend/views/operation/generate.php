@@ -8,17 +8,12 @@ use yii\helpers\ArrayHelper;
 use common\models\WorkStatus;
 use common\models\OperationTemplate;
 use common\models\Task;
-
 $this->title = Yii::t('app', 'Создание операции');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Операция'), 'url' => ['index']];
 ?>
 
 <div class="orders-view box-padding" style="padding: 0;">
-
     <div class="panel panel-default">
-
         <h3 class="text-center" style="padding: 20px 5px 0 5px;">Создание рабочих процессов</h3>
-
         <div class="panel-body">
 
             <?php $form = ActiveForm::begin([
@@ -33,7 +28,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Операция'), 
             <header class="header-result">
 
                 <ul class="nav nav-tabs" style="width: 418px; margin: 0 auto;">
-                    <li class=""><a href="/task/generate">Задача</a></li>
+                    <li class=""><a href="/task/create">Задача</a></li>
                     <li class="active"><a href="/operation/generate">Операция</a></li>
                 </ul>
 
@@ -55,12 +50,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Операция'), 
 
                             <?php
 
-                            $tasks = Task::find()
-                                ->where(
-                                    'taskStatusUuid != :workStatusUuid',
-                                    ['workStatusUuid' => 'F5C3788B-6659-409F-913F-32555CE327C8'])
-                                ->all();
-
+                            $tasks = Task::find()->all();
                             $items = ArrayHelper::map($tasks, 'uuid', 'taskName');
                             $params = [
                                 'prompt' => 'Выберите задачу..',
@@ -96,11 +86,6 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Операция'), 
                     ]) ?>
 
                 </div>
-
-                <h6 class='text-center'>
-                    * Если вы не нашли необходимую вам категорию, вы всегда можете создать её
-                    <b><?= Html::a('сами!', ['/operation'], ['target' => '_blank',]) ?></b>
-                </h6>
 
             </header>
 

@@ -1,10 +1,10 @@
 <?php
 
-use app\commands\MainFunctions;
+use common\components\MainFunctions;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Objects;
-use common\models\House;
+use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -29,28 +29,20 @@ use yii\widgets\ActiveForm;
     ); ?>
 
     <?php
-
     if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')
-            ->textInput(['maxlength' => true, 'readonly' => true]);
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
     } else {
-        echo $form->field($model, 'uuid')
-            ->textInput(
-                ['maxlength' => true, 'readonly' => true, 'value' => (new MainFunctions)->GUID()]
-            );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
-
     ?>
 
-    <?php
+    <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
+    <?php
     $equipmentType = EquipmentType::find()->all();
     $items = ArrayHelper::map($equipmentType, 'uuid', 'title');
     echo $form->field($model, 'equipmentTypeUuid',
-        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/equipment-type/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::classname(),
+        ['template' => MainFunctions::getAddButton("/equipment-type/create")])->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -68,10 +60,7 @@ use yii\widgets\ActiveForm;
     $equipmentStatus = EquipmentStatus::find()->all();
     $items = ArrayHelper::map($equipmentStatus, 'uuid', 'title');
     echo $form->field($model, 'equipmentStatusUuid',
-        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/equipment-status/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
+        ['template' => MainFunctions::getAddButton("/equipment-status/create")])->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -87,6 +76,7 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
     <?php echo $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
@@ -106,35 +96,16 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php
-    $house = House::find()->all();
-    $items = ArrayHelper::map($house, 'uuid', function ($model) {
-        return $model['street']->title . ', ' . $model['number'];
+    $object = Objects::find()->all();
+    $items = ArrayHelper::map($object, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
     });
-    echo $form->field($model, 'houseUuid')->widget(Select2::class,
+    echo $form->field($model, 'objectUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите дом..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-
-    ?>
-
-    <?php
-    $flat = Objects::find()->all();
-    $items = ArrayHelper::map($flat, 'uuid', function ($model) {
-        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['number'];
-    });
-    echo $form->field($model, 'flatUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите квартиру..'
+                'placeholder' => 'Выберите объект..'
             ],
             'pluginOptions' => [
                 'allowClear' => true

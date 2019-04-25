@@ -4,10 +4,10 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\EquipmentModel */
-/* @var $searchModel backend\models\EquipmentSearchModel */
+/* @var $model common\models\EquipmentSystem */
+/* @var $searchModel backend\models\EquipmentSystemSearch */
 
-$this->title = Yii::t('app', 'Создать модель оборудования');
+$this->title = Yii::t('app', 'Создать инженерную систему');
 ?>
 <div class="equipment-model-create box-padding">
 
@@ -21,24 +21,12 @@ $this->title = Yii::t('app', 'Создать модель оборудовани
 
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
-                    <h6>
-                        <?php echo $this->render(
-                            '_form',
-                            [
-                                'model' => $model,
-                            ]
-                        ) ?>
-                    </h6>
-                    <h6 class='text-center'>
-                        * Если вы не нашли
-                        <b><?php
-                            echo Html::a(
-                                'тип оборудования',
-                                ['/equipment-type/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>,
-                        создайте его!
-                    </h6>
+                    <?php echo $this->render(
+                        '_form',
+                        [
+                            'model' => $model,
+                        ]
+                    ) ?>
                     <?php echo GridView::widget(
                         [
                             'dataProvider' => $dataProvider,
@@ -59,14 +47,14 @@ $this->title = Yii::t('app', 'Создать модель оборудовани
                                     }
                                 ],
                                 [
-                                    'attribute' => 'equipmentType',
+                                    'attribute' => 'titleUser',
                                     'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => [
                                         'class' => 'text-center'
                                     ],
-                                    'value' => 'equipmentType.title',
+                                    'value' => 'titleUser',
                                 ],
                             ],
                         ]

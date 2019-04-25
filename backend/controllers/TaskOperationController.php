@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use backend\models\TaskOperationSearch;
-use backend\models\UserSearch;
 use common\models\TaskOperation;
 use common\models\User;
 use Yii;
@@ -64,7 +63,7 @@ class TaskOperationController extends Controller
     public function actionView($id)
     {
 
-        $model = User::find()->where(['_id' => $id])->one();
+        $model = TaskOperation::find()->where(['_id' => $id])->one();
 
         return $this->render('view', [
             'model' => $model,
@@ -81,7 +80,7 @@ class TaskOperationController extends Controller
         $model = new TaskOperation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', '_id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,

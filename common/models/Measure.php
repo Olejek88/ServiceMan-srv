@@ -78,7 +78,7 @@ class Measure extends ActiveRecord
                 'required'
             ],
             [['value'], 'number'],
-            [['uuid', 'equipmentUuid', 'userUuid', 'date'], 'string', 'max' => 50],
+            [['uuid', 'equipmentUuid', 'userUuid', 'date', 'oid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
         ];
     }

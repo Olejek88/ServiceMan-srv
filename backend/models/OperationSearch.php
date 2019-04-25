@@ -17,7 +17,7 @@ class OperationSearch extends Operation
     public function rules()
     {
         return [
-            [['_id', 'flowOrder'], 'integer'],
+            [['_id'], 'integer'],
             [['uuid', 'taskUuid', 'operationStatusUuid', 'operationTemplateUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }

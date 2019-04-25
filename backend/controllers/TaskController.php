@@ -73,26 +73,6 @@ class TaskController extends Controller
     }
 
     /**
-     * Displays a single task model.
-     *
-     * @param integer $id Id
-     *
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        $model = Task::findOne($id);
-        $task = Task::findOne(['uuid' => $model['taskUuid']]);
-        return $this->render(
-            'view',
-            [
-                'task' => $task,
-                'model' => $model,
-            ]
-        );
-    }
-
-    /**
      * Search
      *
      * @return string
@@ -125,7 +105,7 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            return self::actionIndex();
         } else {
             return $this->render(
                 'create',

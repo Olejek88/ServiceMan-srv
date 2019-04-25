@@ -41,7 +41,7 @@ class EquipmentSystemSearch extends EquipmentSystem
      */
     public function search($params)
     {
-        $query = EquipmentStatus::find();
+        $query = EquipmentSystem::find();
 
         // add conditions that should always apply here
 

@@ -76,7 +76,7 @@ class MeasureController extends Controller
     {
         $model = new Measure();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            return self::actionIndex();
         } else {
             return $this->render('create', [
                 'model' => $model,

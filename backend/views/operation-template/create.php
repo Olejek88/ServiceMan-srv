@@ -6,10 +6,6 @@ use yii\helpers\Html;
 /* @var $model common\models\OperationTemplate */
 
 $this->title = Yii::t('app', 'Создать шаблон операции');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Шаблоны операции'),
-    'url' => ['index']
-];
 ?>
 <div class="operation-template-create box-padding">
 

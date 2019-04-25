@@ -1,5 +1,6 @@
 <?php
 
+use kartik\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
@@ -7,10 +8,6 @@ use yii\helpers\Html;
 /* @var $parentModel yii\base\DynamicModel */
 
 $this->title = Yii::t('app', 'Создать тип оборудования');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Типы оборудования'),
-    'url' => ['index']
-];
 ?>
 <div class="equipment-type-create box-padding">
 
@@ -32,6 +29,28 @@ $this->params['breadcrumbs'][] = [
                             ]
                         ) ?>
                     </h6>
+                    <?php echo GridView::widget(
+                        [
+                            'dataProvider' => $dataProvider,
+                            'tableOptions' => [
+                                'class' => 'table-striped table table-bordered table-hover table-condensed'
+                            ],
+                            'columns' => [
+                                [
+                                    'attribute' => 'title',
+                                    'contentOptions' => [
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => [
+                                        'class' => 'text-center'
+                                    ],
+                                    'content' => function ($data) {
+                                        return $data->title;
+                                    }
+                                ]
+                            ],
+                        ]
+                    ); ?>
                 </div>
             </div>
 

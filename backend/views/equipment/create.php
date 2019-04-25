@@ -5,10 +5,6 @@ use yii\helpers\Html;
 /* @var $model \common\models\Equipment */
 
 $this->title = Yii::t('app', 'Создать оборудование');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Оборудование'),
-    'url' => ['index']
-];
 ?>
 <div class="equipment-create box-padding">
 
@@ -29,21 +25,6 @@ $this->params['breadcrumbs'][] = [
                                 'model' => $model,
                             ]
                         ) ?>
-                    </h6>
-                    <h6 class='text-center'>
-                        * Если вы не нашли
-                        <b><?php
-                            echo Html::a(
-                                'модель оборудования',
-                                ['/equipment-type/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>,
-                        <b><?php
-                            echo Html::a(
-                                'статус оборудования',
-                                ['/equipment-status/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>, создайте их.
                     </h6>
                 </div>
             </div>

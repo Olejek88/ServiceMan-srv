@@ -102,6 +102,7 @@ class ObjectController extends Controller
             $searchModel = new ObjectsSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 15;
+            //if ($_GET['from'])
             return $this->render('table', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

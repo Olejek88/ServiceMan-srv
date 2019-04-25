@@ -478,6 +478,7 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
+            'equipmentSystemUuid' => $this->string(45)->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
@@ -503,10 +504,10 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'oid' => $this->string(45)->notNull(),
+            'title' => $this->string(150)->notNull(),
             'objectUuid' => $this->string(45)->notNull(),
             'equipmentTypeUuid' => $this->string(45)->notNull(),
             'equipmentStatusUuid' => $this->string(45)->notNull(),
-            'equipmentSystemUuid' => $this->string(45)->notNull(),
             'tag' => $this->string(),
             'serial' => $this->string(),
             'testDate' => $this->timestamp()->defaultValue('2019-01-01'),
@@ -565,13 +566,13 @@ class m190412_104112_init_new extends Migration
 
         $this->createIndex(
             'idx-equipmentSystemUuid',
-            'equipment',
+            'equipment_type',
             'equipmentSystemUuid'
         );
 
         $this->addForeignKey(
-            'fk-equipment-equipmentSystemUuid',
-            'equipment',
+            'fk-equipment_type-equipmentSystemUuid',
+            'equipment_type',
             'equipmentSystemUuid',
             'equipment_system',
             'uuid',
@@ -1081,6 +1082,7 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'description' => $this->string()->notNull(),
             'normative' => $this->integer()->defaultValue(120),
             'taskTypeUuid' => $this->string(45)->notNull(),
@@ -1160,6 +1162,8 @@ class m190412_104112_init_new extends Migration
             'equipmentUuid' => $this->string()->notNull(),
             'workStatusUuid' => $this->string()->notNull(),
             'taskVerdictUuid' => $this->string()->notNull(),
+            'taskTemplateUuid' => $this->string()->notNull(),
+            'date' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'startDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'endDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1193,6 +1197,22 @@ class m190412_104112_init_new extends Migration
             'task',
             'workStatusUuid',
             'work_status',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );
+
+        $this->createIndex(
+            'idx-taskTemplateUuid',
+            'task',
+            'taskTemplateUuid'
+        );
+
+        $this->addForeignKey(
+            'fk-task-taskTemplateUuid',
+            'task',
+            'taskTemplateUuid',
+            'task_template',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -1276,7 +1296,6 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%task_operation}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->notNull(),
             'taskTemplateUuid' => $this->string()->notNull(),
             'operationTemplateUuid' => $this->string()->notNull(),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1293,7 +1312,7 @@ class m190412_104112_init_new extends Migration
             'fk-task_operation-taskTemplateUuid',
             'task_operation',
             'taskTemplateUuid',
-            'task_operation',
+            'task_template',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -1309,7 +1328,7 @@ class m190412_104112_init_new extends Migration
             'fk-task_operation-operationTemplateUuid',
             'task_operation',
             'operationTemplateUuid',
-            'operation',
+            'operation_template',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'

@@ -1,13 +1,4 @@
 <?php
-/**
- * PHP Version 7.0
- *
- * @category Category
- * @package  Views
- * @author   Дмитрий Логачев <demonwork@yandex.ru>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
- */
 
 namespace backend\models;
 
@@ -16,14 +7,7 @@ use yii\data\ActiveDataProvider;
 use common\models\TaskOperation;
 
 /**
- * StageOperationSearch represents the model behind the
- * search form about StageOperation.
- *
- * @category Category
- * @package  Backend\models
- * @author   Дмитрий Логачев <demonwork@yandex.ru>
- * @license  http://www.yiiframework.com/license/ License name
- * @link     http://www.toirus.ru
+ * TaskOperationSearch represents the model behind the search form about TaskOperation.
  */
 class TaskOperationSearch extends TaskOperation
 {
@@ -41,7 +25,7 @@ class TaskOperationSearch extends TaskOperation
             [
                 [
                     'uuid',
-                    'stageTemplateUuid',
+                    'taskTemplateUuid',
                     'operationTemplateUuid',
                     'createdAt',
                     'changedAt'
@@ -98,7 +82,7 @@ class TaskOperationSearch extends TaskOperation
         //);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'stageTemplateUuid', $this->stageTemplateUuid])
+            ->andFilterWhere(['like', 'taskTemplateUuid', $this->taskTemplateUuid])
             ->andFilterWhere(
                 ['like', 'operationTemplateUuid', $this->operationTemplateUuid]
             );
