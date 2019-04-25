@@ -14,11 +14,6 @@ $this->title = Yii::t('app', 'Заявка');
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 204px; margin: 0 auto;">
-                <li class="active"><a href="/request">Список</a></li>
-                <li class=""><a href="/request-status">Статусы</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 

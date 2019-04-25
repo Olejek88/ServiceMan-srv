@@ -6,13 +6,12 @@ use yii\helpers\Html;
 /* @var $model common\models\ObjectType */
 
 $this->title .= $model->title;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Типы'),
-    'url' => ['index']
-];
 ?>
-<div class="stage-status-update box-padding">
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>

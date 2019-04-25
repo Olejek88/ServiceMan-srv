@@ -146,6 +146,7 @@ class RequestController extends Controller
             MainFunctions::register('Создана заявка ' . $model->comment);
             return $this->redirect(['table', 'id' => $model->_id]);
         } else {
+            echo json_encode($model->errors);
             return $this->render('create', [
                 'model' => $model,
             ]);

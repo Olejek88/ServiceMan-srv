@@ -17,7 +17,7 @@ class EquipmentRegisterSearch extends EquipmentRegister
     public function rules()
     {
         return [
-            [['userUuid', 'registerType', 'equipmentUuid', 'date', 'fromParameterUuid', 'toParameterUuid'], 'safe'],
+            [['userUuid', 'registerType', 'equipmentUuid', 'date'], 'safe'],
         ];
     }
 

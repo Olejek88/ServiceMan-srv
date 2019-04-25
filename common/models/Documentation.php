@@ -71,7 +71,7 @@ class Documentation extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'title', 'documentationTypeUuid', 'required'], 'required'],
+            [['uuid', 'title', 'documentationTypeUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [
                 ['path'],
@@ -109,7 +109,7 @@ class Documentation extends ActiveRecord
                 return $model->documentationType;
             }, 'title','path',
             'createdAt', 'changedAt',
-            'equipmentModelUuid',
+            'equipmentTypeUuid',
             'equipmentType' => function ($model) {
                 return $model->equipmentType;
             },

@@ -592,8 +592,9 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'equipmentUuid' => $this->string(45)->notNull(),
+            'equipmentUuid' => $this->string(45),
             'documentationTypeUuid' => $this->string(45)->notNull(),
+            'equipmentTypeUuid' => $this->string(45),
             'path' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP')
@@ -610,6 +611,22 @@ class m190412_104112_init_new extends Migration
             'documentation',
             'equipmentUuid',
             'equipment',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );
+
+        $this->createIndex(
+            'idx-equipmentTypeUuid',
+            'documentation',
+            'equipmentTypeUuid'
+        );
+
+        $this->addForeignKey(
+            'fk-documentation-equipmentTypeUuid',
+            'documentation',
+            'equipmentTypeUuid',
+            'equipment_type',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -957,9 +974,9 @@ class m190412_104112_init_new extends Migration
             'requestTypeUuid' => $this->string(45)->notNull(),
             'comment' => $this->string(),
             'equipmentUuid' => $this->string(45)->notNull(),
-            'objectUuid' => $this->string(45)->notNull(),
-            'taskUuid' => $this->string(45)->notNull(),
-            'closeDate' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
+            'objectUuid' => $this->string(45),
+            'taskUuid' => $this->string(45),
+            'closeDate' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);

@@ -48,6 +48,15 @@ $this->title = Yii::t('app', 'Создать тип контрагента');
                                 'content' => function ($data) {
                                     return $data->title;
                                 }
+                            ],
+                            [
+                                'class' => 'yii\grid\ActionColumn',
+                                'header' => 'Действия',
+                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                'contentOptions' => [
+                                    'class' => 'text-center',
+                                ],
+                                'template' => '{view} {update} {delete}{link}',
                             ]
                         ],
                     ]); ?>

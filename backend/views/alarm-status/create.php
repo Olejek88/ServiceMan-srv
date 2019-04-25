@@ -7,9 +7,11 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Создать статус');
 
 ?>
-<div class="alert-type-create box-padding">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
@@ -48,6 +50,15 @@ $this->title = Yii::t('app', 'Создать статус');
                                 'content' => function ($data) {
                                     return $data->title;
                                 }
+                            ],
+                            [
+                                'class' => 'yii\grid\ActionColumn',
+                                'header' => 'Действия',
+                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                'contentOptions' => [
+                                    'class' => 'text-center',
+                                ],
+                                'template' => '{view} {update} {delete}{link}',
                             ]
                         ],
                     ]); ?>

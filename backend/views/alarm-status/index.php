@@ -9,18 +9,15 @@ $this->title = Yii::t('app', 'Статусы предупреждений');
  * @var $searchModel backend\models\AlarmSearchStatus
  */
 ?>
-<div class="equipment-index box-padding-index">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-            <ul class="nav nav-tabs" style="width: 255px; margin: 0 auto;">
-                <li><a href="/alarm">Предупреждения</a></li>
-                <li><a href="/alarm-type">Тип</a></li>
-                <li class="active"><a href="/alarm-status">Статус</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 

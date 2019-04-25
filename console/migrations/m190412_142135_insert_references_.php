@@ -72,6 +72,17 @@ class m190412_142135_insert_references_ extends Migration
         $this->insertIntoType('object_status','BB6E24F2-6FA5-4E9A-83C8-5E1F4D51789B',
             'Отсутствует', $currentTime, $currentTime);
 
+        $this->insertIntoType('request_status','F45775D3-9876-4831-9781-92E00240D44F',
+            'Новая', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','49085FF9-5223-404A-B98D-7B042BB571A3',
+            'В работе', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','FB7E8A7C-E228-4226-AAF5-AD3DB472F4ED',
+            'Выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','B17CB2E0-58DF-4CA3-B620-AF8B39D6C229',
+            'Не выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','8DA302D8-978B-4900-872C-4EB4DE13682A',
+            'Отменена', $currentTime, $currentTime);
+
         $this->insert('{{%user}}', [
             'username' => 'sUser',
             'auth_key' => self::AUTH_KEY,

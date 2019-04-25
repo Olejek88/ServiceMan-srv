@@ -2,24 +2,15 @@
 
 use yii\helpers\Html;
 
-/* @var $model common\models\EquipmentModel */
+/* @var $model common\models\EquipmentSystem */
 
-$this->title = Yii::t(
-    'app',
-    'Обновить {modelClass}: ',
-    [
-        'modelClass' => 'Модели оборудования',
-    ]
-);
 $this->title .= $model->title;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Модели оборудования'),
-    'url' => ['index']
-];
 ?>
-<div class="equipment-model-update box-padding">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
