@@ -18,7 +18,7 @@ use app\commands\MainFunctions;
         if (!$model->isNewRecord) {
             echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
         } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => MainFunctions::GUID()]);
+            echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
         }
 
     ?>

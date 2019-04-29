@@ -15,8 +15,7 @@ $this->title = Yii::t('app', 'Операция');
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 505px; margin: 0 auto;">
+            <ul class="nav nav-tabs" style="width: 285px; margin: 0 auto;">
                 <li class="active"><a href="/operation">Список</a></li>
                 <li class=""><a href="/work-status">Статусы</a></li>
                 <li class=""><a href="/operation-template">Шаблоны</a></li>

@@ -40,7 +40,6 @@ class TaskVerdictController extends Controller
     public function actionView($id)
     {
         $taskVerdict   = TaskVerdict::find()
-                            ->select('taskTypeUuid')
                             ->where(['_id' => $id])
                             ->asArray()
                             ->one();

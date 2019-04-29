@@ -72,6 +72,22 @@ class m190412_142135_insert_references_ extends Migration
         $this->insertIntoType('object_status','BB6E24F2-6FA5-4E9A-83C8-5E1F4D51789B',
             'Отсутствует', $currentTime, $currentTime);
 
+        $this->insertIntoType('request_status','F45775D3-9876-4831-9781-92E00240D44F',
+            'Новая', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','49085FF9-5223-404A-B98D-7B042BB571A3',
+            'В работе', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','FB7E8A7C-E228-4226-AAF5-AD3DB472F4ED',
+            'Выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','B17CB2E0-58DF-4CA3-B620-AF8B39D6C229',
+            'Не выполнена', $currentTime, $currentTime);
+        $this->insertIntoType('request_status','8DA302D8-978B-4900-872C-4EB4DE13682A',
+            'Отменена', $currentTime, $currentTime);
+
+        $this->insertIntoType('task_verdict','0916D468-A631-4FC9-898C-04B7C9415284',
+            'Не определен', $currentTime, $currentTime);
+        $this->insertIntoType('task_verdict','DFD29CF9-A817-41CD-B78C-3AC44C8A4747',
+            'Выполнен', $currentTime, $currentTime);
+
         $this->insert('{{%user}}', [
             'username' => 'sUser',
             'auth_key' => self::AUTH_KEY,
@@ -81,28 +97,30 @@ class m190412_142135_insert_references_ extends Migration
             'created_at' => $currentTime,
             'updated_at' => $currentTime
         ]);
-
+/*
         $this->insert('{{%users}}', [
             '_id' => '1',
             'uuid' => 'E788CF00-CDCF-4BB5-A53A-DCBC946B2325',
             'user_id' => 1,
+            'type' => 2,
             'name' => 'Олег Иванов',
             'whoIs' => 'Ведущий инженер',
             'pin' => 'E20040008609006920603ED7',
             'contact' => '+79227000293 Олег',
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ]);*/
 
         $user = User::find()->where(['username' => 'sUser'])->one();
         if ($user) {
             $this->insert('{{%users}}', [
                 'uuid' => Users::USER_SERVICE_UUID,
+                'user_id' => 1,
                 'name' => 'sUser',
                 'pin' => self::USERS_PIN_MD5,
                 'contact' => 'none',
+                'type' => 2,
                 'whoIs' => 'Сервисный',
-                'user_id' => $user['_id'],
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
             ]);

@@ -7,19 +7,15 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Типы записей в журнал событий');
 ?>
-<div class="equipment-index box-padding-index">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 405px; margin: 0 auto;">
-                <li class=""><a href="/equipment-register">Журнал</a></li>
-                <li class=""><a href="/equipment">Оборудование</a></li>
-                <li class="active"><a href="/equipment-register-type">Типы записей</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -42,7 +38,7 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                                     'attribute' => '_id',
                                     'contentOptions' => [
                                         'class' => 'table_class',
-                                        'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
+                                        'style' => 'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content' => function ($data) {
@@ -52,8 +48,7 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                                 [
                                     'attribute' => 'uuid',
                                     'contentOptions' => [
-                                        'class' => 'table_class',
-                                        'style' => 'padding: 5px 10px 5px 10px;'
+                                        'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content' => function ($data) {
@@ -63,8 +58,7 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                                 [
                                     'attribute' => 'title',
                                     'contentOptions' => [
-                                        'class' => 'table_class',
-                                        'style' => 'padding: 5px 10px 5px 10px;'
+                                        'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content' => function ($data) {
@@ -76,8 +70,7 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                                     'header' => 'Действия',
                                     'headerOptions' => ['class' => 'text-center', 'width' => '70'],
                                     'contentOptions' => [
-                                        'class' => 'text-center',
-                                        'style' => 'padding: 5px 10px 5px 10px;'
+                                        'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

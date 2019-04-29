@@ -22,7 +22,7 @@ class OperationSearchTemplate extends OperationTemplate
     public function rules()
     {
         return [
-            [['_id', 'normative',], 'integer'],
+            [['_id'], 'integer'],
             [
                 [
                     'uuid',

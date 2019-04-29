@@ -7,8 +7,6 @@ use yii\helpers\Html;
 /* @var $model common\models\Measure */
 
 $this->title = Yii::t('app', 'Добавить измеренное значение');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Измеренные значения'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="measured-value-create box-padding">
 

@@ -64,30 +64,10 @@ class TaskController extends Controller
         $dataProvider->pagination->pageSize = 25;
 
         return $this->render(
-            'index',
+            'table',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
-            ]
-        );
-    }
-
-    /**
-     * Displays a single task model.
-     *
-     * @param integer $id Id
-     *
-     * @return mixed
-     */
-    public function actionView($id)
-    {
-        $model = Task::findOne($id);
-        $task = Task::findOne(['uuid' => $model['taskUuid']]);
-        return $this->render(
-            'view',
-            [
-                'task' => $task,
-                'model' => $model,
             ]
         );
     }
@@ -125,7 +105,7 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->_id]);
+            return self::actionIndex();
         } else {
             return $this->render(
                 'create',

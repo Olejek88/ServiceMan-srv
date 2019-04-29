@@ -5,7 +5,6 @@ use yii\helpers\Html;
 /* @var $model common\models\EquipmentRegister */
 
 $this->title = Yii::t('app', 'Создать запись в журнале оборудования');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Записи в журнале оборудования'), 'url' => ['index']];
 ?>
 <div class="equipment-create box-padding">
 

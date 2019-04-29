@@ -4,7 +4,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Таблица организаций');
+$this->title = Yii::t('app', 'Таблица контрагентов');
 $gridColumns = [
     [
         'attribute' => '_id',
@@ -18,6 +18,7 @@ $gridColumns = [
             return $data->_id;
         }
     ],
+
     [
         'class' => 'kartik\grid\ExpandRowColumn',
         'width' => '50px',
@@ -33,7 +34,7 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'owner',
+        'attribute' => 'title',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
@@ -41,12 +42,12 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->owner;
+            return $data->title;
         }
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'contractNumber',
+        'attribute' => 'address',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
@@ -54,51 +55,71 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->contractNumber;
+            return $data->address;
         }
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'contractDate',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-        'filterType' => GridView::FILTER_DATETIME,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'editableOptions' => [
-            'header' => 'Дата',
-            'size' => 'md',
-            'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-            'widgetClass' => 'kartik\datecontrol\DateControl',
-            'options' => [
-                'type' => \kartik\datecontrol\DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'dd.MM.yyyy',
-                'saveFormat' => 'php:Y-m-d',
-                'options' => [
-                    'pluginOptions' => [
-                        'autoclose' => true
-                    ]
-                ]
-            ]
-        ],
-    ],
-    [
-        'attribute' => 'flat',
+        'attribute' => 'phone',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'header' => 'Квартира ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/flat/create?from=residents/table', [
-                    'title' => Yii::t('app', 'Добавить')]),
         'content' => function ($data) {
-            return 'ул.' . $data['flat']['house']['street']->title . ', ' .
-                $data['flat']['house']->number . ', ' .
-                $data['flat']->number;
+            return $data->phone;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'inn',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->inn;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'director',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->director;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'email',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->email;
+        }
+    ],
+    [
+        'attribute' => 'contragentType',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->contragentType->title;
         }
     ],
     [
@@ -135,8 +156,8 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/subject/create'], ['class' => 'btn btn-success']) . ' ' .
-            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['/subject/table'], ['data-pjax' => 0,
+            Html::a('Новый', ['/contragent/create'], ['class' => 'btn btn-success']) . ' ' .
+            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['/contragent/table'], ['data-pjax' => 0,
                 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
         '{export}'

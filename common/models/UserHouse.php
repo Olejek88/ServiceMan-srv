@@ -39,7 +39,7 @@ class UserHouse extends ActiveRecord
         return [
             [['uuid', 'userUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'userUuid', 'houseUuid'], 'string', 'max' => 50],
+            [['uuid', 'userUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
         ];
     }
 

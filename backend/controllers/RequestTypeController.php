@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\RequestTypeSearch;
 use common\models\RequestStatus;
+use common\models\RequestType;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -77,12 +78,16 @@ class RequestTypeController extends Controller
      */
     public function actionCreate()
     {
-        $model = new RequestStatus();
+        $model = new RequestType();
+        $searchModel = new RequestTypeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

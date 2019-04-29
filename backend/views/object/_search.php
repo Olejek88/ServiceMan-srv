@@ -23,9 +23,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'houseUuid') ?>
 
-    <?= $form->field($model, 'flatStatusUuid') ?>
+    <?= $form->field($model, 'objectStatusUuid') ?>
 
-    <?= $form->field($model, 'flatTypeUuid') ?>
+    <?= $form->field($model, 'objectTypeUuid') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>

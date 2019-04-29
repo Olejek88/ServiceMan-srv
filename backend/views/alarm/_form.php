@@ -34,12 +34,8 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')
-            ->textInput(
-                ['maxlength' => true, 'readonly' => true, 'value' => (new MainFunctions)->GUID()]
-            );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
-
     ?>
 
     <?php
@@ -86,11 +82,7 @@ use yii\widgets\ActiveForm;
     <?php
     $alarmStatus = AlarmStatus::find()->all();
     $items = ArrayHelper::map($alarmStatus, 'uuid', 'title');
-    echo $form->field($model, 'alarmStatusUuid',
-        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/equipment-status/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
+    echo $form->field($model, 'alarmStatusUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -104,6 +96,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php echo $form->field($model, 'comment')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата</p>

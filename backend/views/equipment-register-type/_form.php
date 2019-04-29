@@ -18,20 +18,19 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-
     if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
     } else {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
-
     ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-center">
 
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Создать') : Yii::t('app', 'Обновить'), [
+        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Создать') :
+            Yii::t('app', 'Обновить'), [
             'class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary'
         ]) ?>
 

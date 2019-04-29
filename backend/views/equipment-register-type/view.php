@@ -6,12 +6,12 @@ use yii\widgets\DetailView;
 /* @var $model common\models\EquipmentRegisterType */
 
 $this->title = $model['title'];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы записей в журнал оборудования'),
-    'url' => ['index']];
 ?>
-<div class="order-status-view box-padding">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
@@ -22,15 +22,10 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Типы запис�
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
                     <p class="text-center">
-                        <?= Html::a(Yii::t('app', 'Обновить'), ['update', 'id' => $model['_id']],
-                            ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a(Yii::t('app', 'Удалить'), ['delete', 'id' => $model['_id']], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => Yii::t('app', 'Вы действительно хотите удалить данный элемент?'),
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+                        <?php
+                        echo $this->render('@backend/views/yii2-app/layouts/buttons.php',
+                            ['model' => $model]);
+                        ?>
                     </p>
                     <h6>
                         <?= DetailView::widget([

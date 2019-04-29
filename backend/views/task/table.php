@@ -38,19 +38,14 @@ $gridColumns = [
         'expandOneOnly' => true
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'title',
+        'attribute' => 'taskTemplateUuid',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (isset($data['title'])) {
-                return $data['title'];
-            } else {
-                return 'неизвестно';
-            }
+            return $data['taskTemplate']->title;
         }
     ],
     [
@@ -69,6 +64,7 @@ $gridColumns = [
         }
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'workStatusUuid',
         'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
@@ -101,7 +97,7 @@ $gridColumns = [
             ];
         },
         'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['workStatusUuid'],'task_status');
+            $status =MainFunctions::getColorLabelByStatus($model['workStatus'],'task_status');
             return $status;
         },
 
@@ -120,14 +116,14 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['taskVerdictUuid'],'task_verdict');
+            $status =MainFunctions::getColorLabelByStatus($model['taskVerdict'],'task_verdict');
             return $status;
         },
         'format' => 'raw'
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'startDate',
+        'attribute' => 'date',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => ['class' => 'kv-sticky-column'],
@@ -152,7 +148,7 @@ $gridColumns = [
             ]
         ],
     ],
-    [
+/*    [
         'class' => 'kartik\grid\EditableColumn',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -163,7 +159,7 @@ $gridColumns = [
         'editableOptions'=> function () {
             $users = ArrayHelper::map(Users::find()->orderBy('name')->all(), 'uuid', 'name');
             return [
-                'header' => 'Исполнитель наряда',
+                'header' => 'Исполнитель задачи',
                 'size' => 'md',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $users,
@@ -177,40 +173,45 @@ $gridColumns = [
             'pluginOptions' => ['allowClear' => true]
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
-    ],
+    ],*/
     [
-        'attribute' => 'openDate',
+        'attribute' => 'startDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+    ],
+    [
+        'attribute' => 'endDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Закрыта задача',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->openDate)>0)
-                return date("Y-m-d h:m", strtotime($data->openDate));
+            if (strtotime($data->endDate)>0)
+                return date("Y-m-d h:m", strtotime($data->endDate));
             else
-                return 'не открыт';
+                return 'не закрыта';
         }
     ],
     [
-        'attribute' => 'closeDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Основание',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->closeDate)>0)
-                return date("Y-m-d h:m", strtotime($data->closeDate));
-            else
-                return 'не закрыт';
+            // или автоматически по расписанию
+            return 'заявка';
         }
     ],
-];
+ ];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -244,14 +245,14 @@ echo GridView::widget([
                 ]
             ]).'</div><div class="col-sm-2" style="width:12%">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']).'</div><div class="col-sm-2" style="width:12%">'.
-            Html::a('Новый', ['/orders/create'], ['class'=>'btn btn-success']).'</div>'.
+            Html::a('Новая', ['/task/create'], ['class'=>'btn btn-success']).'</div>'.
             '<div class="col-sm-1" style="width:8%">'.'{export}'.'</div></div></form>',
             'options' => ['style' => 'width:100%']
         ],
     ],
     'export' => [
         'target' => GridView::TARGET_BLANK,
-        'filename' => 'orders'
+        'filename' => 'tasks'
     ],
     'pjax' => true,
     'showPageSummary' => false,
@@ -265,7 +266,7 @@ echo GridView::widget([
     'floatHeader' => false,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Наряды',
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Задачи',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

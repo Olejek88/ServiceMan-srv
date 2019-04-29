@@ -11,15 +11,16 @@ use yii\db\ActiveRecord;
  * @property string $uuid
  * @property string $oid идентификатор организации
  * @property string $equipmentUuid
- * @property string $registerType
+ * @property string $registerTypeUuid
  * @property string $userUuid
  * @property string $date
  * @property string $description
  *
  * @property User $user
  * @property Equipment $equipment
- * @property RegisterType $registerType
+ * @property EquipmentRegisterType $equipmentRegisterType
  */
+
 class EquipmentRegister extends ActiveRecord
 {
     /**
@@ -39,7 +40,7 @@ class EquipmentRegister extends ActiveRecord
             [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid', 'date'], 'required'],
             [['data'], 'safe'],
             [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
-            [['description'], 'string', 'max' => 250],
+            [['description','oid'], 'string', 'max' => 250],
         ];
     }
 
@@ -60,6 +61,7 @@ class EquipmentRegister extends ActiveRecord
             'user' => Yii::t('app', 'Пользователь'),
             'description' => Yii::t('app', 'Запись'),
             'date' => Yii::t('app', 'Дата'),
+            'registerType' => Yii::t('app', 'Тип события'),
             'registerTypeUuid' => Yii::t('app', 'Тип события'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
@@ -107,6 +109,7 @@ class EquipmentRegister extends ActiveRecord
             'user' => function ($model) {
                 return $model->user;
             },
+            'registerTypeUuid',
             'registerType' => function ($model) {
                 return $model->registerType;
             }, 'date', 'description', 'createdAt', 'changedAt'

@@ -285,151 +285,38 @@ class UsersController extends Controller
 
     /**
      * Build tree of equipment by user
-     *
-     * @param integer $id Id
-     * @param $date_start
-     * @param $date_end
      * @return mixed
      */
-    public function actionTable($id, $date_start, $date_end)
+    public function actionTable()
     {
-        ini_set('memory_limit', '-1');
-        $c = 'children';
-        $fullTree = array();
-        $user = Users::find()
-            ->select('*')
-            ->where(['_id' => $id])
-            ->one();
-        if ($user) {
-            $oCnt1 = 0;
-            $gut_total_count = 0;
-            $object_count = 0;
-            $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
-            foreach ($user_houses as $user_house) {
-                $flats = Objects::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
-                $flat_gut=0;
-                foreach ($flats as $flat) {
-                    $objectContragent = ObjectContragent::find()
-                        ->where(['uuid' => $flat['uuid']])
-                        ->one();
-                    if ($objectContragent)
-                        $contragent = $objectContragent['contragent']['title'];
-                    else
-                        $contragent = '';
-                    $equipments = Equipment::find()
-                        ->select('*')
-                        ->where(['flatUuid' => $flat['uuid']])
-                        ->orderBy('changedAt desc')
-                        ->all();
-                    foreach ($equipments as $equipment) {
-                        $address = 'ул.' . $equipment['house']['street']['title'] . ', д.' .
-                            $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'];
-                        if ($contragent)
-                            $address.=' ['.$contragent['address'].']';
-
-                        $gut=0;
-                        $object_count++;
-                        $prev_date = 0;
-                        $measures = Measure::find()
-                            ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->andWhere('date > \''.$date_start.'\'')
-                            ->andWhere('date < \''.$date_end.'\'')
-                            ->orderBy('date')
-                            ->all();
-                        // есть измерение, есть/нет фото
-                        foreach ($measures as $measure) {
-                            $fullTree[$oCnt1]['title']
-                                = Html::a(
-                                $address, ['equipment/view', 'id' => $equipment['_id']]
-                            );
-                            $fullTree[$oCnt1]['measure_date'] = $measure['date'];
-                            $fullTree[$oCnt1]['measure'] = $measure['value'];
-
-                            $photo_flat_count = Photo::find()
-                                ->where(['objectUuid' => $equipment['uuid']])
-                                ->andWhere('createdAt > DATE_SUB(\''.$measure['date'].'\', INTERVAL 15 MINUTE)')
-                                ->andWhere('createdAt < DATE_ADD(\''.$measure['date'].'\', INTERVAL 15 MINUTE)')
-                                ->count();
-
-                            if ($photo_flat_count>0) {
-                                $class = 'critical3';
-                                $status = 'А. Отличное';
-                            } else {
-                                $class = 'critical2';
-                                $status = 'Б. Удовлетворительное';
-                            }
-                            $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
-                                . $class . '">' . $status . '</div></div>';
-
-                            if (strtotime($measure['date'])>($prev_date+3600)) {
-                                $gut++;
-                                $oCnt1++;
-                            }
-                            $prev_date = strtotime($measure['date']);
-                        }
-
-                        // есть комментарий,  нет измерения, есть/нет фото
-                        $messages = Message::find()
-                            ->where(['flatUuid' => $equipment['flat']['uuid']])
-                            ->orderBy('date DESC')
-                            ->all();
-                        foreach ($messages as $message) {
-                            $measure_count = Measure::find()
-                                ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->andWhere('date > DATE_SUB(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
-                                ->andWhere('date < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
-                                ->count();
-
-                            $photo_flat_count = Photo::find()
-                                ->where(['objectUuid' => $equipment['uuid']])
-                                ->andWhere('createdAt > DATE_SUB(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
-                                ->andWhere('createdAt < DATE_ADD(\''.$message['date'].'\', INTERVAL 15 MINUTE)')
-                                ->count();
-
-                            if ($measure_count==0 && $photo_flat_count>0) {
-                                $fullTree[$oCnt1]['measure_date'] = $message['date'];
-                                $fullTree[$oCnt1]['measure'] = 'есть сообщение';
-                                $fullTree[$oCnt1]['title']
-                                    = Html::a(
-                                    $address, ['equipment/view', 'id' => $equipment['_id']]
-                                );
-
-                                $class = 'critical3';
-                                $status = 'Отличное';
-                                $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
-                                    . $class . '">Б.' . $status . '</div></div>';
-                                $oCnt1++;
-                                $gut++;
-                            }
-                        }
-
-                        if ($gut==0 && $flat_gut!=1) {
-                            $class = 'critical1';
-                            $status = 'Не удовлетворительное';
-                            $fullTree[$oCnt1]['status'] = '<div class="progress"><div class="'
-                                . $class . '">А.' . $status . '</div></div>';
-                            $fullTree[$oCnt1]['title']
-                                = Html::a($address, ['equipment/view', 'id' => $equipment['_id']]
-                            );
-                            $fullTree[$oCnt1]['measure_date'] = '-';
-                            $fullTree[$oCnt1]['measure'] = '-';
-                            $oCnt1++;
-                        } else {
-                            $flat_gut = 1;
-                            $gut_total_count += $gut;
-                        }
-                    }
-                }
+        if (isset($_POST['editableAttribute'])) {
+            $model = Users::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute']=='type') {
+                $model['type']=intval($_POST['Users'][$_POST['editableIndex']]['type']);
+                if ($model['active']==true) $model['active']=1;
+                else $model['active']=0;
+                $model->save();
+                return json_encode($model->errors);
             }
-            $fullTree[$oCnt1]['title'] = 'Всего';
-            $percent = 0;
-            if ($object_count>0)
-                $percent = number_format($gut_total_count*100/$object_count,2);
-            $fullTree[$oCnt1]['measure_date'] = 'Показаний: ' . $gut_total_count . '[' . $percent . '%]';
+            if ($_POST['editableAttribute']=='active') {
+                if ($_POST['Users'][$_POST['editableIndex']]['active']==true)
+                    $model['active']=1;
+                else $model['active']=0;
+                $model->save();
+                return json_encode("hui2");
+            }
         }
+        $searchModel = new UsersSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
         return $this->render(
             'table',
-            ['equipment' => $fullTree]
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
         );
     }
 

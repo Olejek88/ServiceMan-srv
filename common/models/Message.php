@@ -95,6 +95,7 @@ class Message extends ActiveRecord
                     'uuid',
                     'fromUserUuid',
                     'toUserUuid',
+                    'oid',
                     'date'
                 ],
                 'string', 'max' => 50

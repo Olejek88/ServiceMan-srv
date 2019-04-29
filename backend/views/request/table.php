@@ -5,9 +5,12 @@ use common\models\EquipmentStatus;
 use common\models\RequestStatus;
 use common\models\Stage;
 use common\models\StageStatus;
+use common\models\Task;
+use common\models\WorkStatus;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС::Управление заявками');
 
@@ -139,14 +142,14 @@ $gridColumns = [
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'value' => function ($model) {
-            if ($model['stageUuid']) {
-                $stage = Stage::find()->where(['uuid' => $model['stageUuid']])->one();
-                if ($stage) {
-                    $order = 'Наряд №'.$stage['task']['order']['_id'].' ['.$stage['task']['order']['user']['name'].']';
-                    if ($stage['stageStatusUuid']==StageStatus::COMPLETE)
+            if ($model['taskUuid']) {
+                $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
+                if ($task) {
+                    $order = 'Задача №'.$task['_id'].' ['.$task['taskTemplate']['title'].']';
+                    if ($task['workStatusUuid']==WorkStatus::COMPLETE)
                         return "<span class='badge' style='background-color: green; height: 22px'>".$order." [Выполнен]</span>";
                     else
-                        return "<span class='badge' style='background-color: sandybrown; height: 22px'>".$order." [".$stage['stageStatus']->title."]</span>";
+                        return "<span class='badge' style='background-color: sandybrown; height: 22px'>".$order." [".$task['workStatus']->title."]</span>";
                 }
             }
             return "<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>";
@@ -192,6 +195,9 @@ echo GridView::widget([
         '{toggleData}'
     ],
     'toolbar' => [
+        ['content' =>
+            Html::a('Новая', ['/request/create'], ['class' => 'btn btn-success'])
+        ],
         '{export}',
     ],
     'export' => [

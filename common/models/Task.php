@@ -17,6 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $equipmentUuid
  * @property string $taskVerdictUuid
  * @property string $taskTemplateUuid
+ * @property string $taskDate
  * @property string $startDate
  * @property string $endDate
  * @property string $createdAt
@@ -58,8 +59,8 @@ class Task extends ActiveRecord
         return [
             [['uuid', 'workStatusUuid'], 'required'],
             [['comment'], 'string'],
-            [['startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid'], 'string', 'max' => 45],
+            [['startDate', 'taskDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],
         ];
     }
 
@@ -116,7 +117,7 @@ class Task extends ActiveRecord
 
     public function getTaskVerdict()
     {
-        return $this->hasOne(Objects::class, ['uuid' => 'taskVerdictUuid']);
+        return $this->hasOne(TaskVerdict::class, ['uuid' => 'taskVerdictUuid']);
     }
 
     public function getTaskTemplate()

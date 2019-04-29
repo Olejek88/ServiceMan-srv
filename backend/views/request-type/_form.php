@@ -14,13 +14,11 @@ use app\commands\MainFunctions;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php
-
-        if (!$model->isNewRecord) {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
-        } else {
-            echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => MainFunctions::GUID()]);
-        }
-
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
+    } else {
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
+    }
     ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>

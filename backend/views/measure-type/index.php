@@ -1,15 +1,16 @@
 <?php
+/* @var $searchModel backend\models\MeasureSearchType */
 
-use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\grid\GridView;
 
-/* @var $searchModel  backend\models\ContragentSearch */
-
-$this->title = Yii::t('app', 'Контрагенты');
+$this->title = Yii::t('app', 'Типы измерений');
 ?>
-<div class="orders-index box-padding-index">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
@@ -33,30 +34,32 @@ $this->title = Yii::t('app', 'Контрагенты');
                             ],
                             'columns' => [
                                 [
-                                    'attribute' => '_id',
-                                    'contentOptions' => [
+                                    'attribute'=>'_id',
+                                    'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style' => 'width: 50px; text-align: center'
+                                        'style'=>'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content' => function ($data) {
+                                    'content'=>function($data){
                                         return $data->_id;
                                     }
                                 ],
                                 [
-                                    'attribute' => 'title',
-                                    'contentOptions' => [
-                                        'class' => 'table_class'
+                                    'attribute'=>'title',
+                                    'contentOptions' =>[
+                                        'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'value' => 'title',
+                                    'content'=>function($data){
+                                        return $data->title;
+                                    }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',
-                                    'header' => 'Действия',
-                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
-                                    'contentOptions' => [
-                                        'class' => 'text-center'
+                                    'header'=>'Действия',
+                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
+                                    'contentOptions' =>[
+                                        'class' => 'text-center',
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],

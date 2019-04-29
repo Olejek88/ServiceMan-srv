@@ -2,6 +2,7 @@
 
 namespace common\components;
 
+use common\models\EquipmentStatus;
 use common\models\Journal;
 use common\models\TaskVerdict;
 use common\models\Users;
@@ -161,7 +162,7 @@ class MainFunctions
     public static function getColorLabelByStatus($status, $type)
     {
         $label = '<div class="progress"><div class="critical3">' . $status['title'] . '</div></div>';
-        if ($type=='task_status') {
+        if ($type == 'task_status') {
             if ($status["uuid"] == WorkStatus::NEW_OPERATION ||
                 $status["uuid"] == WorkStatus::IN_WORK)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
@@ -170,13 +171,33 @@ class MainFunctions
             if ($status["uuid"] == WorkStatus::UN_COMPLETE)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
-        if ($type=='task_verdict') {
+        if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
             if ($status["uuid"] == TaskVerdict::INSPECTED)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
+        if ($type == 'equipment_status') {
+            if ($status['uuid'] == EquipmentStatus::NOT_MOUNTED) {
+                $label = 'critical1';
+            } elseif ($status['uuid'] == EquipmentStatus::NOT_WORK) {
+                $label = 'critical2';
+            } elseif ($status['uuid'] == EquipmentStatus::UNKNOWN) {
+                $label = 'critical4';
+            } else {
+                $label = 'critical3';
+            }
+        }
         return $label;
     }
+
+    public static function getAddButton($link)
+    {
+        return "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+        <a href=\"" . $link . "\">
+        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
+        </button></a></span></div>\n{hint}\n{error}";
+    }
+
 }
 

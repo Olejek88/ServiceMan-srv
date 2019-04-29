@@ -58,7 +58,7 @@ class Objects extends ActiveRecord
             [['uuid', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
-            [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'string', 'max' => 50],
+            [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
         ];
     }
 
@@ -85,9 +85,9 @@ class Objects extends ActiveRecord
         ];
     }
 
-    public function getFlatStatus()
+    public function getObjectStatus()
     {
-        return $this->hasOne(ObjectStatus::class, ['uuid' => 'flatStatusUuid']);
+        return $this->hasOne(ObjectStatus::class, ['uuid' => 'objectStatusUuid']);
     }
 
     public function getHouse()

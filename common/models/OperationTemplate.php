@@ -69,7 +69,7 @@ class OperationTemplate extends ActiveRecord
             [['description'], 'string'],
             [['createdAt', 'changedAt'], 'safe'],
             [
-                ['uuid'], 'string', 'max' => 45
+                ['uuid','oid'], 'string', 'max' => 45
             ],
             [['title'], 'string', 'max' => 200],
         ];

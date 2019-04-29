@@ -74,24 +74,11 @@ $this->title = Yii::t('app', 'Журнал оборудования');
                                     }
                                 ],
                                 [
-                                    'attribute' => 'fromParameterUuid',
+                                    'attribute' => 'description',
                                     'contentOptions' => [
                                         'class' => 'table_class',
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
-                                    'content' => function ($data) {
-                                        return $data->fromParameterUuid;
-                                    }
-                                ],
-                                [
-                                    'attribute' => 'toParameterUuid',
-                                    'contentOptions' => [
-                                        'class' => 'table_class',
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content' => function ($data) {
-                                        return $data->toParameterUuid;
-                                    }
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',

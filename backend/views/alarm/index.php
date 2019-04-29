@@ -14,7 +14,7 @@ $this->title = Yii::t('app', 'Предупреждения');
                 <?= Html::encode($this->title) ?>
             </h3>
 
-            <ul class="nav nav-tabs" style="width: 255px; margin: 0 auto;">
+            <ul class="nav nav-tabs" style="width: 285px; margin: 0 auto;">
                 <li class="active"><a href="/alarm">Предупреждения</a></li>
                 <li><a href="/alarm-type">Тип</a></li>
                 <li><a href="/alarm-status">Статус</a></li>

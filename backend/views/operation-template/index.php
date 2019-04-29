@@ -14,12 +14,6 @@ $this->title = Yii::t('app', 'Шаблоны операций');
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 550px; margin: 0 auto;">
-                <li class=""><a href="/operation">Список</a></li>
-                <li class=""><a href="/operation-status">Статусы</a></li>
-                <li class="active"><a href="/operation-template">Шаблоны</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -47,7 +41,7 @@ $this->title = Yii::t('app', 'Шаблоны операций');
                                         'attribute' => '_id',
                                         'contentOptions' => [
                                             'class' => 'table_class',
-                                            'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
+                                            'style' => 'width: 50px; text-align: center'
                                         ],
                                         'headerOptions' => [
                                             'class' => 'text-center'
@@ -60,26 +54,13 @@ $this->title = Yii::t('app', 'Шаблоны операций');
                                         'attribute' => 'title',
                                         'contentOptions' => [
                                             'class' => 'table_class',
-                                            'style' => 'text-align: left; padding: 5px 10px 5px 10px;'
+                                            'style' => 'text-align: left'
                                         ],
                                         'headerOptions' => [
                                             'class' => 'text-center'
                                         ],
                                         'content' => function ($data) {
                                             return $data->title;
-                                        }
-                                    ],
-                                    [
-                                        'attribute' => 'normative',
-                                        'contentOptions' => [
-                                            'class' => 'table_class',
-                                            'style' => 'padding: 5px 10px 5px 10px;'
-                                        ],
-                                        'headerOptions' => [
-                                            'class' => 'text-center'
-                                        ],
-                                        'content' => function ($data) {
-                                            return $data->normative;
                                         }
                                     ],
                                     [
@@ -91,7 +72,6 @@ $this->title = Yii::t('app', 'Шаблоны операций');
                                         ],
                                         'contentOptions' => [
                                             'class' => 'text-center',
-                                            'style' => 'padding: 5px 10px 5px 10px;'
                                         ],
                                         'template' => '{view} {update} {delete}{link}',
                                     ],

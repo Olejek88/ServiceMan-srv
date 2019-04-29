@@ -25,10 +25,6 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'description') ?>
 
-    <?php // echo $form->field($model, 'createdAt') ?>
-
-    <?php // echo $form->field($model, 'changedAt') ?>
-
     <div class="form-group">
         <?php echo Html::submitButton(
             Yii::t('app', 'Search'),

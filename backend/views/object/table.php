@@ -8,7 +8,7 @@ use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Квартиры');
+$this->title = Yii::t('app', 'Объекты');
 
 $gridColumns = [
     [
@@ -37,15 +37,15 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'number',
+        'attribute' => 'title',
         'vAlign' => 'middle',
         'width' => '180px',
-        'header' => 'Квартира',
+        'header' => 'Объект',
         'format' => 'raw',
     ],
     [
         'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'flatStatusUuid',
+        'attribute' => 'objectStatusUuid',
         'header' => 'Статус',
         'contentOptions' => [
             'class' => 'table_class'
@@ -56,15 +56,15 @@ $gridColumns = [
         'width' => '180px',
         'value' => function ($model, $key, $index, $widget) {
             $color = 'background-color: yellow';
-            if ($model['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_DEFAULT)
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_DEFAULT)
                 $color = 'background-color: gray';
-            if ($model['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_NO_ENTRANCE ||
-                ObjectStatus::FLAT_STATUS_ABSENT)
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_NO_ENTRANCE ||
+                ObjectStatus::OBJECT_STATUS_NO_ENTRANCE)
                 $color = 'background-color: lightred';
-            if ($model['flatStatusUuid'] == ObjectStatus::FLAT_STATUS_OK)
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_OK)
                 $color = 'background-color: green';
             return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;  
-                        " . $model['flatStatus']->title;
+                        " . $model['objectStatus']->title;
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(ObjectStatus::find()->orderBy('title')->all(),
@@ -77,7 +77,7 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'flatTypeUuid',
+        'attribute' => 'objectTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
@@ -96,7 +96,7 @@ $gridColumns = [
         'editableOptions' => function ($model, $key, $index, $widget) {
             $models = ArrayHelper::map(ObjectType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
-                'header' => 'Тип квартиры',
+                'header' => 'Тип объекта',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $models,
@@ -133,7 +133,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новая', ['/flat/create'], ['class' => 'btn btn-success']),
+            Html::a('Новый', ['/object/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -156,7 +156,7 @@ echo GridView::widget([
     'hover' => true,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Квартира',
+        'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Объекты',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

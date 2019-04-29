@@ -75,12 +75,16 @@ class DocumentationTypeController extends Controller
     public function actionCreate()
     {
         $model = new DocumentationType();
-
+        $searchModel = new DocumentationSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }

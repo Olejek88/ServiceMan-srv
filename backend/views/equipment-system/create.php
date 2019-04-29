@@ -4,14 +4,16 @@ use kartik\grid\GridView;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\EquipmentModel */
-/* @var $searchModel backend\models\EquipmentSearchModel */
+/* @var $model common\models\EquipmentSystem */
+/* @var $searchModel backend\models\EquipmentSystemSearch */
 
-$this->title = Yii::t('app', 'Создать модель оборудования');
+$this->title = Yii::t('app', 'Создать инженерную систему');
 ?>
-<div class="equipment-model-create box-padding">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
@@ -21,24 +23,12 @@ $this->title = Yii::t('app', 'Создать модель оборудовани
 
             <div id="myTabContent" class="tab-content">
                 <div class="tab-pane fade active in" id="list">
-                    <h6>
-                        <?php echo $this->render(
-                            '_form',
-                            [
-                                'model' => $model,
-                            ]
-                        ) ?>
-                    </h6>
-                    <h6 class='text-center'>
-                        * Если вы не нашли
-                        <b><?php
-                            echo Html::a(
-                                'тип оборудования',
-                                ['/equipment-type/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>,
-                        создайте его!
-                    </h6>
+                    <?php echo $this->render(
+                        '_form',
+                        [
+                            'model' => $model,
+                        ]
+                    ) ?>
                     <?php echo GridView::widget(
                         [
                             'dataProvider' => $dataProvider,
@@ -46,6 +36,18 @@ $this->title = Yii::t('app', 'Создать модель оборудовани
                                 'class' => 'table-striped table table-bordered table-hover table-condensed'
                             ],
                             'columns' => [
+                                [
+                                    'attribute' => 'uuid',
+                                    'contentOptions' => [
+                                        'class' => 'table_class'
+                                    ],
+                                    'headerOptions' => [
+                                        'class' => 'text-center'
+                                    ],
+                                    'content' => function ($data) {
+                                        return $data->uuid;
+                                    }
+                                ],
                                 [
                                     'attribute' => 'title',
                                     'contentOptions' => [
@@ -59,15 +61,24 @@ $this->title = Yii::t('app', 'Создать модель оборудовани
                                     }
                                 ],
                                 [
-                                    'attribute' => 'equipmentType',
+                                    'attribute' => 'titleUser',
                                     'contentOptions' => [
                                         'class' => 'table_class'
                                     ],
                                     'headerOptions' => [
                                         'class' => 'text-center'
                                     ],
-                                    'value' => 'equipmentType.title',
+                                    'value' => 'titleUser',
                                 ],
+                                [
+                                    'class' => 'yii\grid\ActionColumn',
+                                    'header' => 'Действия',
+                                    'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                    'contentOptions' => [
+                                        'class' => 'text-center',
+                                    ],
+                                    'template' => '{view} {update} {delete}{link}',
+                                ]
                             ],
                         ]
                     ); ?>

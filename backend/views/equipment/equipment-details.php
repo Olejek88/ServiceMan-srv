@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\Measure;
+use common\models\Photo;
 use common\models\PhotoEquipment;
 use yii\helpers\Html;
 
@@ -16,8 +17,8 @@ $models = Equipment::findOne($model['_id']);
 $measures = Measure::find()
     ->where(['equipmentUuid' => $equipment['uuid']])
     ->all();
-$photo = PhotoEquipment::find()
-    ->where(['equipmentUuid' => $equipment['uuid']])
+$photo = Photo::find()
+    ->where(['objectUuid' => $equipment['uuid']])
     ->orderBy('createdAt DESC')
     ->one();
 

@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Users;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
@@ -37,10 +38,7 @@ use kartik\file\FileInput;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')
-            ->textInput(
-                ['maxlength' => true, 'value' => (new MainFunctions)->GUID()]
-            );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
 
@@ -51,16 +49,7 @@ use kartik\file\FileInput;
         ['rows' => 4, 'style' => 'resize: none;']
     );
     ?>
-
-    <?php
-    echo $form->field($model, 'image')->widget(
-        FileInput::class,
-        [
-            'options' => ['accept' => 'image/*', 'allowEmpty' => true],
-        ]
-    ); ?>
-
-    <?php echo $form->field($model, 'normative')->textInput() ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <div class="form-group text-center">
         <?php

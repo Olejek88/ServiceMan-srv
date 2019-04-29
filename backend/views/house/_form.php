@@ -4,6 +4,7 @@ use app\commands\MainFunctions;
 use common\models\HouseStatus;
 use common\models\HouseType;
 use common\models\Street;
+use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -23,14 +24,12 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')->textInput(
-            ['maxlength' => true,
-                'value' => (new MainFunctions)->GUID()]
-        );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
 
     <?php echo $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?php
     $streets = Street::find()->all();

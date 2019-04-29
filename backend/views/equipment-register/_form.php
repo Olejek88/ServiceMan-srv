@@ -26,13 +26,11 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-
     if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'readonly' => true]);
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
     } else {
-        echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
-
     ?>
     <?php
     $registerTypes = EquipmentRegisterType::find()->orderBy("title")->all();
@@ -64,9 +62,12 @@ use yii\widgets\ActiveForm;
         ?>
     </div>
 
-    <?= $form->field($model, 'fromParameterUuid')->textInput(['value' => 0]) ?>
-
-    <?= $form->field($model, 'toParameterUuid')->textInput(['value' => 0]) ?>
+    <?php
+    echo $form->field($model, 'description')->textarea(
+        ['rows' => 4, 'style' => 'resize: none;']
+    );
+    ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <div class="form-group text-center">
 

@@ -61,6 +61,8 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'user_id' => $this->integer()->notNull()->unique(),
+            'type' => $this->integer()->notNull(),
+            'active' => $this->integer()->notNull()->defaultValue(0),
             'name' => $this->string()->notNull(),
             'pin' => $this->string()->notNull(),
             'whoIs' => $this->string(45)->defaultValue(""),
@@ -79,8 +81,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%city}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -89,8 +91,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%street}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'cityUuid' => $this->string(45)->notNull(),
             'deleted' => $this->smallInteger()->defaultValue(0),
@@ -125,8 +127,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%house_type}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -135,8 +137,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%house}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'number' => $this->string()->notNull(),
             'houseStatusUuid' => $this->string(45)->notNull(),
             'houseTypeUuid' => $this->string(45)->notNull(),
@@ -205,8 +207,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%object_type}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -215,8 +217,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%object}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'objectStatusUuid' => $this->string()->notNull(),
             'houseUuid' => $this->string(45)->notNull(),
@@ -324,12 +326,12 @@ class m190412_104112_init_new extends Migration
                 '_id' => $this->primaryKey()->comment("Id"),
                 'uuid' => $this->string(45)->unique()->notNull(),
                 'date' => $this->timestamp()->defaultExpression('CURRENT_TIMESTAMP')->notNull(),
-                'oid' => $this->string(45)->unique()->notNull(),
-                'alarmTypeUuid' => $this->string(45)->unique()->notNull(),
-                'alarmStatusUuid' => $this->string(45)->unique()->notNull(),
-                'objectUuid' => $this->string(45)->unique()->notNull(),
-                'userUuid' => $this->string(45)->unique()->notNull(),
-                'comment' => $this->string(512)->unique()->notNull(),
+                'oid' => $this->string(45)->notNull(),
+                'alarmTypeUuid' => $this->string(45)->notNull(),
+                'alarmStatusUuid' => $this->string(45)->notNull(),
+                'objectUuid' => $this->string(45)->notNull(),
+                'userUuid' => $this->string(45)->notNull(),
+                'comment' => $this->string(512)->notNull(),
                 'longitude' => $this->double()->defaultValue('55'),
                 'latitude' => $this->double()->defaultValue('55'),
                 'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -413,8 +415,8 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%contragent}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
-            'gis_id' => $this->string(45)->unique(),
+            'oid' => $this->string(45)->notNull(),
+            'gis_id' => $this->string(45),
             'title' => $this->string()->notNull(),
             'address' => $this->string()->defaultValue("не указан"),
             'phone' => $this->string()->defaultValue("не указан"),
@@ -447,7 +449,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%contragent_register}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'contragentUuid' => $this->string(45)->notNull(),
             'date' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'description' => $this->string()->defaultValue(""),
@@ -476,6 +478,7 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
+            'equipmentSystemUuid' => $this->string(45)->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
@@ -500,11 +503,11 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%equipment}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
+            'title' => $this->string(150)->notNull(),
             'objectUuid' => $this->string(45)->notNull(),
             'equipmentTypeUuid' => $this->string(45)->notNull(),
             'equipmentStatusUuid' => $this->string(45)->notNull(),
-            'equipmentSystemUuid' => $this->string(45)->notNull(),
             'tag' => $this->string(),
             'serial' => $this->string(),
             'testDate' => $this->timestamp()->defaultValue('2019-01-01'),
@@ -563,13 +566,13 @@ class m190412_104112_init_new extends Migration
 
         $this->createIndex(
             'idx-equipmentSystemUuid',
-            'equipment',
+            'equipment_type',
             'equipmentSystemUuid'
         );
 
         $this->addForeignKey(
-            'fk-equipment-equipmentSystemUuid',
-            'equipment',
+            'fk-equipment_type-equipmentSystemUuid',
+            'equipment_type',
             'equipmentSystemUuid',
             'equipment_system',
             'uuid',
@@ -589,8 +592,9 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
-            'equipmentUuid' => $this->string(45)->notNull(),
+            'equipmentUuid' => $this->string(45),
             'documentationTypeUuid' => $this->string(45)->notNull(),
+            'equipmentTypeUuid' => $this->string(45),
             'path' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP')
@@ -607,6 +611,22 @@ class m190412_104112_init_new extends Migration
             'documentation',
             'equipmentUuid',
             'equipment',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );
+
+        $this->createIndex(
+            'idx-equipmentTypeUuid',
+            'documentation',
+            'equipmentTypeUuid'
+        );
+
+        $this->addForeignKey(
+            'fk-documentation-equipmentTypeUuid',
+            'documentation',
+            'equipmentTypeUuid',
+            'equipment_type',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -639,7 +659,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%equipment_register}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'equipmentUuid' => $this->string(45)->notNull(),
             'userUuid' => $this->string(45)->notNull(),
             'registerTypeUuid' => $this->string(45)->notNull(),
@@ -700,7 +720,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%export_link}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'table' => $this->string(45)->notNull(),
             'dbUuid' => $this->string(45)->notNull(),
             'externalId' => $this->string(45)->notNull(),
@@ -770,7 +790,7 @@ class m190412_104112_init_new extends Migration
 
         $this->createTable('{{%measure}}', ['_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'measureTypeUuid' => $this->string(45)->notNull(),
             'equipmentUuid' => $this->string(45)->notNull(),
             'userUuid' => $this->string(45)->notNull(),
@@ -832,7 +852,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%messages}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'fromUserUuid' => $this->string(45)->notNull(),
             'toUserUuid' => $this->string(45)->notNull(),
             'status' => $this->string()->notNull(),
@@ -877,7 +897,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%object_contragent}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'objectUuid' => $this->string(45)->notNull(),
             'contragentUuid' => $this->string(45)->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -919,7 +939,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%operation_template}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'title' => $this->string()->notNull(),
             'description' => $this->string()->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -946,7 +966,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%request}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'userUuid' => $this->string(45),
             'contragentUuid' => $this->string(45),
             'authorUuid' => $this->string(45)->notNull(),
@@ -954,9 +974,9 @@ class m190412_104112_init_new extends Migration
             'requestTypeUuid' => $this->string(45)->notNull(),
             'comment' => $this->string(),
             'equipmentUuid' => $this->string(45)->notNull(),
-            'objectUuid' => $this->string(45)->notNull(),
-            'taskUuid' => $this->string(45)->notNull(),
-            'closeDate' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
+            'objectUuid' => $this->string(45),
+            'taskUuid' => $this->string(45),
+            'closeDate' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
@@ -1034,7 +1054,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%shutdown}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'startDate' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'endDate' => $this->dateTime(),
             'comment' => $this->string()->notNull(),
@@ -1079,6 +1099,7 @@ class m190412_104112_init_new extends Migration
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'title' => $this->string()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'description' => $this->string()->notNull(),
             'normative' => $this->integer()->defaultValue(120),
             'taskTypeUuid' => $this->string(45)->notNull(),
@@ -1153,11 +1174,13 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%task}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'comment' => $this->string(),
             'equipmentUuid' => $this->string()->notNull(),
             'workStatusUuid' => $this->string()->notNull(),
             'taskVerdictUuid' => $this->string()->notNull(),
+            'taskTemplateUuid' => $this->string()->notNull(),
+            'date' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'startDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'endDate' => $this->dateTime()->notNull()->defaultValue('2019-01-01'),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1197,6 +1220,22 @@ class m190412_104112_init_new extends Migration
         );
 
         $this->createIndex(
+            'idx-taskTemplateUuid',
+            'task',
+            'taskTemplateUuid'
+        );
+
+        $this->addForeignKey(
+            'fk-task-taskTemplateUuid',
+            'task',
+            'taskTemplateUuid',
+            'task_template',
+            'uuid',
+            $delete = 'RESTRICT',
+            $update = 'CASCADE'
+        );
+
+        $this->createIndex(
             'idx-equipmentUuid',
             'task',
             'equipmentUuid'
@@ -1215,7 +1254,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%operation}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'taskUuid' => $this->string()->notNull(),
             'workStatusUuid' => $this->string()->notNull(),
             'operationTemplateUuid' => $this->string()->notNull(),
@@ -1274,7 +1313,6 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%task_operation}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
             'taskTemplateUuid' => $this->string()->notNull(),
             'operationTemplateUuid' => $this->string()->notNull(),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1291,7 +1329,7 @@ class m190412_104112_init_new extends Migration
             'fk-task_operation-taskTemplateUuid',
             'task_operation',
             'taskTemplateUuid',
-            'task_operation',
+            'task_template',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -1307,7 +1345,7 @@ class m190412_104112_init_new extends Migration
             'fk-task_operation-operationTemplateUuid',
             'task_operation',
             'operationTemplateUuid',
-            'operation',
+            'operation_template',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
@@ -1316,7 +1354,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%task_user}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'taskUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1358,7 +1396,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%user_house}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'houseUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -1400,7 +1438,7 @@ class m190412_104112_init_new extends Migration
         $this->createTable('{{%user_system}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'oid' => $this->string(45)->unique()->notNull(),
+            'oid' => $this->string(45)->notNull(),
             'equipmentSystemUuid' => $this->string()->notNull(),
             'userUuid' => $this->string()->notNull(),
             'createdAt' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),

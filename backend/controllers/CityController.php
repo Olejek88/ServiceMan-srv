@@ -75,6 +75,9 @@ class CityController extends Controller
     public function actionCreate()
     {
         $model = new City();
+        $searchModel = new CitySearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 50;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             $searchModel = new CitySearch();
@@ -86,7 +89,7 @@ class CityController extends Controller
             ]);
         } else {
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

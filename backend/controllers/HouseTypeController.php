@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\HouseSearch;
 use backend\models\HouseSearchType;
 use common\models\HouseType;
 use Yii;
@@ -75,12 +76,17 @@ class HouseTypeController extends Controller
     public function actionCreate()
     {
         $model = new HouseType();
+        $searchModel = new HouseSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }

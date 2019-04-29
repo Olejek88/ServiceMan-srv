@@ -7,8 +7,6 @@ use yii\widgets\DetailView;
 /* @var $model common\models\Measure */
 
 $this->title = 'Измеренное значение';
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Измеренные значения'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box box-default">
     <div class="box-header with-border">

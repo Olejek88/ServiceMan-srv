@@ -31,12 +31,11 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')
-            ->textInput(
-                ['maxlength' => true, 'value' => (new MainFunctions)->GUID()]
-            );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
+
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?php
     $users = Users::find()->all();

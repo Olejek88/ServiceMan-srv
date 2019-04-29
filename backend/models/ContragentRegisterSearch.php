@@ -18,7 +18,7 @@ class ContragentRegisterSearch extends ContragentRegister
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'description', 'date', 'contragentUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'contragentUuid', 'date', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -63,7 +63,7 @@ class ContragentRegisterSearch extends ContragentRegister
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'title', $this->description]);
+            ->andFilterWhere(['like', 'title', $this->contragentUuid]);
 
         return $dataProvider;
     }

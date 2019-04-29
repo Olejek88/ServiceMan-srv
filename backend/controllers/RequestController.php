@@ -146,6 +146,7 @@ class RequestController extends Controller
             MainFunctions::register('Создана заявка ' . $model->comment);
             return $this->redirect(['table', 'id' => $model->_id]);
         } else {
+            echo json_encode($model->errors);
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -252,7 +253,7 @@ class RequestController extends Controller
         $model = $this->findModel($id);
         if ($model) {
             $accountUser = Yii::$app->user->identity;
-            $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+            $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
             if ($currentUser) {
                 // если заявку создал текущий пользователь или у него роль заказчика
                 if ($model->userUuid == $currentUser['uuid']) {

@@ -1,6 +1,8 @@
 <?php
 
 use common\models\Equipment;
+use common\models\TaskTemplate;
+use common\models\Users;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -24,10 +26,7 @@ use common\models\WorkStatus;
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
-        echo $form->field($model, 'uuid')->textInput(
-            ['maxlength' => true,
-                'value' => (new MainFunctions)->GUID()]
-        );
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
 
@@ -46,11 +45,18 @@ use common\models\WorkStatus;
             ],
         ]);
     ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?php
-    $taskStatus = WorkStatus::find()->all();
-    $items = ArrayHelper::map($taskStatus, 'uuid', 'title');
-    echo $form->field($model, 'taskStatusUuid')->dropDownList($items);
+    $taskTemplate = TaskTemplate::find()->all();
+    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
+    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
+    ?>
+
+    <?php
+    $workStatus = WorkStatus::find()->all();
+    $items = ArrayHelper::map($workStatus, 'uuid', 'title');
+    echo $form->field($model, 'workStatusUuid')->dropDownList($items);
     ?>
 
     <?php

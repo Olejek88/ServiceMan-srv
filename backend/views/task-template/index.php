@@ -1,25 +1,19 @@
 <?php
 
-use yii\grid\GridView;
 use yii\helpers\Html;
+use yii\grid\GridView;
 
-/* @var $searchModel backend\models\EquipmentSearchModel */
+/* @var $searchModel  backend\models\TaskSearchTemplate */
 
-$this->title = Yii::t('app', 'Модели оборудования');
+$this->title = Yii::t('app', 'Шаблоны операций');
 ?>
-<div class="equipment-index box-padding-index">
+<div class="orders-index box-padding-index">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 450px; margin: 0 auto;">
-                <li class=""><a href="/equipment">Список</a></li>
-                <li class=""><a href="/equipment-type">Тип</a></li>
-                <li class=""><a href="/equipment-status">Статус</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -57,21 +51,10 @@ $this->title = Yii::t('app', 'Модели оборудования');
                                         }
                                     ],
                                     [
-                                        'attribute' => 'uuid',
-                                        'contentOptions' => [
-                                            'class' => 'table_class'
-                                        ],
-                                        'headerOptions' => [
-                                            'class' => 'text-center'
-                                        ],
-                                        'content' => function ($data) {
-                                            return $data->uuid;
-                                        }
-                                    ],
-                                    [
                                         'attribute' => 'title',
                                         'contentOptions' => [
-                                            'class' => 'table_class'
+                                            'class' => 'table_class',
+                                            'style' => 'text-align: left'
                                         ],
                                         'headerOptions' => [
                                             'class' => 'text-center'
@@ -81,14 +64,16 @@ $this->title = Yii::t('app', 'Модели оборудования');
                                         }
                                     ],
                                     [
-                                        'attribute' => 'equipmentType',
-                                        'contentOptions' => [
-                                            'class' => 'table_class'
-                                        ],
+                                        'class' => 'yii\grid\ActionColumn',
+                                        'header' => 'Действия',
                                         'headerOptions' => [
-                                            'class' => 'text-center'
+                                            'class' => 'text-center',
+                                            'width' => '70'
                                         ],
-                                        'value' => 'equipmentType.title',
+                                        'contentOptions' => [
+                                            'class' => 'text-center',
+                                        ],
+                                        'template' => '{view} {update} {delete}{link}',
                                     ],
                                 ],
                             ]

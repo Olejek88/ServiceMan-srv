@@ -52,9 +52,9 @@ $this->title = Yii::t('app', 'Измеренные значения');
                                 'headerOptions' => ['class' => 'text-center'],
                                 'content' => function ($data) {
                                     return $data['equipment']['equipmentType']->title . ' [' .
-                                        $data['equipment']['flat']['house']['street']->title . ', ' .
-                                        $data['equipment']['flat']['house']->number . ', ' .
-                                        $data['equipment']['flat']['number'] . ']';
+                                        $data['equipment']['object']['house']['street']->title . ', ' .
+                                        $data['equipment']['object']['house']->number . ', ' .
+                                        $data['equipment']['object']['title'] . ']';
 
                                 }
                             ],

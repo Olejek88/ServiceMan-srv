@@ -75,10 +75,12 @@ class HouseController extends Controller
     public function actionCreate()
     {
         $model = new House();
+        $searchModel = new HouseSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $searchModel = new HouseSearch();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 500;
             return $this->render('index', [
                 'searchModel' => $searchModel,
@@ -87,6 +89,7 @@ class HouseController extends Controller
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }

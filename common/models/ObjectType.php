@@ -52,7 +52,7 @@ class ObjectType extends ActiveRecord
         return [
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'title'], 'string', 'max' => 50],
+            [['uuid', 'title', 'oid'], 'string', 'max' => 50],
         ];
     }
 

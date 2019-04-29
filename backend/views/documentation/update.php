@@ -2,22 +2,16 @@
 
 use yii\helpers\Html;
 
-/* @var $model common\models\EquipmentModel */
+/* @var $model */
+/* @var $entityType */
 
 $this->title = Yii::t(
     'app',
-    'Обновить {modelClass}: ',
-    [
-        'modelClass' => 'Модели оборудования',
-    ]
+    'Обновить документацию: '
 );
 $this->title .= $model->title;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Модели оборудования'),
-    'url' => ['index']
-];
 ?>
-<div class="equipment-model-update box-padding">
+<div class="documentation-update box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
@@ -34,6 +28,7 @@ $this->params['breadcrumbs'][] = [
                             '_form',
                             [
                                 'model' => $model,
+                                'entityType' => $entityType
                             ]
                         ) ?>
                     </h6>

@@ -4,21 +4,17 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-$this->title = Yii::t('app', 'Статусы операций');
+$this->title = Yii::t('app', 'Статусы задач/операций');
 ?>
-<div class="orders-index box-padding-index">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 550px; margin: 0 auto;">
-                <li class=""><a href="/operation">Список</a></li>
-                <li class="active"><a href="/work-status">Статусы</a></li>
-                <li class=""><a href="/operation-template">Шаблоны</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -41,7 +37,7 @@ $this->title = Yii::t('app', 'Статусы операций');
                                     'attribute'=>'_id',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center; padding: 18px 10px 15px 10px;'
+                                        'style'=>'width: 50px; text-align: center'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -51,8 +47,7 @@ $this->title = Yii::t('app', 'Статусы операций');
                                 [
                                     'attribute'=>'uuid',
                                     'contentOptions' =>[
-                                        'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
+                                        'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -62,8 +57,7 @@ $this->title = Yii::t('app', 'Статусы операций');
                                 [
                                     'attribute'=>'title',
                                     'contentOptions' =>[
-                                        'class' => 'table_class',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
+                                        'class' => 'table_class'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content'=>function($data){
@@ -75,8 +69,7 @@ $this->title = Yii::t('app', 'Статусы операций');
                                     'header'=>'Действия',
                                     'headerOptions' => ['class' => 'text-center','width' => '70'],
                                     'contentOptions' =>[
-                                        'class' => 'text-center',
-                                        'style'=>'padding: 18px 10px 15px 10px;'
+                                        'class' => 'text-center'
                                     ],
                                     'template' => '{view} {update} {delete}{link}',
                                 ],
@@ -85,7 +78,6 @@ $this->title = Yii::t('app', 'Статусы операций');
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

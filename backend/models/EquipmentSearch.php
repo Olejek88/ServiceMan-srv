@@ -18,7 +18,7 @@ class EquipmentSearch extends Equipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentTypeUuid', 'flatUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'equipmentTypeUuid', 'objectUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -64,7 +64,7 @@ class EquipmentSearch extends Equipment
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'flatUuid', $this->flatUuid])
+            ->andFilterWhere(['like', 'objectUuid', $this->objectUuid])
             ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
             ->andFilterWhere(['like', 'equipmentStatusUuid', $this->equipmentStatusUuid])
             ->andFilterWhere(['like', 'serial', $this->serial])
