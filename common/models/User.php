@@ -12,7 +12,6 @@ use yii\web\IdentityInterface;
  * User model
  *
  * @property integer $_id
- * @property string $oid идентификатор организации
  * @property string $username
  * @property string $password_hash
  * @property string $password_reset_token
@@ -296,7 +295,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         $token = \Yii::createObject([
             'class' => UserTokenAuth::class,
-            'valid_till' => date(DATE_W3C, time() + $duration),
+            'valid_till' => date('Y-m-d H:i:s', time() + $duration),
 //            'type' => UserTokenAuth::AUTH_TYPE,
         ]);
 

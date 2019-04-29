@@ -21,7 +21,7 @@ class UserTokenAuth extends UserToken
                 ['valid_till'],
                 'default',
                 'value' => function () {
-                    return date(DATE_W3C, strtotime('+1 week'));
+                    return date('Y-m-d H:i:s', strtotime('+1 week'));
                 }
             ],
             [['token'], 'string', 'max' => 32],

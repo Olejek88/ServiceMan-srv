@@ -23,12 +23,12 @@ use yii\db\Expression;
  * @property integer $createdAt
  * @property integer $changedAt
  * @property string $image
- * @property boolean $deleted
  *
  * @property integer $id
  * @property string $photoUrl
  * @property null|string $imageDir
  * @property User $user
+ * @property \common\models\Organization|null $organization
  */
 class Users extends ActiveRecord
 {
@@ -198,5 +198,13 @@ class Users extends ActiveRecord
         }
 
         return $url;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
     }
 }

@@ -18,20 +18,14 @@ class m190429_094122_add_organization extends \console\yii2\Migration
         $this->createTable(self::TABLE_ORGANIZATION, [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
-            'title' => $this->string(45)->notNull()->defaultValue(''),
-            'inn' => $this->string(45)->notNull()->defaultValue(''),
-            'secret' => $this->string(45)->notNull(),
+            'title' => $this->string(100)->notNull()->defaultValue(''),
+            'inn' => $this->string(100)->notNull()->defaultValue(''),
+            'secret' => $this->string(100)->notNull(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
 
         // связываем все модели с организацией
-        $this->createIndex(
-            'idx-city-uuid',
-            self::TABLE_ORGANIZATION,
-            'uuid'
-        );
-
         $this->addForeignKey(
             'fk-city-organization-oid',
             '{{%city}}',

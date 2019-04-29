@@ -77,7 +77,7 @@ class UserToken extends ActiveRecord
      */
     public function touchLastAccess()
     {
-        $this->valid_till = date(DATE_W3C, strtotime('+1 week'));
+        $this->valid_till = date('Y-m-d H:i:s', strtotime('+1 week'));
         $this->last_access = new Expression('CURRENT_TIMESTAMP');
         $this->save(false, ['last_access', 'valid_till']);
     }
