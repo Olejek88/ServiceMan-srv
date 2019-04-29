@@ -253,7 +253,7 @@ class RequestController extends Controller
         $model = $this->findModel($id);
         if ($model) {
             $accountUser = Yii::$app->user->identity;
-            $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+            $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
             if ($currentUser) {
                 // если заявку создал текущий пользователь или у него роль заказчика
                 if ($model->userUuid == $currentUser['uuid']) {

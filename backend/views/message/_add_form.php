@@ -3,13 +3,8 @@
 /* @var $toUser \common\models\User */
 
 use common\components\MainFunctions;
-use common\models\CriticalType;
-use common\models\EquipmentModel;
-use common\models\EquipmentStatus;
-use common\models\Objects;
 use common\models\Users;
 use kartik\select2\Select2;
-use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -51,7 +46,7 @@ use yii\helpers\Html;
             ]);
     }
     $accountUser = Yii::$app->user->identity;
-    $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
     echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
     echo $form->field($message, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
@@ -62,7 +57,7 @@ use yii\helpers\Html;
     ?>
 </div>
 <div class="modal-footer">
-    <?php echo Html::submitButton(Yii::t('backend', 'Отправить'), ['class' => 'btn btn-success']) ?>
+    <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>

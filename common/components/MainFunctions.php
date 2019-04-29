@@ -171,7 +171,7 @@ class MainFunctions
             if ($status["uuid"] == WorkStatus::UN_COMPLETE)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
-        if ($type == 'task_verdict') {
+        if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
             if ($status["uuid"] == TaskVerdict::INSPECTED)

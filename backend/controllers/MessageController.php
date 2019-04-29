@@ -54,7 +54,7 @@ class MessageController extends Controller
     {
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
-            ->where(['userId' => $accountUser['id']])
+            ->where(['user_id' => $accountUser['id']])
             ->asArray()
             ->one();
 
@@ -97,12 +97,17 @@ class MessageController extends Controller
     public function actionCreate()
     {
         $model = new Message();
+        $searchModel = new MessageSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['table']);
+            return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }
@@ -133,7 +138,7 @@ class MessageController extends Controller
         $model = new Message();
         $model->uuid = MainFunctions::GUID();
         $accountUser = Yii::$app->user->identity;
-        $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+        $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
         $model->fromUserUuid = $currentUser['uuid'];
         $model->text = $_POST["message"];
         $model->toUserUuid = $model->fromUserUuid;
