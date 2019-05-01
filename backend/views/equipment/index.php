@@ -45,14 +45,13 @@ $gridColumns = [
         'attribute' => 'objectUuid',
         'vAlign' => 'middle',
         'width' => '180px',
+        'mergeHeader' => true,
         'value' => function ($data) {
             return $data['object']['house']['street']->title . ', ' . $data['object']['house']->number . '-' . $data['object']->title;
         },
-        'filterType' => GridView::FILTER_SELECT2,
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/object/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
-        'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
     ],
     [
@@ -96,6 +95,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -144,6 +144,7 @@ $gridColumns = [
         'attribute' => 'testDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'editableOptions' => [

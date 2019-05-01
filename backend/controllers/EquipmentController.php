@@ -2,19 +2,23 @@
 
 namespace backend\controllers;
 
-use app\commands\MainFunctions;
 use backend\models\EquipmentSearch;
+use common\components\MainFunctions;
+use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Objects;
 use common\models\House;
 use common\models\Measure;
 use common\models\Message;
+use common\models\Objects;
 use common\models\Photo;
 use common\models\Street;
+use common\models\Task;
 use common\models\UserHouse;
 use common\models\Users;
+use common\models\UserSystem;
+use common\models\WorkStatus;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
@@ -166,7 +170,6 @@ class EquipmentController extends Controller
             if ($equipment == null) {
                 $equipment = new Equipment();
                 $equipment->uuid = MainFunctions::GUID();
-                $equipment->equipmentSystemUuid = $equipment['equipmentSystem']->uuid;
                 $equipment->objectUuid = $object['uuid'];
                 $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
                 $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
@@ -242,6 +245,7 @@ class EquipmentController extends Controller
                 $type['title'],
                 ['equipment-type/view', 'id' => $type['_id']]
             );
+            $fullTree[$oCnt0]['folder'] = true;
             $equipments = Equipment::find()
                 ->select('*')
                 ->where(['equipmentTypeUuid' => $type['uuid']])
@@ -251,7 +255,9 @@ class EquipmentController extends Controller
             foreach ($equipments as $equipment) {
                 $fullTree[$oCnt0][$c][$oCnt1]['title']
                     = Html::a(
-                    'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
+                    'ул.' . $equipment['object']['house']['street']['title'] .
+                    ', д.' . $equipment['object']['house']['number'] .
+                    ', кв.' . $equipment['object']['title'],
                     ['equipment/view', 'id' => $equipment['_id']]
                 );
                 if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
@@ -339,7 +345,7 @@ class EquipmentController extends Controller
                         ->orderBy('changedAt desc')
                         ->one();
                     if ($equipment) {
-                        $gut=0;
+                        $gut = 0;
                         $object_count++;
                         $fullTree[$oCnt1]['title']
                             = Html::a(
@@ -352,20 +358,20 @@ class EquipmentController extends Controller
                             ->where(['equipmentUuid' => $equipment['uuid']])
                             ->orderBy('date DESC')
                             ->all();
-                        $oCnt2=0;
+                        $oCnt2 = 0;
                         // есть измерение, есть/нет фото
                         foreach ($measures as $measure) {
                             $fullTree[$oCnt1][$c][$oCnt2]
-                                ['measure_date'] = $measure['date'];
+                            ['measure_date'] = $measure['date'];
                             $fullTree[$oCnt1][$c][$oCnt2]
-                                ['measure'] = $measure['value'];
+                            ['measure'] = $measure['value'];
                             $photo_flat_count = Photo::find()
                                 ->where(['objectUuid' => $equipment['uuid']])
-                                ->andWhere(['date' >= ($measure['date']-3600)])
-                                ->andWhere(['date' < ($measure['date']+3600)])
+                                ->andWhere(['date' >= ($measure['date'] - 3600)])
+                                ->andWhere(['date' < ($measure['date'] + 3600)])
                                 ->count();
 
-                            if ($photo_flat_count>0) {
+                            if ($photo_flat_count > 0) {
                                 $class = 'critical3';
                                 $status = 'А. Отличное';
                             } else {
@@ -374,7 +380,7 @@ class EquipmentController extends Controller
                             }
                             $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
                                 . $class . '">' . $status . '</div></div>';
-                            $gut=1;
+                            $gut = 1;
                             $oCnt2++;
                         }
 
@@ -396,7 +402,7 @@ class EquipmentController extends Controller
                                 ->andWhere(['date' < ($message['date'] + 1200)])
                                 ->count();
 
-                            if ($measure_count==0 && $photo_flat_count>0) {
+                            if ($measure_count == 0 && $photo_flat_count > 0) {
                                 $fullTree[$oCnt1][$c][$oCnt2]
                                 ['measure_date'] = $message['date'];
                                 $fullTree[$oCnt1][$c][$oCnt2]
@@ -406,11 +412,11 @@ class EquipmentController extends Controller
                                 $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
                                     . $class . '">Б.' . $status . '</div></div>';
                                 $oCnt2++;
-                                $gut=1;
+                                $gut = 1;
                             }
                         }
 
-                        if ($gut==0) {
+                        if ($gut == 0) {
                             $class = 'critical1';
                             $status = 'Не удовлетворительное';
                             $fullTree[$oCnt1][$c][$oCnt2]['status'] = '<div class="progress"><div class="'
@@ -421,8 +427,8 @@ class EquipmentController extends Controller
                 }
                 $fullTree[$oCnt1]['title'] = 'Всего';
                 $percent = 0;
-                if ($object_count>0)
-                    $percent = number_format($gut_total_count*100/$object_count,2);
+                if ($object_count > 0)
+                    $percent = number_format($gut_total_count * 100 / $object_count, 2);
                 $fullTree[$oCnt1]['measure_date'] = 'Показаний: ' . $gut_total_count . '[' . $percent . ']';
             }
         }
@@ -496,7 +502,7 @@ class EquipmentController extends Controller
                             ->orderBy('date DESC')
                             ->where(['flatUuid' => $equipment['flat']['uuid']])
                             ->one();
-                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] ['.$message['date'].']';
+                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] [' . $message['date'] . ']';
                         if ($message != null) {
                             $message_text .= substr($message['message'], 0, 150);
                             $message_count++;
@@ -524,7 +530,7 @@ class EquipmentController extends Controller
                             ->where(['equipmentUuid' => $equipment['uuid']])
                             ->orderBy('date')
                             ->all();
-                        $measure_count_column=0;
+                        $measure_count_column = 0;
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_date0'] = '';
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_value0'] = '';
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_date1'] = '';
@@ -535,13 +541,13 @@ class EquipmentController extends Controller
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_value3'] = '';
                         $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = '';
 
-                        $measure=null;
+                        $measure = null;
                         foreach ($measures as $measure) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'.$measure_count_column] = $measure['date'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'.$measure_count_column] = $measure['value'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date' . $measure_count_column] = $measure['date'];
+                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value' . $measure_count_column] = $measure['value'];
                             $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
                             $measure_count_column++;
-                            if ($measure_count_column>3) break;
+                            if ($measure_count_column > 3) break;
                             $measure_total_count++;
                         }
 
@@ -622,24 +628,20 @@ class EquipmentController extends Controller
     public function actionTreeStreet()
     {
         ini_set('memory_limit', '-1');
-        $c = 'children';
         $fullTree = array();
         $streets = Street::find()
             ->select('*')
             ->orderBy('title')
             ->all();
-        $oCnt0 = 0;
         foreach ($streets as $street) {
-            $last_user = '';
-            $last_date = '';
-            $house_count = 0;
-            $house_visited = 0;
-            $photo_count = 0;
-            $fullTree[$oCnt0]['title'] = Html::a(
-                $street['title'],
-                ['street/view', 'id' => $street['_id']]
-            );
-            $oCnt1 = 0;
+            $fullTree['children'][] = [
+                'title' => $street['title'],
+                'type' => 'street',
+                'key' => $street['_id'],
+                'folder' => true,
+                'expanded' => true
+            ];
+            $childIdx = count($fullTree['children']) - 1;
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
             orderBy('number')->all();
             foreach ($houses as $house) {
@@ -647,119 +649,165 @@ class EquipmentController extends Controller
                 $user = Users::find()->where(['uuid' =>
                     UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
-                $flats = Objects::find()->select('uuid,number')->where(['houseUuid' => $house['uuid']])->all();
-                foreach ($flats as $flat) {
-                    $house_count++;
-                    $visited = 0;
-                    $equipments = Equipment::find()->where(['flatUuid' => $flat['uuid']])->all();
+                $fullTree['children'][$childIdx]['children'][] =
+                    [
+                        'title' => $house['number'],
+                        'type' => 'house',
+                        'key' => $house['_id'],
+                        'folder' => true
+                    ];
+                $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+                $objects = Objects::find()->select('uuid, title')->where(['houseUuid' => $house['uuid']])->all();
+                foreach ($objects as $object) {
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                        ['title' => $object['title'], 'key' => $object['_id'] . "",
+                            'expanded' => true, 'folder' => true];
+                    $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
+                    $defectsCount = 0;
                     foreach ($equipments as $equipment) {
-                        $fullTree[$oCnt0][$c][$oCnt1]['title']
-                            = Html::a(
-                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
-                            ['equipment/view', 'id' => $equipment['_id']]
+                        $userSystems = UserSystem::find()
+                            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
+                            ->all();
+                        $count = 0;
+                        $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+                            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Добавить заявку',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modal_request',
+                            ]
                         );
-
-                        if ($user != null)
-                            $fullTree[$oCnt0][$c][$oCnt1]['user'] = Html::a(
-                                $user['name'],
-                                ['user-house/delete', 'id' => $user_house['_id']], ['target' => '_blank']
-                            );
-
-                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                            $class = 'critical1';
-                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                            $class = 'critical2';
-                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
-                            $class = 'critical4';
-                        } else {
-                            $class = 'critical3';
+                        foreach ($userSystems as $userSystem) {
+                            if ($count > 0) $userEquipmentName .= ', ';
+                            $userEquipmentName .= $userSystem['title'];
+                            $count++;
                         }
-                        $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
-                            . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
-                        $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
-                        //$fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
+                        if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
 
-                        $measure = Measure::find()
+                        $tasks = Task::find()
                             ->select('*')
                             ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('date DESC')
+                            ->orderBy('changedAt DESC')
                             ->one();
-                        if ($measure) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                            $last_user = $measure['user']->name;
-                            $last_date = $measure['date'];
-                            $house_visited++;
-                            $visited++;
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
+                        $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
+                        if ($tasks) {
+                            if (strlen($tasks['taskTemplate']->title) > 50)
+                                $title = substr($tasks['taskTemplate']->title, 0, 50);
+                            else
+                                $title = $tasks['taskTemplate']->title;
+                            $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
+                            if ($tasks['workStatusUuid'] == WorkStatus::COMPLETE)
+                                $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
+                            else
+                                $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
                         }
+                        $task = Html::a($task_text,
+                            ['select-task', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Создать задачу обслуживания',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalAddTask',
+                            ]
+                        );
+                        $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatus'],"equipment");
+                        $status = Html::a($status,
+                            ['/equipment/status', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Сменить статус',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalStatus',
+                            ]
+                        );
 
-                        $message = Message::find()
-                            ->select('*')
-                            ->orderBy('date DESC')
-                            ->where(['flatUuid' => $equipment['flat']['uuid']])
-                            ->one();
-                        if ($message != null) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['message'] =
-                                mb_convert_encoding(substr($message['message'], 0, 150), 'UTF-8', 'UTF-8');
-                            if ($visited == 0)
-                                $visited = 1;
-                            $house_visited++;
-                        }
-
-                        $photo = Photo::find()
-                            ->select('*')
-                            ->where(['objectuid' => $equipment['uuid']])
-                            ->orderBy('createdAt DESC')
-                            ->one();
-                        if ($photo) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
-                                ['storage/equipment/' . $photo['uuid'] . '.jpg']
+                        $documentations = Documentation::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
+                        $docs = '';
+                        foreach ($documentations as $documentation) {
+                            $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                                [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
                             );
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                            $last_user = $photo['user']->name;
-                            $photo_count++;
-                            if ($visited == 0) {
-                                $visited = 1;
-                                $house_visited++;
-                            }
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
                         }
-                        $oCnt1++;
+
+                        $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
+                            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Добавить заявку',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modal_request',
+                            ]
+                        );
+                        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+                            ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Добавить запись',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalChange',
+                            ]
+                        );
+                        $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
+                            ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Дефекты',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalDefects',
+                            ]
+                        );
+                        $links .= Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+                            ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Журнал событий',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalRegister',
+                            ]
+                        );
+                        $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
+                            ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Перечень операций',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalTasks',
+                            ]
+                        );
+                        $links .= Html::a('<span class="glyphicon glyphicon-file"></span>&nbsp',
+                            ['/equipment-attribute/list', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Аттрибуты',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalAttributes',
+                            ]
+                        );
+                        if ($equipment["serial"]) {
+                            $serial = $equipment["serial"];
+                        } else {
+                            $serial = 'отсутствует';
+                        }
+                        $serial = Html::a($serial,
+                            ['/equipment/serial', 'equipmentUuid' => $equipment['uuid']],
+                            [
+                                'title' => 'Сменить серийный номер',
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modalSN',
+                            ]
+                        );
+
+                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
+                            ['key' => $equipment['_id'] . "",
+                                'folder' => false,
+                                'serial' => $serial,
+                                'title' => $equipment["title"],
+                                'tag' => $equipment['tag'],
+                                'uuid' => $equipment['uuid'],
+                                'type_uuid' => $equipment['equipmentType']['uuid'],
+                                'docs' => $docs,
+                                'start' => "" . date_format(date_create($equipment['testDate']), "Y-m-d H:i:s"),
+                                'location' => $equipment['object']->title,
+                                'tasks' => $task,
+                                'user' => $userEquipmentName,
+                                'links' => $links,
+                                'status' => $status];
                     }
                 }
             }
-            $fullTree[$oCnt0]['measure_user'] = $last_user;
-            $fullTree[$oCnt0]['measure_date'] = $last_date;
-            $fullTree[$oCnt0]['photo_user'] = $last_user;
-            $fullTree[$oCnt0]['photo_date'] = $last_date;
-            $fullTree[$oCnt0]['photo'] = $photo_count;
-            $ok = 0;
-            if ($house_count > 0)
-                $ok = $house_visited * 100 / $house_count;
-            if ($ok > 100) $ok = 100;
-            if ($ok < 20) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } elseif ($ok < 45) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } elseif ($ok < 70) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } else {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">' .
-                    number_format($ok, 2) . '%</div></div>';
-            }
-            $oCnt0++;
         }
         return $this->render(
             'tree-street',
@@ -805,7 +853,7 @@ class EquipmentController extends Controller
                             ->orderBy('date')
                             ->all();
 
-                        $measure_count_column=0;
+                        $measure_count_column = 0;
                         $fullTree[$oCnt0]['measure_date0'] = '';
                         $fullTree[$oCnt0]['measure_value0'] = '';
                         $fullTree[$oCnt0]['measure_date1'] = '';
@@ -815,41 +863,39 @@ class EquipmentController extends Controller
                         $fullTree[$oCnt0]['measure_date3'] = '';
                         $fullTree[$oCnt0]['measure_value3'] = '';
                         $fullTree[$oCnt0]['measure_user'] = '';
-                        $measure_first=0;
-                        $measure_last=0;
-                        $measure_date_first=0;
-                        $measure_date_last=0;
+                        $measure_first = 0;
+                        $measure_last = 0;
+                        $measure_date_first = 0;
+                        $measure_date_last = 0;
                         foreach ($measures as $measure) {
-                            $fullTree[$oCnt0]['measure_date'.$measure_count_column] = $measure['date'];
-                            $fullTree[$oCnt0]['measure_value'.$measure_count_column] = $measure['value'];
+                            $fullTree[$oCnt0]['measure_date' . $measure_count_column] = $measure['date'];
+                            $fullTree[$oCnt0]['measure_value' . $measure_count_column] = $measure['value'];
                             $fullTree[$oCnt0]['measure_user'] = $measure['user']->name;
-                            if ($measure_count_column==0) {
+                            if ($measure_count_column == 0) {
                                 $measure_first = $measure['value'];
                                 $measure_date_first = $measure['date'];
-                            }
-                            else {
-                                $measure_last=$measure['value'];
+                            } else {
+                                $measure_last = $measure['value'];
                                 $measure_date_last = $measure['date'];
                             }
                             $measure_count_column++;
-                            if ($measure_count_column>3) break;
+                            if ($measure_count_column > 3) break;
                         }
 
                         $datetime1 = date_create($measure_date_first);
                         $datetime2 = date_create($measure_date_last);
                         if ($datetime2 && $datetime1) {
                             $diff = $datetime2->diff($datetime1);
-                            $interval = $diff->format("%h")+($diff->days*24);
-                            $value = number_format($measure_last-$measure_first,2);
-                        }
-                        else {
+                            $interval = $diff->format("%h") + ($diff->days * 24);
+                            $value = number_format($measure_last - $measure_first, 2);
+                        } else {
                             $interval = 0;
-                            $value=0;
+                            $value = 0;
                         }
                         $fullTree[$oCnt0]['interval'] = $interval;
                         $fullTree[$oCnt0]['value'] = $value;
-                        if ($interval>0)
-                            $fullTree[$oCnt0]['relative'] = number_format($value/$interval,2);
+                        if ($interval > 0)
+                            $fullTree[$oCnt0]['relative'] = number_format($value / $interval, 2);
 
                         $message = Message::find()
                             ->select('*')
@@ -923,5 +969,22 @@ class EquipmentController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    static function getDocDir($documentation)
+    {
+        if ($documentation['equipmentTypeUuid'] != null) {
+            $typeUuid = $documentation['equipmentTypeUuid'];
+        } else {
+            return null;
+        }
+
+        //$identity = \Yii::$app->user->identity;
+        //$userName = $identity->oid;
+        //$dir = 'storage/doc/' . $typeUuid . '/';
+        $dir = 'storage/doc/';
+        //$dir = 'storage/' . $userName . $path;
+        //$url = Yii::$app->request->BaseUrl . '/' . $dir;
+        return $dir;
     }
 }

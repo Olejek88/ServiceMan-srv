@@ -6,7 +6,7 @@ use yii\web\JsExpression;
 $this->title = 'Дерево моделей оборудования';
 
 ?>
-<table id="tree">
+<table id="tree" style="width: 100%">
     <colgroup>
         <col width="*">
         <col width="160px">
@@ -48,9 +48,18 @@ $this->title = 'Дерево моделей оборудования';
     </tr>
     </tbody>
 </table>
-<?php echo FancytreeWidget::widget([
+
+<?php
+$this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js', ['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
+$this->registerJsFile('/js/custom/modules/list/jquery.contextMenu.min.js',
+    ['depends' => ['yii\jui\JuiAsset']]);
+$this->registerCssFile('/css/custom/modules/list/ui.fancytree.css');
+$this->registerCssFile('/css/custom/modules/list/jquery.contextMenu.min.css');
+
+echo FancytreeWidget::widget([
     'options' => [
         'id' => 'tree',
+        'checkbox' => true,
         'source' => $equipment,
         'extensions' => ['dnd', "glyph", "table"],
         'glyph' => 'glyph_opts',

@@ -216,7 +216,6 @@ class Documentation extends ActiveRecord
             // такого в штатном режиме быть не должно!
             $url = null;
         }
-
         return $url;
     }
 

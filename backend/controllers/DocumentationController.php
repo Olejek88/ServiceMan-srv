@@ -58,6 +58,17 @@ class DocumentationController extends Controller
      */
     public function actionIndex()
     {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Documentation::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'title') {
+                $model['title'] = $_POST['Documentation'][$_POST['editableIndex']]['title'];
+            }
+            $model->save();
+            return json_encode('');
+        }
+
         $searchModel = new DocumentationSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
