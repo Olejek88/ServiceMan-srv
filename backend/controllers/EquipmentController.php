@@ -3,7 +3,9 @@
 namespace backend\controllers;
 
 use backend\models\EquipmentSearch;
+use common\components\Errors;
 use common\components\MainFunctions;
+use common\components\OrderFunctions;
 use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
@@ -19,12 +21,17 @@ use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
+use Exception as ExceptionAlias;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
+use yii\web\UploadedFile;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.
@@ -110,10 +117,9 @@ class EquipmentController extends Controller
 
     /**
      * Displays a single Equipment model.
-     *
      * @param integer $id Id
-     *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -155,43 +161,43 @@ class EquipmentController extends Controller
      *
      * @return mixed
      */
-    public function actionNew()
-    {
-        $equipments = array();
-        $equipment_count = 0;
-        $objects = Objects::find()
-            ->select('*')
-            ->all();
-        foreach ($objects as $object) {
-            $equipment = Equipment::find()
+    /*    public function actionNew()
+        {
+            $equipments = array();
+            $equipment_count = 0;
+            $objects = Objects::find()
                 ->select('*')
-                ->where(['objectUuid' => $object['uuid']])
-                ->one();
-            if ($equipment == null) {
-                $equipment = new Equipment();
-                $equipment->uuid = MainFunctions::GUID();
-                $equipment->objectUuid = $object['uuid'];
-                $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
-                $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
-                $equipment->serial = '222222';
-                $equipment->tag = '111111';
-                $equipment->testDate = date('Y-m-d H:i:s');
-                $equipment->changedAt = date('Y-m-d H:i:s');
-                $equipment->createdAt = date('Y-m-d H:i:s');
-                $equipment->save();
-                $equipments[$equipment_count] = $equipment;
-                $equipment_count++;
-            } else {
-                if ($equipment['equipmentTypeUuid'] != EquipmentType::EQUIPMENT_HVS) {
-                    $equipment['equipmentTypeUuid'] = EquipmentType::EQUIPMENT_HVS;
-                    $equipment['changedAt'] = date('Y-m-d H:i:s');
+                ->all();
+            foreach ($objects as $object) {
+                $equipment = Equipment::find()
+                    ->select('*')
+                    ->where(['objectUuid' => $object['uuid']])
+                    ->one();
+                if ($equipment == null) {
+                    $equipment = new Equipment();
+                    $equipment->uuid = MainFunctions::GUID();
+                    $equipment->objectUuid = $object['uuid'];
+                    $equipment->equipmentTypeUuid = EquipmentType::EQUIPMENT_HVS;
+                    $equipment->equipmentStatusUuid = EquipmentStatus::UNKNOWN;
+                    $equipment->serial = '222222';
+                    $equipment->tag = '111111';
+                    $equipment->testDate = date('Y-m-d H:i:s');
+                    $equipment->changedAt = date('Y-m-d H:i:s');
+                    $equipment->createdAt = date('Y-m-d H:i:s');
                     $equipment->save();
-                    echo $equipment['uuid'] . '<br/>';
+                    $equipments[$equipment_count] = $equipment;
+                    $equipment_count++;
+                } else {
+                    if ($equipment['equipmentTypeUuid'] != EquipmentType::EQUIPMENT_HVS) {
+                        $equipment['equipmentTypeUuid'] = EquipmentType::EQUIPMENT_HVS;
+                        $equipment['changedAt'] = date('Y-m-d H:i:s');
+                        $equipment->save();
+                        echo $equipment['uuid'] . '<br/>';
+                    }
                 }
             }
-        }
-        return $this->render('new', ['equipments' => $equipments]);
-    }
+            return $this->render('new', ['equipments' => $equipments]);
+        }*/
 
 
     /**
@@ -199,8 +205,8 @@ class EquipmentController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      *
      * @param integer $id Id
-     *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -446,7 +452,6 @@ class EquipmentController extends Controller
     public function actionTreeUser()
     {
         ini_set('memory_limit', '-1');
-        $c = 'children';
         $fullTree = array();
         $users = Users::find()
             ->select('*')
@@ -454,169 +459,49 @@ class EquipmentController extends Controller
             ->andWhere('name != "Иванов О.А."')
             ->orderBy('_id')
             ->all();
-        $oCnt0 = 0;
+
         foreach ($users as $user) {
-            $fullTree[$oCnt0]['title'] = Html::a(
-                $user['name'],
-                ['user/view', 'id' => $user['_id']]
-            );
-            /*            $query = Equipment::find()
-                            ->select('*')
-                            ->where(['flatUuid' => (
-                                Flat::find()->select('uuid')->where(['houseUuid' => (
-                                    UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all()
-                                )]))]);
-                        //$query->with('house');
-                        $equipments = $query->orderBy('changedAt')->groupBy('flatUuid')->all();*/
-            $oCnt1 = 0;
-            $measure_total_count = 0;
-            $measure_count = 0;
-            $photo_count = 0;
-            $message_count = 0;
+            $fullTree['children'][] = [
+                'title' => $user['name'],
+                'type' => 'user',
+                'key' => $user['_id'],
+                'folder' => true,
+                'expanded' => false
+            ];
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Objects::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
-                foreach ($flats as $flat) {
-                    $equipment = Equipment::find()
-                        ->select('*')
-                        ->where(['flatUuid' => $flat['uuid']])
-                        ->orderBy('changedAt desc')
-                        ->one();
-                    if ($equipment) {
-                        $fullTree[$oCnt0][$c][$oCnt1]['title']
-                            = Html::a(
-                            'ул.' . $equipment['house']['street']['title'] . ', д.' .
-                            $equipment['house']['number'] . ', кв.' . $equipment['flat']['number'],
-                            ['equipment/view', 'id' => $equipment['_id']]
-                        );
-
-                        $message_flat_count = Message::find()
-                            ->where(['flatUuid' => $equipment['flat']['uuid']])
-                            ->count();
-                        $photo_flat_count = Photo::find()
-                            ->where(['objectUuid' => $equipment['uuid']])
-                            ->count();
-
-                        $message = Message::find()
-                            ->select('*')
-                            ->orderBy('date DESC')
-                            ->where(['flatUuid' => $equipment['flat']['uuid']])
-                            ->one();
-                        $message_text = '[' . $photo_flat_count . '/' . $message_flat_count . '] [' . $message['date'] . ']';
-                        if ($message != null) {
-                            $message_text .= substr($message['message'], 0, 150);
-                            $message_count++;
-                        }
-                        $fullTree[$oCnt0][$c][$oCnt1]['message'] = mb_convert_encoding($message_text, 'UTF-8', 'UTF-8');
-
-                        $photo = Photo::find()
-                            ->select('*')
-                            ->where(['objectUuid' => $equipment['uuid']])
-                            ->orderBy('createdAt DESC')
-                            ->one();
-                        if ($photo) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a($photo['createdAt'],
-                                ['storage/equipment/' . $photo['uuid'] . '.jpg']
-                            );
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                            $photo_count++;
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
-                        }
-
-                        $measures = Measure::find()
-                            ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('date')
-                            ->all();
-                        $measure_count_column = 0;
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date0'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value0'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date1'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value1'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date2'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value2'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_date3'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_value3'] = '';
-                        $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = '';
-
-                        $measure = null;
-                        foreach ($measures as $measure) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date' . $measure_count_column] = $measure['date'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value' . $measure_count_column] = $measure['value'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                            $measure_count_column++;
-                            if ($measure_count_column > 3) break;
-                            $measure_total_count++;
-                        }
-
-                        if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                            $class = 'critical1';
-                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                            $class = 'critical2';
-                        } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::UNKNOWN) {
-                            $class = 'critical4';
-                        } else {
-                            $class = 'critical3';
-                        }
-
-                        $status = $equipment['equipmentStatus']->title;
-                        if ($measure) {
-                            //echo $measure['date'].' | '.time() .'-'. strtotime($measure['date']). ' < ' . (3600 * 24 * 7 * 1).'<br/>';
-                            if (time() - strtotime($measure['date']) > (3600 * 24 * 7 * 1)) {
-                                $class = 'critical2';
-                                $status = 'Посещался';
-                            } else
-                                $measure_count++;
-                        } else {
-                            if ($message != null) {
-                                $class = 'critical4';
-                                $status = 'Не попали';
-                            } else {
-                                if ($photo == null) {
-                                    $class = 'critical1';
-                                    $status = 'Не посещался';
-                                } else {
-                                    $class = 'critical2';
-                                    $status = 'Нет показаний';
-                                }
-                            }
-                        }
-
-                        $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
-                            . $class . '">' . $status . '</div></div>';
-
-                        $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
-                        $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
-
-                        $oCnt1++;
-                    }
-                }
-                if ($oCnt1 > 0) {
-                    if ($oCnt1 > 0) {
-                        $ok = $measure_count * 100 / $oCnt1;
-                        if ($ok < 20) {
-                            $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">Очень плохо</div></div>';
-                        } elseif ($ok < 45) {
-                            $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">Плохо</div></div>';
-                        } elseif ($ok < 70) {
-                            $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">Средне</div></div>';
-                        } else {
-                            $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">Хорошо</div></div>';
+                $childIdx = count($fullTree['children']) - 1;
+                $houses = House::find()->select('uuid,number')->where(['uuid' => $user_house['houseUuid']])->
+                orderBy('number')->all();
+                foreach ($houses as $house) {
+                    $fullTree['children'][$childIdx]['children'][] =
+                        [
+                            'title' => 'ул.'.$house['street']['title'].', д.'.$house['number'],
+                            'type' => 'house',
+                            'key' => $house['_id'],
+                            'folder' => true
+                        ];
+                    $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+                    $objects = Objects::find()->select('uuid, title')->where(['houseUuid' => $house['uuid']])->all();
+                    foreach ($objects as $object) {
+                        $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
+                        foreach ($equipments as $equipment) {
+                            $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                                self::addEquipment($equipment);
                         }
                     }
-                    $fullTree[$oCnt0]['measure_date0'] = 'Показаний: ' . $measure_count . '[' . $measure_total_count . ']';
-                    $fullTree[$oCnt0]['measure_value0'] = $measure_count . '[' . number_format($measure_count * 100 / $oCnt1, 2) . '%]';
-                    $fullTree[$oCnt0]['photo'] = $photo_count . '[' . number_format($photo_count * 100 / $oCnt1, 2) . '%]';
-                    $fullTree[$oCnt0]['message'] = $message_count . '[' . number_format($message_count * 100 / $oCnt1, 2) . '%]';
                 }
             }
-            $oCnt0++;
         }
+        $users = Users::find()->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+
         return $this->render(
-            'tree-user',
-            ['equipment' => $fullTree]
+            'tree-street',
+            [
+                'equipment' => $fullTree,
+                'users' => $items
+            ]
         );
     }
 
@@ -664,154 +549,22 @@ class EquipmentController extends Controller
                             'expanded' => true, 'folder' => true];
                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
                     $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
-                    $defectsCount = 0;
                     foreach ($equipments as $equipment) {
-                        $userSystems = UserSystem::find()
-                            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
-                            ->all();
-                        $count = 0;
-                        $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-                            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Добавить заявку',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modal_request',
-                            ]
-                        );
-                        foreach ($userSystems as $userSystem) {
-                            if ($count > 0) $userEquipmentName .= ', ';
-                            $userEquipmentName .= $userSystem['title'];
-                            $count++;
-                        }
-                        if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
-
-                        $tasks = Task::find()
-                            ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('changedAt DESC')
-                            ->one();
-                        $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
-                        if ($tasks) {
-                            if (strlen($tasks['taskTemplate']->title) > 50)
-                                $title = substr($tasks['taskTemplate']->title, 0, 50);
-                            else
-                                $title = $tasks['taskTemplate']->title;
-                            $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
-                            if ($tasks['workStatusUuid'] == WorkStatus::COMPLETE)
-                                $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
-                            else
-                                $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
-                        }
-                        $task = Html::a($task_text,
-                            ['select-task', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Создать задачу обслуживания',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalAddTask',
-                            ]
-                        );
-                        $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatus'],"equipment");
-                        $status = Html::a($status,
-                            ['/equipment/status', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Сменить статус',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalStatus',
-                            ]
-                        );
-
-                        $documentations = Documentation::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
-                        $docs = '';
-                        foreach ($documentations as $documentation) {
-                            $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                                [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
-                            );
-                        }
-
-                        $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
-                            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Добавить заявку',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modal_request',
-                            ]
-                        );
-                        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
-                            ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Добавить запись',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalChange',
-                            ]
-                        );
-                        $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
-                            ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Дефекты',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalDefects',
-                            ]
-                        );
-                        $links .= Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
-                            ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Журнал событий',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalRegister',
-                            ]
-                        );
-                        $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
-                            ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Перечень операций',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalTasks',
-                            ]
-                        );
-                        $links .= Html::a('<span class="glyphicon glyphicon-file"></span>&nbsp',
-                            ['/equipment-attribute/list', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Аттрибуты',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalAttributes',
-                            ]
-                        );
-                        if ($equipment["serial"]) {
-                            $serial = $equipment["serial"];
-                        } else {
-                            $serial = 'отсутствует';
-                        }
-                        $serial = Html::a($serial,
-                            ['/equipment/serial', 'equipmentUuid' => $equipment['uuid']],
-                            [
-                                'title' => 'Сменить серийный номер',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalSN',
-                            ]
-                        );
-
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            ['key' => $equipment['_id'] . "",
-                                'folder' => false,
-                                'serial' => $serial,
-                                'title' => $equipment["title"],
-                                'tag' => $equipment['tag'],
-                                'uuid' => $equipment['uuid'],
-                                'type_uuid' => $equipment['equipmentType']['uuid'],
-                                'docs' => $docs,
-                                'start' => "" . date_format(date_create($equipment['testDate']), "Y-m-d H:i:s"),
-                                'location' => $equipment['object']->title,
-                                'tasks' => $task,
-                                'user' => $userEquipmentName,
-                                'links' => $links,
-                                'status' => $status];
+                            self::addEquipment($equipment);
                     }
                 }
             }
         }
+        $users = Users::find()->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+
         return $this->render(
             'tree-street',
-            ['equipment' => $fullTree]
+            [
+                'equipment' => $fullTree,
+                'users' => $items
+            ]
         );
     }
 
@@ -927,6 +680,9 @@ class EquipmentController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public
     function actionDelete($id)
@@ -974,9 +730,7 @@ class EquipmentController extends Controller
     static function getDocDir($documentation)
     {
         if ($documentation['equipmentTypeUuid'] != null) {
-            $typeUuid = $documentation['equipmentTypeUuid'];
-        } else {
-            return null;
+            return 'storage/doc/' . $documentation['equipmentTypeUuid'] . '/';
         }
 
         //$identity = \Yii::$app->user->identity;
@@ -987,4 +741,530 @@ class EquipmentController extends Controller
         //$url = Yii::$app->request->BaseUrl . '/' . $dir;
         return $dir;
     }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет связывание выбранного оборудования с пользователем
+     *
+     * @return mixed
+     * @throws ExceptionAlias
+     * @throws Throwable
+     */
+    public function actionMove()
+    {
+        if (isset($_POST["selected_node"])) {
+            $node = $_POST["selected_node"];
+            $user = $_POST["user"];
+            if ($user && $node)
+                $this->updateUserEquipment($user, $node);
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет отвязывание выбранного оборудования от пользователя
+     * @return mixed
+     * @throws ExceptionAlias
+     * @throws Throwable
+     */
+    public function actionRemove()
+    {
+        if (isset($_POST["selected_node"])) {
+            $node = $_POST["selected_node"];
+            if ($node)
+                $this->updateUserEquipment(null, $node);
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет переименование оборудования
+     * @return mixed
+     */
+    public function actionRename()
+    {
+        $id = '';
+        $param = '';
+        if (isset($_POST["uuid"]))
+            $id = $_POST["uuid"];
+        if (isset($_POST["param"]))
+            $param = $_POST["param"];
+        if (isset($_POST["folder"]) && $_POST["folder"] == "false") {
+            $equipment = Equipment::find()->where(['_id' => $id])->one();
+            if ($equipment) {
+                $equipment['title'] = $param;
+                if ($equipment->save())
+                    return Errors::OK;
+                else
+                    return Errors::ERROR_SAVE;
+            }
+        }
+        return Errors::GENERAL_ERROR;
+    }
+
+    /**
+     * функция связывает/отвязывает оборудование от пользователей
+     *
+     * @param $user
+     * @param $node
+     * @throws ExceptionAlias
+     * @throws Throwable
+     */
+    function updateUserEquipment($user, $node)
+    {
+        $equipment = Equipment::find()->where(['_id' => $node])->one();
+        if ($equipment['uuid']) {
+            /*            if (!$user) {
+                            $userEquipment = UserEquipment::find()->select('*')
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->one();
+                            if ($userEquipment) {
+                                $userEquipment->delete();
+                                $this->redirect('tree');
+                            }
+                        } else {
+                            $userEquipment = UserEquipment::find()->select('*')
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->andWhere(['userUuid' => $user])
+                                ->one();
+                            if (!$userEquipment) {
+                                $userEquipment = new UserEquipment();
+                                $userEquipment->uuid = (new \app\commands\MainFunctions)->GUID();
+                                $userEquipment->equipmentUuid = $equipment['uuid'];
+                                $userEquipment->userUuid = $user;
+                                $userEquipment->save();
+                                $this->redirect('tree');
+                            }
+                        }*/
+        }
+    }
+
+    /**
+     * функция добавляет/отвязывает оборудование от пользователей
+     *
+     * @param $user
+     * @param $node
+     * @throws ExceptionAlias
+     * @throws Throwable
+     */
+    function addUserEquipment($user, $node)
+    {
+        $equipment = Equipment::find()->where(['_id' => $node])->one();
+        if ($equipment['uuid']) {
+            /*            if ($user) {
+                            $userEquipment = UserEquipment::find()->select('*')->where(['equipmentUuid' => $equipment['uuid']])
+                                ->andWhere(['userUuid' => $user])
+                                ->one();
+                            if (!$userEquipment) {
+                                $userEquipment = new UserEquipment();
+                                $userEquipment->uuid = (new MainFunctions)->GUID();
+                                $userEquipment->equipmentUuid = $equipment['uuid'];
+                                $userEquipment->userUuid = $user;
+                                $userEquipment->save();
+                            }
+                        } else {
+                            $userEquipment = UserEquipment::find()->select('*')
+                                ->where(['equipmentUuid' => $equipment['uuid']])
+                                ->one();
+                            if ($userEquipment)
+                                $userEquipment->delete();
+                        }*/
+        }
+    }
+
+    /**
+     * Сохраняем файл согласно нашим правилам.
+     *
+     * @param Equipment $model Шаблон задачи
+     * @param UploadedFile $file Файл
+     *
+     * @return string | null
+     */
+    private
+    static function _saveFile($model, $file)
+    {
+        $dir = $model->getImageDir();
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0755, true)) {
+                return null;
+            }
+        }
+
+        $targetDir = Yii::getAlias($dir);
+        $fileName = $model->uuid . '.' . $file->extension;
+        if ($file->saveAs($targetDir . $fileName)) {
+            return $fileName;
+        } else {
+            return null;
+        }
+    }
+
+    public
+    function actionOperations()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $tasks = Task::find()->where(['equipmentUuid' => $_GET["equipmentUuid"]])
+                ->orderBy('changedAt DESC')
+                ->limit(20)
+                ->all();
+            return $this->renderAjax('/task/_tasks_list', [
+                'tasks' => $tasks,
+            ]);
+        }
+        return true;
+    }
+
+    public
+    function actionMeasures()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $measures = Measure::find()->where(['equipmentUuid' => $_GET["equipmentUuid"]])
+                ->orderBy('changedAt DESC')
+                ->limit(20)
+                ->all();
+            return $this->renderAjax('/measure/_measure_list', [
+                'measures' => $measures,
+            ]);
+        }
+        return true;
+    }
+
+    public
+    function actionStatus()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
+                ->one();
+            return $this->renderAjax('_change_form', [
+                'model' => $model,
+            ]);
+        }
+        if ($_POST["Equipment"]["equipmentStatusUuid"]) {
+            $model = Equipment::find()->where(['_id' => $_POST["Equipment"]["_id"]])
+                ->one();
+            if ($model) {
+                $model["equipmentStatusUuid"] = $_POST["Equipment"]["equipmentStatusUuid"];
+                $model->save();
+            }
+        }
+        return false;
+    }
+
+    public
+    function actionSerial()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
+                ->one();
+            return $this->renderAjax('_change_serial', [
+                'model' => $model,
+            ]);
+        }
+        if ($_POST["Equipment"]["serial"]) {
+            $model = Equipment::find()->where(['_id' => $_POST["Equipment"]["_id"]])
+                ->one();
+            if ($model) {
+                $model["serial"] = $_POST["Equipment"]["serial"];
+                $model->save();
+            }
+        }
+        return false;
+    }
+
+    public
+    function actionSelectTask()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
+                ->one();
+            return $this->renderAjax('_select_task', [
+                'model' => $model,
+            ]);
+        }
+        $equipmentStageUuid = null;
+        if (isset($_POST["Equipment"]["equipmentStatusUuid"]))
+            $equipmentStageUuid = $_POST["Equipment"]["equipmentStatusUuid"];
+        if (isset($_POST["equipmentStatusUuid"]))
+            $equipmentStageUuid = $_POST["equipmentStatusUuid"];
+
+        if ($equipmentStageUuid) {
+            $accountUser = Yii::$app->user->identity;
+            $currentUser = Users::findOne(['userId' => $accountUser['id']]);
+            $equipment = Equipment::findOne(['_id' => $_POST["Equipment"]['_id']]);
+            if ($equipment) {
+                $return = OrderFunctions::createOrder($equipment['uuid'], $currentUser, $equipmentStageUuid, null);
+                if ($return['result'] == null)
+                    return $return['message'];
+                else
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
+     *
+     * @return mixed
+     */
+    public
+    function actionNew()
+    {
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            if (isset($_POST["type"]))
+                $type_id = $_POST["selected_node"];
+            else $type_id = 0;
+            if (isset($_POST["type_uuid"]))
+                $type_uuid = $_POST["type_uuid"];
+            else $type_uuid = 0;
+            // из дерева объектов
+            if (isset($_POST["uuid"]))
+                $object_uuid = $_POST["uuid"];
+            else $object_uuid = 0;
+            if ($folder == "true" && $type_id > 0) {
+                $equipmentType = new EquipmentType();
+                return $this->renderAjax('../equipment-type/_add_form', [
+                    'equipmentType' => $equipmentType,
+                    'type_id' => $type_id
+                ]);
+            }
+            if ($folder == "true" && $type_uuid) {
+                $equipment = new Equipment();
+                return $this->renderAjax('_add_form', [
+                    'equipment' => $equipment,
+                    'type_uuid' => $type_uuid,
+                    'object_uuid' => null
+                ]);
+            }
+            if ($folder == "true" && $object_uuid) {
+                $equipment = new Equipment();
+                return $this->renderAjax('_add_form', [
+                    'equipment' => $equipment,
+                    'object_uuid' => $object_uuid,
+                    'type_uuid' => null
+                ]);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
+     *
+     * @return mixed
+     */
+    public function actionEdit()
+    {
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            $reference = "equipment";
+            if (isset($_POST["reference"])) {
+                $reference = $_POST["reference"];
+            }
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["type_uuid"]))
+                $type_uuid = $_POST["type_uuid"];
+            else $type_uuid = 0;
+
+            if ($folder == "false" && $uuid) {
+                $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+                if ($equipment)
+                    return $this->renderAjax('_add_form', [
+                        'equipment' => $equipment,
+                        'type_uuid' => null,
+                        'object_uuid' => null,
+                        'reference' => $reference
+                    ]);
+                return "";
+            }
+            if ($folder == "true" && $type_uuid) {
+                $equipmentType = EquipmentType::find()->where(['uuid' => $type_uuid])->one();
+                if ($equipmentType)
+                    return $this->renderAjax('../equipment-model/_add_form', [
+                        'equipmentType' => $equipmentType,
+                        'type_uuid' => $equipmentType['uuid'],
+                        'object_uuid' => null,
+                        'reference' => $reference
+                    ]);
+                return "";
+            }
+            return "";
+        }
+        return "";
+    }
+
+    /**
+     * Creates a new Equipment model.
+     * @return mixed
+     */
+    public
+    function actionSave()
+    {
+        if (isset($_POST['equipmentUuid']))
+            $model = Equipment::find()->where(['uuid' => $_POST['equipmentUuid']])->one();
+        else
+            $model = new Equipment();
+        if ($model->load(Yii::$app->request->post())) {
+            $file = UploadedFile::getInstance($model, 'image');
+            if ($file && $file->tempName) {
+                $fileName = self::_saveFile($model, $file);
+                if ($fileName) {
+                    $model->image = $fileName;
+                }
+            }
+            if ($model->save(false)) {
+                if (isset($_POST['reference']) && $_POST['reference'] == "object")
+                    return $this->redirect(['/objects/tree']);
+                return $this->redirect(['/equipment/tree']);
+            }
+        }
+        return $this->render('_add_form', [
+            'model_uuid' => null,
+            'object_uuid' => null,
+            'equipment' => $model,
+            'reference' => "/equipment/tree"
+        ]);
+    }
+
+    /**
+     * @param $equipment
+     * @return array
+     */
+    public function addEquipment($equipment)
+    {
+        $userSystems = UserSystem::find()
+            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
+            ->all();
+        $count = 0;
+        $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Добавить заявку',
+                'data-toggle' => 'modal',
+                'data-target' => '#modal_request',
+            ]
+        );
+        foreach ($userSystems as $userSystem) {
+            if ($count > 0) $userEquipmentName .= ', ';
+            $userEquipmentName .= $userSystem['title'];
+            $count++;
+        }
+        if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+
+        $tasks = Task::find()
+            ->select('*')
+            ->where(['equipmentUuid' => $equipment['uuid']])
+            ->orderBy('changedAt DESC')
+            ->one();
+        $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
+        if ($tasks) {
+            if (strlen($tasks['taskTemplate']->title) > 50)
+                $title = substr($tasks['taskTemplate']->title, 0, 50);
+            else
+                $title = $tasks['taskTemplate']->title;
+            $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
+            if ($tasks['workStatusUuid'] == WorkStatus::COMPLETE)
+                $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
+            else
+                $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
+        }
+        $task = Html::a($task_text,
+            ['select-task', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Создать задачу обслуживания',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalAddTask',
+            ]
+        );
+        $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatus'], "equipment");
+        $status = Html::a($status,
+            ['/equipment/status', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Сменить статус',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalStatus',
+            ]
+        );
+
+        $documentations = Documentation::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
+        $docs = '';
+        foreach ($documentations as $documentation) {
+            $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
+            );
+        }
+
+        $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
+            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Добавить заявку',
+                'data-toggle' => 'modal',
+                'data-target' => '#modal_request',
+            ]
+        );
+        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+            ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Добавить запись',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalChange',
+            ]
+        );
+        $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
+            ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Измерения',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalMeasures',
+            ]
+        );
+        $links .= Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+            ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Журнал событий',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalRegister',
+            ]
+        );
+        $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
+            ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Перечень операций',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalTasks',
+            ]
+        );
+        if ($equipment["serial"]) {
+            $serial = $equipment["serial"];
+        } else {
+            $serial = 'отсутствует';
+        }
+        $serial = Html::a($serial,
+            ['/equipment/serial', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Сменить серийный номер',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalSN',
+            ]
+        );
+        return ['key' => $equipment['_id'] . "",
+            'folder' => false,
+            'serial' => $serial,
+            'title' => $equipment["title"],
+            'tag' => $equipment['tag'],
+            'uuid' => $equipment['uuid'],
+            'type_uuid' => $equipment['equipmentType']['uuid'],
+            'docs' => $docs,
+            'start' => "" . date_format(date_create($equipment['testDate']), "Y-m-d H:i:s"),
+            'location' => $equipment['object']->title,
+            'tasks' => $task,
+            'user' => $userEquipmentName,
+            'links' => $links,
+            'status' => $status];
+    }
 }
+

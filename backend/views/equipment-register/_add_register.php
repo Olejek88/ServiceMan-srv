@@ -1,35 +1,40 @@
 <?php
-/* @var $model common\models\Request */
+/* @var $model common\models\EquipmentRegister */
+/* @var $equipmentUuid */
 
 use common\components\MainFunctions;
-use common\models\RequestStatus;
+use common\models\Equipment;
+use common\models\EquipmentRegisterType;
 use common\models\Users;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 ?>
 <?php $form = ActiveForm::begin([
         'enableAjaxValidation' => false,
-        'options'                => [
-            'id'      => 'form'
+        'options' => [
+            'id' => 'form'
         ]]);
 ?>
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Добавить заявку</h4>
+        <h4 class="modal-title">Добавить запись в журнал</h4>
     </div>
     <div class="modal-body">
         <?php
             echo $form->field($model, 'uuid')->hiddenInput(['value' => MainFunctions::GUID()])->label(false);
-            echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
             $accountUser = Yii::$app->user->identity;
             $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
             echo $form->field($model, 'userUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
-            if (isset($_GET["equipmentUuid"]))
-                echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $_GET["equipmentUuid"]])->label(false);
-            if (isset($_GET["objectUuid"]))
-                echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $_GET["objectUuid"]])->label(false);
-            echo $form->field($model, 'comment')->textArea();
+            echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+
+            $registerTypes = EquipmentRegisterType::find()->orderBy("title")->all();
+            $items = ArrayHelper::map($registerTypes,'uuid','title');
+            echo $form->field($model, 'registerTypeUuid')->dropDownList($items);
+
+            echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
+            echo $form->field($model, 'description')->textInput(['value' => 'без описания']);
         ?>
     </div>
     <div class="modal-footer">
@@ -37,19 +42,21 @@ use yii\bootstrap\ActiveForm;
         <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
     </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function () {
+    $(document).on("beforeSubmit", "#form", function (e) {
+        e.preventDefault();
+    }).on('submit', function(e){
+        console.log("1");
+        e.preventDefault();
         $.ajax({
-            url: "../request/new",
+            url: "../equipment-register/new",
             type: "post",
             data: $('form').serialize(),
             success: function () {
-                $('#modal_request').modal('hide');
+                $('#modalChange').modal('hide');
             },
             error: function () {
             }
         })
-    }).on('submit', function(e){
-        e.preventDefault();
     });
 </script>
 <?php ActiveForm::end(); ?>

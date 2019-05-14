@@ -6,6 +6,7 @@ use backend\models\DocumentationSearch;
 use common\models\Documentation;
 use Yii;
 use yii\base\DynamicModel;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -88,6 +89,7 @@ class DocumentationController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -180,6 +182,7 @@ class DocumentationController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -303,6 +306,9 @@ class DocumentationController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -352,5 +358,49 @@ class DocumentationController extends Controller
         } else {
             return null;
         }
+    }
+
+    public function actionAdd()
+    {
+        if (isset($_POST["selected_node"])) {
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["model_uuid"]))
+                $model_uuid = $_POST["model_uuid"];
+            else $model_uuid = 0;
+            $documentation = new Documentation();
+            return $this->renderAjax('../documentation/_add_form', [
+                'documentation' => $documentation,
+                'equipmentUuid' => $uuid,
+                'equipmentModelUuid' => $model_uuid
+            ]);
+        }
+        return 0;
+    }
+
+    public function actionSave()
+    {
+        $model = new Documentation();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if (!$model->validate()) {
+                return false;
+            }
+
+            // получаем изображение для последующего сохранения
+            $file = UploadedFile::getInstance($model, 'path');
+            if ($file && $file->tempName) {
+                $fileName = self::_saveFile($model, $file);
+                if ($fileName) {
+                    $model->path = $fileName;
+                }
+            }
+
+            if ($model->save(false)) {
+                return $this->redirect(['/equipment/tree']);
+            }
+        }
+        return $this->render('_add_form', ['model' => $model]);
     }
 }

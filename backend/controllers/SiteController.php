@@ -6,18 +6,23 @@ use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\City;
 use common\models\Contragent;
+use common\models\Documentation;
+use common\models\DocumentationType;
 use common\models\Equipment;
+use common\models\EquipmentAttribute;
 use common\models\EquipmentType;
 use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
+use common\models\ObjectsAttribute;
 use common\models\Photo;
 use common\models\Resident;
 use common\models\Street;
 use common\models\Subject;
 use common\models\UserHouse;
 use common\models\Users;
+use common\models\UsersAttribute;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -51,7 +56,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline'],
+                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -640,5 +645,81 @@ class SiteController extends Controller
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';
         return $event;
+    }
+    
+        /**
+     * Build tree of files
+     *
+     * @return mixed
+     */
+    public function actionFiles()
+    {
+        $tree = array();
+        $tree['children'][] = ['title' => 'Документация', 'key' => 1010,
+            'expanded' => true, 'folder' => true];
+        $documentationTypes = DocumentationType::find()->all();
+        $documentationCount = 0;
+        foreach ($documentationTypes as $documentationType) {
+            $tree['children'][0]['children'][] = ['title' => $documentationType['title'],
+                'key' => $documentationType['_id'],
+                'what' => 'documentation',
+                'types' => 1,
+                'expanded' => true, 'folder' => true];
+            $documentations = Documentation::find()->where(['documentationTypeUuid' => $documentationType['uuid']])->all();
+            foreach ($documentations as $documentation) {
+                $fileName = EquipmentController::getDocDir($documentation) . $documentation['path'];
+                if (is_file($fileName)) {
+                    $size = number_format(filesize($fileName) / 1024, 2) . 'Кб';
+                    $links = Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                        [EquipmentController::getDocDir($documentation) . $documentation['path']], ['title' => $documentation['title']]
+                    );
+                }
+                else {
+                    $size = "неизвестен";
+                    $links = '';
+                }
+
+                $tree['children'][0]['children'][$documentationCount]['children'][] =
+                    ['title' => $documentation['title'],
+                        'key' => $documentation['_id'] . "",
+                        'date' => $documentation['createdAt'],
+                        'size' => $size,
+                        'links' => $links,
+                        'expanded' => false,
+                        'folder' => false];
+            }
+            $documentationCount++;
+        }
+        return $this->render('files', [
+            'files' => $tree
+        ]);
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового аттрибута
+     *
+     * @return mixed
+     */
+    public function actionAdd()
+    {
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            if (isset($_POST["what"]))
+                $what = $_POST["what"];
+            else $what = 0;
+            if (isset($_POST["types"]))
+                $type = $_POST["types"];
+            else $type = 0;
+            if ($folder == "true" && $type) {
+                if ($what == "documentation") {
+                    $documentation = new Documentation();
+                    return $this->renderAjax('../documentation/_add_form', [
+                        'documentation' => $documentation
+                    ]);
+                }
+                return false;
+            }
+        }
+        return 'Выберите в дереве тип атрибута или документации';
     }
 }

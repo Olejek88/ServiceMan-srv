@@ -8,6 +8,7 @@ use common\models\Request;
 use common\models\RequestStatus;
 use common\models\Users;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\NotFoundHttpException;
@@ -33,10 +34,13 @@ class RequestController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -95,6 +99,7 @@ class RequestController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -113,6 +118,7 @@ class RequestController extends Controller
      * @param integer $id Id
      *
      * @return string
+     * @throws NotFoundHttpException
      */
     public function actionInfo($id)
     {
@@ -169,13 +175,13 @@ class RequestController extends Controller
 
     /**
      * Creates a new Request model.
-     * @var $model \common\models\Request
+     * @var $model Request
      * @return mixed
      */
     public function actionNew()
     {
         $model =  new Request();
-        $request = \Yii::$app->getRequest();
+        $request = Yii::$app->getRequest();
         if ($request->isPost && $model->load($request->post())) {
             $old_request=0;
             if ($model->equipmentUuid) {
@@ -228,6 +234,7 @@ class RequestController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -247,6 +254,9 @@ class RequestController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
