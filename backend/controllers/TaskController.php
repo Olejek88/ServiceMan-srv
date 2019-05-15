@@ -2,6 +2,7 @@
 namespace backend\controllers;
 
 use ArrayObject;
+use common\components\MainFunctions;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\TaskUser;
@@ -105,6 +106,10 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            MainFunctions::register('task','Создана задача',
+                '<a class="btn btn-default btn-xs">'.$model['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
+                '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+
             return self::actionIndex();
         } else {
             return $this->render(

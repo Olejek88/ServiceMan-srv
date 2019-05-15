@@ -64,9 +64,11 @@ class MainFunctions
     /**
      * Logs message to journal register in db
      * @param string $description сообщение в журнал
+     * @param $type
+     * @param $title
      * @return integer код ошибкиы
      */
-    public static function register($description)
+    public static function register($type, $title, $description)
     {
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
@@ -76,6 +78,8 @@ class MainFunctions
         $journal = new Journal();
         $journal->userUuid = $currentUser['uuid'];
         $journal->description = $description;
+        $journal->type = $type;
+        $journal->title = $title;
         $journal->date = date('Y-m-d H:i:s');
         if ($journal->save())
             return Errors::OK;

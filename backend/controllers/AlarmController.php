@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\AlarmSearch;
+use common\components\MainFunctions;
 use common\models\Alarm;
 use common\models\Users;
 use Yii;
@@ -31,10 +32,13 @@ class AlarmController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -60,6 +64,7 @@ class AlarmController extends Controller
      * Displays a single Alarm model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -93,6 +98,9 @@ class AlarmController extends Controller
         $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            MainFunctions::register('alarm','Зарегистрирована авария',
+                '<a class="btn btn-default btn-xs">'.$model['alarmType']['title'].'</a>'.$model->comment.'<br/>'.
+            '<a class="btn btn-default btn-xs">'.$model['object']['title'].'</a>');
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
@@ -106,6 +114,7 @@ class AlarmController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {

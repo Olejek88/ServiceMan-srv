@@ -149,7 +149,12 @@ class RequestController extends Controller
     {
         $model = new Request();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            MainFunctions::register('Создана заявка ' . $model->comment);
+            if ($model->equipmentUuid)
+                MainFunctions::register('request','Создана заявка по оборудованию '.$model['equipment']['title'],
+                    'Комментарий: '.$model->comment);
+            if ($model->objectUuid)
+                MainFunctions::register('request','Создана заявка по объекту '.$model['equipment']['title'],
+                    'Комментарий: '.$model->comment);
             return $this->redirect(['table', 'id' => $model->_id]);
         } else {
             echo json_encode($model->errors);

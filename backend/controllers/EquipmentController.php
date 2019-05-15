@@ -5,9 +5,9 @@ namespace backend\controllers;
 use backend\models\EquipmentSearch;
 use common\components\Errors;
 use common\components\MainFunctions;
-use common\components\OrderFunctions;
 use common\models\Documentation;
 use common\models\Equipment;
+use common\models\EquipmentRegister;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\House;
@@ -66,7 +66,7 @@ class EquipmentController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -149,6 +149,9 @@ class EquipmentController extends Controller
             }
             // сохраняем запись
             if ($model->save(false)) {
+                MainFunctions::register('documentation','Добавлено оборудование',
+                    '<a class="btn btn-default btn-xs">'.$model['equipmentType']['title'].'</a> '.$model['title'].'<br/>'.
+                    'Серийный номер <a class="btn btn-default btn-xs">'.$model['serial'].'</a>');
                 return $this->redirect(['view', 'id' => $model->_id]);
             }
             echo json_encode($model->errors);
@@ -476,7 +479,7 @@ class EquipmentController extends Controller
                 foreach ($houses as $house) {
                     $fullTree['children'][$childIdx]['children'][] =
                         [
-                            'title' => 'ул.'.$house['street']['title'].', д.'.$house['number'],
+                            'title' => 'ул.' . $house['street']['title'] . ', д.' . $house['number'],
                             'type' => 'house',
                             'key' => $house['_id'],
                             'folder' => true
@@ -993,7 +996,8 @@ class EquipmentController extends Controller
             $currentUser = Users::findOne(['userId' => $accountUser['id']]);
             $equipment = Equipment::findOne(['_id' => $_POST["Equipment"]['_id']]);
             if ($equipment) {
-                $return = OrderFunctions::createOrder($equipment['uuid'], $currentUser, $equipmentStageUuid, null);
+                $return="";
+                //$return = OrderFunctions::createOrder($equipment['uuid'], $currentUser, $equipmentStageUuid, null);
                 if ($return['result'] == null)
                     return $return['message'];
                 else
@@ -1265,6 +1269,122 @@ class EquipmentController extends Controller
             'user' => $userEquipmentName,
             'links' => $links,
             'status' => $status];
+    }
+
+    public function actionTimelineAll()
+    {
+        $events = [];
+        $equipments = Equipment::find()->all();
+        foreach ($equipments as $equipment) {
+            $events = self::actionTimeline($equipment['uuid'],0);
+        }
+        $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
+        return $this->render(
+            'timeline',
+            [
+                'events' => $sort_events
+            ]
+        );
+    }
+
+    /**
+     * Displays a equipment register
+     *
+     * @param string $uuid equipment.
+     *
+     * @param $r
+     * @return mixed
+     */
+    public function actionTimeline($uuid, $r)
+    {
+        $events = [];
+        $tasks = Task::find()->where(['equipmentUuid' => $uuid])->orderBy('changedAt DESC')->all();
+        foreach ($tasks as $task) {
+            if ($task['workStatusUuid'] == WorkStatus::NEW_OPERATION) {
+                $text = '<a class="btn btn-default btn-xs">Создана задача для оборудования ' . $task['equipment']['title'] . '</a><br/>
+                <i class="fa fa-bar-chart"></i>&nbsp;Задача<br/>';
+                $events[] = ['date' => $task['changedAt'], 'event' => self::formEvent($task['changedAt'], 'task',
+                    $task['_id'], 'задача', $text)];
+            }
+            if ($task['workStatusUuid'] == WorkStatus::COMPLETE) {
+                $text = '<a class="btn btn-default btn-xs">Закончена задача для оборудования ' . $task['equipment']['title'] . '</a><br/>
+                <i class="fa fa-bar-chart"></i>&nbsp;Задача<br/>';
+                $events[] = ['date' => $task['changedAt'], 'event' => self::formEvent($task['changedAt'], 'task',
+                    $task['_id'], 'задача', $text)];
+            }
+        }
+
+        $equipment_photos = Photo::find()->where(['objectUuid' => $uuid])->all();
+        foreach ($equipment_photos as $equipment_photo) {
+            $text = '<a class="btn btn-default btn-xs">Для оборудования сделано фото</a><br/><i class="fa fa-cogs"></i>&nbsp;Фото<br/>';
+            $events[] = ['date' => $equipment_photo['date'], 'event' => self::formEvent($equipment_photo['date'], 'photo',
+                $equipment_photo['_id'], 'фото', $text)];
+        }
+
+        $measures = Measure::find()
+            ->where(['=', 'equipmentUuid', $uuid])
+            ->all();
+        foreach ($measures as $measure) {
+            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
+                <i class="fa fa-bar-chart-o"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
+            $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
+                $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
+        }
+
+        $equipment_registers = EquipmentRegister::find()
+            ->where(['=', 'equipmentUuid', $uuid])
+            ->all();
+        foreach ($equipment_registers as $register) {
+            $text = '<a class="btn btn-default btn-xs">' . $register['equipment']->title . '</a><br/>
+                <i class="fa fa-cogs"></i>&nbsp;Тип: ' . $register['registerType']['title'] . '<br/>';
+            $events[] = ['date' => $register['date'], 'event' => self::formEvent($register['date'], 'register',
+                $register['_id'], $register['equipment']['equipmentType']->title, $text)];
+        }
+
+        if ($r > 0) {
+            $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
+            return $this->render(
+                'view',
+                [
+                    'events' => $sort_events
+                ]
+            );
+        } else {
+            return $events;
+        }
+    }
+
+    /**
+     * Формируем код записи о событии
+     * @param $date
+     * @param $type
+     * @param $id
+     * @param $title
+     * @param $text
+     *
+     * @return string
+     */
+    public static function formEvent($date, $type, $id, $title, $text)
+    {
+        $event = '<li>';
+        if ($type == 'measure')
+            $event .= '<i class="fa fa-bar-chart bg-aqua"></i>';
+        if ($type == 'register')
+            $event .= '<i class="fa fa-calendar bg-green"></i>';
+
+        $event .= '<div class="timeline-item">';
+        $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
+
+        if ($type == 'measure')
+            $event .= '<h3 class="timeline-header">' . Html::a('Исполнитель снял данные &nbsp;',
+                    ['/measure/view', 'id' => Html::encode($id)]) . $title . '</h3>';
+
+        if ($type == 'register')
+            $event .= '<h3 class="timeline-header"><a href="#">Добавлено событие журнала</a></h3>';
+
+        $event .= '<div class="timeline-body">' . $text . '</div>';
+        $event .= '</div></li>';
+        return $event;
     }
 }
 

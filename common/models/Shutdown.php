@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -71,7 +72,7 @@ class Shutdown extends ActiveRecord
                 ],
                 'required'
             ],
-            [['createdAt', 'changedAt'], 'safe'],
+            [['oid','createdAt', 'changedAt','comment'], 'safe'],
             [
                 [
                     'uuid',
@@ -115,6 +116,7 @@ class Shutdown extends ActiveRecord
             'contragentUuid' => Yii::t('app', 'Контрагент'),
             'startDate' => Yii::t('app', 'Начало работ'),
             'endDate' => Yii::t('app', 'Окончание работ'),
+            'comment' => Yii::t('app', 'Комментарий'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -123,7 +125,7 @@ class Shutdown extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveRecord
+     * @return ActiveRecord
      */
     public function getContragent()
     {
@@ -133,17 +135,4 @@ class Shutdown extends ActiveRecord
             ->one();
         return $contragent;
     }
-
-    /**
-     * Объект связанного поля.
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getWorkStatus()
-    {
-        return $this->hasOne(
-            WorkStatus::class, ['uuid' => 'workStatusUuid']
-        );
-    }
-
 }

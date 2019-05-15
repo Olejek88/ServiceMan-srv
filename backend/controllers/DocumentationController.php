@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\DocumentationSearch;
+use common\components\MainFunctions;
 use common\models\Documentation;
 use Yii;
 use yii\base\DynamicModel;
@@ -46,7 +47,7 @@ class DocumentationController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -107,7 +108,7 @@ class DocumentationController extends Controller
         } else {
             $entity = [
                 'label' => '-------',
-                'title' => 'не привязанно!!!'
+                'title' => 'не привязано!!!'
             ];
         }
 
@@ -160,6 +161,13 @@ class DocumentationController extends Controller
 
             // сохраняем запись
             if ($model->save(false)) {
+                if ($model['equipmentTypeUuid'])
+                    $text = $model['equipmentType']['title'];
+                else
+                    $text = $model['equipment']['title'];
+                MainFunctions::register('documentation','Добавлена документация',
+                    '<a class="btn btn-default btn-xs">'.$model['documentationType']['title'].'</a>'.$model['title'].'<br/>'.
+                    '<a class="btn btn-default btn-xs">'.$text.'</a>');
                 return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render(
