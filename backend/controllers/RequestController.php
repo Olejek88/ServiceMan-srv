@@ -4,15 +4,17 @@ namespace backend\controllers;
 
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
+use common\models\Equipment;
 use common\models\Request;
 use common\models\RequestStatus;
 use common\models\Users;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
+use yii\web\UploadedFile;
 
 /**
  * RequestController implements the CRUD actions for Request model.
@@ -53,23 +55,6 @@ class RequestController extends Controller
     public function actionIndex()
     {
         //OrderFunctions::checkRequests();
-        $searchModel = new RequestSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 50;
-
-        return $this->render('table', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Lists all Request models.
-     * @return mixed
-     */
-    public function actionTable()
-    {
-        //OrderFunctions::checkRequests();
         if (isset($_POST['editableAttribute'])) {
             $model = Request::find()
                 ->where(['_id' => $_POST['editableKey']])
@@ -80,6 +65,20 @@ class RequestController extends Controller
             if ($_POST['editableAttribute'] == 'requestStatusUuid') {
                 $model['requestStatusUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestStatusUuid'];
             }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
+            }
+            if ($_POST['editableAttribute'] == 'verdict') {
+                $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
+            }
+            if ($_POST['editableAttribute'] == 'result') {
+                $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
+            }
+
+            if ($_POST['editableAttribute'] == 'orderVerdictUuid') {
+                $model['orderVerdictUuid'] = $_POST['Orders'][$_POST['editableIndex']]['orderVerdictUuid'];
+            }
+
             if ($model->save())
                 return json_encode('success');
             return json_encode('failed');
@@ -87,7 +86,8 @@ class RequestController extends Controller
         $searchModel = new RequestSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
-        return $this->render('table', [
+        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
+        return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -150,14 +150,13 @@ class RequestController extends Controller
         $model = new Request();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->equipmentUuid)
-                MainFunctions::register('request','Создана заявка по оборудованию '.$model['equipment']['title'],
-                    'Комментарий: '.$model->comment);
+                MainFunctions::register('request', 'Создана заявка по оборудованию ' . $model['equipment']['title'],
+                    'Комментарий: ' . $model->comment);
             if ($model->objectUuid)
-                MainFunctions::register('request','Создана заявка по объекту '.$model['equipment']['title'],
-                    'Комментарий: '.$model->comment);
-            return $this->redirect(['table', 'id' => $model->_id]);
+                MainFunctions::register('request', 'Создана заявка по объекту ' . $model['equipment']['title'],
+                    'Комментарий: ' . $model->comment);
+            return $this->redirect(['index', 'id' => $model->_id]);
         } else {
-            echo json_encode($model->errors);
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -166,71 +165,38 @@ class RequestController extends Controller
 
     public function actionForm()
     {
-        $model = new Request();
-        if (isset($_GET["equipmentUuid"]))
-            $model->equipmentUuid = $_GET["equipmentUuid"];
-        if (isset($_GET["objectUuid"]))
-            $model->objectUuid = $_GET["objectUuid"];
-        if (isset($_GET["user"]))
-            $model->userUuid = $_GET["user"];
-        return $this->renderAjax('_add_request', [
-            'model' => $model,
-        ]);
+        if (isset($_GET["uuid"])) {
+            $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
+        } else {
+            $model = new Request();
+            if (isset($_GET["equipmentUuid"]))
+                $model->equipmentUuid = $_GET["equipmentUuid"];
+            if (isset($_GET["objectUuid"]))
+                $model->objectUuid = $_GET["objectUuid"];
+            if (isset($_GET["user"]))
+                $model->userUuid = $_GET["user"];
+        }
+        return $this->renderAjax('_add_request', ['model' => $model,]);
     }
 
     /**
      * Creates a new Request model.
-     * @var $model Request
      * @return mixed
+     * @var $model Request
      */
-    public function actionNew()
+    public
+    function actionNew()
     {
-        $model =  new Request();
-        $request = Yii::$app->getRequest();
-        if ($request->isPost && $model->load($request->post())) {
-            $old_request=0;
-            if ($model->equipmentUuid) {
-                $old_request = Request::find()
-                    ->where(['requestStatusUuid' => RequestStatus::NEW_REQUEST])
-                    ->andWhere(['equipmentUuid' => $model->equipmentUuid])
-                    ->one();
-                MainFunctions::log("request.log",json_encode($old_request));
+        if (isset($_POST['requestUuid']))
+            $model = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
+        else
+            $model = new Request();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false)) {
+                return true;
             }
-            if ($model->objectUuid) {
-                $old_request = Request::find()
-                    ->where(['requestStatusUuid' => RequestStatus::NEW_REQUEST])
-                    ->andWhere(['objectUuid' => $model->objectUuid])
-                    ->one();
-                MainFunctions::log("request.log",json_encode($old_request));
-            }
-            if (!$old_request) {
-                if (isset($_POST["Request"]["equipmentUuid"]))
-                    $model->equipmentUuid = $_POST["Request"]["equipmentUuid"];
-                if (isset($_POST["Request"]["objectUuid"]))
-                    $model->objectUuid = $_POST["Request"]["objectUuid"];
-                if (isset($_POST["Request"]["userUuid"]))
-                    $model->userUuid = $_POST["Request"]["userUuid"];
-                $model->comment = $_POST["Request"]["comment"];
-                $model->requestStatusUuid = RequestStatus::NEW_REQUEST;
-                $model->uuid = MainFunctions::GUID();
-                $model->save();
-                //ActiveForm::validate($model);
-                if ($model->validate() && $model->equipmentUuid) {
-/*                    $result = OrderFunctions::createOrder($model->equipmentUuid, $model['user'], StageType::STAGE_TYPE_VIEW);
-                    $stage = $result['stage'];
-                    if ($stage) {
-                        $model->stageUuid = $stage['uuid'];
-                        $model->requestStatusUuid = RequestStatus::IN_WORK;
-                        $model->save();
-                    }*/
-                } else {
-                    MainFunctions::log("request.log","error request creating");
-                }
-            } else
-                MainFunctions::log("request.log","request already present");
-            return true;
         }
-        return false;
+        return true;
     }
 
 
@@ -241,12 +207,13 @@ class RequestController extends Controller
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionUpdate($id)
+    public
+    function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['table', 'id' => $model->_id]);
+            return $this->redirect(['index', 'id' => $model->_id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -263,10 +230,12 @@ class RequestController extends Controller
      * @throws \Throwable
      * @throws StaleObjectException
      */
-    public function actionDelete($id)
+    public
+    function actionDelete($id)
     {
         $model = $this->findModel($id);
         if ($model) {
+            $model->delete();
             $accountUser = Yii::$app->user->identity;
             $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
             if ($currentUser) {
@@ -276,7 +245,7 @@ class RequestController extends Controller
                 }
             }
         }
-        return $this->redirect(['table']);
+        return $this->redirect(['index']);
     }
 
     /**
@@ -286,7 +255,8 @@ class RequestController extends Controller
      * @return Request the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected
+    function findModel($id)
     {
         if (($model = Request::findOne($id)) !== null) {
             return $model;

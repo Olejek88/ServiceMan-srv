@@ -11,6 +11,7 @@ use common\models\DocumentationType;
 use common\models\Equipment;
 use common\models\EquipmentAttribute;
 use common\models\EquipmentType;
+use common\models\Journal;
 use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\LoginForm;
@@ -554,8 +555,8 @@ class SiteController extends Controller
             ->limit(100)
             ->all();
         foreach ($measures as $measure) {
-            $photo = PhotoEquipment::find()
-                ->where(['equipmentUuid' => $measure['equipmentUuid']])
+            $photo = Photo::find()
+                ->where(['objectUuid' => $measure['equipmentUuid']])
                 ->orderBy('createdAt DESC')
                 ->one();
 
@@ -567,9 +568,9 @@ class SiteController extends Controller
                         style="width:50px; margin: 2px; float:left" alt=""></a>';
             $text .= '<a class="btn btn-default btn-xs">' .
                 $measure['equipment']['equipmentType']->title . ' [' .
-                $measure['equipment']['flat']['house']['street']->title . ', ' .
-                $measure['equipment']['flat']['house']->number . ', ' .
-                $measure['equipment']['flat']['number'] . ']</a><br/>
+                $measure['equipment']['object']['house']['street']->title . ', ' .
+                $measure['equipment']['object']['house']->number . ', ' .
+                $measure['equipment']['object']['title'] . ']</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Оборудование: ' . $measure['equipment']['equipmentType']->title . '<br/>
                 <i class="fa fa-check-square"></i>&nbsp;Значение: ' . $measure['value'] . '';
             $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
@@ -595,6 +596,21 @@ class SiteController extends Controller
                     <a class="btn btn-default btn-xs">[' . $alarm['longitude'] . '</a> | <a class="btn btn-default btn-xs">' . $alarm['longitude'] . ']</a>';
             $events[] = ['date' => $alarm['date'], 'event' => self::formEvent($alarm['date'],
                 'alarm', 0, '', $text, $alarm['user']->name)];
+        }
+
+        $journals = Journal::find()->orderBy('date DESC')->all();
+        foreach ($journals as $journal) {
+            $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], $journal['type'],
+                0, $journal['title'], $journal['description'], $journal['user']['name'])];
+        }
+
+        $photos = Photo::find()
+            ->limit(5)
+            ->all();
+        foreach ($photos as $photo) {
+            $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
+            $events[] = ['date' => $photo['createdAt'], 'event' => self::formEvent($photo['createdAt'], 'photo',
+                $photo['_id'], 'Добавлено фото', $text,$photo['user']['name'])];
         }
 
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
@@ -623,10 +639,28 @@ class SiteController extends Controller
     public static function formEvent($date, $type, $id, $title, $text, $user)
     {
         $event = '<li>';
-        if ($type == 'measure')
-            $event .= '<i class="fa fa-wrench bg-red"></i>';
         if ($type == 'alarm')
             $event .= '<i class="fa fa-calendar bg-aqua"></i>';
+        if ($type == "alarm")
+            $event .= '<i class="fa fa-warning bg-red"></i>';
+        if ($type == "documentation")
+            $event .= '<i class="fa fa-book bg-blue"></i>';
+        if ($type == "equipment")
+            $event .= '<i class="fa fa-qrcode bg-aqua"></i>';
+        if ($type == "object")
+            $event .= '<i class="fa fa-home bg-green"></i>';
+        if ($type == "request")
+            $event .= '<i class="fa fa-send bg-orange"></i>';
+        if ($type == "user-system")
+            $event .= '<i class="fa fa-user bg-success"></i>';
+        if ($type == "user")
+            $event .= '<i class="fa fa-user bg-success"></i>';
+        if ($type == 'measure')
+            $event .= '<i class="fa fa-bar-chart bg-success"></i>';
+        if ($type == 'photo')
+            $event .= '<i class="fa fa-photo bg-aqua"></i>';
+        if ($type == 'task')
+            $event .= '<i class="fa fa-tasks bg-info"></i>';
 
         $event .= '<div class="timeline-item">';
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
@@ -641,6 +675,11 @@ class SiteController extends Controller
                     <span class="timeline-header" style="vertical-align: middle">' .
                 Html::a('Зафиксировано событие &nbsp;',
                     ['/alarm/view', 'id' => Html::encode($id)]) . $title . '</span>';
+
+        if ($type != 'alarm' && $type != 'measure') {
+            $event .= '&nbsp;<span class="btn btn-primary btn-xs">' . $user . '</span>&nbsp;
+                    <span class="timeline-header" style="vertical-align: middle">' . $title . '</span>';
+        }
 
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';

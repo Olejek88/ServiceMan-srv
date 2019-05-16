@@ -473,8 +473,8 @@ class UsersController extends Controller
         $measures = Measure::find()
             ->all();
         foreach ($measures as $measure) {
-            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
-                <i class="fa fa-cogs"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
+            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']->title . '</a><br/>
+                <i class="fa fa-bar-chart"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
             $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
                 $measure['user']['name'], $measure['equipment']['equipmentType']->title, $text)];
         }
@@ -558,7 +558,7 @@ class UsersController extends Controller
         if ($type == "user")
             $event .= '<i class="fa fa-user bg-success"></i>';
         if ($type == 'measure')
-            $event .= '<i class="fa fa-wrench bg-red"></i>';
+            $event .= '<i class="fa fa-bar bg-success"></i>';
         if ($type == 'photo')
             $event .= '<i class="fa fa-photo bg-aqua"></i>';
         if ($type == 'task')
