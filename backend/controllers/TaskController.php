@@ -6,6 +6,7 @@ use common\components\MainFunctions;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\TaskUser;
+use common\models\Users;
 use common\models\WorkStatus;
 use Yii;
 use yii\db\StaleObjectException;
@@ -123,6 +124,31 @@ class TaskController extends Controller
     }
 
     /**
+     * Lists all Task models.
+     *
+     * @return mixed
+     */
+    public function actionTableUserNormative()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+        }
+        if (isset($_GET['user'])) {
+            $dataProvider->query->andWhere(['=', 'userUuid', $_GET['user']]);
+        }
+        return $this->render(
+            'table-user-normative',
+            [
+                'dataProvider' => $dataProvider
+            ]
+        );
+    }
+
+    /**
      * Search
      *
      * @return string
@@ -156,9 +182,16 @@ class TaskController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             MainFunctions::register('task','Создана задача',
-                '<a class="btn btn-default btn-xs">'.$model['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
+                '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
                 '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
-
+            $user = Users::find()->one();
+            $modelTU = new TaskUser();
+            $modelTU->uuid = (new MainFunctions)->GUID();
+            $modelTU->taskUuid = $model['uuid'];
+            $modelTU->userUuid = $user['uuid'];
+            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->save();
+            //echo json_encode($modelTU->errors);
             return self::actionIndex();
         } else {
             return $this->render(
@@ -256,7 +289,9 @@ class TaskController extends Controller
                     $tasks = Task::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
                     foreach ($tasks as $task) {
                         $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            ['title' => $task['taskTemplate']['title'], 'key' => $task['_id'], 'folder' => true];
+                            ['title' => $task['taskTemplate']['title'], 'key' => $task['_id'], 'folder' => true,
+                                'startDate' => $task['startDate'], 'closeDate' => $task['endDate']
+                            ];
                         $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
                         $user_names='';
                         foreach ($taskUsers as $taskUser) {
@@ -273,9 +308,7 @@ class TaskController extends Controller
                                     'types' => '',
                                     'info' => '',
                                     'user' => $user_names,
-                                    'status' => $operation['workStatus']['title'],
-                                    'startDate' => $operation['startDate'],
-                                    'closeDate' => $operation['closeDate']
+                                    'status' => $operation['workStatus']['title']
                                 ];
                         }
                     }
@@ -283,7 +316,7 @@ class TaskController extends Controller
             }
         }
         return $this->render('tree', [
-            'equipment' => $tree
+            'fullTree' => $tree
         ]);
     }
 }
