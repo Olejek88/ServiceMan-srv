@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -116,14 +117,14 @@ class Objects extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPhoto() {
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getObjectType() {
         return $this->hasOne(ObjectType::class, ['uuid' => 'objectTypeUuid']);

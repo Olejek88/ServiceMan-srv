@@ -21,6 +21,10 @@ td.alt {
     padding: 0;
 }
 
+.btn-toolbar {
+    width: 100%;
+}
+
 .progress {
     position: relative;
     height: 18px;

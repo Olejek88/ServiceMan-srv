@@ -1,107 +1,143 @@
 <?php
+/* @var $searchModel backend\models\MeasureSearch */
 
-use yii\grid\GridView;
+use common\models\MeasureType;
+use kartik\date\DatePicker;
+use kartik\grid\GridView;
+use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $searchModel backend\models\MeasureSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
+$this->title = Yii::t('app', 'ТОИРУС::Отчеты о показаниях приборов');
 
-$this->title = Yii::t('app', 'Измеренные значения');
-?>
-<div class="measured-value-index box-padding-index">
+$gridColumns = [
+    [
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'header' => 'Оборудование',
+        'mergeHeader' => true,
+        'content' => function ($data) {
+            return $data['equipment']['title'];
+        }
+    ],
+    [
+        'attribute' => 'equipment.serial',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Серийный номер',
+        'mergeHeader' => true,
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+    ],
+    [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Адрес',
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            return $data['equipment']['object']->getFullTitle();
+        }
+    ],
+    [
+        'attribute' => 'date',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+    ],
+    [
+        'attribute' => 'value',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return "<span class='badge' style='background-color: green; height: 22px; margin-top: -3px'>".$data['value']."</span>";
+        }
+    ],
+    [
+        'class' => 'kartik\grid\ActionColumn',
+        'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'header' => 'Действия',
+        'template' => '{delete}'
+    ]
+];
 
-    <div class="box box-default">
-        <div class="box-header with-border">
-            <h2><?= Html::encode($this->title) ?></h2>
-            <div class="box-tools pull-right">
-                <span class="label label-default"></span>
-            </div>
-        </div>
-        <div class="box-body" style="padding: 0 10px 0 10px;">
-            <p>
-                <?= Html::a(Yii::t('app', 'Новое измерение'), ['create'], ['class' => 'btn btn-success']) ?>
-            </p>
-            <div class="box-body-table">
-                <h6 class="text-center">
-                    <?= GridView::widget([
-                        'dataProvider' => $dataProvider,
-                        'filterModel' => $searchModel,
-                        'tableOptions' => [
-                            'class' => 'table-striped table table-bordered table-hover table-condensed'
-                        ],
-                        'columns' => [
-                            [
-                                'attribute' => '_id',
-                                'contentOptions' => [
-                                    'class' => 'table_class',
-                                    'style' => 'width: 50px; text-align: center'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'content' => function ($data) {
-                                    return $data->_id;
-                                }
-                            ],
-                            [
-                                'attribute' => 'equipmentUuid',
-                                'contentOptions' => [
-                                    'class' => 'table_class',
-                                    'hAlign' => 'center',
-                                    'style' => 'width: 200px'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'content' => function ($data) {
-                                    return $data['equipment']['equipmentType']->title . ' [' .
-                                        $data['equipment']['object']['house']['street']->title . ', ' .
-                                        $data['equipment']['object']['house']->number . ', ' .
-                                        $data['equipment']['object']['title'] . ']';
+$measureType = MeasureType::find()->all();
+$items = ArrayHelper::map($measureType, 'uuid', 'title');
 
-                                }
-                            ],
-                            [
-                                'attribute' => 'userUuid',
-                                'contentOptions' => [
-                                    'class' => 'table_class',
-                                    'style' => 'width: 200px'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'value' => 'user.name'
-                            ],
-                            [
-                                'attribute' => 'value',
-                                'contentOptions' => [
-                                    'class' => 'table_class',
-                                    'style' => 'width: 50px'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'content' => function ($data) {
-                                    return $data->value;
-                                }
-                            ],
-                            [
-                                'attribute' => 'date',
-                                'contentOptions' => [
-                                    'class' => 'table_class',
-                                    'style' => 'width: 100px'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'content' => function ($data) {
-                                    return $data->date;
-                                }
-                            ],
-                            [
-                                'class' => 'yii\grid\ActionColumn',
-                                'header' => 'Действия',
-                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
-                                'contentOptions' => [
-                                    'class' => 'text-center',
-                                ],
-                                'template' => '{view} {update} {delete}{link}',
-                            ],
-                        ],
-                    ]); ?>
-                </h6>
-            </div>
-        </div>
-    </div>
-</div>
+echo GridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'columns' => $gridColumns,
+    'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px'],
+    'filterRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px important!'],
+    'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
+    'beforeHeader' => [
+        '{toggleData}'
+    ],
+    'toolbar' => [
+        ['content' =>
+            '<form action="/measure/index"><div class="row" style="margin-bottom: 8px; width:100%">
+             <div class="col-sm-4" style="width:30%">' .
+            Select2::widget([
+                'name' => 'type',
+                'language' => 'ru',
+                'data' => $items,
+                'options' => ['placeholder' => 'Тип измерений'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ]
+            ]) . '</div><div class="col-sm-4" style="width:25%">' .
+            DatePicker::widget([
+                'name' => 'start_time',
+                'value' => '2018-12-01',
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd'
+                ]
+            ]) . '</div><div class="col-sm-4" style="width:25%">' .
+            DatePicker::widget([
+                'name' => 'end_time',
+                'value' => '2021-12-31',
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]) . '</div><div class="col-sm-2" style="width:12%">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-success']) . '</div>' .
+            '<div class="col-sm-1" style="width:8%">' . '{export}' . '</div></div></form>',
+            'options' => ['style' => 'width:100%']
+        ],
+    ],
+    'export' => [
+        'target' => GridView::TARGET_BLANK,
+        'filename' => 'orders'
+    ],
+    'pjax' => true,
+    'showPageSummary' => false,
+    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
+    'summary' => '',
+    'bordered' => true,
+    'striped' => false,
+    'condensed' => true,
+    'responsive' => false,
+    'hover' => true,
+    'floatHeader' => false,
+    'panel' => [
+        'type' => GridView::TYPE_PRIMARY,
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Отчет о показаниях приборов',
+        'headingOptions' => ['style' => 'background: #337ab7']
+    ],
+]);

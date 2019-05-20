@@ -36,7 +36,7 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['workStatusUuid'],'task_status');
+            $status =MainFunctions::getColorLabelByStatus($model['workStatus'],'task_status');
             return $status;
         },
         'format' => 'raw'

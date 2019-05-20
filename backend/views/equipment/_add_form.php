@@ -70,7 +70,6 @@ use yii\helpers\Html;
     }
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
     //echo $form->field($equipment, 'startDate')->hiddenInput(['value' => date("Ymd")])->label(false);
-    echo $form->field($equipment, 'criticalTypeUuid')->hiddenInput(['value' => CriticalType::CRITICAL])->label(false);
     echo $form->field($equipment, 'tagId')->textInput(['maxlength' => true]);
 
     echo $form->field($equipment, 'image')->widget(

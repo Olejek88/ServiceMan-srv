@@ -6,7 +6,9 @@ use common\components\MainFunctions;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\TaskUser;
+use common\models\WorkStatus;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -74,6 +76,53 @@ class TaskController extends Controller
     }
 
     /**
+     * Lists all Task models.
+     *
+     * @return mixed
+     */
+    public function actionTableUser()
+    {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Task::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'workStatusUuid') {
+                $model['workStatusUuid'] = $_POST['Task'][$_POST['editableIndex']]['workStatusUuid'];
+            }
+            $model->save();
+            return json_encode('');
+        }
+
+        // TODO task_user
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+        }
+        $dataProvider->query->andWhere(['=','workStatusUuid',WorkStatus::COMPLETE]);
+        $dataProvider->pagination->pageParam = 'dp1';
+
+        $dataProvider2 = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider2->pagination->pageSize = 25;
+        $dataProvider2->query->andWhere(['<>','workStatusUuid',WorkStatus::COMPLETE]);
+        if (isset($_GET['start_time'])) {
+            $dataProvider2->query->andWhere(['>=','date',$_GET['start_time']]);
+            $dataProvider2->query->andWhere(['<','date',$_GET['end_time']]);
+        }
+        $dataProvider2->pagination->pageParam = 'dp2';
+
+        return $this->render(
+            'table-user',
+            [
+                'dataProvider' => $dataProvider,
+                'dataProvider2' => $dataProvider2
+            ]
+        );
+    }
+
+    /**
      * Search
      *
      * @return string
@@ -128,6 +177,7 @@ class TaskController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -152,6 +202,9 @@ class TaskController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

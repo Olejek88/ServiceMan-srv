@@ -166,7 +166,7 @@ class MainFunctions
     public static function getColorLabelByStatus($status, $type)
     {
         $label = '<div class="progress"><div class="critical3">' . $status['title'] . '</div></div>';
-        if ($type == 'task_status') {
+        if ($type == 'work_status') {
             if ($status["uuid"] == WorkStatus::NEW_OPERATION ||
                 $status["uuid"] == WorkStatus::IN_WORK)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
@@ -175,11 +175,22 @@ class MainFunctions
             if ($status["uuid"] == WorkStatus::UN_COMPLETE)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
+        if ($type == 'work_status_edit') {
+            if ($status["uuid"] == WorkStatus::NEW_OPERATION ||
+                $status["uuid"] == WorkStatus::IN_WORK)
+                $label = "<span class='badge' style='gray; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            else if ($status["uuid"] == WorkStatus::CANCELED)
+                $label = "<span class='badge' style='orange; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            else
+                $label = "<span class='badge' style='green; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+        }
         if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
-            if ($status["uuid"] == TaskVerdict::INSPECTED)
+            else if ($status["uuid"] == TaskVerdict::INSPECTED)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
+            else
+                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
         }
         if ($type == 'equipment_status') {
             if ($status['uuid'] == EquipmentStatus::NOT_MOUNTED) {
