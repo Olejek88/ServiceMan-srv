@@ -105,9 +105,51 @@ class EquipmentController extends Controller
         $searchModel = new EquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','testDate',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','testDate',$_GET['end_time']]);
+        }
 
         return $this->render(
             'index',
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
+    /**
+     * Lists all Equipment models.
+     *
+     * @return mixed
+     */
+    public function actionIndexCheck()
+    {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Equipment::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'serial') {
+                $model['serial'] = $_POST['Equipment'][$_POST['editableIndex']]['serial'];
+            }
+            if ($_POST['editableAttribute'] == 'testDate') {
+                $model['testDate'] = date("Y-m-d H:i:s", $_POST['Equipment'][$_POST['editableIndex']]['testDate']);
+            }
+            $model->save();
+            return json_encode('');
+        }
+
+        $searchModel = new EquipmentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','testDate',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','testDate',$_GET['end_time']]);
+        }
+
+        return $this->render(
+            'index-check',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

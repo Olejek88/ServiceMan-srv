@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -18,6 +19,8 @@ use yii\db\Expression;
  * @property string $tag
  * @property string $equipmentStatusUuid
  * @property string $testDate
+ * @property int $period
+ * @property string $replaceDate
  * @property string $objectUuid
  * @property string $createdAt
  * @property string $changedAt
@@ -26,6 +29,7 @@ use yii\db\Expression;
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
  * @property Object $object
+ * @property string $nextDate
  * @property Photo $photo
  */
 class Equipment extends ActiveRecord
@@ -78,7 +82,7 @@ class Equipment extends ActiveRecord
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'serial', 'testDate', 'tag', 'deleted',
+            'serial', 'period', 'testDate', 'replaceDate', 'tag', 'deleted',
             'createdAt', 'changedAt'
         ];
     }
@@ -98,11 +102,13 @@ class Equipment extends ActiveRecord
                     'equipmentTypeUuid',
                     'equipmentStatusUuid',
                     'serial',
+                    'replaceDate',
                 ],
                 'required'
             ],
-            [['testDate', 'createdAt', 'changedAt'], 'safe'],
+            [['testDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
+            [['period'], 'int'],
             [
                 [
                     'uuid',
@@ -139,6 +145,9 @@ class Equipment extends ActiveRecord
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип'),
             'testDate' => Yii::t('app', 'Дата последней поверки'),
+            'period' => Yii::t('app', 'Период'),
+            'nextDate' => Yii::t('app', 'Дата следущей поверки'),
+            'replaceDate' => Yii::t('app', 'Дата замены'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
             'equipmentStatus' => Yii::t('app', 'Статус'),
             'objectUuid' => Yii::t('app', 'Объект'),
@@ -167,7 +176,7 @@ class Equipment extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipmentStatus()
     {
@@ -179,7 +188,7 @@ class Equipment extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipmentType()
     {
@@ -191,7 +200,7 @@ class Equipment extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getObject()
     {
@@ -200,5 +209,20 @@ class Equipment extends ActiveRecord
 
     public function getPhoto() {
         return $this->hasMany(Photo::class, ['equipmentUuid' => 'uuid']);
+    }
+
+    public function getNextDate() {
+        $seconds = strtotime($this->testDate)+($this->period*3600*24);
+        return date('Y-m-d', $seconds);
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return string
+     */
+    public function getFullTitle()
+    {
+        return $this['object']->getFullTitle().' ['.$this['equipmentType']['title'].']';
     }
 }

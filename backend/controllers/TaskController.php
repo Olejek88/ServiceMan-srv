@@ -149,6 +149,30 @@ class TaskController extends Controller
     }
 
     /**
+     * Lists all Task models.
+     *
+     * @return mixed
+     */
+    public function actionTableReportView()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+        }
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
+        return $this->render(
+            'table-report-view',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel
+            ]
+        );
+    }
+
+    /**
      * Search
      *
      * @return string
