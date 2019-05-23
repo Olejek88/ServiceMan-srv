@@ -1,5 +1,7 @@
 <?php
-/* @var $model common\models\Request */
+/* @var $model common\models\Request
+ * @var $receiptUuid string
+ */
 
 use common\components\MainFunctions;
 use common\models\Contragent;
@@ -36,6 +38,8 @@ use yii\bootstrap\ActiveForm;
         ?>
 
         <?php
+        echo Html::hiddenInput("receiptUuid", $receiptUuid);
+
         echo $form->field($model, 'type')->widget(Select2::class,
             [
                 'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
@@ -171,7 +175,7 @@ use yii\bootstrap\ActiveForm;
             type: "post",
             data: $('form').serialize(),
             success: function () {
-                $('#modalAdd').modal('hide');
+                //$('#modalRequest').modal('hide');
             },
             error: function () {
             }

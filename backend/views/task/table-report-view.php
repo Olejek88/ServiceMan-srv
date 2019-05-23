@@ -153,7 +153,7 @@ echo GridView::widget([
     'responsive' => false,
     'hover' => true,
     'floatHeader' => false,
-    'panelTemplate' =>
+/*    'panelTemplate' =>
         '<div class="panel {type}">
         {panelHeading}
         {panelBefore}
@@ -161,7 +161,7 @@ echo GridView::widget([
         {items}
         {panelAfter}
         {panelFooter}
-    </div>',
+    </div>',*/
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Журнал осмотров',

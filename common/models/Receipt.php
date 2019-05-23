@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -40,9 +41,9 @@ class Receipt extends ActiveRecord
     public function rules()
     {
         return [
-            [['userUuid', 'contragentUuid', 'date', 'description'], 'required'],
-            [['description', 'userUuid', 'contragentUuid', 'result', 'description'], 'string'],
-            [['date'], 'safe'],
+            [['uuid', 'userUuid', 'contragentUuid', 'date', 'description'], 'required'],
+            [['description', 'userUuid', 'contragentUuid', 'result'], 'string'],
+            [['date','closed','oid'], 'safe'],
             [['userUuid', 'contragentUuid'], 'string', 'max' => 50],
         ];
     }
@@ -54,16 +55,21 @@ class Receipt extends ActiveRecord
     {
         return [
             '_id' => '№',
-            'userUuid' => 'Uuid Пользователя',
+            'userUuid' => 'Пользователь',
+            'user' => 'Пользователь',
+            'contragentUuid' => 'Контрагент',
+            'contragent' => 'Контрагент',
             'description' => 'Описание',
-            'date' => 'Дата',
+            'result' => 'Результат',
+            'closed' => 'Закрыта',
+            'date' => 'Дата'
         ];
     }
 
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -75,7 +81,7 @@ class Receipt extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getContragent()
     {
@@ -87,7 +93,7 @@ class Receipt extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRequest()
     {

@@ -3,8 +3,10 @@ namespace backend\controllers;
 
 use backend\models\ReceiptSearch;
 use common\models\Receipt;
+use common\models\Request;
 use common\models\Resident;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -58,9 +60,22 @@ class ReceiptController extends Controller
             $model = Receipt::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
-//            if ($_POST['editableAttribute'] == 'inn') {
-//                $model['inn'] = $_POST['Resident'][$_POST['editableIndex']]['inn'];
-//            }
+            if ($_POST['editableAttribute'] == 'result') {
+                $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
+            }
+            if ($_POST['editableAttribute'] == 'closed') {
+                $model['closed'] = $_POST['Request'][$_POST['editableIndex']]['closed'];
+            }
+            if ($_POST['editableAttribute'] == 'description') {
+                $model['description'] = $_POST['Request'][$_POST['editableIndex']]['description'];
+            }
+            if ($_POST['editableAttribute'] == 'userUuid') {
+                $model['userUuid'] = $_POST['Request'][$_POST['editableIndex']]['userUuid'];
+            }
+            if ($_POST['editableAttribute'] == 'requestUuid') {
+                $model['requestUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestUuid'];
+            }
+
             if ($model->save())
                 return json_encode('success');
             return json_encode('failed');
@@ -69,45 +84,17 @@ class ReceiptController extends Controller
         $searchModel = new ReceiptSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
-        return $this->render('table', [
+        return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
-    /**
-     * Lists all Receipt models.
-     *
-     * @return mixed
-     */
-    public function actionTable()
-    {
-        if (isset($_POST['editableAttribute'])) {
-            $model = Resident::find()
-                ->where(['_id' => $_POST['editableKey']])
-                ->one();
-/*            if ($_POST['editableAttribute'] == 'inn') {
-                $model['inn'] = $_POST['Resident'][$_POST['editableIndex']]['inn'];
-            }*/
-            if ($model->save())
-                return json_encode('success');
-            return json_encode('failed');
-        }
-
-        $searchModel = new ReceiptSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 50;
-        return $this->render('table', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
-        ]);
-    }
 
     /**
      * Action list
      *
      * @return mixed
-     * @throws UnauthorizedHttpException
      */
     public function actionList()
     {
@@ -129,6 +116,7 @@ class ReceiptController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -177,6 +165,7 @@ class ReceiptController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -210,6 +199,9 @@ class ReceiptController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -234,5 +226,33 @@ class ReceiptController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionForm()
+    {
+        $model = new Receipt();
+        return $this->renderAjax('_add_receipt', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Creates a new Receipt model.
+     * @return mixed
+     * @var $model Receipt
+     */
+    public
+    function actionNew()
+    {
+        if (isset($_POST['receiptUuid']))
+            $model = Receipt::find()->where(['uuid' => $_POST['receiptUuid']])->one();
+        else
+            $model = new Receipt();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false)) {
+                return true;
+            }
+        }
+        return true;
     }
 }

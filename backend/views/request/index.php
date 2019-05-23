@@ -31,7 +31,7 @@ $gridColumns = [
                 [
                     'title' => 'Редактировать заявку',
                     'data-toggle' => 'modal',
-                    'data-target' => '#modalAdd',
+                    'data-target' => '#modalRequest',
                 ]
             );
         }
@@ -270,7 +270,7 @@ $gridColumns = [
                     [
                         'title' => 'Редактировать заявку',
                         'data-toggle' => 'modal',
-                        'data-target' => '#modalAdd',
+                        'data-target' => '#modalRequest',
                     ]
                 );
             }
@@ -299,7 +299,7 @@ echo GridView::widget([
                     'class' => 'btn btn-success',
                     'title' => 'Добавить заявку',
                     'data-toggle' => 'modal',
-                    'data-target' => '#modalAdd',
+                    'data-target' => '#modalRequest',
                 ]
             )
         ],
@@ -327,12 +327,12 @@ echo GridView::widget([
     ],
 ]);
 
-$this->registerJs('$("#modalAdd").on("hidden.bs.modal",
+$this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      window.location.replace("index");
 })');
 ?>
-<div class="modal remote fade" id="modalAdd">
+<div class="modal remote fade" id="modalRequest">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
     </div>

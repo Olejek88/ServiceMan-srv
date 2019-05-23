@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
 use common\models\Equipment;
+use common\models\Receipt;
 use common\models\Request;
 use common\models\RequestStatus;
 use common\models\Users;
@@ -165,6 +166,7 @@ class RequestController extends Controller
 
     public function actionForm()
     {
+        $receiptUuid = "";
         if (isset($_GET["uuid"])) {
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
         } else {
@@ -175,8 +177,10 @@ class RequestController extends Controller
                 $model->objectUuid = $_GET["objectUuid"];
             if (isset($_GET["user"]))
                 $model->userUuid = $_GET["user"];
+            if (isset($_GET["receiptUuid"]))
+                $receiptUuid = $_GET["receiptUuid"];
         }
-        return $this->renderAjax('_add_request', ['model' => $model,]);
+        return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid]);
     }
 
     /**
@@ -192,7 +196,18 @@ class RequestController extends Controller
         else
             $model = new Request();
         if ($model->load(Yii::$app->request->post())) {
+            if (!isset($model["objectUuid"]) && isset($model["equipmentUuid"])) {
+                $model["objectUuid"] = $model["equipment"]["objectUuid"];
+            }
+
             if ($model->save(false)) {
+                if (isset($_POST['receiptUuid'])) {
+                    $model_receipt = Receipt::find()->where(['uuid' => $_POST['receiptUuid']])->one();
+                    if ($model_receipt) {
+                        $model_receipt["requestUuid"] = $model['uuid'];
+                        $model_receipt->save();
+                    }
+                }
                 return true;
             }
         }
