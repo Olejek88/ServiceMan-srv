@@ -47,27 +47,6 @@ use yii\helpers\Html;
     }
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
 
-    if ($model_uuid != null) {
-        $model = EquipmentModel::find()->where(['uuid' => $model_uuid])->one();
-        if ($model) {
-            echo $form->field($equipment, 'equipmentModelUuid')->hiddenInput(['value' => $model['uuid']])->label(false);
-        }
-    } else {
-        $equipmentModel = EquipmentModel::find()->all();
-        $items = ArrayHelper::map($equipmentModel, 'uuid', 'title');
-        echo $form->field($equipment, 'equipmentModelUuid')->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите модель..',
-                    'style' => ['height' => '42px', 'padding-top' => '10px']
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-    }
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
     //echo $form->field($equipment, 'startDate')->hiddenInput(['value' => date("Ymd")])->label(false);
     echo $form->field($equipment, 'tagId')->textInput(['maxlength' => true]);
