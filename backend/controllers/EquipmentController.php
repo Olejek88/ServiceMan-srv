@@ -1021,32 +1021,17 @@ class EquipmentController extends Controller
     function actionSelectTask()
     {
         if (isset($_GET["equipmentUuid"])) {
-            $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
-                ->one();
+            $model = new Task();
             return $this->renderAjax('_select_task', [
                 'model' => $model,
+                'equipmentUuid' => $_GET["equipmentUuid"],
+                'defectUuid' => $_GET["defectUuid"]
             ]);
         }
-        $equipmentStageUuid = null;
-        if (isset($_POST["Equipment"]["equipmentStatusUuid"]))
-            $equipmentStageUuid = $_POST["Equipment"]["equipmentStatusUuid"];
-        if (isset($_POST["equipmentStatusUuid"]))
-            $equipmentStageUuid = $_POST["equipmentStatusUuid"];
-
-        if ($equipmentStageUuid) {
-            $accountUser = Yii::$app->user->identity;
-            $currentUser = Users::findOne(['userId' => $accountUser['id']]);
-            $equipment = Equipment::findOne(['_id' => $_POST["Equipment"]['_id']]);
-            if ($equipment) {
-                $return="";
-                //$return = OrderFunctions::createOrder($equipment['uuid'], $currentUser, $equipmentStageUuid, null);
-                if ($return['result'] == null)
-                    return $return['message'];
-                else
-                    return false;
-            }
-        }
-        return false;
+        $model = new Task();
+        return $this->renderAjax('_select_task', [
+            'model' => $model
+        ]);
     }
 
     /**
@@ -1342,7 +1327,7 @@ class EquipmentController extends Controller
         $events = [];
         $tasks = Task::find()->where(['equipmentUuid' => $uuid])->orderBy('changedAt DESC')->all();
         foreach ($tasks as $task) {
-            if ($task['workStatusUuid'] == WorkStatus::NEW_OPERATION) {
+            if ($task['workStatusUuid'] == WorkStatus::NEW) {
                 $text = '<a class="btn btn-default btn-xs">Создана задача для оборудования ' . $task['equipment']['title'] . '</a><br/>
                 <i class="fa fa-bar-chart"></i>&nbsp;Задача<br/>';
                 $events[] = ['date' => $task['changedAt'], 'event' => self::formEvent($task['changedAt'], 'task',

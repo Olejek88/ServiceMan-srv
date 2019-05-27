@@ -13,10 +13,14 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '120px',
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
         'attribute' => 'title',
+        'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -25,6 +29,9 @@ $gridColumns = [
     [
         'attribute' => 'equipment.title',
         'header' => 'Оборудование',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '300px',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -33,6 +40,9 @@ $gridColumns = [
     [
         'attribute' => 'user.name',
         'header' => 'Исполнитель',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '200px',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -73,19 +83,36 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\DataColumn',
+        'width' => '180px',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
         'attribute' => 'task.taskTemplate.title',
         'header' => 'Название задачи',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'value' => function ($model) {
+        'content' => function ($model) {
             if ($model['task'])
-                return "<span class='badge' style='background-color: green; height: 22px; margin-top: -3px'>".$model['task']['taskTemplate']['title']."</span>";
+                $task =  "<span class='badge' style='background-color: green; height: 22px; margin-top: -3px'>".$model['task']['taskTemplate']['title']."</span>";
             else
-                return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не назначена</span>";
+                $task =  "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не назначена</span>";
+
+            $task = Html::a($task,
+                ['/equipment/select-task', 'equipmentUuid' => $model['equipmentUuid'],
+                    'defectUuid' => $model['uuid']],
+                [
+                    'title' => 'Создать задачу обслуживания',
+                    'data-toggle' => 'modal',
+                    'data-pjax' => '0',
+                    'data-target' => '#modalAddTask'
+                ]
+            );
+            return $task;
+
         }
-    ],
+    ]
 ];
 
 echo GridView::widget([
@@ -124,3 +151,18 @@ echo GridView::widget([
 
     ],
 ]);
+
+$this->registerJs('$("#modalAddTask").on("hidden.bs.modal",
+function () {
+     window.location.replace("../defect/index");
+})');
+
+?>
+
+<div class="modal remote fade" id="modalAddTask">
+    <div class="modal-dialog" style="width: 400px; height: 300px">
+        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+        </div>
+    </div>
+</div>
+

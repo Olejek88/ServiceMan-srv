@@ -1,7 +1,10 @@
 <?php
 
-use common\models\EquipmentStage;
-use common\models\StageOperation;
+use common\models\Equipment;
+use common\models\TaskTemplate;
+use common\models\TaskVerdict;
+use common\models\Users;
+use common\models\WorkStatus;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -12,6 +15,10 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">Добавить задачу</h4>
+</div>
 <div class="equipment-status-form">
 
     <?php $form = ActiveForm::begin([
@@ -24,35 +31,58 @@ use yii\widgets\ActiveForm;
 
     <?php
     echo $form->field($model, '_id')->hiddenInput(['value' => $model["_id"]])->label(false);
-
-    $equipmentStages = EquipmentStage::find()
-        ->select('equipment_stage.*')
-        ->where(['equipmentModelUuid' => $model['equipmentModelUuid']])
-        ->joinWith(['stageOperation so'])
-        ->groupBy(['stageTemplateUuid'])
-        ->all();
-    $stageOperationCount = 0;
-    $allStageOperations = [];
-    foreach ($equipmentStages as $equipmentStage) {
-        $stageOperations = StageOperation::find()
-            ->where(['stageTemplateUuid' => $equipmentStage["stageOperation"]["stageTemplate"]["uuid"]])
-            ->all();
-        foreach ($stageOperations as $stageOperation) {
-            $allStageOperations[$stageOperationCount] = $stageOperation;
-            $stageOperationCount++;
-        }
+    if (isset($_GET["equipmentUuid"]))
+        echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $_GET["equipmentUuid"]])->label(false);
+    else {
+        $equipment = Equipment::find()->all();
+        $items = ArrayHelper::map($equipment, 'uuid', 'title');
+        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+            [
+                'name' => 'kv_type',
+                'language' => 'ru',
+                'data' => $items,
+                'options' => ['placeholder' => 'Выберите оборудование ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label(false);
     }
-    $items = ArrayHelper::map($allStageOperations, 'stageTemplateUuid', 'stageTemplate.title');
-    echo $form->field($model, 'equipmentStatusUuid')->widget(Select2::class,
+    ?>
+
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+
+    <?php
+    $taskTemplate = TaskTemplate::find()->all();
+    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
+    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
+
+    ?>
+
+    <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
+    <?php echo $form->field($model, 'taskVerdictUuid')->hiddenInput(['value' => TaskVerdict::NOT_DEFINED])->label(false); ?>
+
+    <?php
+    $users = Users::find()->where(['<>','name','sUser'])->all();
+    $items = ArrayHelper::map($users, 'uuid', 'name');
+    echo '<label class="control-label">Исполнитель</label>';
+    echo Select2::widget(
         [
-            'name' => 'status',
+                'id' => 'userUuid',
+            'name' => 'userUuid',
             'language' => 'ru',
             'data' => $items,
-            'options' => ['placeholder' => 'Выберите задачу ...'],
+            'options' => ['placeholder' => 'Выберите исполнителя ...'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ])->label(false);
+        ]);
+
+    if (isset($_GET["defectUuid"])) {
+        echo Html::hiddenInput('defectUuid', $_GET["defectUuid"]);
+    }
+
+    echo $form->field($model, 'comment')
+        ->textarea(['rows' => 4, 'style' => 'resize: none;']);
     ?>
 
     <div class="form-group text-center">
@@ -65,7 +95,7 @@ use yii\widgets\ActiveForm;
         }).on('submit', function (e) {
             e.preventDefault();
             $.ajax({
-                url: "select-task",
+                url: "../task/add-task",
                 type: "post",
                 data: $('form').serialize(),
                 success: function () {

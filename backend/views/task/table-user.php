@@ -66,7 +66,7 @@ $gridColumns = [
             foreach ($statuses as $stat) {
                 $color='background-color: white';
                 if ($stat['uuid']==WorkStatus::CANCELED ||
-                    $stat['uuid']==WorkStatus::NEW_OPERATION)
+                    $stat['uuid']==WorkStatus::NEW)
                     $color='background-color: gray';
                 if ($stat['uuid']==WorkStatus::IN_WORK)
                     $color='background-color: yellow';

@@ -3,6 +3,7 @@ namespace backend\controllers;
 
 use ArrayObject;
 use common\components\MainFunctions;
+use common\models\Defect;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\TaskUser;
@@ -342,5 +343,49 @@ class TaskController extends Controller
         return $this->render('tree', [
             'fullTree' => $tree
         ]);
+    }
+
+    /**
+     * Creates a new task model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     *
+     * @return mixed
+     */
+    public function actionAddTask()
+    {
+        $model = new Task();
+        if ($model->load(Yii::$app->request->post())) {
+            $task = MainFunctions::createTask($model->taskTemplateUuid, $model->equipmentUuid,
+                $model->comment, $model->oid, $_POST['userUuid']);
+            if (isset($_POST["defectUuid"]) && $task) {
+                $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
+                if ($defect) {
+                    $defect->taskUuid = $task['uuid'];
+                    $defect->save();
+                }
+            }
+            MainFunctions::register('task','Создана задача',
+                '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
+                '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+
+            $user = Users::find()->one();
+            $modelTU = new TaskUser();
+            $modelTU->uuid = (new MainFunctions)->GUID();
+            $modelTU->userUuid = $user['uuid'];
+            if ($_POST["userUuid"])
+                $modelTU->userUuid = $_POST["userUuid"];
+            $modelTU->taskUuid = $model['uuid'];
+            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->save();
+            //echo json_encode($modelTU->errors);
+            return self::actionIndex();
+        } else {
+            return $this->render(
+                'create',
+                [
+                    'model' => $model,
+                ]
+            );
+        }
     }
 }

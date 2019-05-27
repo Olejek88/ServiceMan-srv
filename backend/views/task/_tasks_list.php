@@ -27,7 +27,7 @@ use common\models\WorkStatus;
                     $class = "critical2";
                     if ($task['workStatusUuid']==WorkStatus::COMPLETE) $class = "critical3";
                     if ($task['workStatusUuid']==WorkStatus::IN_WORK) $class = "critical5";
-                    if ($task['workStatusUuid']==WorkStatus::NEW_OPERATION) $class = "critical1";
+                    if ($task['workStatusUuid']==WorkStatus::NEW) $class = "critical1";
                     if ($task['workStatusUuid']==WorkStatus::UN_COMPLETE) $class = "critical2";
                     if ($task['workStatusUuid']==WorkStatus::CANCELED) $class = "critical4";
                     echo '<div class="progress"><div class="'.$class.'">'.$task['workStatus']['title'].'</div></div>';
