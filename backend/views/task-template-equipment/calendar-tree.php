@@ -12,32 +12,26 @@ $this->title = 'Дерево задач';
 <table id="tree" style="background-color: white; width: 100%">
     <colgroup>
         <col width="*">
-        <col width="*">
         <col width="150px">
-        <col width="80px">
-        <col width="150px">
-        <col width="150px">
+        <col width="100px">
+        <col width="100px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="6" style="background-color: #3c8dbc; color: whitesmoke">
-            Технологические карты (шаблоны) для оборудования системы
+        <th align="center" colspan="4" style="background-color: #3c8dbc; color: whitesmoke">
+            Задачи для оборудования системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
         <th align="center" style="font-weight: normal">Оборудование / Шаблоны</th>
-        <th>Описание</th>
-        <th>Тип</th>
-        <th>Норматив</th>
+        <th>Последний</th>
+        <th>Следующий</th>
         <th>Период</th>
-        <th>Создан</th>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td></td>
-        <td class="alt" align="center"></td>
-        <td align="center"></td>
         <td class="alt" align="center"></td>
         <td align="center"></td>
         <td class="alt" align="center"></td>
@@ -58,33 +52,7 @@ $this->title = 'Дерево задач';
         'source' => $equipment,
         'checkbox' => true,
         'selectMode' => 3,
-        'extensions' => ['table', 'contextMenu', 'edit'],
-        'edit' => [
-            'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
-            'save' => new JsExpression('function(event, data) {
-                            setTimeout(function(){
-                                $(data.node.span).removeClass("pending");
-                                data.node.setTitle(data.node.title);
-                            }, 2000);
-                            return true;
-                        }'),
-            'close' => new JsExpression('function(event, data) {
-                            if(data.save) {
-                                 $(data.node.span).addClass("pending");
-                                 $.ajax({
-                                    url: "rename",
-                                    type: "post",
-                                    data: {
-                                      uuid: data.node.key,
-                                      param: data.node.title,
-                                      operation: data.node.data.operation                                         
-                                    },
-                                    success: function (data) {
-                                       }
-                                 });
-                            }
-                        }')
-        ],
+        'extensions' => ['table', 'contextMenu'],
         'contextMenu' => [
             'menu' => [
                 'add' => [
@@ -127,11 +95,6 @@ $this->title = 'Дерево задач';
                                           model_id: data.data.model_id
                                       },
                                       success: function (result) {
-                                          console.log(result);
-                                          data.remove();            
-                                      },
-                                      error: function (result) {
-                                          console.log(result);
                                           data.remove();            
                                       }                                    
                                    });
@@ -143,25 +106,8 @@ $this->title = 'Дерево задач';
                     'icon' => 'edit',
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
-                        if (node.folder==false) {
-                            $.ajax({
-                                url: "../stage-template/edit",
-                                type: "post",
-                                data: {
-                                    selected_node: node.key,
-                                    folder: node.folder,
-                                    uuid: node.data.uuid,
-                                    type: node.type,
-                                    model_id: node.data.model_id,
-                                    type_uuid: node.data.type_uuid,
-                                    reference: "stage-template"                                                                        
-                                },
-                                success: function (data) { 
-                                    $(\'#modalAddOperation\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
-                                }
-                           }); 
-                        }                       
+                        if (!node.folder && node.data.operation)
+                            window.location.replace("/operation-template/update?id="+node.key);                                                                                                                                                            
                     }')
                 ]
             ]
@@ -169,41 +115,24 @@ $this->title = 'Дерево задач';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "descriptionColumnIdx" => "2",
-            "typesColumnIdx" => "3",
-            "normativeColumnIdx" => "4",
-            "periodColumnIdx" => "5",
-            "createdColumnIdx" => "6",
+            "lastColumnIdx" => "2",
+            "nextColumnIdx" => "3",
+            "periodColumnIdx" => "4",
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).html(node.data.description);
-            $tdList.eq(2).html(node.data.types);
-            $tdList.eq(3).text(node.data.normative);
-            $tdList.eq(4).html(node.data.period);
-            $tdList.eq(5).text(node.data.created);            
+            $tdList.eq(1).text(node.data.last_date);
+            $tdList.eq(2).text(node.data.next_date);
+            $tdList.eq(3).text(node.data.period);            
         }')
     ]
 ]);
-
-$this->registerJs('$("#modalStatus").on("hidden.bs.modal",
-function () {
-     window.location.replace("tree");
-})');
 ?>
 
-<div class="modal remote fade" id="modalStatus">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
-        </div>
-    </div>
-</div>
-
-<div class="modal remote fade" id="modalAddOperation">
+<div class="modal remote fade" id="modalEditTemplate">
     <div class="modal-dialog">
         <div class="modal-content loader-lg" id="modalContent">
         </div>
     </div>
 </div>
-
