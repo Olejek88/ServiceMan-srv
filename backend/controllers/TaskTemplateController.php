@@ -2,19 +2,19 @@
 
 namespace backend\controllers;
 
-use common\components\TypeTreeHelper;
+use backend\models\TaskSearchTemplate;
 use common\models\Equipment;
 use common\models\EquipmentType;
+use common\models\TaskOperation;
+use common\models\TaskTemplate;
+use common\models\TaskTemplateEquipment;
 use common\models\TaskTypeTree;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
+use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
-use common\models\TaskTemplate;
-use common\models\TaskType;
-use backend\models\TaskSearchTemplate;
 
 /**
  * TaskTemplateController implements the CRUD actions for TaskTemplate model.
@@ -155,42 +155,42 @@ class TaskTemplateController extends Controller
      */
     public function actionTree()
     {
-/*        $indexTable = array();
-        $typesTree = EquipmentTypeTree::find()
-            ->from([EquipmentTypeTree::tableName() . ' as ttt'])
-            ->innerJoin(
-                EquipmentType::tableName() . ' as tt',
-                '`tt`.`_id` = `ttt`.`child`'
-            )
-            ->orderBy('title')
-            ->all();
+        /*        $indexTable = array();
+                $typesTree = EquipmentTypeTree::find()
+                    ->from([EquipmentTypeTree::tableName() . ' as ttt'])
+                    ->innerJoin(
+                        EquipmentType::tableName() . ' as tt',
+                        '`tt`.`_id` = `ttt`.`child`'
+                    )
+                    ->orderBy('title')
+                    ->all();
 
-        FancyTreeHelper::indexClosure($typesTree, $indexTable);
-        if (count($indexTable) == 0) {
-            return $this->render('tree', ['defects' => [], 'equipment' => [],
-                'registers' => [], 'operations' => [], $defectsCount = 0]);
-        }
+                FancyTreeHelper::indexClosure($typesTree, $indexTable);
+                if (count($indexTable) == 0) {
+                    return $this->render('tree', ['defects' => [], 'equipment' => [],
+                        'registers' => [], 'operations' => [], $defectsCount = 0]);
+                }
 
-        $indexTable = array();
-        $types = EquipmentType::find()->indexBy('_id')->all();
-        $tree = array();
-        $startLevel = 1;
-        foreach ($indexTable['levels']['backward'][$startLevel] as $node_id) {
-            $expanded = false;
-            if (isset($_GET['typeUuid']) && $_GET['typeUuid'] == $types[$node_id]->uuid)
-                $expanded = true;
-            $tree[] = [
-                'title' => $types[$node_id]->title,
-                'key' => $node_id,
-                'folder' => true,
-                'model' => false,
-                'model_id' => 0,
-                'expanded' => $expanded,
-                'children' => FancyTreeHelper::closureToTree($node_id, $indexTable),
-            ];
-        }
-        unset($indexTable);
-        unset($types);*/
+                $indexTable = array();
+                $types = EquipmentType::find()->indexBy('_id')->all();
+                $tree = array();
+                $startLevel = 1;
+                foreach ($indexTable['levels']['backward'][$startLevel] as $node_id) {
+                    $expanded = false;
+                    if (isset($_GET['typeUuid']) && $_GET['typeUuid'] == $types[$node_id]->uuid)
+                        $expanded = true;
+                    $tree[] = [
+                        'title' => $types[$node_id]->title,
+                        'key' => $node_id,
+                        'folder' => true,
+                        'model' => false,
+                        'model_id' => 0,
+                        'expanded' => $expanded,
+                        'children' => FancyTreeHelper::closureToTree($node_id, $indexTable),
+                    ];
+                }
+                unset($indexTable);
+                unset($types);*/
 
         $tree = array();
         $fullTree2 = self::addEquipmentStageToTree($tree,
@@ -198,7 +198,6 @@ class TaskTemplateController extends Controller
             Equipment::class,
             'equipmentTypeUuid'
         );
-
         return $this->render('tree', [
             'equipment' => $fullTree2
         ]);
@@ -216,110 +215,93 @@ class TaskTemplateController extends Controller
     public
     static function addEquipmentStageToTree($tree, $modelClass, $entityClass, $linkField)
     {
-        if (is_array($tree)) {
-            $tree = array_slice($tree, 0);
-            foreach ($tree AS $key => $value) {
-                if (is_array($value)) {
-                    $tree[$key] = self::addEquipmentStageToTree(
-                        $value, $modelClass, $entityClass, $linkField
-                    );
-                }
-            }
-        }
+        $types = EquipmentType::find()->all();
+        foreach ($types as $type) {
+            $expanded = false;
+            $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
+                'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['_id'] . "",
+                'operation' => false];
+            $childIdx = count($tree['children']) - 1;
 
-        if (isset($tree['key'])) {
-            $type = EquipmentType::findOne($tree['key']);
-            $models = $modelClass::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
-            foreach ($models as $model) {
-                $expanded = false;
-                if (isset($_GET['modelId']) && $_GET['modelId'] == $model['_id'])
-                    $expanded = true;
-                $tree['children'][] = ['title' => $model['title'], 'key' => $model['_id'] . "",
-                    'expanded' => $expanded, 'folder' => true, 'model' => true, 'model_id' => $model['_id'] . "",
+            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+            foreach ($equipments as $equipment) {
+                $tree['children'][$childIdx]['children'][] = [
+                    'title' => $equipment->getFullTitle(),
+                    'key' => $equipment['_id'] . "",
+                    'expanded' => $expanded,
+                    'folder' => true,
+                    'equipment' => false,
+                    'equipment_id' => $equipment['_id'] . "",
                     'operation' => false];
-                $childIdx = count($tree['children']) - 1;
+                $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
 
-                $equipmentStages = EquipmentStage::find()
-                    ->select('equipment_stage.*')
-                    ->where(['equipmentModelUuid' => $model['uuid']])
-                    ->joinWith(['stageOperation so'])
-                    ->groupBy(['stageTemplateUuid'])
+                $taskTemplateEquipments = TaskTemplateEquipment::find()
+                    ->where(['equipmentUuid' => $equipment['uuid']])
                     ->all();
-                $equipmentStageCount = 0;
-                foreach ($equipmentStages as $equipmentStage) {
-                    $taskEquipmentStage = TaskEquipmentStage::find()
-                        ->where(['equipmentStageUuid' => $equipmentStage['uuid']])
-                        ->one();
-                    $period = "";
-                    if ($taskEquipmentStage) {
-                        $period_text = $taskEquipmentStage["period"];
-                        if ($taskEquipmentStage["period"] == "@hourly")
-                            $period_text = "каждый час";
-                        if ($taskEquipmentStage["period"] == "@daily")
-                            $period_text = "каждый день";
-                        if ($taskEquipmentStage["period"] == "@yearly")
-                            $period_text = "раз в год";
-                        if ($taskEquipmentStage["period"] == "@monthly")
-                            $period_text = "каждый месяц";
-                        $period = '<div class="progress"><div class="critical4">' .
-                            $period_text . '</div></div>';
-                        if ($taskEquipmentStage["period"] == "") {
-                            $period = '<div class="progress"><div class="critical5">не задан</div></div>';
-                        }
-                        $period = Html::a($period,
-                            ['/task-equipment-stage/period', 'taskEquipmentStageUuid' => $taskEquipmentStage['uuid']],
-                            [
-                                'title' => 'Задать период',
-                                'data-toggle' => 'modal',
-                                'data-target' => '#modalStatus',
-                            ]
-                        );
+                foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+                    $period_text = $taskTemplateEquipment["period"];
+                    if ($taskTemplateEquipment["period"] == "@hourly")
+                        $period_text = "каждый час";
+                    if ($taskTemplateEquipment["period"] == "@daily")
+                        $period_text = "каждый день";
+                    if ($taskTemplateEquipment["period"] == "@yearly")
+                        $period_text = "раз в год";
+                    if ($taskTemplateEquipment["period"] == "@monthly")
+                        $period_text = "каждый месяц";
+                    $period = '<div class="progress"><div class="critical4">' .
+                        $period_text . '</div></div>';
+                    if ($taskTemplateEquipment["period"] == "") {
+                        $period = '<div class="progress"><div class="critical5">не задан</div></div>';
                     }
-
+                    $period = Html::a($period,
+                        ['/task-template-equipment/period', 'taskTemplateEquipmentUuid' => $taskTemplateEquipment['uuid']],
+                        [
+                            'title' => 'Задать период',
+                            'data-toggle' => 'modal',
+                            'data-target' => '#modalStatus',
+                        ]
+                    );
                     $type = '<div class="progress"><div class="critical5">' .
-                        $equipmentStage["stageOperation"]["stageTemplate"]["stageType"]["title"] . '</div></div>';
-                    $tree['children'][$childIdx]['children'][] =
-                        ['key' => $equipmentStage["stageOperation"]["stageTemplate"]["_id"] . "",
+                        $taskTemplateEquipment["taskTemplate"]["title"] . '</div></div>';
+                    $tree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                        ['key' => $taskTemplateEquipment["taskTemplate"]["_id"] . "",
                             'folder' => false,
-                            'model_id' => $model['_id'],
-                            'model' => false,
-                            'uuid' => $equipmentStage["stageOperation"]["stageTemplate"]["uuid"],
+                            'task_id' => $taskTemplateEquipment["taskTemplate"]['_id'],
+                            'task' => false,
+                            'uuid' => $taskTemplateEquipment["taskTemplate"]["uuid"],
                             'operation' => false,
-                            'created' => $equipmentStage["stageOperation"]["stageTemplate"]["changedAt"],
-                            'description' => $equipmentStage["stageOperation"]["stageTemplate"]["description"],
+                            'created' => $taskTemplateEquipment["taskTemplate"]["changedAt"],
+                            'description' => $taskTemplateEquipment["taskTemplate"]["description"],
                             'types' => $type,
                             'expanded' => true,
                             'period' => $period,
-                            'normative' => $equipmentStage["stageOperation"]["stageTemplate"]["normative"],
-                            'title' => mb_convert_encoding($equipmentStage["stageOperation"]["stageTemplate"]["title"], 'UTF-8', 'UTF-8'),
+                            'normative' => $taskTemplateEquipment["taskTemplate"]["normative"],
+                            'title' => mb_convert_encoding($taskTemplateEquipment["taskTemplate"]["title"], 'UTF-8', 'UTF-8'),
                         ];
 
-                    $stageOperations = StageOperation::find()
-                        ->where(['stageTemplateUuid' => $equipmentStage["stageOperation"]["stageTemplate"]["uuid"]])
+
+                    $childIdx3 = count($tree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                    $taskOperations = TaskOperation::find()
+                        ->where(['taskTemplateUuid' => $taskTemplateEquipment["taskTemplate"]["uuid"]])
                         ->all();
-                    $stageOperationCount = 0;
-                    foreach ($stageOperations as $stageOperation) {
-                        if ($stageOperation["operationTemplate"]["uuid"] != OperationTemplate::DEFAULT_OPERATION) {
-                            $type = '<div class="progress"><div class="critical5">' .
-                                $stageOperation["operationTemplate"]["operationType"]["title"] . '</div></div>';
-                            $tree['children'][$childIdx]['children'][$equipmentStageCount]['children'][$stageOperationCount] =
-                                ['key' => $stageOperation["operationTemplate"]["_id"] . "",
-                                    'folder' => false,
-                                    'expanded' => true,
-                                    'model_id' => $model['_id'],
-                                    'created' => $stageOperation["operationTemplate"]["changedAt"],
-                                    'types' => $type,
-                                    'uuid' => $stageOperation["operationTemplate"]["uuid"],
-                                    'normative' => $stageOperation["operationTemplate"]["normative"],
-                                    'description' => mb_convert_encoding(substr($stageOperation["operationTemplate"]["description"],0,150), 'UTF-8', 'UTF-8'),
-                                    'model' => false,
-                                    'operation' => true,
-                                    'title' => mb_convert_encoding($stageOperation["operationTemplate"]["title"], 'UTF-8', 'UTF-8'),
-                                ];
-                            $stageOperationCount++;
-                        }
+                    foreach ($taskOperations as $taskOperation) {
+                        $type = '<div class="progress"><div class="critical5">' .
+                            $taskOperation["operationTemplate"]["title"] . '</div></div>';
+                        $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
+                            ['key' => $taskOperation["operationTemplate"]["_id"] . "",
+                                'folder' => false,
+                                'expanded' => true,
+                                'created' => $taskOperation["operationTemplate"]["changedAt"],
+                                'types' => $type,
+                                'uuid' => $taskOperation["operationTemplate"]["uuid"],
+                                'normative' => '-',
+                                'description' => mb_convert_encoding(substr($taskOperation["operationTemplate"]["description"],
+                                    0, 150), 'UTF-8', 'UTF-8'),
+                                'model' => false,
+                                'operation' => true,
+                                'title' => mb_convert_encoding($taskOperation["operationTemplate"]["title"], 'UTF-8', 'UTF-8'),
+                            ];
                     }
-                    $equipmentStageCount++;
                 }
             }
         }

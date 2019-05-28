@@ -19,7 +19,7 @@ use yii\db\Expression;
  * @property string $tag
  * @property string $equipmentStatusUuid
  * @property string $testDate
- * @property int $period
+ * @property integer $period
  * @property string $replaceDate
  * @property string $objectUuid
  * @property string $createdAt
@@ -108,7 +108,7 @@ class Equipment extends ActiveRecord
             ],
             [['testDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
-            [['period'], 'int'],
+            [['period'], 'integer'],
             [
                 [
                     'uuid',
