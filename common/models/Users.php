@@ -28,7 +28,7 @@ use yii\db\Expression;
  * @property string $photoUrl
  * @property null|string $imageDir
  * @property User $user
- * @property \common\models\Organization|null $organization
+ * @property Organization|null $organization
  */
 class Users extends ActiveRecord
 {
@@ -84,7 +84,6 @@ class Users extends ActiveRecord
             ],
             [['image'], 'file'],
             [['user_id','type', 'active'], 'integer'],
-            [['deleted'], 'boolean'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'pin', 'whoIs'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
