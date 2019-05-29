@@ -929,7 +929,7 @@ class EquipmentController extends Controller
     private
     static function _saveFile($model, $file)
     {
-        $dir = $model->getImageDir();
+        $dir = '/storage/main/';
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 return null;
@@ -1140,17 +1140,24 @@ class EquipmentController extends Controller
         else
             $model = new Equipment();
         if ($model->load(Yii::$app->request->post())) {
-            $file = UploadedFile::getInstance($model, 'image');
+            //TODO доделать сохранение фото
+/*            $file = UploadedFile::getInstanceByName('image');
             if ($file && $file->tempName) {
                 $fileName = self::_saveFile($model, $file);
                 if ($fileName) {
-                    $model->image = $fileName;
+                    $photo = new Photo();
+                    $photo->oid = Users::ORGANISATION_UUID;
+                    $photo->objectUuid = $model['uuid'];
+                    $accountUser = Yii::$app->user->identity;
+                    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+                    $photo->userUuid = $currentUser['uuid'];
+                    $photo->save();
                 }
-            }
+            }*/
             if ($model->save(false)) {
-                if (isset($_POST['reference']) && $_POST['reference'] == "object")
-                    return $this->redirect(['/objects/tree']);
-                return $this->redirect(['/equipment/tree']);
+                if (isset($_POST['reference']) && $_POST['reference'] == "equipment")
+                    return $this->redirect(['/equipment/tree']);
+                return $this->redirect(['/task-template/tree']);
             }
         }
         return $this->render('_add_form', [

@@ -58,7 +58,7 @@ $this->title = 'Дерево задач';
         'source' => $equipment,
         'checkbox' => true,
         'selectMode' => 3,
-        'extensions' => ['table', 'contextMenu', 'edit'],
+        'extensions' => ['table', 'contextMenu'],
         'edit' => [
             'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
             'save' => new JsExpression('function(event, data) {
@@ -99,8 +99,32 @@ $this->title = 'Дерево задач';
                                 data: {
                                     selected_node: node.key,
                                     folder: node.folder,
-                                    model: node.data.model,
-                                    model_id: node.data.model_id
+                                    type_id: node.data.type_id,
+                                    equipment_id: node.data.equipment_id,
+                                    task_id: node.data.task_id                                    
+                                },
+                                success: function (data) { 
+                                    $(\'#modalAddOperation\').modal(\'show\');
+                                    $(\'#modalContent\').html(data);
+                                }
+                            });
+                    }')
+                ],
+                'choose' => [
+                    'name' => "Назначить",
+                    'icon' => "add",
+                    'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            var node = $.ui.fancytree.getNode(opt.$trigger);
+                            $.ajax({
+                                url: "choose",
+                                type: "post",
+                                data: {
+                                    selected_node: node.key,
+                                    folder: node.folder,
+                                    type_id: node.data.type_id,
+                                    equipment_id: node.data.equipment_id,
+                                    task_id: node.data.task_id                                    
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddOperation\').modal(\'show\');
@@ -120,11 +144,13 @@ $this->title = 'Дерево задач';
                                       url: "remove",
                                       type: "post",
                                       data: {
-                                          selected_node: data.key,
-                                          folder: node.folder,
-                                          model: data.data.model,
-                                          operation: data.data.operation,
-                                          model_id: data.data.model_id
+                                            selected_node: node.key,
+                                            folder: node.folder,
+                                            type_id: node.data.type_id,
+                                            equipment_id: node.data.equipment_id,
+                                            task_id: node.data.task_id,
+                                            task_template_equipment: node.data.task_template_equipment,
+                                            task_operation_id: node.data.task_operation_id                             
                                       },
                                       success: function (result) {
                                           console.log(result);
@@ -143,25 +169,23 @@ $this->title = 'Дерево задач';
                     'icon' => 'edit',
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
-                        if (node.folder==false) {
-                            $.ajax({
-                                url: "../stage-template/edit",
-                                type: "post",
-                                data: {
+                        $.ajax({
+                            url: "../task-template/edit",
+                            type: "post",
+                            data: {
                                     selected_node: node.key,
                                     folder: node.folder,
-                                    uuid: node.data.uuid,
-                                    type: node.type,
-                                    model_id: node.data.model_id,
-                                    type_uuid: node.data.type_uuid,
-                                    reference: "stage-template"                                                                        
+                                    type_id: node.data.type_id,
+                                    equipment_id: node.data.equipment_id,
+                                    task_id: node.data.task_id,
+                                    task_template_equipment: node.data.task_template_equipment,
+                                    operation_id: node.data.operation_id                    
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddOperation\').modal(\'show\');
                                     $(\'#modalContent\').html(data);
                                 }
                            }); 
-                        }                       
                     }')
                 ]
             ]
@@ -188,6 +212,11 @@ $this->title = 'Дерево задач';
 ]);
 
 $this->registerJs('$("#modalStatus").on("hidden.bs.modal",
+function () {
+     window.location.replace("tree");
+})');
+
+$this->registerJs('$("#modalAddOperation").on("hidden.bs.modal",
 function () {
      window.location.replace("tree");
 })');

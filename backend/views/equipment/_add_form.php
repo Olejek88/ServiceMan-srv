@@ -1,5 +1,5 @@
 <?php
-/* @var $equipment \common\models\Equipment */
+/* @var $equipment Equipment */
 /* @var string $model_uuid */
 /* @var string $reference */
 
@@ -7,9 +7,12 @@
 
 use common\components\MainFunctions;
 use common\models\CriticalType;
+use common\models\Equipment;
 use common\models\EquipmentModel;
 use common\models\EquipmentStatus;
+use common\models\EquipmentType;
 use common\models\Objects;
+use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
 use kartik\widgets\FileInput;
@@ -32,6 +35,7 @@ use yii\helpers\Html;
     <h4 class="modal-title">Редактировать оборудование</h4>
 </div>
 <div class="modal-body">
+
     <?php
     if ($equipment['uuid']) {
         echo Html::hiddenInput("equipmentUuid", $equipment['uuid']);
@@ -45,55 +49,75 @@ use yii\helpers\Html;
             ->hiddenInput(['value' => MainFunctions::GUID()])
             ->label(false);
     }
+    echo $form->field($equipment, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
-
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
-    //echo $form->field($equipment, 'startDate')->hiddenInput(['value' => date("Ymd")])->label(false);
-    echo $form->field($equipment, 'tagId')->textInput(['maxlength' => true]);
+    echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);
 
-    echo $form->field($equipment, 'image')->widget(
-        FileInput::class,
-        ['options' => ['accept' => '*'],]
-    );
+    echo '<label class="control-label">Фотография</label>';
+    echo FileInput::widget([
+        'name' => 'image',
+        'options' => ['accept' => '*']
+    ]);
 
-    echo $form->field($equipment, 'inventoryNumber')->textInput(['maxlength' => true]);
-    echo $form->field($equipment, 'serialNumber')->textInput(['maxlength' => true]);
+    echo $form->field($equipment, 'serial')->textInput(['maxlength' => true]);
+    echo $form->field($equipment, 'period')->textInput(['maxlength' => true]);
 
-    if ($object_uuid != null) {
-        echo $form->field($equipment, 'locationUuid')->hiddenInput(['value' => $object_uuid])->label(false);
-        echo Html::hiddenInput("locationUuid", $object_uuid);
-    } else {
 
-        $objectType = Objects::find()->all();
-        $items = ArrayHelper::map($objectType, 'uuid', 'title');
-        $countItems = count($items);
-        $isItems = $countItems != 0;
+    $object = Objects::find()->all();
+    $items = ArrayHelper::map($object, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
+    });
+    echo $form->field($equipment, 'objectUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите объект..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
-        if ($isItems) {
-            echo $form->field($equipment, 'locationUuid')->widget(Select2::class,
-                [
-                    'data' => $items,
-                    'language' => 'ru',
-                    'options' => [
-                        'placeholder' => 'Выберите объект..',
-                        'style' => ['height' => '42px', 'padding-top' => '10px']
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]);
-        } else {
-            echo $form->field($equipment, 'locationUuid')->dropDownList([
-                '00000000-0000-0000-0000-000000000004' => 'Данных нет']);
-        }
-    }
+
+    $equipmentType = EquipmentType::find()->all();
+    $items = ArrayHelper::map($equipmentType, 'uuid', 'title');
+    echo $form->field($equipment, 'equipmentTypeUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
+
     <div class="pole-mg">
-        <p style="width: 300px; margin-bottom: 0;">Дата ввода в эксплуатацию</p>
+        <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
         <?php echo DatePicker::widget(
             [
                 'model' => $equipment,
-                'attribute' => 'startDate',
+                'attribute' => 'testDate',
+                'language' => 'ru',
+                'size' => 'ms',
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]
+        );
+        ?>
+    </div>
+    <div class="pole-mg">
+        <p style="width: 300px; margin-bottom: 0;">Дата замены</p>
+        <?php echo DatePicker::widget(
+            [
+                'model' => $equipment,
+                'attribute' => 'replaceDate',
                 'language' => 'ru',
                 'size' => 'ms',
                 'pluginOptions' => [
@@ -106,7 +130,7 @@ use yii\helpers\Html;
     </div>
 </div>
 <div class="modal-footer">
-    <?php echo Html::submitButton(Yii::t('backend', 'Отправить'), ['class' => 'btn btn-success']) ?>
+    <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>

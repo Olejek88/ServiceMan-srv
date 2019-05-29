@@ -1,18 +1,16 @@
 <?php
+
 namespace backend\controllers;
 
 use app\commands\MainFunctions;
 use backend\models\TaskTemplateEquipmentSearch;
 use common\components\Errors;
-use common\components\FancyTreeHelper;
-use common\models\Equipment;
-use common\models\EquipmentType;
 use common\models\TaskTemplate;
+use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use DateTime;
+use Exception;
 use Yii;
-use common\models\TaskTemplateEquipment;
-use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -28,6 +26,7 @@ class TaskTemplateEquipmentController extends Controller
     protected $modelClass = TaskTemplateEquipment::class;
 
     // отключаем проверку для внешних запросов
+
     /**
      * @param $action
      * @return bool
@@ -139,7 +138,7 @@ class TaskTemplateEquipmentController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      * @throws StaleObjectException
      */
@@ -181,13 +180,12 @@ class TaskTemplateEquipmentController extends Controller
             $template = TaskTemplate::find()->where(['_id' => $_POST["uuid"]])->one();
             if ($template) {
                 $template['title'] = $_POST["param"];
-                if($template->save())
+                if ($template->save())
                     return Errors::OK;
                 else
                     return Errors::ERROR_SAVE;
             }
-        }
-        else
+        } else
             return Errors::WRONG_INPUT_PARAMETERS;
         return Errors::GENERAL_ERROR;
     }
@@ -196,7 +194,7 @@ class TaskTemplateEquipmentController extends Controller
      * функция отрабатывает сигнал от дерева редактирования TaskTemplate
      * POST string $uuid - задачи
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      * @throws StaleObjectException
      */
@@ -208,11 +206,9 @@ class TaskTemplateEquipmentController extends Controller
             if ($template) {
                 $template->delete();
                 return Errors::OK;
-            }
-            else
+            } else
                 return Errors::ERROR_SAVE;
-        }
-        else return Errors::WRONG_INPUT_PARAMETERS;
+        } else return Errors::WRONG_INPUT_PARAMETERS;
     }
 
     /**
@@ -238,8 +234,7 @@ class TaskTemplateEquipmentController extends Controller
                 } else
                     return Errors::GENERAL_ERROR;
             }
-        }
-        else return Errors::GENERAL_ERROR;
+        } else return Errors::GENERAL_ERROR;
         return Errors::GENERAL_ERROR;
     }
 
@@ -247,7 +242,7 @@ class TaskTemplateEquipmentController extends Controller
      * функция отрабатывает сигнал от дерева удаления EquipmentStage
      * POST string $uuid
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
      * @throws StaleObjectException
      */
@@ -259,75 +254,66 @@ class TaskTemplateEquipmentController extends Controller
             if ($template) {
                 $template->delete();
                 return Errors::OK;
-            }
-            else
+            } else
                 return Errors::ERROR_SAVE;
-        }
-        else return Errors::WRONG_INPUT_PARAMETERS;
+        } else return Errors::WRONG_INPUT_PARAMETERS;
     }
 
     public function actionCalendar()
     {
         $events = [];
-        $equipmentStages = EquipmentStage::find()
+        $taskTemplateEquipments = TaskTemplateEquipment::find()
             ->select('*')
             ->all();
-        foreach ($equipmentStages as $equipmentStage) {
+        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
             // в этой версии периодичность назначается только типовым задачам
-            $taskEquipmentStage = TaskTemplateEquipment::find()
-                ->select('*')
-                ->where(['equipmentStageUuid' => $equipmentStage['uuid']])
-                ->andWhere(['taskTemplateUuid' => TaskTemplate::DEFAULT_TASK])
-                ->one();
-            if ($taskEquipmentStage) {
-                $period = $taskEquipmentStage["period"];
-                try {
-                    $last = new DateTime($taskEquipmentStage["last_date"]);
-                    $cron = CronExpression::factory($period);
-                    $first_date = $cron->getPreviousRunDate();
-                    foreach ($cron->getMultipleRunDates(   5, $last, false) as $date) {
-                        //echo $last->format('Y-m-d H:i:s') . PHP_EOL;
-                        //$diff = date_diff($cron->getNextRunDate(),$cron->getPreviousRunDate(),true);
-                        //$next_date = $first_date->add($diff)->format('Y-m-d H:i:s');
-                        $event = new Event();
-                        $event->id = $taskEquipmentStage['_id'];
-                        $event->title = '[' .$taskEquipmentStage['equipmentStage']['equipmentModel']['title']. '] '
-                            . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['title'];
-                        $event->start = $date->format('Y-m-d H:i:s');
-                        $event->backgroundColor = 'gray';
-                        //TODO реальная продолжительность задачи
-                        //$event->end = $next_date->add(new \DateInterval(3600,))->format('Y-m-d H:i:s')
-                        //$event->url = '/task-equipment-stage/' . $taskEquipmentStage['_id'];
-                        $event->url = '/stage-template/view?id=' . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['_id'];
-                        $event->color = '#333333';
-                        $events[] = $event;
-                    }
-                } catch (\Exception $e) {
-                    //echo $e;
-                }
-
-                $stages = Stage::find()
-                    ->select('*')
-                    ->where(['stageTemplateUuid' => $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplateUuid']])
-                    ->all();
-                foreach ($stages as $stage) {
+/*            $period = $taskTemplateEquipment["period"];
+            try {
+                $last = new DateTime($taskEquipmentStage["last_date"]);
+                $cron = CronExpression::factory($period);
+                $first_date = $cron->getPreviousRunDate();
+                foreach ($cron->getMultipleRunDates(5, $last, false) as $date) {
+                    //echo $last->format('Y-m-d H:i:s') . PHP_EOL;
+                    //$diff = date_diff($cron->getNextRunDate(),$cron->getPreviousRunDate(),true);
+                    //$next_date = $first_date->add($diff)->format('Y-m-d H:i:s');
                     $event = new Event();
                     $event->id = $taskEquipmentStage['_id'];
-                    $event->title = '[' .$stage['equipment']['title']. '] '
+                    $event->title = '[' . $taskEquipmentStage['equipmentStage']['equipmentModel']['title'] . '] '
                         . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['title'];
-                    $event->start = $stage['startDate'];
+                    $event->start = $date->format('Y-m-d H:i:s');
                     $event->backgroundColor = 'gray';
-                    if ($stage['stageStatusUuid']==StageStatus::COMPLETE)
-                        $event->backgroundColor = 'green';
-                    if ($stage['stageStatusUuid']==StageStatus::UN_COMPLETE)
-                        $event->backgroundColor = 'lightred';
-                    if ($stage['stageStatusUuid']==StageStatus::IN_WORK)
-                        $event->backgroundColor = 'orange';
-                    $event->url = '/stage-template/view?id=' . $taskEquipmentStage['_id'];
+                    //TODO реальная продолжительность задачи
+                    //$event->end = $next_date->add(new \DateInterval(3600,))->format('Y-m-d H:i:s')
+                    //$event->url = '/task-equipment-stage/' . $taskEquipmentStage['_id'];
+                    $event->url = '/stage-template/view?id=' . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['_id'];
                     $event->color = '#333333';
                     $events[] = $event;
                 }
+            } catch (Exception $e) {
+                //echo $e;
             }
+
+            $stages = Stage::find()
+                ->select('*')
+                ->where(['stageTemplateUuid' => $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplateUuid']])
+                ->all();
+            foreach ($stages as $stage) {
+                $event = new Event();
+                $event->id = $taskEquipmentStage['_id'];
+                $event->title = '[' . $stage['equipment']['title'] . '] '
+                    . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['title'];
+                $event->start = $stage['startDate'];
+                $event->backgroundColor = 'gray';
+                if ($stage['stageStatusUuid'] == StageStatus::COMPLETE)
+                    $event->backgroundColor = 'green';
+                if ($stage['stageStatusUuid'] == StageStatus::UN_COMPLETE)
+                    $event->backgroundColor = 'lightred';
+                if ($stage['stageStatusUuid'] == StageStatus::IN_WORK)
+                    $event->backgroundColor = 'orange';
+                $event->url = '/stage-template/view?id=' . $taskEquipmentStage['_id'];
+                $event->color = '#333333';
+                $events[] = $event;
+            }*/
         }
 
         return $this->render('calendar', [
@@ -337,24 +323,24 @@ class TaskTemplateEquipmentController extends Controller
 
     public function actionPeriod()
     {
-        if (isset($_GET["taskEquipmentStageUuid"])) {
-            $model = TaskTemplateEquipment::find()->where(['uuid' => $_GET["taskEquipmentStageUuid"]])
+        if (isset($_GET["taskTemplateEquipmentUuid"])) {
+            $model = TaskTemplateEquipment::find()->where(['uuid' => $_GET["taskTemplateEquipmentUuid"]])
                 ->one();
             return $this->renderAjax('_change_form', [
                 'model' => $model,
             ]);
         }
-        if (isset($_POST["TaskEquipmentStage"]["period"]) || $_POST["TaskEquipmentStage"]["period"]=="") {
+        if (isset($_POST["TaskTemplateEquipment"]["period"]) || $_POST["TaskTemplateEquipment"]["period"] == "") {
             try {
-                CronExpression::factory($_POST["TaskEquipmentStage"]["period"]);
-            } catch (\Exception $e) {
-                if ($_POST["TaskEquipmentStage"]["period"]!="")
+                CronExpression::factory($_POST["TaskTemplateEquipment"]["period"]);
+            } catch (Exception $e) {
+                if ($_POST["TaskTemplateEquipment"]["period"] != "")
                     return "Ошибка задания периода";
             }
-            $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["TaskEquipmentStage"]["_id"]])
+            $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["TaskTemplateEquipment"]["_id"]])
                 ->one();
             if ($model) {
-                $model["period"] = $_POST["TaskEquipmentStage"]["period"];
+                $model["period"] = $_POST["TaskTemplateEquipment"]["period"];
                 $model->save();
             }
         }

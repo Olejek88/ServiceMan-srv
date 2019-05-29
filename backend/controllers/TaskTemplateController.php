@@ -3,12 +3,19 @@
 namespace backend\controllers;
 
 use backend\models\TaskSearchTemplate;
+use common\components\MainFunctions;
 use common\models\Equipment;
+use common\models\EquipmentStage;
 use common\models\EquipmentType;
+use common\models\ExternalEvent;
+use common\models\ExternalTag;
+use common\models\OperationTemplate;
+use common\models\StageOperation;
+use common\models\StageTemplate;
+use common\models\TaskEquipmentStage;
 use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
-use common\models\TaskTypeTree;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
@@ -155,43 +162,6 @@ class TaskTemplateController extends Controller
      */
     public function actionTree()
     {
-        /*        $indexTable = array();
-                $typesTree = EquipmentTypeTree::find()
-                    ->from([EquipmentTypeTree::tableName() . ' as ttt'])
-                    ->innerJoin(
-                        EquipmentType::tableName() . ' as tt',
-                        '`tt`.`_id` = `ttt`.`child`'
-                    )
-                    ->orderBy('title')
-                    ->all();
-
-                FancyTreeHelper::indexClosure($typesTree, $indexTable);
-                if (count($indexTable) == 0) {
-                    return $this->render('tree', ['defects' => [], 'equipment' => [],
-                        'registers' => [], 'operations' => [], $defectsCount = 0]);
-                }
-
-                $indexTable = array();
-                $types = EquipmentType::find()->indexBy('_id')->all();
-                $tree = array();
-                $startLevel = 1;
-                foreach ($indexTable['levels']['backward'][$startLevel] as $node_id) {
-                    $expanded = false;
-                    if (isset($_GET['typeUuid']) && $_GET['typeUuid'] == $types[$node_id]->uuid)
-                        $expanded = true;
-                    $tree[] = [
-                        'title' => $types[$node_id]->title,
-                        'key' => $node_id,
-                        'folder' => true,
-                        'model' => false,
-                        'model_id' => 0,
-                        'expanded' => $expanded,
-                        'children' => FancyTreeHelper::closureToTree($node_id, $indexTable),
-                    ];
-                }
-                unset($indexTable);
-                unset($types);*/
-
         $tree = array();
         $fullTree2 = self::addEquipmentStageToTree($tree,
             EquipmentType::class,
@@ -217,7 +187,7 @@ class TaskTemplateController extends Controller
     {
         $types = EquipmentType::find()->all();
         foreach ($types as $type) {
-            $expanded = false;
+            $expanded = true;
             $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
                 'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['_id'] . "",
                 'operation' => false];
@@ -275,6 +245,7 @@ class TaskTemplateController extends Controller
                             'types' => $type,
                             'expanded' => true,
                             'period' => $period,
+                            'task_template_equipment' => $taskTemplateEquipment['_id'],
                             'normative' => $taskTemplateEquipment["taskTemplate"]["normative"],
                             'title' => mb_convert_encoding($taskTemplateEquipment["taskTemplate"]["title"], 'UTF-8', 'UTF-8'),
                         ];
@@ -299,6 +270,8 @@ class TaskTemplateController extends Controller
                                     0, 150), 'UTF-8', 'UTF-8'),
                                 'model' => false,
                                 'operation' => true,
+                                'task_operation_id' => $taskOperation['_id'],
+                                'operation_id' => $taskOperation["operationTemplate"]["_id"],
                                 'title' => mb_convert_encoding($taskOperation["operationTemplate"]["title"], 'UTF-8', 'UTF-8'),
                             ];
                     }
@@ -308,5 +281,392 @@ class TaskTemplateController extends Controller
         return ($tree);
     }
 
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
+     *
+     * @return mixed
+     */
+    public function actionAdd()
+    {
+        MainFunctions::log("tree.log", "[add] stage template / model" . $_POST["selected_node"]);
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            $type_id = 0;
+            $equipment_id = 0;
+            $task_id = 0;
+            if (isset($_POST["type_id"]))
+                $type_id = $_POST["type_id"];
+            if (isset($_POST["equipment_id"]))
+                $equipment_id = $_POST["equipment_id"];
+            if (isset($_POST["task_id"]))
+                $task_id = $_POST["task_id"];
 
+            // тип оборудования
+            if ($folder == "true" && $type_id > 0) {
+                $equipment = new Equipment();
+                return $this->renderAjax('../equipment/_add_form', [
+                    'type_id' => $type_id,
+                    'equipment' => $equipment
+                ]);
+            }
+
+            // оборудование
+            if ($folder == "true" && $equipment_id > 0) {
+                $taskTemplate = new TaskTemplate();
+                $taskTemplateEquipment = new TaskTemplateEquipment();
+                return $this->renderAjax('_add_task', [
+                    'equipment_id' => $equipment_id,
+                    'taskTemplate' => $taskTemplate,
+                    'taskTemplateEquipment' => $taskTemplateEquipment,
+                ]);
+            }
+
+            // задача
+            if ($folder == "false" && $task_id > 0) {
+                $taskTemplate = TaskTemplate::find()->where(['_id' => $task_id])->one();
+                if ($taskTemplate) {
+                    $taskTemplateEquipment = TaskTemplateEquipment::find()
+                        ->where(['equipmentUuid' => $equipment_id])
+                        ->andWhere(['taskTemplateUuid' => $taskTemplate['uuid']])
+                        ->one();
+                    $operationTemplate = new OperationTemplate();
+                    MainFunctions::log("tree.log", "!operationTemplate");
+                    return $this->renderAjax('_add_operation', [
+                        'taskTemplateUuid' => $taskTemplate['uuid'],
+                        'taskTemplateEquipment' => $taskTemplateEquipment['uuid'],
+                        'equipment_uuid' => $taskTemplateEquipment['equipmentUuid'],
+                        'operationTemplate' => $operationTemplate
+                    ]);
+                }
+            }
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет удаление выбранного шаблона и всех операций
+     * @return mixed
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public
+    function actionRemove()
+    {
+        if (isset($_POST["selected_node"])) {
+            $node = $_POST["selected_node"];
+            $folder = $_POST["folder"];
+            $type_id = 0;
+            $equipment_id = 0;
+            $task_operation_id = 0;
+            $task_template_equipment = 0;
+            if (isset($_POST["type_id"]))
+                $type_id = $_POST["type_id"];
+            if (isset($_POST["equipment_id"]))
+                $equipment_id = $_POST["equipment_id"];
+            if (isset($_POST["task_operation_id"]))
+                $task_operation_id = $_POST["task_operation_id"];
+            if (isset($_POST["task_template_equipment"]))
+                $task_template_equipment = $_POST["task_template_equipment"];
+
+            // тип оборудования
+            if ($folder == "true" && $type_id > 0) {
+                // тип оборудования удалять не стоит
+            }
+
+            // оборудование
+            if ($folder == "true" && $equipment_id > 0) {
+                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                if ($equipment) {
+                    $equipment->deleted = true;
+                    $equipment->save();
+                }
+            }
+
+            // задача
+            if ($folder == "false" && $task_template_equipment > 0) {
+                self::removeTaskTemplate($task_template_equipment);
+            }
+
+            // операция
+            if ($folder == "false" && $task_operation_id > 0) {
+                self::removeTaskOperation($task_operation_id);
+            }
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * Creates a new TaskTemplate and correlation model.
+     * @return mixed
+     * @var $model TaskTemplate
+     */
+    public
+    function actionNew()
+    {
+        $equipment_id = 0;
+        if (isset($_POST['equipment_id']))
+            $equipment_id = $_POST['equipment_id'];
+
+        if (isset($_POST['taskTemplateUuid']))
+            $model = TaskTemplate::find()->where(['uuid' => $_POST['taskTemplateUuid']])->one();
+        else
+            $model = new TaskTemplate();
+        $request = Yii::$app->getRequest();
+        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        if ($request->isPost && $model->load($request->post())) {
+            if (isset($_POST["TaskTemplate"]["normative"]))
+                $model->normative = $_POST["TaskTemplate"]["normative"];
+            if (isset($_POST["TaskTemplate"]["normative"]))
+                $model->description = $_POST["TaskTemplate"]["description"];
+            if (isset($_POST["TaskTemplate"]["title"]))
+                $model->title = $_POST["TaskTemplate"]["title"];
+            if (isset($_POST['taskTemplateUuid'])) {
+                $model->save();
+                return $this->redirect('tree');
+            }
+            $model->taskTypeUuid = $_POST["TaskTemplate"]["taskTypeUuid"];
+            $model->uuid = MainFunctions::GUID();
+            $model->save();
+            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            if ($model->validate() && $equipment_id > 0) {
+                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                if ($equipment) {
+                    $taskTemplateEquipment = new TaskTemplateEquipment();
+                    $taskTemplateEquipment->equipmentUuid = $equipment['uuid'];
+                    $taskTemplateEquipment->taskTemplateUuid = $model->uuid;
+                    if (isset($_POST["TaskTemplateEquipment"]["period"]))
+                        $taskTemplateEquipment->period = $_POST["TaskTemplateEquipment"]["period"];
+                    $taskTemplateEquipment->next_dates = "";
+                    $taskTemplateEquipment->last_date = date('Y-m-d H:i:s');
+                    $taskTemplateEquipment->uuid = MainFunctions::GUID();
+                    $taskTemplateEquipment->save();
+                } else
+                    MainFunctions::log("tree.log", "error create task template");
+            }
+        }
+        return $this->redirect(['tree']);
+    }
+
+    /**
+     * Creates a new OperationTemplate and correlation model.
+     * @return mixed
+     * @var $model OperationTemplate
+     */
+    public
+    function actionOperation()
+    {
+        if (isset($_POST['operationTemplateUuid']))
+            $model = OperationTemplate::find()->where(['uuid' => $_POST['operationTemplateUuid']])->one();
+        else
+            $model = new OperationTemplate();
+        $request = Yii::$app->getRequest();
+        MainFunctions::log("tree.log", "[new] operationTemplate");
+        if ($request->isPost && $model->load($request->post())) {
+            if (isset($_POST["OperationTemplate"]["normative"]))
+                $model->description = $_POST["OperationTemplate"]["description"];
+            $model->title = $_POST["OperationTemplate"]["title"];
+            if (isset($_POST['operationTemplateUuid'])) {
+                $model->save();
+                if (isset($_POST['stageTemplateUuid']))
+                    return $this->redirect(['tree', 'modelId' => $_POST["model_id"]]);
+                else
+                    return $this->redirect('tree');
+            }
+            $model->uuid = MainFunctions::GUID();
+            $model->save();
+            MainFunctions::log("tree.log", "[new] new OperationTemplate " . json_encode($model->errors));
+            if ($model->validate()) {
+                $taskOperation = new TaskOperation();
+                $taskOperation->uuid = MainFunctions::GUID();
+                $taskOperation->taskTemplateUuid = $_POST["taskTemplateUuid"];
+                $taskOperation->operationTemplateUuid = $model["uuid"];
+                MainFunctions::log("tree.log", "[new] create new");
+                $taskOperation->save();
+            }
+        } else
+            MainFunctions::log("tree.log", "[new] error create operation template: " . json_encode($model->errors));
+        return $this->redirect(['tree']);
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление существующего шаблона этапа
+     *
+     * @return mixed
+     */
+    public function actionChoose()
+    {
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            $equipment_id = 0;
+            $task_id = 0;
+            if (isset($_POST["equipment_id"]))
+                $equipment_id = $_POST["equipment_id"];
+            if (isset($_POST["task_id"]))
+                $task_id = $_POST["task_id"];
+
+            // оборудование
+            if ($folder == "true" && $equipment_id > 0) {
+                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                return $this->renderAjax('_choose_task', [
+                    'equipment' => $equipment
+                ]);
+            }
+
+            // задача
+            if ($folder == "false" && $task_id > 0) {
+                $taskTemplate = TaskTemplate::find()->where(['_id' => $task_id])->one();
+                if ($taskTemplate) {
+                    return $this->renderAjax('_choose_operation', [
+                        'taskTemplate' => $taskTemplate
+                    ]);
+                }
+            }
+        }
+        if (isset($_POST["equipment_uuid"]) && isset($_POST["taskTemplateUuid"])) {
+            $taskTemplateEquipment = new TaskTemplateEquipment();
+            $taskTemplateEquipment->taskTemplateUuid = $_POST["taskTemplateUuid"];
+            $taskTemplateEquipment->equipmentUuid = $_POST["equipment_uuid"];
+            if (isset($_POST["period"])) {
+                $taskTemplateEquipment->period = $_POST["period"];
+            }
+            $taskTemplateEquipment->next_dates = "";
+            $taskTemplateEquipment->last_date = date('Y-m-d H:i:s');
+            $taskTemplateEquipment->uuid = MainFunctions::GUID();
+            $taskTemplateEquipment->save();
+        }
+
+        if (isset($_POST["taskTemplateUuid"])) {
+            $taskOperation = new TaskOperation();
+            $taskOperation->uuid = MainFunctions::GUID();
+            $taskOperation->taskTemplateUuid = $_POST["taskTemplateUuid"];
+            $taskOperation->operationTemplateUuid = $_POST["operationTemplateUuid"];
+            $taskOperation->save();
+        }
+
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * функция удаляет, всю цепочку объектов, связанную с taskOperation
+     * @param $task_operation_id String Идентификатор этапа операции
+     * @return int
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public
+    function removeTaskOperation($task_operation_id)
+    {
+        $taskOperation = TaskOperation::find()->where(['_id' => $task_operation_id])->one();
+        if ($taskOperation) {
+            $operationTemplatesCount = OperationTemplate::find()->where(['uuid' => $taskOperation['operationUuid']])->count();
+            // удаляем только если это единственный шаблон
+            if ($operationTemplatesCount == 1) {
+                $operationTemplate = OperationTemplate::find()->where(['uuid' => $taskOperation['operationUuid']])->one();
+                if ($operationTemplate)
+                    $operationTemplate->delete();
+            }
+            $taskOperation->delete();
+            return 0;
+        }
+    }
+
+    /**
+     * функция удаляет, всю цепочку объектов, связанную с taskOperation
+     * @param $task_template_equipment String Идентификатор этапа операции
+     * @return int
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public
+    function removeTaskTemplate($task_template_equipment)
+    {
+        $taskTemplateEquipment = TaskTemplateEquipment::find()->where(['_id' => $task_template_equipment])->one();
+        if ($taskTemplateEquipment) {
+            // связан ли шаблон с еще каким-нибудь оборудованием?
+            $taskTemplatesCount = TaskTemplateEquipment::find()
+                ->where(['taskTemplateUuid' => $taskTemplateEquipment['taskTemplateUuid']])->count();
+            // удаляем только если это единственный шаблон
+            if ($taskTemplatesCount == 1) {
+                $taskTemplate = TaskTemplate::find()->where(['uuid' => $taskTemplateEquipment['taskTemplateUuid']])->one();
+                $taskOperationCount = TaskOperation::find()->where(['taskTemplateUuid' => $taskTemplateEquipment['taskTemplateUuid']])->count();
+                if ($taskOperationCount == 1) {
+                    $taskOperation = TaskOperation::find()->where(['taskTemplateUuid' => $taskTemplateEquipment['taskTemplateUuid']])->one();
+                    $operationTemplatesCount = OperationTemplate::find()->where(['uuid' => $taskOperation['operationTemplateUuid']])->count();
+                    // удаляем только если это единственный шаблон
+                    if ($operationTemplatesCount == 1) {
+                        $operationTemplate = OperationTemplate::find()->where(['uuid' => $taskOperation['operationTemplateUuid']])->one();
+                        if ($operationTemplate)
+                            $operationTemplate->delete();
+                    }
+                    if ($taskOperation)
+                        $taskOperation->delete();
+                }
+                if ($taskTemplate)
+                    $taskTemplate->delete();
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования, шаблона задачи или операции
+     *
+     * @return mixed
+     */
+    public function actionEdit()
+    {
+        if (isset($_POST["selected_node"])) {
+            $operation_id = 0;
+            $equipment_id = 0;
+            $task_id = 0;
+            if (isset($_POST["operation_id"]))
+                $operation_id = $_POST["operation_id"];
+            if (isset($_POST["equipment_id"]))
+                $equipment_id = $_POST["equipment_id"];
+            if (isset($_POST["task_id"]))
+                $task_id = $_POST["task_id"];
+            if (isset($_POST["task_template_equipment"]))
+                $task_template_equipment  = $_POST["task_template_equipment"];
+            // оборудование
+            if ($equipment_id > 0) {
+                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                return $this->renderAjax('../equipment/_add_form', [
+                    'equipment' => $equipment,
+                    'reference' => 'task-template/tree'
+                ]);
+            }
+
+            if ($task_id > 0) {
+                $taskTemplate = TaskTemplate::find()->where(['_id' => $task_id])->one();
+                $taskTemplateEquipment = TaskTemplateEquipment::find()
+                    ->where(['_id' => $task_template_equipment])
+                    ->one();
+                if ($taskTemplate) {
+                    if (isset($_POST["equipment_id"]))
+                        $equipment_id = $_POST["equipment_id"];
+                    else $equipment_id = 0;
+                    return $this->renderAjax('_add_task', [
+                        'taskTemplate' => $taskTemplate,
+                        'taskTemplateEquipment' => $taskTemplateEquipment,
+                        'equipment_id' => $equipment_id
+                    ]);
+                }
+            }
+
+            if ($operation_id > 0) {
+                $operationTemplate = OperationTemplate::find()->where(['_id' => $operation_id])->one();
+                if ($operationTemplate) {
+                    return $this->renderAjax('_add_operation', [
+                        'operationTemplate' => $operationTemplate
+                    ]);
+                }
+            }
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
 }

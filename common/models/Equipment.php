@@ -223,6 +223,6 @@ class Equipment extends ActiveRecord
      */
     public function getFullTitle()
     {
-        return $this['object']->getFullTitle().' ['.$this['equipmentType']['title'].']';
+        return $this['object']->getFullTitle().' ['.$this['title'].']';
     }
 }
