@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
         }).on('submit', function(e){
             e.preventDefault();
             $.ajax({
-                url: "../task-equipment-stage/period",
+                url: "../task-template-equipment/period",
                 type: "post",
                 data: $('form').serialize(),
                 success: function ($e) {
