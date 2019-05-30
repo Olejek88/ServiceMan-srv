@@ -68,7 +68,7 @@ class Operation extends ActiveRecord
                 ],
                 'required'
             ],
-            [['createdAt', 'changedAt'], 'safe'],
+            [['oid','createdAt', 'changedAt'], 'safe'],
             [
                 [
                     'uuid',

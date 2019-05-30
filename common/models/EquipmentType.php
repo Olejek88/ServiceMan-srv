@@ -88,4 +88,17 @@ class EquipmentType extends ActiveRecord
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
     }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEquipmentSystem()
+    {
+        return $this->hasOne(
+            EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']
+        );
+    }
+
 }

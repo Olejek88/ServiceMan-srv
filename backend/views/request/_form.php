@@ -18,7 +18,7 @@ use common\models\requestStatus;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="task-request-form" style="min-height: 880px">
+<div class="task-request-form" style="min-height: 900px">
 
     <?php $form = ActiveForm::begin([
         'id' => 'form-input-documentation',
@@ -35,6 +35,53 @@ use common\models\requestStatus;
     } else {
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
+    ?>
+
+    <?php
+    echo $form->field($model, 'type')->widget(Select2::class,
+        [
+            'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+
+    <?php
+    $users = Contragent::find()->orderBy('title DESC')->all();
+    $items = ArrayHelper::map($users, 'uuid', 'title');
+    echo $form->field($model, 'userUuid')->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Заявитель'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+
+    <?php
+    $contragents = Contragent::find()->all();
+    $items = ArrayHelper::map($contragents, 'uuid', 'title');
+    echo $form->field($model, 'contragentUuid',
+        ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите исполнителя..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php
@@ -55,39 +102,6 @@ use common\models\requestStatus;
     ?>
 
     <?php
-    $contragents = Contragent::find()->all();
-    $items = ArrayHelper::map($contragents, 'uuid', 'title');
-    echo $form->field($model, 'contragentUuid',
-        ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    ?>
-
-    <?php
-    $users = Users::find()->all();
-    $items = ArrayHelper::map($users, 'uuid', 'name');
-    echo $form->field($model, 'userUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Исполнитель'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    ?>
-
-    <?php
     $equipments = Equipment::find()->all();
     $items = ArrayHelper::map($equipments, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid',
@@ -97,6 +111,23 @@ use common\models\requestStatus;
             'language' => 'ru',
             'options' => [
                 'placeholder' => 'Выберите оборудование..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
+
+    <?php
+    $objects  = Objects::find()->all();
+    $items = ArrayHelper::map($objects,'uuid','title');
+    echo $form->field($model, 'objectUuid',
+        ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите объект..'
             ],
             'pluginOptions' => [
                 'allowClear' => true
@@ -129,12 +160,6 @@ use common\models\requestStatus;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?= $form->field($model, 'comment')->textInput() ?>
-
-    <?php
-    $objects  = Objects::find()->all();
-    $items = ArrayHelper::map($objects,'uuid','title');
-    echo $form->field($model, 'objectUuid')->dropDownList($items);
-    ?>
 
     <div class="form-group text-center">
 

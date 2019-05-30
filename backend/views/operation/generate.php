@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Users;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
@@ -51,7 +52,7 @@ $this->title = Yii::t('app', 'Создание операции');
                             <?php
 
                             $tasks = Task::find()->all();
-                            $items = ArrayHelper::map($tasks, 'uuid', 'taskName');
+                            $items = ArrayHelper::map($tasks, 'uuid', 'taskTemplate.title');
                             $params = [
                                 'prompt' => 'Выберите задачу..',
                             ];
@@ -59,6 +60,8 @@ $this->title = Yii::t('app', 'Создание операции');
                             echo $form->field($model, 'taskUuid')->dropDownList($items, $params);
 
                             ?>
+
+                            <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
                             <?php
 

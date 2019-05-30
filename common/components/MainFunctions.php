@@ -4,6 +4,16 @@ namespace common\components;
 
 use common\models\EquipmentStatus;
 use common\models\Journal;
+use common\models\Operation;
+use common\models\OperationStatus;
+use common\models\OperationTemplate;
+use common\models\OperationVerdict;
+use common\models\Stage;
+use common\models\StageOperation;
+use common\models\StageStatus;
+use common\models\StageVerdict;
+use common\models\Task;
+use common\models\TaskUser;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -64,9 +74,11 @@ class MainFunctions
     /**
      * Logs message to journal register in db
      * @param string $description сообщение в журнал
+     * @param $type
+     * @param $title
      * @return integer код ошибкиы
      */
-    public static function register($description)
+    public static function register($type, $title, $description)
     {
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
@@ -76,6 +88,8 @@ class MainFunctions
         $journal = new Journal();
         $journal->userUuid = $currentUser['uuid'];
         $journal->description = $description;
+        $journal->type = $type;
+        $journal->title = $title;
         $journal->date = date('Y-m-d H:i:s');
         if ($journal->save())
             return Errors::OK;
@@ -162,8 +176,8 @@ class MainFunctions
     public static function getColorLabelByStatus($status, $type)
     {
         $label = '<div class="progress"><div class="critical3">' . $status['title'] . '</div></div>';
-        if ($type == 'task_status') {
-            if ($status["uuid"] == WorkStatus::NEW_OPERATION ||
+        if ($type == 'work_status') {
+            if ($status["uuid"] == WorkStatus::NEW ||
                 $status["uuid"] == WorkStatus::IN_WORK)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
             if ($status["uuid"] == WorkStatus::CANCELED)
@@ -171,11 +185,22 @@ class MainFunctions
             if ($status["uuid"] == WorkStatus::UN_COMPLETE)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
+        if ($type == 'work_status_edit') {
+            if ($status["uuid"] == WorkStatus::NEW ||
+                $status["uuid"] == WorkStatus::IN_WORK)
+                $label = "<span class='badge' style='gray; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            else if ($status["uuid"] == WorkStatus::CANCELED)
+                $label = "<span class='badge' style='orange; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            else
+                $label = "<span class='badge' style='green; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+        }
         if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
                 $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
-            if ($status["uuid"] == TaskVerdict::INSPECTED)
+            else if ($status["uuid"] == TaskVerdict::INSPECTED)
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
+            else
+                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
         }
         if ($type == 'equipment_status') {
             if ($status['uuid'] == EquipmentStatus::NOT_MOUNTED) {
@@ -199,5 +224,57 @@ class MainFunctions
         </button></a></span></div>\n{hint}\n{error}";
     }
 
+    public static function createTask($taskTemplateUuid, $equipmentUuid, $comment, $oid, $userUuid)
+    {
+        $task = new Task();
+        $task->uuid = MainFunctions::GUID();
+        $task->taskTemplateUuid = $taskTemplateUuid;
+        $task->oid = $oid;
+        $task->equipmentUuid = $equipmentUuid;
+        $task->workStatusUuid = WorkStatus::NEW;
+        $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
+        $task->comment = $comment;
+        if (!$task->save()) {
+            MainFunctions::log("request.log", json_encode($task->errors));
+            return null;
+        } else {
+            $taskUser = new TaskUser();
+            $taskUser->uuid = MainFunctions::GUID();
+            $taskUser->taskUuid = $task->uuid;
+            $taskUser->userUuid = $userUuid;
+            $taskUser->oid = $oid;
+            if (!$taskUser->save()) {
+                MainFunctions::log("request.log", json_encode($taskUser->errors));
+                return null;
+            }
+
+            $operationTemplates = OperationTemplate::find()
+                ->where(['uuid' => $task['taskTemplateUuid']])
+                ->all();
+            foreach ($operationTemplates as $operationTemplate) {
+                self::createOperation($operationTemplate['operationTemplate']['uuid'], $task['uuid'], $oid);
+            }
+
+        }
+        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplateUuid . ']');
+        return $task;
+    }
+
+    private
+    static function createOperation($operationTemplateUuid, $taskUuid, $oid)
+    {
+        $operation = new Operation();
+        $operation->uuid = MainFunctions::GUID();
+        $operation->operationTemplateUuid = $operationTemplateUuid;
+        $operation->taskUuid = $taskUuid;
+        $operation->oid = $oid;
+        $operation->workStatusUuid = WorkStatus::NEW;
+        if (!$operation->save()) {
+            MainFunctions::log("request.log", json_encode($operation->errors));
+            return null;
+        }
+        MainFunctions::log("request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
+        return $operation;
+    }
 }
 

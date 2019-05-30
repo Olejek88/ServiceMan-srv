@@ -41,7 +41,7 @@ class ShutdownSearch extends Shutdown
      */
     public function search($params)
     {
-        $query = Objects::find();
+        $query = Shutdown::find();
 
         // add conditions that should always apply here
 

@@ -2,30 +2,20 @@
 
 namespace backend\controllers;
 
-use api\controllers\TokenController;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
-use common\models\Contragent;
-use common\models\Defect;
 use common\models\Equipment;
-use common\models\ObjectContragent;
-use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
 use common\models\Message;
-use common\models\Orders;
-use common\models\OrderStatus;
+use common\models\Objects;
 use common\models\Photo;
-use common\models\PhotoEquipment;
-use common\models\PhotoFlat;
-use common\models\PhotoHouse;
-use common\models\Subject;
-use common\models\Token;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -66,7 +56,7 @@ class UsersController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -98,6 +88,7 @@ class UsersController extends Controller
      * @param integer $id Id.
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -127,7 +118,7 @@ class UsersController extends Controller
 
             // FIXME: !!!! почему обновление записи происходит в методе view вместо update?!
             if ($model->save()) {
-                MainFunctions::register('Обновлен профиль пользователя ' . $model->name);
+                MainFunctions::register('user','Обновлен профиль пользователя ' . $model->name,'');
                 return $this->redirect(['view', 'id' => $model->id]);
             } else
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -210,7 +201,7 @@ class UsersController extends Controller
                 }
             }
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                MainFunctions::register('Добавлен пользователь ' . $model->name);
+                MainFunctions::register('user','Добавлен пользователь ' . $model->name, $model->contact);
                 return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render('create', ['model' => $model]);
@@ -293,17 +284,17 @@ class UsersController extends Controller
             $model = Users::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
-            if ($_POST['editableAttribute']=='type') {
-                $model['type']=intval($_POST['Users'][$_POST['editableIndex']]['type']);
-                if ($model['active']==true) $model['active']=1;
-                else $model['active']=0;
+            if ($_POST['editableAttribute'] == 'type') {
+                $model['type'] = intval($_POST['Users'][$_POST['editableIndex']]['type']);
+                if ($model['active'] == true) $model['active'] = 1;
+                else $model['active'] = 0;
                 $model->save();
                 return json_encode($model->errors);
             }
-            if ($_POST['editableAttribute']=='active') {
-                if ($_POST['Users'][$_POST['editableIndex']]['active']==true)
-                    $model['active']=1;
-                else $model['active']=0;
+            if ($_POST['editableAttribute'] == 'active') {
+                if ($_POST['Users'][$_POST['editableIndex']]['active'] == true)
+                    $model['active'] = 1;
+                else $model['active'] = 0;
                 $model->save();
                 return json_encode("hui2");
             }
@@ -327,6 +318,7 @@ class UsersController extends Controller
      * @param integer $id Id.
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -350,7 +342,7 @@ class UsersController extends Controller
             }
 
             if ($model->save()) {
-                MainFunctions::register('Обновлен профиль пользователя ' . $model->name);
+                MainFunctions::register('user','Обновлен профиль пользователя ' . $model->name,'');
                 //return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render(
@@ -376,6 +368,9 @@ class UsersController extends Controller
      * @param integer $id Id.
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -453,6 +448,46 @@ class UsersController extends Controller
     }
 
     /**
+     * Displays a equipment register
+     *
+     * @return mixed
+     */
+    public function actionTimeline()
+    {
+        $events = [];
+
+        $journals = Journal::find()->orderBy('date DESC')->all();
+        foreach ($journals as $journal) {
+            $events[] = ['date' => $journal['date'], 'event' => self::formEventUsers($journal['date'], $journal['type'],
+                $journal['user']['name'], $journal['title'], $journal['description'])];
+        }
+        $photos = Photo::find()
+            ->limit(5)
+            ->all();
+        foreach ($photos as $photo) {
+            $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
+            $events[] = ['date' => $photo['createdAt'], 'event' => self::formEventUsers($photo['createdAt'], 'photo',
+                $photo['user']['name'], 'Добавлено фото', $text)];
+        }
+
+        $measures = Measure::find()
+            ->all();
+        foreach ($measures as $measure) {
+            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']->title . '</a><br/>
+                <i class="fa fa-bar-chart"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
+            $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
+                $measure['user']['name'], $measure['equipment']['equipmentType']->title, $text)];
+        }
+
+        return $this->render(
+            'timeline',
+            [
+                'events' => $events
+            ]
+        );
+    }
+
+    /**
      * Формируем код записи о событии
      * @param $date
      * @param $type
@@ -483,4 +518,57 @@ class UsersController extends Controller
         return $event;
     }
 
+    /**
+     * Формируем код записи о событии
+     * @param $date
+     * @param $type
+     * @param $user
+     * @param $title
+     * @param $text
+     *
+     * @return string
+     */
+    public static function formEventUsers($date, $type, $user, $title, $text)
+    {
+        // create/change
+        // alarm
+        // documentation
+        // equipment
+        // object
+        // request
+        // user_system
+        // complete/create
+        // task
+        // measure
+        // photo
+
+        $event = '<li>';
+        if ($type == "alarm")
+            $event .= '<i class="fa fa-warning bg-red"></i>';
+        if ($type == "documentation")
+            $event .= '<i class="fa fa-book bg-blue"></i>';
+        if ($type == "equipment")
+            $event .= '<i class="fa fa-qrcode bg-aqua"></i>';
+        if ($type == "object")
+            $event .= '<i class="fa fa-home bg-green"></i>';
+        if ($type == "request")
+            $event .= '<i class="fa fa-send bg-orange"></i>';
+        if ($type == "user-system")
+            $event .= '<i class="fa fa-user bg-success"></i>';
+        if ($type == "user")
+            $event .= '<i class="fa fa-user bg-success"></i>';
+        if ($type == 'measure')
+            $event .= '<i class="fa fa-bar bg-success"></i>';
+        if ($type == 'photo')
+            $event .= '<i class="fa fa-photo bg-aqua"></i>';
+        if ($type == 'task')
+            $event .= '<i class="fa fa-tasks bg-info"></i>';
+
+        $event .= '<div class="timeline-item">';
+        $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
+        $event .= '<h3 class="timeline-header"><a class="btn btn-default btn-xs">'.$user.'</a> '. $title . '</h3>';
+        $event .= '<div class="timeline-body">' . $text . '</div>';
+        $event .= '</div></li>';
+        return $event;
+    }
 }

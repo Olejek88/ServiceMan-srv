@@ -95,6 +95,23 @@ use yii\widgets\ActiveForm;
         ?>
     </div>
 
+    <div class="pole-mg" style="margin: 0 -15px 20px -15px">
+        <p style="width: 300px; margin-bottom: 0;">Дата замены</p>
+        <?php echo DatePicker::widget(
+            [
+                'model' => $model,
+                'attribute' => 'replaceDate',
+                'language' => 'ru',
+                'size' => 'ms',
+                'pluginOptions' => [
+                    'format' => 'yyyy-mm-dd',
+                    'todayHighlight' => true
+                ]
+            ]
+        );
+        ?>
+    </div>
+
     <?php
     $object = Objects::find()->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {

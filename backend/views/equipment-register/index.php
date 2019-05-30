@@ -14,12 +14,6 @@ $this->title = Yii::t('app', 'Журнал оборудования');
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 405px; margin: 0 auto;">
-                <li class=""><a href="/equipment">Список оборудования</a></li>
-                <li class=""><a href="/equipment-register-type">Тип записи</a></li>
-                <li class="active"><a href="/equipment-register">Журнал событий</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 

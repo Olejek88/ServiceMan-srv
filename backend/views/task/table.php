@@ -4,6 +4,7 @@
 use common\components\MainFunctions;
 use common\models\Users;
 use common\models\WorkStatus;
+use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use kartik\widgets\DateTimePicker;
@@ -76,7 +77,7 @@ $gridColumns = [
             foreach ($statuses as $stat) {
                 $color='background-color: white';
                 if ($stat['uuid']==WorkStatus::CANCELED ||
-                    $stat['uuid']==WorkStatus::NEW_OPERATION)
+                    $stat['uuid']==WorkStatus::NEW)
                     $color='background-color: gray';
                 if ($stat['uuid']==WorkStatus::IN_WORK)
                     $color='background-color: yellow';
@@ -121,59 +122,6 @@ $gridColumns = [
         },
         'format' => 'raw'
     ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'date',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-        'filterType' => GridView::FILTER_DATETIME,
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'editableOptions' => [
-            'header' => 'Дата назначения',
-            'size' => 'md',
-            'inputType' => \kartik\editable\Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
-            'options' => [
-                'type' => \kartik\datecontrol\DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'yyyy-MM-dd hh:mm:ss',
-                'saveFormat' => 'php:Y-m-d h:m:s',
-                'options' => [
-                    'pluginOptions' => [
-                        'autoclose' => true
-                    ]
-                ]
-            ]
-        ],
-    ],
-/*    [
-        'class' => 'kartik\grid\EditableColumn',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Исполнители',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'editableOptions'=> function () {
-            $users = ArrayHelper::map(Users::find()->orderBy('name')->all(), 'uuid', 'name');
-            return [
-                'header' => 'Исполнитель задачи',
-                'size' => 'md',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $users,
-                'data' => $users
-            ];
-        },
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
-            'uuid', 'name'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true]
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-    ],*/
     [
         'attribute' => 'startDate',
         'hAlign' => 'center',

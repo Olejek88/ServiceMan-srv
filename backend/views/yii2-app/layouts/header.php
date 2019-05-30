@@ -1,8 +1,9 @@
 <?php
 
 use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $currentUser /console/model/Users */
 /* @var $content string */
 
@@ -31,8 +32,8 @@ $userImage = Yii::$app->view->params['userImage'];
                 </li>
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
-                    <a href="/message" class="dropdown-toggle">
-                        <i class="fa fa-envelope-o"></i>
+                    <a href="/message/list" class="dropdown-toggle">
+                            <i class="fa fa-envelope-o"></i>
                     </a>
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->

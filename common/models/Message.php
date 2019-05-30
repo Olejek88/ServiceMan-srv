@@ -25,6 +25,10 @@ use yii\db\Expression;
  */
 class Message extends ActiveRecord
 {
+    const MESSAGE_NEW = 0;
+    const MESSAGE_READ = 1;
+    const MESSAGE_DELETED = 2;
+
     /**
      * Behaviors.
      *

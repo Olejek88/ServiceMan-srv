@@ -14,6 +14,7 @@ use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -40,10 +41,13 @@ class ObjectController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -78,6 +82,7 @@ class ObjectController extends Controller
      * Displays a single Object model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -103,6 +108,10 @@ class ObjectController extends Controller
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 15;
             //if ($_GET['from'])
+            MainFunctions::register('object','Добавлен объект',
+                '<a class="btn btn-default btn-xs">'.$model['objectType']['title'].'</a> '.$model['title'].'<br/>'.
+                '<a class="btn btn-default btn-xs">Адрес</a> ул.'.$model['house']['street']['title'].',д.'.$model['house']['number']);
+
             return $this->render('table', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -119,6 +128,7 @@ class ObjectController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -138,6 +148,9 @@ class ObjectController extends Controller
      * If deletion is successful, the browser will be redirected to the 'table' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

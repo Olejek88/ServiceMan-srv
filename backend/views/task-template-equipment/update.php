@@ -1,23 +1,24 @@
 <?php
-
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\EquipmentAttribute */
+/* @var $model common\models\TaskTemplateEquipment */
 
-$this->title = Yii::t('app', 'Создать аттрибут для оборудования');
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Аттрибуты'),
-    'url' => ['index']
-];
+$this->title = Yii::t(
+    'app',
+    'Редактирование связи задачи с этапом'
+);
 ?>
-<div class="equipment-model-create box-padding">
+<div class="task-equipment-stage-update box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
+        </div>
+        <div class="box-tools pull-right">
+            <span class="label label-default"></span>
         </div>
         <div class="panel-body">
 
@@ -31,20 +32,8 @@ $this->params['breadcrumbs'][] = [
                             ]
                         ) ?>
                     </h6>
-                    <h6 class='text-center'>
-                        * Если вы не нашли
-                        <b><?php
-                            echo Html::a(
-                                'тип аттрибута',
-                                ['/attribute-type/create'],
-                                ['target' => '_blank',]
-                            ) ?></b>,
-                        создайте его!
-                    </h6>
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>

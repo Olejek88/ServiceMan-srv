@@ -1,29 +1,21 @@
 <?php
-
 use yii\helpers\Html;
 
-/* @var $model common\models\EquipmentAttribute */
+/* @var $this yii\web\View */
+/* @var $model common\models\TaskTemplateEquipment */
 
-$this->title = Yii::t(
-    'app',
-    'Обновить {modelClass}: ',
-    [
-        'modelClass' => 'Аттрибуты оборудования',
-    ]
-);
-$this->title .= 'Аттрибуты оборудования';
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Аттрибуты оборудования'),
-    'url' => ['index']
-];
+$this->title = Yii::t('app', 'Создать связь задачи с оборудованием');
 ?>
-<div class="equipment-model-update box-padding">
+<div class="task-equipment-stage-create box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
+            <div class="box-tools pull-right">
+                <span class="label label-default"></span>
+            </div>
         </div>
         <div class="panel-body">
 
@@ -39,7 +31,6 @@ $this->params['breadcrumbs'][] = [
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
 

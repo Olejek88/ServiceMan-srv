@@ -38,7 +38,7 @@ class TaskUser extends ActiveRecord
     {
         return [
             [['uuid', 'userUuid', 'taskUuid'], 'required'],
-            [['createdAt', 'changedAt'], 'safe'],
+            [['oid', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'taskUuid'], 'string', 'max' => 50],
         ];
     }
