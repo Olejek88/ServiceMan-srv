@@ -3,35 +3,28 @@
 namespace backend\tests\functional;
 
 use backend\tests\FunctionalTester;
-use common\fixtures\User as UserFixture;
 
-/**
- * Class LoginCest
- */
 class LoginCest
 {
-    public function _before(FunctionalTester $I)
+    function _before(FunctionalTester $I)
     {
-        $I->haveFixtures([
-            'user' => [
-                'class' => UserFixture::className(),
-                'dataFile' => codecept_data_dir() . 'login_data.php'
-            ]
-        ]);
+        $I->amOnRoute('site/login');
     }
 
-    /**
-     * @param FunctionalTester $I
-     */
-    public function loginUser(FunctionalTester $I)
+    protected function formParams()
     {
-        $I->amOnPage('/login');
-        $I->fillField('Имя пользователя', 'erau');
-        $I->fillField('Пароль', 'password_0');
-        $I->click('login-button');
+        return [
+            'LoginForm[username]' => 'dev',
+            'LoginForm[password]' => 'qwerty',
+            'LoginForm[rememberMe]' => true
+        ];
+    }
 
-        // $I->see('logout');
-        $I->dontSeeLink('Login');
-        $I->dontSeeLink('Signup');
+    public function checkValidLogin(FunctionalTester $I)
+    {
+        $I->submitForm('#login-form', $this->formParams(),'login-button');
+        $I->seeInTitle('Сводная');
+        $I->dontSee('Неверное имя пользователя');
+        $I->dontSee('<h3>Not Found 404</h3>');
     }
 }
