@@ -10,14 +10,25 @@ use yii\web\JsExpression;
 echo ScheduleWidget::widget([
     'clientOptions' => [
         'daily' => 'true',
-        'column-magnet' => 'column',
-        'time-frames-magnet' => false
+        'auto-expand' => 'both',
+        'timespans' => [
+              'from' => '2019-05-20 00:00:00',
+              'to' => '2019-06-20 00:00:00'
+        ],
+        'columnLimitThreshold' => '20',
+        'headersFormats' => [
+            'month' => 'MMMM'
+        ]
     ],
     'plugins' => [
-        ScheduleWidget::PLUGIN_MOVABLE => [],
+        ScheduleWidget::PLUGIN_MOVABLE => [
+            'allow-moving' => true,
+            'enabled' => true,
+            'allowMoving' => true
+        ],
         ScheduleWidget::PLUGIN_TABLE => [
             'headers' => [
-                'model.name' => 'Name'
+                'model.name' => 'Оборудование'
             ]
         ],
         ScheduleWidget::PLUGIN_TOOLTIP => []
@@ -27,13 +38,6 @@ echo ScheduleWidget::widget([
             .'console.log(task.row.model);'
             .'}')
     ],
-    'data' => '[
-        {"name":"Row №1","sortable":"false","tasks":[]},
-        {"name":"Row №2","sortable":"false","tasks":[]},
-        {"name":"Row №3","sortable":"false","tasks":[
-            {"name":"Task №1","from":"2015 04 16","to":"2015 04 23"}
-          ]
-        }
-      ]'
+    'data' => json_encode($events)
 ]);
 

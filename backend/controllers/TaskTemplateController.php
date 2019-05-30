@@ -630,7 +630,7 @@ class TaskTemplateController extends Controller
             if (isset($_POST["task_id"]))
                 $task_id = $_POST["task_id"];
             if (isset($_POST["task_template_equipment"]))
-                $task_template_equipment  = $_POST["task_template_equipment"];
+                $task_template_equipment = $_POST["task_template_equipment"];
             // оборудование
             if ($equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();

@@ -213,13 +213,16 @@ class TaskTemplateEquipment extends ActiveRecord
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $count = count($dates);
+            if (strlen($this->next_dates)<6) $count=0;
             while (self::TASK_DEEP - $count) {
                 if ($count>0)
                     $last_date = strtotime($dates[$count-1]);
                 else
                     $last_date = strtotime($this->last_date);
                 $next_date = $last_date + $this->period*3600;
+                if ($count>0) $next_dates.=',';
                 $next_dates.=date("Y-m-d H:i:s",$next_date);
+                $dates[$count]=date("Y-m-d H:i:s",$next_date);
                 $count++;
             }
             $this->next_dates = $next_dates;
