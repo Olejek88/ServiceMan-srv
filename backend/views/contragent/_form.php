@@ -19,12 +19,12 @@ use yii\widgets\ActiveForm;
 
     <?php
     if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')
-            ->textInput(['maxlength' => true, 'readonly' => true]);
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
     } else {
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
+
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
 
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>

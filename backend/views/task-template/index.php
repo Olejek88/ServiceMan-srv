@@ -8,8 +8,10 @@ use yii\grid\GridView;
 $this->title = Yii::t('app', 'Шаблоны операций');
 ?>
 <div class="orders-index box-padding-index">
-
-    <div class="panel panel-default">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>

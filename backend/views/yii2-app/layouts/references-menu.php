@@ -20,5 +20,7 @@
     echo Html::a("Типы задач", ['../task-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Вердикты задач", ['../task-verdict/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Статусы работ", ['../work-status/create'], ['class' => 'btn btn-info btn100']);
+
+    echo Html::a("Шаблоны задач", ['../task-template/create'], ['class' => 'btn btn-info btn100']);
     ?>
 </div>

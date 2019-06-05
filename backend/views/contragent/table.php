@@ -156,7 +156,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/contragent/create'], ['class' => 'btn btn-success']) . ' ' .
+            Html::a('Создать', ['/contragent/create'], ['class' => 'btn btn-success']) . ' ' .
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['/contragent/table'], ['data-pjax' => 0,
                 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -178,7 +178,7 @@ echo GridView::widget([
     'floatHeader' => true,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Организации',
+        'heading' => '<i class="fa fa-users"></i>&nbsp; Организации/Абоненты',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

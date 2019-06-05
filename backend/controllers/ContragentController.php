@@ -30,10 +30,13 @@ class ContragentController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -67,6 +70,9 @@ class ContragentController extends Controller
             }
             if ($_POST['editableAttribute'] == 'phone') {
                 $model['phone'] = $_POST['Contragent'][$_POST['editableIndex']]['phone'];
+            }
+            if ($_POST['editableAttribute'] == 'director') {
+                $model['director'] = $_POST['Contragent'][$_POST['editableIndex']]['director'];
             }
             if ($_POST['editableAttribute'] == 'address') {
                 $model['address'] = $_POST['Contragent'][$_POST['editableIndex']]['address'];

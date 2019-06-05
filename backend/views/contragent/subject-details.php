@@ -1,27 +1,170 @@
 <?php
 
-use app\commands\MainFunctions;
-use common\models\Equipment;
-use common\models\PhotoEquipment;
-use common\models\PhotoFlat;
+use common\models\ObjectContragent;
+use common\models\ObjectStatus;
+use common\models\ObjectType;
+use kartik\editable\Editable;
+use kartik\grid\GridView;
+use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-/* @var $model \common\models\Contragent */
+/* @var $model */
 
-?>
-<div class="kv-expand-row kv-grid-demo">
-    <div class="kv-expand-detail skip-export kv-grid-demo">
-        <div class="skip-export kv-expanded-row kv-grid-demo" data-index="0" data-key="1">
-            <div class="kv-detail-content">
-                <h3>
-                </h3>
-                <div class="row">
-                    <div class="col-sm-2">
-                    </div>
-                    <?php
-                    ?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+$gridColumns = [
+    [
+        'attribute' => '_id',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class',
+            'style' => 'width: 50px; text-align: center'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->_id;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'house',
+        'vAlign' => 'middle',
+        'width' => '220px',
+        'value' => function ($data) {
+            return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
+        },
+        'header' => 'Адрес',
+        'format' => 'raw',
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'title',
+        'vAlign' => 'middle',
+        'width' => '180px',
+        'header' => 'Объект',
+        'format' => 'raw',
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'objectStatusUuid',
+        'header' => 'Статус',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '180px',
+        'value' => function ($model, $key, $index, $widget) {
+            $color = 'background-color: yellow';
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_DEFAULT)
+                $color = 'background-color: gray';
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_NO_ENTRANCE ||
+                ObjectStatus::OBJECT_STATUS_NO_ENTRANCE)
+                $color = 'background-color: lightred';
+            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_OK)
+                $color = 'background-color: green';
+            return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;  
+                        " . $model['objectStatus']->title;
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(ObjectStatus::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'format' => 'raw'
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'objectTypeUuid',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '180px',
+        'filterType' => GridView::FILTER_SELECT2,
+        'header' => 'Тип',
+        'filter' => ArrayHelper::map(ObjectType::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'format' => 'raw',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'editableOptions' => function ($model, $key, $index, $widget) {
+            $models = ArrayHelper::map(ObjectType::find()->orderBy('title')->all(), 'uuid', 'title');
+            return [
+                'header' => 'Тип объекта',
+                'size' => 'lg',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $models,
+                'data' => $models
+            ];
+        },
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'changedAt',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'header' => 'Дата изменения',
+    ],
+    [
+        'class' => 'kartik\grid\ActionColumn',
+        'header' => 'Действия',
+        'headerOptions' => ['class' => 'kartik-sheet-style'],
+    ]
+];
+
+$objectContragents = ObjectContragent::find()->where(['contragentUuid' => $model['uuid']]);
+$provider = new ActiveDataProvider(
+    [
+        'query' => $objectContragents,
+        'sort' =>false,
+    ]
+);
+
+echo GridView::widget([
+    'id' => 'flat-table',
+    'dataProvider' => $provider,
+    'columns' => $gridColumns,
+    'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
+    'headerRowOptions' => ['class' => 'kartik-sheet-style'],
+    'filterRowOptions' => ['class' => 'kartik-sheet-style'],
+    'beforeHeader' => [
+        '{toggleData}'
+    ],
+    'toolbar' => [
+        ['content' =>
+            Html::a('Новый', ['/object/create'], ['class' => 'btn btn-success']),
+            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
+                ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
+        ],
+        '{export}',
+    ],
+    'export' => [
+        'fontAwesome' => true,
+        'target' => GridView::TARGET_BLANK,
+        'filename' => 'equipments'
+    ],
+    'pjax' => true,
+    'showPageSummary' => false,
+    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
+    'summary' => '',
+    'bordered' => true,
+    'striped' => false,
+    'condensed' => false,
+    'responsive' => true,
+    'persistResize' => false,
+    'hover' => true,
+    'panel' => [
+        'type' => GridView::TYPE_PRIMARY,
+        'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Объекты',
+        'headingOptions' => ['style' => 'background: #337ab7']
+    ],
+]);

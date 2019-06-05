@@ -5,6 +5,7 @@ namespace backend\controllers;
 use app\commands\MainFunctions;
 use backend\models\TaskTemplateEquipmentSearch;
 use common\components\Errors;
+use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
@@ -262,22 +263,24 @@ class TaskTemplateEquipmentController extends Controller
     public function actionCalendarGantt()
     {
         $events = [];
+        $categories = [];
 
         $taskTemplateEquipments = TaskTemplateEquipment::find()
             ->select('*')
             ->groupBy('equipmentUuid')
             ->all();
+        $task_equipment_count=0;
         foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
             $period = $taskTemplateEquipment["period"];
             try {
                 $last = new DateTime($taskTemplateEquipment["last_date"]);
             } catch (Exception $e) {
             }
+            $tasks=[];
             $taskTemplateEquipment->formDates();
             $dates = $taskTemplateEquipment->getDates();
             if ($dates) {
                 $count = 0;
-                $tasks = [];
                 while ($count < count($dates)) {
                     $taskTemplates = TaskTemplateEquipment::find()
                         ->select('*')
@@ -285,29 +288,50 @@ class TaskTemplateEquipmentController extends Controller
                         ->all();
                     foreach ($taskTemplates as $taskTemplate) {
                         $start = strtotime($dates[$count]);
-                        $finish = $start + $taskTemplate['taskTemplate']['normative'];
+                        $finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
                         $end_date =date("Y-m-d H:i:s",$finish);
                         $tasks[] = [
-                            'name' => 'TO',
-                            'from' => $dates[$count],
-                            'to' => $end_date
+                            'title' => 'TO',
+                            'start' => $start*1000,
+                            'end' => $finish*1000,
+                            'id' => $taskTemplate['_id'],
+                            'y' => $task_equipment_count
                         ];
                     }
                     $count++;
                     if ($count>5) break;
                 }
+                $all_tasks = Task::find()
+                    ->select('*')
+                    ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                    ->all();
+                foreach ($all_tasks as $task) {
+                    $start = strtotime($task["startDate"])*1000;
+                    $finish = strtotime($task["endDate"])*1000;
+                    $tasks[] = [
+                        'title' => 'TO',
+                        'start' => $start,
+                        'end' => $finish,
+                        'id' => $task['_id'],
+                        'completed' => 0,
+                        'y' => $task_equipment_count
+                    ];
+                }
                 $events[] = [
-                    'name' => $taskTemplateEquipment['equipment']['title'],
-                    'sortable' => true,
-                    'tasks' =>
-                        $tasks
-                    ,
+                    'title' => $taskTemplateEquipment['equipment']['title'],
+                    'period' => $period,
+                    'data' => $tasks
                 ];
             }
+            $task_equipment_count++;
         }
-        //echo json_encode($events)
+        $max=0;
+        if ($task_equipment_count>0) $max=$task_equipment_count-1;
+        //echo json_encode($events);
         return $this->render('calendar-gantt', [
-            'events' => $events
+            'events' => $events,
+            'categories' => $categories,
+            'max' => $max
         ]);
     }
 
