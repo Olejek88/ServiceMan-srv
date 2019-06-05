@@ -23,7 +23,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
 <div class="col-md-12">
     <div class="panel-group">
         <div class="panel panel-default">
-            <div class="panel-heading">
+            <div class="panel-heading" style="background-color: #3c8dbc; color: white">
                 <h4 class="panel-title"><a href="" data-toggle="collapse">План-график работ</a></h4>
             </div>
             <div class="panel-collapse collapse am-collapse in">
@@ -151,11 +151,13 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 title: task_event.title,
                 start: task_event.start,
                 end: task_event.end,
-                y: i
+                y: i,
+                user: task_event.user
 
             };
         });
         return {
+            name: event.title,
             title: event.title,
             period: event.period,
             data: data,
@@ -168,13 +170,25 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
     var chart = Highcharts.ganttChart('container', {
         series: series,
         chart: {
-            spacingLeft: 1
+            spacingLeft: 1,
+            styledMode: true,
+            spacing: [4, 4, 5, 5]
+        },
+        annotations: {
+          draggable: 'x'
         },
         title: {
             text: ''
         },
+        tooltip: {
+            pointFormat: '<span><b>{point.title}</b></span><br/><span>Дата: {point.start:%e. %b}</span><br/>' +
+                '<span>Исполнитель: {point.user}</span>'
+        },
         scrollbar: {
-            enabled: true
+            enabled: true,
+            showFull: false,
+            barBackgroundColor: '#3c8dbc',
+            buttonBackgroundColor: '#3c8dbc'
         },
         rangeSelector: {
             enabled: true,
@@ -281,12 +295,13 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
 
         xAxis: {
             currentDateIndicator: true,
-            min: new Date().getTime()
+            min: new Date().getTime(),
+            labels: {
+                format: '{value:%W}'
+            },
+            gridLineColor: '#3c8dbc'
         },
 
-        tooltip: {
-            xDateFormat: '%a %b %d, %H:%M'
-        },
         exporting: {
             sourceWidth: 1000
         }

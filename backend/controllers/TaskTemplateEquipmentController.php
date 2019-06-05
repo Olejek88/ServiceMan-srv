@@ -269,9 +269,15 @@ class TaskTemplateEquipmentController extends Controller
             ->select('*')
             ->groupBy('equipmentUuid')
             ->all();
+
         $task_equipment_count=0;
         foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
             $period = $taskTemplateEquipment["period"];
+            $selected_user = $taskTemplateEquipment->getUser();
+            if ($selected_user)
+                $user = $selected_user['name'];
+            else
+                $user = 'Не назначен';
             try {
                 $last = new DateTime($taskTemplateEquipment["last_date"]);
             } catch (Exception $e) {
@@ -288,14 +294,16 @@ class TaskTemplateEquipmentController extends Controller
                         ->all();
                     foreach ($taskTemplates as $taskTemplate) {
                         $start = strtotime($dates[$count]);
-                        $finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
+                        //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
+                        $finish = $start + 3600*24;
                         $end_date =date("Y-m-d H:i:s",$finish);
                         $tasks[] = [
                             'title' => 'TO',
                             'start' => $start*1000,
                             'end' => $finish*1000,
                             'id' => $taskTemplate['_id'],
-                            'y' => $task_equipment_count
+                            'y' => $task_equipment_count,
+                            'user' => $user
                         ];
                     }
                     $count++;
@@ -314,7 +322,8 @@ class TaskTemplateEquipmentController extends Controller
                         'end' => $finish,
                         'id' => $task['_id'],
                         'completed' => 0,
-                        'y' => $task_equipment_count
+                        'y' => $task_equipment_count,
+                        'user' => $user
                     ];
                 }
                 $events[] = [
