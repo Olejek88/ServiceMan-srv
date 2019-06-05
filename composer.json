@@ -36,7 +36,6 @@
     "kartik-v/yii2-widgets": "~3.4.1",
     "kartik-v/yii2-datecontrol": "~1.9.7",
     "yiisoft/yii2-queue": "^2.0",
-    "miloschuman/yii2-highcharts-widget": "^5.0",
     "kartik-v/yii2-editable": "^1.7.8",
     "msvdev/yii2-widget-mappicker": "~1.0.1",
     "yiisoft/yii2-httpclient": "~2.0.7",
@@ -46,7 +45,6 @@
     "2amigos/yii2-leaflet-geocoder-plugin": "~1.0",
     "dragonmantank/cron-expression": "^2.3",
     "ext-json": "*",
-    "professionalweb/schedule-widget-yii2": "dev-master"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",
@@ -54,8 +52,7 @@
     "yiisoft/yii2-faker": "~2.0.0",
     "codeception/base": "^2.2.3",
     "codeception/verify": "~0.3.1",
-    "codeception/specify": "~0.4.3",
-    "insolita/yii2-migration-generator": "~3.1"
+    "codeception/specify": "~0.4.3"
   },
   "config": {
     "process-timeout": 1800,

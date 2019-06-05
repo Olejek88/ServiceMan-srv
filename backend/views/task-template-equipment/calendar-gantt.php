@@ -136,7 +136,9 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 'Вс', 'Пн', 'Вт', 'Ср',
                 'Чт', 'Пт', 'Сб'
             ],
-            rangeSelectorZoom: 'Масштаб'
+            rangeSelectorZoom: 'Масштаб',
+            rangeSelectorFrom: 'От',
+            rangeSelectorTo: 'До'
         }
     });
 
