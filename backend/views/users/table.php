@@ -92,6 +92,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\BooleanColumn',
         'attribute' => 'active',
+        'mergeHeader' => true,
         'vAlign' => 'middle'
     ],
 /*    [

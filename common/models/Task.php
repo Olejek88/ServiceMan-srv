@@ -25,6 +25,7 @@ use yii\db\ActiveRecord;
  *
  * @property TaskVerdict $taskVerdict
  * @property TaskTemplate $taskTemplate
+ * @property Users $users
  * @property WorkStatus $workStatus
  * @property Equipment $equipment
  * @property Operation $operations
@@ -140,5 +141,16 @@ class Task extends ActiveRecord
     public function getOperations()
     {
         return $this->hasMany(Operation::class, ['taskUuid' => 'uuid']);
+    }
+
+    public function getUsers()
+    {
+        $taskUsers = TaskUser::find()->select('userUuid')->where(['taskUuid' => $this->uuid])->all();
+        $taskUserList = [];
+        foreach ($taskUsers as $taskUser) {
+            $taskUserList[]=$taskUser['userUuid'];
+        }
+        $users = Users::find()->where(['IN','uuid', $taskUserList])->all();
+        return $users;
     }
 }

@@ -24,7 +24,7 @@ $this->title = 'Дерево моделей оборудования';
     });
 </script>
 
-<table id="tree">
+<table id="tree" style="width: 100%">
     <colgroup>
         <col width="*">
         <col width="100px">

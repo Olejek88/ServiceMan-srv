@@ -13,10 +13,18 @@ td.alt {
     background-color: #d0e9c6;
     margin: 0 3px 0 3px;
 }
+
 .btn100 {
     width: 100%;
     margin: 3px 0 3px 0;
+    height: 25px;
+    padding: 0;
 }
+
+.btn-toolbar {
+    width: 100%;
+}
+
 .progress {
     position: relative;
     height: 18px;
@@ -43,22 +51,32 @@ td.alt {
 .progress > .critical1 {
     background-color: #ff3333;
     color: white;
+    text-align: center;
     margin-top: -3px;
 }
 .progress > .critical2 {
     background-color: #ff9933;
     color: white;
+    text-align: center;
     margin-top: -3px;
 }
 .progress > .critical3 {
     background-color: #11aa11;
     color: white;
+    text-align: center;
     margin-top: -3px;
 }
 .progress > .critical4 {
-    background-color: #666666;
+    background-color: #3399ff;
+    text-align: center;
     color: white;
     margin-top: -3px;
+}
+.progress > .critical5 {
+    background-color: lightgrey;
+    color: white;
+    text-align: center;
+    margin-top: -5px;
 }
 table.fancytree-ext-table tbody tr.fancytree-active {
     background-color: #d0e9c6;
@@ -72,4 +90,8 @@ span.fancytree-expander {
 .list-group-item {
     padding: 5px;
     line-height: 1.2;
+}
+
+span.fancytree-checkbox, span.fancytree-expander, span.fancytree-custom-icon {
+    margin-top: 6px !important;
 }

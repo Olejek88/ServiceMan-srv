@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\PhotoSearch;
+use common\components\MainFunctions;
 use common\models\Photo;
 use Yii;
 use yii\filters\VerbFilter;
@@ -30,10 +31,13 @@ class PhotoController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -59,6 +63,7 @@ class PhotoController extends Controller
      * Displays a single Photo model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -89,6 +94,7 @@ class PhotoController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -107,6 +113,9 @@ class PhotoController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {

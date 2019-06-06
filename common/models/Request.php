@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -12,12 +13,15 @@ use yii\db\Expression;
  * @property integer $_id
  * @property string $oid идентификатор организации
  * @property string $uuid
+ * @property integer $type
  * @property string $userUuid
  * @property string $contragentUuid
  * @property string $authorUuid
  * @property string $requestStatusUuid
  * @property string $requestTypeUuid
  * @property string $comment
+ * @property string $verdict
+ * @property string $result
  * @property string $equipmentUuid
  * @property string $objectUuid
  * @property string $taskUuid
@@ -85,13 +89,12 @@ class Request extends ActiveRecord
                     'contragentUuid',
                     'authorUuid',
                     'equipmentUuid',
-                    'objectUuid',
                     'taskUuid',
                     'comment'
                 ],
                 'required'
             ],
-            [['closeDate', 'createdAt', 'changedAt'], 'safe'],
+            [['closeDate', 'type', 'createdAt', 'changedAt'], 'safe'],
             [
                 [
                     'uuid',
@@ -109,7 +112,7 @@ class Request extends ActiveRecord
                 'string',
                 'max' => 45
             ],
-            [['comment'], 'string', 'max' => 500],
+            [['comment', 'verdict', 'result'], 'string', 'max' => 500],
         ];
     }
 
@@ -172,8 +175,9 @@ class Request extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'userUuid' => Yii::t('app', 'Пользователь'),
             'user' => Yii::t('app', 'Пользователь'),
-            'requestTypeUuid' => Yii::t('app', 'Тип заявки'),
-            'requestType' => Yii::t('app', 'Тип заявки'),
+            'type' => Yii::t('app', 'Тип'),
+            'requestTypeUuid' => Yii::t('app', 'Характер обращения'),
+            'requestType' => Yii::t('app', 'Характер обращения'),
             'requestStatusUuid' => Yii::t('app', 'статус заявки'),
             'requestStatus' => Yii::t('app', 'Статус заявки'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
@@ -196,19 +200,19 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
         return $this->hasOne(
-            Users::class, ['uuid' => 'userUuid']
+            Contragent::class, ['uuid' => 'userUuid']
         );
     }
 
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getContragent()
     {
@@ -220,19 +224,19 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getAuthor()
     {
         return $this->hasOne(
-            Contragent::class, ['uuid' => 'authorUuid']
+            Users::class, ['uuid' => 'authorUuid']
         );
     }
 
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRequestStatus()
     {
@@ -244,7 +248,7 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRequestType()
     {
@@ -256,7 +260,7 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipment()
     {
@@ -268,7 +272,7 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getObject()
     {
@@ -280,7 +284,7 @@ class Request extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getTask()
     {

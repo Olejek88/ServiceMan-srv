@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\MeasureSearch;
 use common\models\Measure;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,10 +31,13 @@ class MeasureController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -48,7 +52,13 @@ class MeasureController extends Controller
         $searchModel = new MeasureSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 200;
-
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+        }
+        if (isset($_GET['type'])) {
+            $dataProvider->query->andWhere(['=','measureTypeUuid',$_GET['type']]);
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -59,6 +69,7 @@ class MeasureController extends Controller
      * Displays a single Measure model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -111,6 +122,7 @@ class MeasureController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -129,6 +141,9 @@ class MeasureController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

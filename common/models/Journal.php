@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -12,6 +13,8 @@ use yii\db\ActiveRecord;
  * @property string $userUuid
  * @property string $description
  * @property string $date
+ * @property string $type
+ * @property string $title
  *
  * @property Users $user
  */
@@ -34,7 +37,7 @@ class Journal extends ActiveRecord
             [['userUuid', 'description'], 'required'],
             [['description'], 'string'],
             [['date'], 'safe'],
-            [['userUuid'], 'string', 'max' => 50],
+            [['userUuid','type'], 'string', 'max' => 50],
         ];
     }
 
@@ -54,7 +57,7 @@ class Journal extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {

@@ -3,8 +3,10 @@
 namespace backend\controllers;
 
 use backend\models\UserSystemSearch;
+use common\components\MainFunctions;
 use common\models\UserSystem;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,10 +32,13 @@ class UserSystemController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -59,6 +64,7 @@ class UserSystemController extends Controller
      * Displays a single UserSystem model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -80,6 +86,9 @@ class UserSystemController extends Controller
             $searchModel = new UserSystemSearch();
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 100;
+            MainFunctions::register('user-system','Добавлена специализация пользователя',
+                '<a class="btn btn-default btn-xs">'.$model['user']['name'].'</a> '.$model['system']['title'].'<br/>');
+
             return $this->render('index', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -96,12 +105,16 @@ class UserSystemController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            MainFunctions::register('user-system','Изменена специализация пользователя',
+                '<a class="btn btn-default btn-xs">'.$model['user']['name'].'</a> '.$model['system']['title'].'<br/>');
+
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('update', [
@@ -115,6 +128,9 @@ class UserSystemController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

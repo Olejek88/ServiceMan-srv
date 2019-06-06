@@ -102,7 +102,7 @@ class Contragent extends ActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'title' => Yii::t('app', 'Контрагент'),
+            'title' => Yii::t('app', 'Название'),
             'address' => Yii::t('app', 'Адрес'),
             'phone' => Yii::t('app', 'Телефон'),
             'inn' => Yii::t('app', 'ИНН'),

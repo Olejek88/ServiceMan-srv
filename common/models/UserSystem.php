@@ -2,6 +2,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -67,7 +68,7 @@ class UserSystem extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -76,7 +77,7 @@ class UserSystem extends ActiveRecord
 
     /**
      * Объект связанного поля.
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getSystem()
     {

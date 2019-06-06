@@ -58,20 +58,36 @@ class MessageController extends Controller
             ->asArray()
             ->one();
 
-        $messages = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
-            ->orWhere(['toUserUuid' => $currentUser['uuid']])
+        $messages = Message::find()->where(['status' => Message::MESSAGE_NEW])
+            ->andWhere(['OR',['fromUserUuid' => $currentUser['uuid']],['toUserUuid' => $currentUser['uuid']]])
             ->orderBy('date DESC')
             ->all();
+
         $income = Message::find()->where(['toUserUuid' => $currentUser['uuid']])
+            ->andWhere(['status' => Message::MESSAGE_NEW])
             ->orderBy('date DESC')
             ->all();
         $sent = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
+            ->andWhere(['status' => Message::MESSAGE_NEW])
             ->orderBy('date DESC')
             ->all();
+        $deleted = Message::find()->where(['status' => Message::MESSAGE_DELETED])
+            ->orderBy('date DESC')
+            ->all();
+
+        if (isset($_GET["type"])) {
+            if ($_GET["type"]=="income")
+                $messages=$income;
+            if ($_GET["type"]=="sent")
+                $messages=$sent;
+            if ($_GET["type"]=="deleted")
+                $messages=$deleted;
+        }
 
         return $this->render('list', [
             'messages' => $messages,
             'income' => $income,
+            'deleted' => $deleted,
             'sent' => $sent
         ]);
     }
@@ -227,6 +243,22 @@ class MessageController extends Controller
             return $this->redirect('list');
         }
         return false;
+    }
+
+    /**
+     */
+    public
+    function actionDeletes()
+    {
+        foreach ($_POST as $key => $value) {
+            if ($value=="on") {
+                if (($model = Message::findOne($key)) !== null) {
+                    $model->status=Message::MESSAGE_DELETED;
+                    $model->save();
+                }
+            }
+        }
+        return $this->redirect('list');
     }
 
 }

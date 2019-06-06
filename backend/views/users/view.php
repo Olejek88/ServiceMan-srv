@@ -1,9 +1,10 @@
 <?php
 
 use common\models\User;
+use common\models\Users;
 use yii\helpers\Html;
 
-/* @var $model \common\models\Users */
+/* @var $model Users */
 /* @var $user_property */
 /* @var $orders */
 /* @var $events */

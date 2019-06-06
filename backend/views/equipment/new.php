@@ -1,9 +1,10 @@
 <?php
 
+use common\models\Equipment;
 use yii\helpers\Html;
 
-/* @var $model \common\models\Equipment */
-/* @var $equipments \common\models\Equipment[] */
+/* @var $model Equipment */
+/* @var $equipments Equipment[] */
 
 $this->title = 'Добавляем оборудование';
 ?>

@@ -1,9 +1,10 @@
 <?php
 
+use common\models\Equipment;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\Equipment */
+/* @var $model Equipment */
 
 $this->title = $model['equipmentType']->title;
 ?>
