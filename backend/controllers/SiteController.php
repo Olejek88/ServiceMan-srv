@@ -1,4 +1,5 @@
 <?php
+
 namespace backend\controllers;
 
 use backend\models\UsersSearch;
@@ -9,22 +10,18 @@ use common\models\Contragent;
 use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
-use common\models\EquipmentAttribute;
 use common\models\EquipmentType;
-use common\models\Journal;
-use common\models\Objects;
 use common\models\Gpstrack;
+use common\models\Journal;
 use common\models\LoginForm;
 use common\models\Measure;
-use common\models\ObjectsAttribute;
+use common\models\Objects;
 use common\models\Photo;
-use common\models\Resident;
 use common\models\Street;
-use common\models\Subject;
 use common\models\UserHouse;
 use common\models\Users;
-use common\models\UsersAttribute;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
@@ -609,7 +606,7 @@ class SiteController extends Controller
         foreach ($photos as $photo) {
             $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
             $events[] = ['date' => $photo['createdAt'], 'event' => self::formEvent($photo['createdAt'], 'photo',
-                $photo['_id'], 'Добавлено фото', $text,$photo['user']['name'])];
+                $photo['_id'], 'Добавлено фото', $text, $photo['user']['name'])];
         }
 
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
@@ -684,8 +681,8 @@ class SiteController extends Controller
         $event .= '</div></li>';
         return $event;
     }
-    
-        /**
+
+    /**
      * Build tree of files
      *
      * @return mixed
@@ -706,32 +703,31 @@ class SiteController extends Controller
                 'types' => 1,
                 'expanded' => true, 'folder' => true];
 
-            $sum_size=0;
+            $sum_size = 0;
             foreach ($documentations as $documentation) {
                 $fileName = EquipmentController::getDocDir($documentation) . $documentation['path'];
                 if (is_file($fileName)) {
                     $size = number_format(filesize($fileName) / 1024, 2) . 'Кб';
-                    $real_size=filesize($fileName) / 1024;
+                    $real_size = filesize($fileName) / 1024;
                     $links = Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
                         [EquipmentController::getDocDir($documentation) . $documentation['path']], ['title' => $documentation['title']]
                     );
                     $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-                }
-                else {
+                } else {
                     $size = "неизвестен";
                     $links = '';
-                    $real_size=0;
+                    $real_size = 0;
                     $ext = "-";
                 }
                 $title = 'общее';
                 if ($documentation['equipment'])
                     $title = $documentation['equipment']['title'];
                 if ($documentation['equipmentType'])
-                    $title = 'Тип: '. $documentation['equipmentType']['title'];
+                    $title = 'Тип: ' . $documentation['equipmentType']['title'];
 
                 $tree['children'][0]['children'][$documentationCount]['children'][] =
                     [
-                        'title' => '['.$title.'] '.$documentation['title'],
+                        'title' => '[' . $title . '] ' . $documentation['title'],
                         'key' => $documentation['_id'] . "",
                         'date' => $documentation['createdAt'],
                         'size' => $size,
@@ -739,9 +735,9 @@ class SiteController extends Controller
                         'ext' => $ext,
                         'expanded' => false,
                         'folder' => false];
-                $sum_size+=$real_size;
+                $sum_size += $real_size;
             }
-            if ($sum_size>0)
+            if ($sum_size > 0)
                 $tree['children'][0]['children'][$documentationCount]['size'] = number_format($sum_size / 1024, 2) . 'Мб';
             else
                 $tree['children'][0]['children'][$documentationCount]['size'] = 'нет файлов';
@@ -782,12 +778,20 @@ class SiteController extends Controller
         return 'Выберите в дереве тип атрибута или документации';
     }
 
+    /**
+     * @return mixed
+     */
     public function actionRemove()
     {
         if (!isset($_POST["types"]) && isset($_POST["selected_node"])) {
             $model = Documentation::find()->where(['_id' => $_POST["selected_node"]])->one();
-            if ($model)
-              $model->delete();
+            if ($model) {
+                try {
+                    $model->delete();
+                } catch (StaleObjectException $e) {
+                } catch (\Throwable $e) {
+                }
+            }
         }
         return self::actionFiles();
     }

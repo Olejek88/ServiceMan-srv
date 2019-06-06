@@ -4,10 +4,8 @@ namespace backend\controllers;
 
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
-use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
-use common\models\RequestStatus;
 use common\models\Users;
 use Yii;
 use yii\db\StaleObjectException;
@@ -15,7 +13,6 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
-use yii\web\UploadedFile;
 
 /**
  * RequestController implements the CRUD actions for Request model.

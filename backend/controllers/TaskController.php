@@ -51,7 +51,7 @@ class TaskController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -100,8 +100,8 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=','startDate',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','startDate',$_GET['end_time']]);
         }
         $dataProvider->query->andWhere(['=','workStatusUuid',WorkStatus::COMPLETE]);
         $dataProvider->pagination->pageParam = 'dp1';
@@ -110,8 +110,8 @@ class TaskController extends Controller
         $dataProvider2->pagination->pageSize = 25;
         $dataProvider2->query->andWhere(['<>','workStatusUuid',WorkStatus::COMPLETE]);
         if (isset($_GET['start_time'])) {
-            $dataProvider2->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider2->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider2->query->andWhere(['>=','startDate',$_GET['start_time']]);
+            $dataProvider2->query->andWhere(['<','startDate',$_GET['end_time']]);
         }
         $dataProvider2->pagination->pageParam = 'dp2';
 

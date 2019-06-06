@@ -3,6 +3,7 @@
 use common\components\MainFunctions;
 use common\models\MeasureType;
 use common\models\Operation;
+use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -13,6 +14,9 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::Таблица задач');
+
+$users = Users::find()->all();
+$items = ArrayHelper::map($users, 'uuid', 'name');
 
 $gridColumns = [
     [
@@ -211,9 +215,6 @@ $gridColumns = [
     ]
 ];
 
-$measureType = MeasureType::find()->all();
-$items = ArrayHelper::map($measureType, 'uuid', 'title');
-
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'columns' => $gridColumns,
@@ -224,16 +225,17 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/task/table-user"><table style="width: 100%; padding: 3px"><tr><td>' .
+            '<form action="/task/table-user"><table style="width: 100%"><tr>
+            <td style="margin: 3px; padding: 3px">' .
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
                 'data' => $items,
-                'options' => ['placeholder' => 'Исполнитель'],
+                'options' => ['placeholder' => 'Все исполнители'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ]) . '</td><td>'.
+            ]) . '</td><td style="margin: 3px; padding: 3px">'.
             DateTimePicker::widget([
                 'name' => 'start_time',
                 'value' => '2018-12-01 00:00:00',
@@ -242,7 +244,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td>'.
+            ]).'</td><td style="margin: 3px; padding: 3px">'.
             DateTimePicker::widget([
                 'name' => 'end_time',
                 'value' => '2021-12-31 00:00:00',
@@ -251,7 +253,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td>'.Html::submitButton(Yii::t('app', 'Выбрать'), [
+            ]).'</td><td style="margin: 3px; padding: 3px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']).'</td><td>{export}</td></tr></table></form>',
             'options' => ['style' => 'width:100%']
         ],
@@ -295,6 +297,16 @@ echo GridView::widget([
     'responsive' => false,
     'hover' => true,
     'floatHeader' => false,
+    'toolbar' => [
+        ['content' =>
+            '<table style="width: 100%"><tr><td style="align-content: end">{export}</td></tr></table>',
+            'options' => ['style' => 'width:100%']
+        ],
+    ],
+    'export' => [
+        'target' => GridView::TARGET_BLANK,
+        'filename' => 'tasks'
+    ],
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Задачи в работе',

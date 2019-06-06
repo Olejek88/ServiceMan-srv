@@ -3,9 +3,9 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Request */
+/* @var $model common\models\Shutdown */
 
-$this->title = Yii::t('app', 'Создать заявку');
+$this->title = Yii::t('app', 'Создать аварийное подключение');
 ?>
 <div class="task-request-create box-padding">
 

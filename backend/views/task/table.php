@@ -2,9 +2,7 @@
 /* @var $searchModel backend\models\TaskSearch */
 
 use common\components\MainFunctions;
-use common\models\Users;
 use common\models\WorkStatus;
-use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use kartik\widgets\DateTimePicker;

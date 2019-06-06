@@ -61,6 +61,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
+        'mergeHeader' => true,
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
@@ -73,6 +74,7 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
+        'mergeHeader' => true,
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
