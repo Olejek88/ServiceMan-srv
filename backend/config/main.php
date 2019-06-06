@@ -96,6 +96,7 @@ return [
                 '/timeline' => 'site/timeline',
                 '/login' => 'site/login',
                 '/logout' => 'site/logout',
+                '/signup' => 'site/signup',
                 '<controller>/<id:\d+>' => '<controller>/create',
                 '<controller>/<id:\d+>' => '<controller>/delete',
                 '<controller>/<id:\d+>' => '<controller>/view',

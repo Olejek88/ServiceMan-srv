@@ -3,11 +3,11 @@
 namespace common\models;
 
 use Yii;
-use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use yii\base\InvalidConfigException;
+use Exception;
 
 /**
  * User model
@@ -64,7 +64,16 @@ class User extends ActiveRecord implements IdentityInterface
     public function behaviors()
     {
         return [
-            TimestampBehavior::class,
+            'timestamp' => [
+                'class' => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'created_at',
+                    ActiveRecord::EVENT_BEFORE_UPDATE => 'updated_at',
+                ],
+                'value' => function () {
+                    return date('Y-m-d H-i-s');
+                },
+            ],
         ];
     }
 
@@ -106,7 +115,6 @@ class User extends ActiveRecord implements IdentityInterface
      * @inheritdoc
      *
      * @return User
-     * @throws NotSupportedException
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
@@ -242,7 +250,7 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $password Пароль.
      *
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function setPassword($password)
     {
@@ -253,7 +261,7 @@ class User extends ActiveRecord implements IdentityInterface
      * Generates "remember me" authentication key
      *
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateAuthKey()
     {
@@ -265,7 +273,7 @@ class User extends ActiveRecord implements IdentityInterface
      *
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function generatePasswordResetToken()
     {
@@ -346,7 +354,9 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @return null|Users
      */
-    public function getUsers() {
+    public function getUsers()
+    {
         return Users::findOne(['user_id' => $this->_id]);
     }
+
 }

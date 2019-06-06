@@ -22,6 +22,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
+use Throwable;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -215,16 +216,20 @@ class UsersController extends Controller
      */
     public function actionDashboard()
     {
-        $users = Users::find()->where('name!="sUser"')->orderBy('createdAt DESC')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->andWhere(['oid' => Users::findOne(['user_id' => Yii::$app->user->id])->oid])
+            ->orderBy('createdAt DESC')
+            ->all();
         $user_property[][] = '';
         $count = 0;
         foreach ($users as $user) {
             $user_photo = Photo::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['photos'] = $user_photo;
-            $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['alarms'] = $user_alarms;
-            $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['messages'] = $user_messages;
+//            $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
+//            $user_property[$count]['alarms'] = $user_alarms;
+//            $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
+//            $user_property[$count]['messages'] = $user_messages;
 
             $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->
             andWhere('date > NOW() - INTERVAL 7 DAY')->count();
@@ -369,7 +374,7 @@ class UsersController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)

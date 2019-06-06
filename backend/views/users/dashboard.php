@@ -37,13 +37,15 @@ $this->title = Yii::t('app', 'Пользователи');
                             <li><a href="#">Фотографий
                             <span class="pull-right badge bg-blue">' . $user_property[$count]['photos'] . '</span></a></li>
                             <li><a href="#">Сообщений 
-                            <span class="pull-right badge bg-green">' . $user_property[$count]['messages'] . '</span></a></li>
+                            <span class="pull-right badge bg-green">' . /*$user_property[$count]['messages'] . */
+            '</span></a></li>
                             <li><a href="#">Домов/квартир 
-                            <span class="pull-right badge bg-orange">' . count($user_property[$count]['houses']) . ' / ' .
+                            <span class="pull-right badge bg-orange">' . /*count($user_property[$count]['houses']) . */
+            ' / ' .
             $user_property[$count]['objects'] . '</span></a>
                             </li>
                             <li>'.Html::a('Посещено <span class="pull-right badge bg-green">' . $user_property[$count]['visited'] . ' / ' .
-                            $user_property[$count]['visited_total'] . '%</span>',
+                /*$user_property[$count]['visited_total'] . */ '%</span>',
                             ['/users/table', 'id' => Html::encode($user['_id']),
                                 'date_start' => '2018-09-27 00:00:00',
                                 'date_end' => '2018-10-07 00:00:00']).' 

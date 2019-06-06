@@ -1,6 +1,8 @@
 <?php
+
 namespace backend\controllers;
 
+use backend\models\SignupForm;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
@@ -9,26 +11,23 @@ use common\models\Contragent;
 use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
-use common\models\EquipmentAttribute;
 use common\models\EquipmentType;
 use common\models\Journal;
 use common\models\Objects;
 use common\models\Gpstrack;
 use common\models\LoginForm;
 use common\models\Measure;
-use common\models\ObjectsAttribute;
 use common\models\Photo;
-use common\models\Resident;
 use common\models\Street;
-use common\models\Subject;
+use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
-use common\models\UsersAttribute;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
+use Throwable;
 
 /**
  * Site controller
@@ -335,7 +334,7 @@ class SiteController extends Controller
         $equipmentCount = Equipment::find()->count();
         $contragentCount = Contragent::find()->count();
         $equipmentTypeCount = EquipmentType::find()->count();
-        $usersCount = Users::find()->count();
+//        $usersCount = Users::find()->count();
 
         $last_measures = Measure::find()
             ->where('createdAt > (NOW()-(4*24*3600000));')
@@ -360,7 +359,11 @@ class SiteController extends Controller
          * Работа с картой
          */
         $userData = array();
-        $users = Users::find()->where('name != "sUser"')->select('*')->all();
+        $users = Users::find()
+            ->where('name != "sUser"')
+            ->andWhere(['oid' => Users::findOne(['user_id' => Yii::$app->user->id])->oid])
+            ->select('*')
+            ->all();
         $userList[] = $users;
         $usersCount = count($users);
 
@@ -502,6 +505,30 @@ class SiteController extends Controller
     }
 
     /**
+     * Signup action.
+     *
+     * @return string
+     * @throws Throwable
+     */
+    public function actionSignup()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->user->login(User::findByUsername($model->username), true ? 3600 * 24 * 30 : 0);
+            $this->goBack();
+        } else {
+            $model->password = '';
+            return $this->render('signup', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
      * Action error
      *
      * @return string
@@ -610,7 +637,7 @@ class SiteController extends Controller
         foreach ($photos as $photo) {
             $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
             $events[] = ['date' => $photo['createdAt'], 'event' => self::formEvent($photo['createdAt'], 'photo',
-                $photo['_id'], 'Добавлено фото', $text,$photo['user']['name'])];
+                $photo['_id'], 'Добавлено фото', $text, $photo['user']['name'])];
         }
 
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
@@ -685,8 +712,8 @@ class SiteController extends Controller
         $event .= '</div></li>';
         return $event;
     }
-    
-        /**
+
+    /**
      * Build tree of files
      *
      * @return mixed
@@ -712,8 +739,7 @@ class SiteController extends Controller
                     $links = Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
                         [EquipmentController::getDocDir($documentation) . $documentation['path']], ['title' => $documentation['title']]
                     );
-                }
-                else {
+                } else {
                     $size = "неизвестен";
                     $links = '';
                 }
