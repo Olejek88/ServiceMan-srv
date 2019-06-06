@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "measure".
@@ -22,6 +23,7 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property Users $user
+ * @property ActiveQuery $measureType
  * @property Equipment $equipment
  */
 class Measure extends ActiveRecord

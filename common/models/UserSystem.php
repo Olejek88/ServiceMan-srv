@@ -15,6 +15,9 @@ use yii\db\ActiveRecord;
  * @property string $equipmentSystemUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $system
  */
 class UserSystem extends ActiveRecord
 {

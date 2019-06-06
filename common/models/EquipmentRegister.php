@@ -4,10 +4,12 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "equipment_register".
  *
+ * @property int $_id
  * @property string $uuid
  * @property string $oid идентификатор организации
  * @property string $equipmentUuid
@@ -15,10 +17,12 @@ use yii\db\ActiveRecord;
  * @property string $userUuid
  * @property string $date
  * @property string $description
+ * @property int $createdAt
+ * @property int $changedAt
  *
  * @property User $user
+ * @property ActiveQuery $registerType
  * @property Equipment $equipment
- * @property EquipmentRegisterType $equipmentRegisterType
  */
 
 class EquipmentRegister extends ActiveRecord

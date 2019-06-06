@@ -7,6 +7,7 @@ use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use yii\base\InvalidConfigException;
 
 /**
  * User model
@@ -285,15 +286,15 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * @param null $duration
      * @return mixed
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public function generateAccessToken($duration = null)
     {
         if ($duration === null) {
-            $duration = \Yii::$app->params['duration']['week'];
+            $duration = Yii::$app->params['duration']['week'];
         }
 
-        $token = \Yii::createObject([
+        $token = Yii::createObject([
             'class' => UserTokenAuth::class,
             'valid_till' => date('Y-m-d H:i:s', time() + $duration),
 //            'type' => UserTokenAuth::AUTH_TYPE,

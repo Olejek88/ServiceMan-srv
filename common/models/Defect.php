@@ -13,6 +13,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid
  * @property string $userUuid
  * @property string $title
  * @property string $date

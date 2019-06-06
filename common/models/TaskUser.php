@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "task_user".
@@ -14,6 +15,9 @@ use yii\db\ActiveRecord;
  * @property string $taskUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $task
  */
 class TaskUser extends ActiveRecord
 {

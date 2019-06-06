@@ -13,7 +13,6 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $oid идентификатор организации
  * @property string $equipmentUuid
  * @property string $documentationTypeUuid
  * @property string $title
@@ -197,7 +196,7 @@ class Documentation extends ActiveRecord
      */
     public function getDocUrl()
     {
-        $dbName = \Yii::$app->session->get('user.dbname');
+        $dbName = Yii::$app->session->get('user.dbname');
         if ($this->equipmentTypeUuid != null) {
             $typeUuid = $this->equipmentTypeUuid;
         } else if ($this->equipment->equipmentTypeUuid != null) {
@@ -209,7 +208,9 @@ class Documentation extends ActiveRecord
         $localPath = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
             . $typeUuid . '/' . $this->path;
         if (file_exists(Yii::getAlias($localPath))) {
-            $userName = \Yii::$app->user->identity->username;
+            /** @var User $identity */
+            $identity = Yii::$app->user->identity;
+            $userName = $identity->username;
             $dir = 'storage/' . $userName . '/' . self::$_IMAGE_ROOT . '/'
                 . $typeUuid . '/' . $this->path;
             $url = Yii::$app->request->BaseUrl . '/' . $dir;
@@ -236,7 +237,7 @@ class Documentation extends ActiveRecord
             return null;
         }
 
-        $dbName = \Yii::$app->session->get('user.dbname');
+        $dbName = Yii::$app->session->get('user.dbname');
         $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
             . $typeUuid . '/';
         return $dir;
@@ -252,7 +253,7 @@ class Documentation extends ActiveRecord
      */
     public function getDocDirType($typeUuid)
     {
-        $dbName = \Yii::$app->session->get('user.dbname');
+        $dbName = Yii::$app->session->get('user.dbname');
         $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
             . $typeUuid . '/';
         return $dir;

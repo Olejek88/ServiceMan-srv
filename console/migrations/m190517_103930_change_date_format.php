@@ -12,12 +12,10 @@ class m190517_103930_change_date_format extends Migration
      */
     public function safeUp()
     {
-        //$this->dropColumn('{{%task}}', 'date');
-        //$this->dropColumn('{{%task}}', 'startDate');
-        //$this->dropColumn('{{%task}}', 'endDate');
+        $this->dropColumn('{{%task}}', 'date');
 
-        $this->addColumn('{{%task}}', 'startDate', $this->dateTime()->defaultExpression("NULL"));
-        $this->addColumn('{{%task}}', 'endDate', $this->dateTime()->defaultExpression("NULL"));
+        $this->alterColumn('{{%task}}', 'startDate', $this->dateTime()->defaultExpression('NULL'));
+        $this->alterColumn('{{%task}}', 'endDate', $this->dateTime()->defaultExpression('NULL'));
     }
 
     /**

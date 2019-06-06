@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -79,10 +80,10 @@ class Organization extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            '_id' => \Yii::t('app', '№'),
-            'uuid' => \Yii::t('app', 'Uuid'),
-            'title' => \Yii::t('app', 'Наименование'),
-            'inn' => \Yii::t('app', 'ИНН'),
+            '_id' => Yii::t('app', '№'),
+            'uuid' => Yii::t('app', 'Uuid'),
+            'title' => Yii::t('app', 'Наименование'),
+            'inn' => Yii::t('app', 'ИНН'),
             'secret' => Yii::t('app', 'Секрет'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),

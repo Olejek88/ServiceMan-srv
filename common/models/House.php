@@ -25,6 +25,7 @@ use yii\db\Expression;
  * @property Street $street
  * @property HouseStatus $houseStatus
  * @property Photo $photo
+ * @property string $fullTitle
  * @property HouseType $houseType
  */
 class House extends ActiveRecord

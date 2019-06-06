@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "object_contragent".
@@ -13,6 +14,8 @@ use yii\db\ActiveRecord;
  * @property string $objectUuid
  * @property string $contragentUuid
  * @property string $createdAt
+ * @property ActiveQuery $object
+ * @property ActiveQuery $contragent
  * @property string $changedAt
  */
 class ObjectContragent extends ActiveRecord

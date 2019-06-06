@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "user_house".
@@ -14,6 +15,9 @@ use yii\db\ActiveRecord;
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $house
  */
 class UserHouse extends ActiveRecord
 {
