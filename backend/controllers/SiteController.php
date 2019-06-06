@@ -482,7 +482,6 @@ class SiteController extends Controller
      * Login action.
      *
      * @return string
-     * @throws \yii\web\HttpException
      */
     public function actionLogin()
     {
@@ -699,34 +698,53 @@ class SiteController extends Controller
         $documentationTypes = DocumentationType::find()->all();
         $documentationCount = 0;
         foreach ($documentationTypes as $documentationType) {
-            $tree['children'][0]['children'][] = ['title' => $documentationType['title'],
+            $documentations = Documentation::find()->where(['documentationTypeUuid' => $documentationType['uuid']])->all();
+            $tree['children'][0]['children'][] = [
+                'title' => $documentationType['title'],
                 'key' => $documentationType['_id'],
                 'what' => 'documentation',
                 'types' => 1,
                 'expanded' => true, 'folder' => true];
-            $documentations = Documentation::find()->where(['documentationTypeUuid' => $documentationType['uuid']])->all();
+
+            $sum_size=0;
             foreach ($documentations as $documentation) {
                 $fileName = EquipmentController::getDocDir($documentation) . $documentation['path'];
                 if (is_file($fileName)) {
                     $size = number_format(filesize($fileName) / 1024, 2) . 'Кб';
+                    $real_size=filesize($fileName) / 1024;
                     $links = Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
                         [EquipmentController::getDocDir($documentation) . $documentation['path']], ['title' => $documentation['title']]
                     );
+                    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
                 }
                 else {
                     $size = "неизвестен";
                     $links = '';
+                    $real_size=0;
+                    $ext = "-";
                 }
+                $title = 'общее';
+                if ($documentation['equipment'])
+                    $title = $documentation['equipment']['title'];
+                if ($documentation['equipmentType'])
+                    $title = 'Тип: '. $documentation['equipmentType']['title'];
 
                 $tree['children'][0]['children'][$documentationCount]['children'][] =
-                    ['title' => $documentation['title'],
+                    [
+                        'title' => '['.$title.'] '.$documentation['title'],
                         'key' => $documentation['_id'] . "",
                         'date' => $documentation['createdAt'],
                         'size' => $size,
                         'links' => $links,
+                        'ext' => $ext,
                         'expanded' => false,
                         'folder' => false];
+                $sum_size+=$real_size;
             }
+            if ($sum_size>0)
+                $tree['children'][0]['children'][$documentationCount]['size'] = number_format($sum_size / 1024, 2) . 'Мб';
+            else
+                $tree['children'][0]['children'][$documentationCount]['size'] = 'нет файлов';
             $documentationCount++;
         }
         return $this->render('files', [
@@ -753,12 +771,24 @@ class SiteController extends Controller
                 if ($what == "documentation") {
                     $documentation = new Documentation();
                     return $this->renderAjax('../documentation/_add_form', [
-                        'documentation' => $documentation
+                        'documentation' => $documentation,
+                        'equipmentType' => $type,
+                        'source' => 'site/files'
                     ]);
                 }
                 return false;
             }
         }
         return 'Выберите в дереве тип атрибута или документации';
+    }
+
+    public function actionRemove()
+    {
+        if (!isset($_POST["types"]) && isset($_POST["selected_node"])) {
+            $model = Documentation::find()->where(['_id' => $_POST["selected_node"]])->one();
+            if ($model)
+              $model->delete();
+        }
+        return self::actionFiles();
     }
 }

@@ -774,16 +774,7 @@ class EquipmentController extends Controller
 
     static function getDocDir($documentation)
     {
-        if ($documentation['equipmentTypeUuid'] != null) {
-            return 'storage/doc/' . $documentation['equipmentTypeUuid'] . '/';
-        }
-
-        //$identity = \Yii::$app->user->identity;
-        //$userName = $identity->oid;
-        //$dir = 'storage/doc/' . $typeUuid . '/';
         $dir = 'storage/doc/';
-        //$dir = 'storage/' . $userName . $path;
-        //$url = Yii::$app->request->BaseUrl . '/' . $dir;
         return $dir;
     }
 

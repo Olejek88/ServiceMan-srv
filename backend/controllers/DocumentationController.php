@@ -352,7 +352,7 @@ class DocumentationController extends Controller
      */
     private static function _saveFile($model, $file)
     {
-        $dir = $model->getDocDir();
+        $dir ='storage/doc/';
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 return null;
@@ -390,8 +390,14 @@ class DocumentationController extends Controller
     public function actionSave()
     {
         $model = new Documentation();
+        $model->equipmentTypeUuid = null;
+        $model->equipmentUuid = null;
 
         if ($model->load(Yii::$app->request->post())) {
+            if ($model->equipmentTypeUuid=='')
+                $model->equipmentTypeUuid = null;
+            if ($model->equipmentUuid=='')
+                $model->equipmentUuid = null;
             if (!$model->validate()) {
                 return false;
             }
@@ -406,7 +412,10 @@ class DocumentationController extends Controller
             }
 
             if ($model->save(false)) {
-                return $this->redirect(['/equipment/tree']);
+                if (isset($_POST['source']))
+                    return $this->redirect(['../site/files']);
+                else
+                    return $this->redirect(['/equipment/tree']);
             }
         }
         return $this->render('_add_form', ['model' => $model]);

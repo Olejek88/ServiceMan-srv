@@ -1,5 +1,6 @@
 <?php
 
+use backend\controllers\EquipmentController;
 use common\models\DocumentationType;
 use common\models\EquipmentType;
 use kartik\grid\GridView;
@@ -87,13 +88,21 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
+        'attribute' => 'createdAt',
+        'vAlign' => 'middle',
+        'width' => '120px',
+        'header' => 'Создан',
+        'mergeHeader' => true
+    ],
+    [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'buttons'=>[
             'link' => function ($url,$model) {
-                return Html::a( '<span class="fa fa-file"></span>', $model->getDocUrl(),
-                    ['title' => Yii::t('app', $model->title)]);
+                return Html::a( '<span class="fa fa-file"></span>',
+                    '../'.EquipmentController::getDocDir($model) . $model['path'],
+                    ['title' => $model->title, 'data-pjax' => '0']);
             }
         ],
         'template'=>'{link} {edit} {delete}'
