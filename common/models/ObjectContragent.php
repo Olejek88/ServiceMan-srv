@@ -1,8 +1,8 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\ActiveQuery;
  * @property ActiveQuery $contragent
  * @property string $changedAt
  */
-class ObjectContragent extends ActiveRecord
+class ObjectContragent extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.

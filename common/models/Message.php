@@ -1,9 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -23,7 +23,7 @@ use yii\db\Expression;
  * @property Users $fromUser
  * @property Users $toUser
  */
-class Message extends ActiveRecord
+class Message extends ZhkhActiveRecord
 {
     const MESSAGE_NEW = 0;
     const MESSAGE_READ = 1;

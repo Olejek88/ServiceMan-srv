@@ -2,8 +2,8 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "receipt".
@@ -25,7 +25,7 @@ use yii\db\ActiveRecord;
  * @property Contragent $contragent
  * @property Users $user
  */
-class Receipt extends ActiveRecord
+class Receipt extends ZhkhActiveRecord
 {
     /**
      * @inheritdoc

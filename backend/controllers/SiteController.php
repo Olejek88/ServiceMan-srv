@@ -28,6 +28,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
 use Throwable;
+use yii\base\InvalidConfigException;
 
 /**
  * Site controller
@@ -87,6 +88,7 @@ class SiteController extends Controller
      * Displays homepage.
      *
      * @return string
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -231,10 +233,7 @@ class SiteController extends Controller
                     ->asArray()
                     ->all();*/
 
-        $userUuid = Users::find()
-            ->select('uuid, name')
-            ->asArray()
-            ->all();
+//        $userUuid = Users::find()->select('uuid, name')->asArray()->all();
 
         // $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
 
@@ -315,6 +314,7 @@ class SiteController extends Controller
      * Dashboard
      *
      * @return string
+     * @throws InvalidConfigException
      */
     public function actionDashboard()
     {
@@ -337,7 +337,7 @@ class SiteController extends Controller
 //        $usersCount = Users::find()->count();
 
         $last_measures = Measure::find()
-            ->where('createdAt > (NOW()-(4*24*3600000));')
+            ->where('createdAt > (NOW()-(4*24*3600000))')
             ->count();
         $complete = 0;
         if ($flatCount > 0)
@@ -352,8 +352,7 @@ class SiteController extends Controller
             ->limit(20)
             ->all();
 
-        $users = Users::find()
-            ->all();
+//        $users = Users::find()->all();
 
         /**
          * Работа с картой
@@ -361,7 +360,6 @@ class SiteController extends Controller
         $userData = array();
         $users = Users::find()
             ->where('name != "sUser"')
-            ->andWhere(['oid' => Users::findOne(['user_id' => Yii::$app->user->id])->oid])
             ->select('*')
             ->all();
         $userList[] = $users;
@@ -485,7 +483,6 @@ class SiteController extends Controller
      * Login action.
      *
      * @return string
-     * @throws \yii\web\HttpException
      */
     public function actionLogin()
     {
@@ -519,7 +516,7 @@ class SiteController extends Controller
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->user->login(User::findByUsername($model->username), true ? 3600 * 24 * 30 : 0);
-            $this->goBack();
+            return $this->goBack();
         } else {
             $model->password = '';
             return $this->render('signup', [
@@ -587,7 +584,7 @@ class SiteController extends Controller
                 ->orderBy('createdAt DESC')
                 ->one();
 
-            $status = '<a class="btn btn-success btn-xs">Значение</a>';
+//            $status = '<a class="btn btn-success btn-xs">Значение</a>';
             $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
             if ($path == null)
                 $path = 'images/no-image-icon-4.png';

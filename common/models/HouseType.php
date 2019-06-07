@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class HouseType extends ActiveRecord
+class HouseType extends ZhkhActiveRecord
 {
     const HOUSE_TYPE_PRIVATE = "6A0AB43B-AEA7-44BE-8E6C-001F4F854A4F";
 

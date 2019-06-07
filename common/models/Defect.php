@@ -2,10 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -25,9 +25,10 @@ use yii\db\Expression;
  *
  * @property Task $task
  * @property Users $user
+ * @property ActiveQuery $photo
  * @property Equipment $equipment
  */
-class Defect extends ActiveRecord
+class Defect extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -109,10 +110,12 @@ class Defect extends ActiveRecord
     {
         return $this->hasOne(Equipment::class, ['uuid' => 'equipmentUuid']);
     }
+
     public function getUser()
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
+
     public function getTask()
     {
         return $this->hasOne(Task::class, ['uuid' => 'taskUuid']);

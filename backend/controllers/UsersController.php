@@ -23,6 +23,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
 use Throwable;
+use yii\base\InvalidConfigException;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -213,12 +214,12 @@ class UsersController extends Controller
 
     /**
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionDashboard()
     {
         $users = Users::find()
             ->where('name!="sUser"')
-            ->andWhere(['oid' => Users::findOne(['user_id' => Yii::$app->user->id])->oid])
             ->orderBy('createdAt DESC')
             ->all();
         $user_property[][] = '';

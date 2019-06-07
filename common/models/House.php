@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -28,7 +28,7 @@ use yii\db\Expression;
  * @property string $fullTitle
  * @property HouseType $houseType
  */
-class House extends ActiveRecord
+class House extends ZhkhActiveRecord
 {
     public function behaviors()
     {

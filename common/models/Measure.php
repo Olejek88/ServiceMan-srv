@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
 
@@ -26,7 +26,7 @@ use yii\db\ActiveQuery;
  * @property ActiveQuery $measureType
  * @property Equipment $equipment
  */
-class Measure extends ActiveRecord
+class Measure extends ZhkhActiveRecord
 {
 
     /**

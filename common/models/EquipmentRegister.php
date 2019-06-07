@@ -2,8 +2,8 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\db\ActiveQuery;
 
 /**
@@ -24,8 +24,7 @@ use yii\db\ActiveQuery;
  * @property ActiveQuery $registerType
  * @property Equipment $equipment
  */
-
-class EquipmentRegister extends ActiveRecord
+class EquipmentRegister extends ZhkhActiveRecord
 {
     /**
      * @inheritdoc

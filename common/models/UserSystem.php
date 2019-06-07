@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -19,7 +20,7 @@ use yii\db\ActiveRecord;
  * @property ActiveQuery $user
  * @property ActiveQuery $system
  */
-class UserSystem extends ActiveRecord
+class UserSystem extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.

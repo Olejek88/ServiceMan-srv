@@ -2,9 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use yii\db\Expression;
 
 /**
@@ -30,7 +31,7 @@ use yii\db\Expression;
  * @property User $user
  * @property Organization|null $organization
  */
-class Users extends ActiveRecord
+class Users extends ZhkhActiveRecord
 {
     private static $_IMAGE_ROOT = 'users';
     public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
@@ -141,7 +142,7 @@ class Users extends ActiveRecord
     /**
      * Связываем пользователей из yii с пользователями из sman.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -161,6 +162,7 @@ class Users extends ActiveRecord
             return false;
         }
     }
+
     /**
      * Возвращает id.
      *
@@ -200,7 +202,7 @@ class Users extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getOrganization()
     {

@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
@@ -23,7 +24,7 @@ use yii\db\ActiveQuery;
  * @property ActiveQuery $operationTemplate
  * @property ActiveQuery $workStatus
  */
-class Operation extends ActiveRecord
+class Operation extends ZhkhActiveRecord
 {
     /**
      * Behaviors
