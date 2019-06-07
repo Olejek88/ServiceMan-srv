@@ -38,7 +38,6 @@ $this->title = $model->title;
                                 'director',
                                 'email',
                                 'contragentTypeUuid',
-                                'status',
                                 'createdAt',
                                 'changedAt',
                             ],

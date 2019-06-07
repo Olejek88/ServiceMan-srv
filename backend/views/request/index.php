@@ -69,6 +69,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'requestStatusUuid',
+        'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '150px',
         'header' => 'Статус заявки',
@@ -142,7 +143,6 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'comment',
-        'hAlign' => 'center',
         'vAlign' => 'middle',
         'header' => ' Причина обращения',
         'format' => 'raw',
@@ -183,7 +183,12 @@ $gridColumns = [
             if ($model['taskUuid']) {
                 $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
                 if ($task) {
-                    $order = 'Задача №' . $task['_id'] . ' ';
+                    $order = Html::a('Задача №' . $task['_id'],
+                        ['../task', 'uuid' => $task['uuid']],
+                        [
+                            'title' => 'Редактировать заявку',
+                        ]);
+                    $order.=' ';
                     if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
                         $order .= "<span class='badge' style='background-color: green; height: 22px'>Выполнена</span>";
                     else
@@ -325,6 +330,12 @@ echo GridView::widget([
         'heading' => '<i class="fa fa-tasks"></i>&nbsp; Журнал диспетчера',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
+    'rowOptions' => function($model) {
+        if (isset($_GET['uuid'])){
+            if ($_GET['uuid'] == $model['uuid'])
+                return ['class' => 'danger'];
+        }
+    }
 ]);
 
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",

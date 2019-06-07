@@ -111,7 +111,7 @@ $gridColumns = [
         }
     ],
     [
-        'attribute' => 'contragentType',
+        'attribute' => 'contragentTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [

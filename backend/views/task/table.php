@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\TaskSearch */
 
 use common\components\MainFunctions;
+use common\models\Request;
 use common\models\WorkStatus;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -154,7 +155,11 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             // или автоматически по расписанию
-            return 'заявка';
+            $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
+            if ($request)
+                return Html::a('заявка',['../request', 'uuid' => $request['uuid']]);
+            else
+                return 'плановая';
         }
     ],
  ];
@@ -169,6 +174,11 @@ echo GridView::widget([
     'beforeHeader' => [
         '{toggleData}'
     ],
+    'rowOptions'=>function($model){
+        if(isset($_GET['uuid']) && $_GET['uuid'] == $model['uuid']){
+            return ['class' => 'danger'];
+        }
+    },
     'toolbar' => [
         ['content' =>
             '<form action="table"><div class="row" style="margin-bottom: 8px; width:100%"><div class="col-sm-4" style="width:34%">'.

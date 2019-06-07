@@ -61,15 +61,17 @@ class ContragentSearch extends Contragent
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'contragentTypeUuid' => $this->contragentTypeUuid,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'title', $this->address])
-            ->andFilterWhere(['like', 'title', $this->phone])
-            ->andFilterWhere(['like', 'title', $this->inn]);
+            ->andFilterWhere(['like', 'address', $this->address])
+            ->andFilterWhere(['like', 'director', $this->director])
+            ->andFilterWhere(['like', 'phone', $this->phone])
+            ->andFilterWhere(['like', 'inn', $this->inn]);
 
         return $dataProvider;
     }

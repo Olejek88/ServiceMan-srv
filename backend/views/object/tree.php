@@ -10,29 +10,25 @@ $this->title = 'Дерево абонентов системы';
 <table id="tree" style="width: 100%; font-weight: normal">
     <colgroup>
         <col width="*">
-        <col width="160px">
-        <col width="120px">
-        <col width="130px">
-        <col width="130px">
-        <col width="160px">
-        <col width="130px">
-        <col width="120px">
         <col width="*">
+        <col width="130px">
+        <col width="120px">
+        <col width="130px">
+        <col width="160px">
+        <col width="130px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="12" style="background-color: #3c8dbc; color: whitesmoke">Абоненты</th>
+        <th align="center" colspan="7" style="background-color: #3c8dbc; color: whitesmoke">Контрагенты</th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
         <th align="center">Адрес</th>
-        <th align="center">Ответственный</th>
-        <th>Статус</th>
-        <th>Дата обхода</th>
-        <th>Показания</th>
-        <th>Пользователь</th>
-        <th>Дата фото</th>
-        <th>Фото</th>
-        <th>Сообщение</th>
+        <th align="center">Адрес</th>
+        <th>ИНН</th>
+        <th>Телефон</th>
+        <th>Е-мэйл</th>
+        <th>Тип</th>
+        <th>Дата</th>
     </tr>
     </thead>
     <tbody>
@@ -44,16 +40,24 @@ $this->title = 'Дерево абонентов системы';
         <td class="center"></td>
         <td class="alt"></td>
         <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
     </tr>
     </tbody>
 </table>
-<?php echo FancytreeWidget::widget([
+
+<?php
+$this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js', ['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
+$this->registerJsFile('/js/custom/modules/list/jquery.contextMenu.min.js',
+    ['depends' => ['yii\jui\JuiAsset']]);
+$this->registerCssFile('/css/custom/modules/list/ui.fancytree.css');
+$this->registerCssFile('/css/custom/modules/list/jquery.contextMenu.min.css');
+
+echo FancytreeWidget::widget([
     'options' => [
         'id' => 'tree',
         'source' => $contragents,
-        'extensions' => ['dnd', "glyph", "table"],
+        'extensions' => ['dnd', "glyph", "table", 'contextMenu'],
+        'checkbox' => true,
+        'selectMode' => 3,
         'glyph' => 'glyph_opts',
         'edit' => [
             'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
@@ -83,7 +87,7 @@ $this->title = 'Дерево абонентов системы';
         'contextMenu' => [
             'menu' => [
                 'new' => [
-                    'name' => 'Добавить новое',
+                    'name' => 'Добавить',
                     'icon' => 'add',
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
@@ -95,13 +99,11 @@ $this->title = 'Дерево абонентов системы';
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    type: node.type,
-                                    model_uuid: node.data.model_uuid,
-                                    type_uuid: node.data.type_uuid                                                                        
+                                    type: node.type
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAddEquipment\').modal(\'show\');
-                                    $(\'#modalContentEquipment\').html(data);
+                                    $(\'#modalAdd\').modal(\'show\');
+                                    $(\'#modalContent\').html(data);
                                 }
                            }); 
                         }                        
@@ -112,7 +114,6 @@ $this->title = 'Дерево абонентов системы';
                     'icon' => 'edit',
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
-                        if (node.folder==false) {
                             $.ajax({
                                 url: "edit",
                                 type: "post",
@@ -120,121 +121,68 @@ $this->title = 'Дерево абонентов системы';
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    type: node.type,
-                                    model_uuid: node.data.model_uuid,
-                                    type_uuid: node.data.type_uuid,
-                                    reference: "equipment"                                                                        
+                                    type: node.type                                    
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAddEquipment\').modal(\'show\');
-                                    $(\'#modalContentEquipment\').html(data);
-                                }
-                           }); 
-                        }                        
-                    }')
-                ],
-                'doc' => [
-                    'name' => 'Добавить документацию',
-                    'icon' => 'add',
-                    'callback' => new JsExpression('function(key, opt) {
-                            var node = $.ui.fancytree.getNode(opt.$trigger);
-                            $.ajax({
-                                url: "../documentation/add",
-                                type: "post",
-                                data: {
-                                    selected_node: node.key,
-                                    folder: node.folder,
-                                    uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
-                                },
-                                success: function (data) { 
-                                    $(\'#modalAddDocumentation\').modal(\'show\');
+                                    $(\'#modalAdd\').modal(\'show\');
                                     $(\'#modalContent\').html(data);
                                 }
-                            });
+                           }); 
                     }')
                 ],
-                'defect' => [
-                    'name' => 'Добавить дефект',
-                    'icon' => 'add',
+                'delete' => [
+                    'name' => "Удалить",
+                    'icon' => "delete",
                     'callback' => new JsExpression('function(key, opt) {
-                            var node = $.ui.fancytree.getNode(opt.$trigger);
-                            $.ajax({
-                                url: "../defect/add",
-                                type: "post",
-                                data: {
-                                    selected_node: node.key,
-                                    folder: node.folder,
-                                    uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
-                                },
-                                success: function (data) { 
-                                    $(\'#modalAddDefect\').modal(\'show\');
-                                    $(\'#modalContentDefect\').html(data);
-                                }
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                var node = $.ui.fancytree.getNode(opt.$trigger);
+                                $.ajax({
+                                      url: "remove",
+                                      type: "post",
+                                      data: {
+                                          selected_node: data.key,
+                                          folder: node.folder,
+                                          type: node.type,
+                                          uuid: node.data.uuid
+                                      },
+                                      success: function (result) {
+                                        data.remove();            
+                                      }                                    
+                                   });
                             });
-                    }')
-                ]
+                         }')
+                ],
             ]
         ],
 
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "userColumnIdx" => "2",
-            "statusColumnIdx" => "3",
-            "dateMeasureColumnIdx" => "4",
-            "valueColumnIdx" => "5",
-            "userMeasureColumnIdx" => "6",
-            "datePhotoColumnIdx" => "7",
-            "photoColumnIdx" => "8",
-            "messageColumnIdx" => "9"
+            "addressColumnIdx" => "2",
+            "innColumnIdx" => "3",
+            "phoneColumnIdx" => "4",
+            "emailColumnIdx" => "5",
+            "typeColumnIdx" => "6",
+            "dateColumnIdx" => "7"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).html(node.data.user);
-            $tdList.eq(2).html(node.data.status);
-            $tdList.eq(3).html(node.data.measure_date);
-            $tdList.eq(4).text(node.data.measure_value);
-            $tdList.eq(5).html(node.data.measure_user);
-            $tdList.eq(6).html(node.data.photo_date);
-            $tdList.eq(7).html(node.data.photo);
-            $tdList.eq(8).html(node.data.message);
+            $tdList.eq(1).html(node.data.address);
+            $tdList.eq(2).html(node.data.inn);
+            $tdList.eq(3).html(node.data.phone);
+            $tdList.eq(4).text(node.data.email);
+            $tdList.eq(5).html(node.data.type);
+            $tdList.eq(6).html(node.data.date);
         }')
     ]
 ]);
 ?>
 
-
-<div class="modal remote fade" id="modalRegister">
+<div class="modal remote fade" id="modalAdd">
     <div class="modal-dialog">
-        <div class="modal-content loader-lg">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title text-center">Показания</h4>
-            </div>
-            <div class="modal-body">
-                <table class="table table-striped table-hover text-left">
-                    <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Время</th>
-                        <th>Значение</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!--                    <?php /*foreach ($registers as $register): */ ?>
-                        <tr>
-                            <td><? /*= $register['uuid'] */ ?></td>
-                            <td><? /*= $register['user'] */ ?></td>
-                            <td><? /*= $register['type'] */ ?></td>
-                            <td><? /*= $register['date'] */ ?></td>
-                        </tr>
-                    --><?php /*endforeach; */ ?>
-                    </tbody>
-                </table>
-            </div>
+        <div class="modal-content loader-lg" id="modalContent">
         </div>
     </div>
 </div>

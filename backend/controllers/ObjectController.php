@@ -4,19 +4,16 @@ namespace backend\controllers;
 
 use backend\models\ObjectsSearch;
 use common\components\MainFunctions;
-use common\models\Equipment;
+use common\models\Contragent;
 use common\models\House;
-use common\models\Measure;
 use common\models\ObjectContragent;
 use common\models\Objects;
-use common\models\Photo;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
-use yii\helpers\Html;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
@@ -108,9 +105,9 @@ class ObjectController extends Controller
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 15;
             //if ($_GET['from'])
-            MainFunctions::register('object','Добавлен объект',
-                '<a class="btn btn-default btn-xs">'.$model['objectType']['title'].'</a> '.$model['title'].'<br/>'.
-                '<a class="btn btn-default btn-xs">Адрес</a> ул.'.$model['house']['street']['title'].',д.'.$model['house']['number']);
+            MainFunctions::register('object', 'Добавлен объект',
+                '<a class="btn btn-default btn-xs">' . $model['objectType']['title'] . '</a> ' . $model['title'] . '<br/>' .
+                '<a class="btn btn-default btn-xs">Адрес</a> ул.' . $model['house']['street']['title'] . ',д.' . $model['house']['number']);
 
             return $this->render('table', [
                 'searchModel' => $searchModel,
@@ -191,6 +188,10 @@ class ObjectController extends Controller
         foreach ($streets as $street) {
             $fullTree['children'][] = [
                 'title' => $street['title'],
+                'address' => $street['city']['title'] . ', ул.' . $street['title'],
+                'type' => 'street',
+                'expanded' => true,
+                'uuid' => $street['uuid'],
                 'folder' => true
             ];
             $houses = House::find()->select('uuid, number')->where(['streetUuid' => $street['uuid']])->
@@ -203,22 +204,41 @@ class ObjectController extends Controller
                 $childIdx = count($fullTree['children']) - 1;
                 $fullTree['children'][$childIdx]['children'][] = [
                     'title' => $house['number'],
+                    'address' => $street['title'] . ', ' . $house['number'],
+                    'type' => 'house',
+                    'expanded' => true,
+                    'uuid' => $house['uuid'],
                     'folder' => true
                 ];
                 $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($objects as $object) {
-                    $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
-                        'title' => $object['objectType']['title'].' '.$object['title'],
-                        'folder' => true
-                    ];
-                    $contragents = ObjectContragent::find()->where(['objectUuid' => $object['uuid']])->all();
-                    foreach ($contragents as $contragent) {
-                        $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
-                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
-                            'title' => $contragent['title'],
+                    if (!$object['deleted']) {
+                        $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
+                            'title' => $object['objectType']['title'] . ' ' . $object['title'],
+                            'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
+                            'type' => 'object',
+                            'uuid' => $object['uuid'],
                             'folder' => true
                         ];
+                        $objectContragents = ObjectContragent::find()->where(['objectUuid' => $object['uuid']])->all();
+                        foreach ($objectContragents as $objectContragent) {
+                            if (!$objectContragent['contragent']['deleted']) {
+                                $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                                $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
+                                    'title' => $objectContragent['contragent']['title'],
+                                    'address' => $objectContragent['contragent']['address'],
+                                    'inn' => $objectContragent['contragent']['inn'],
+                                    'phone' => $objectContragent['contragent']['phone'],
+                                    'email' => $objectContragent['contragent']['email'],
+                                    'contragentType' => $objectContragent['contragent']['contragentType']['title'],
+                                    'date' => $objectContragent['contragent']['createdAt'],
+                                    'type' => 'contragent',
+                                    'uuid' => $objectContragent['contragent']['uuid'],
+                                    'folder' => false
+                                ];
+                            }
+                        }
                     }
                 }
             }
@@ -230,130 +250,225 @@ class ObjectController extends Controller
     }
 
     /**
-     * Build tree of equipment by user
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования или объекта
      *
      * @return mixed
      */
-    public function actionTrees()
+    public
+    function actionNew()
     {
-        ini_set('memory_limit', '-1');
-        $c = 'children';
-        $fullTree = array();
-        $streets = Street::find()
-            ->select('*')
-            ->orderBy('title')
-            ->all();
-        $oCnt0 = 0;
-        foreach ($streets as $street) {
-            $last_user = '';
-            $last_date = '';
-            $house_count = 0;
-            $house_visited = 0;
-            $photo_count = 0;
-            $fullTree[$oCnt0]['title'] = $street['title'];
-            $oCnt1 = 0;
-            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
-            orderBy('number')->all();
-            foreach ($houses as $house) {
-                $user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
-                $user = Users::find()->where(['uuid' =>
-                    UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
-                ])->one();
-                $objects = Objects::find()->select('uuid,title')->where(['houseUuid' => $house['uuid']])->all();
-                foreach ($objects as $object) {
-                    $house_count++;
-                    $visited = 0;
-                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
-                    foreach ($equipments as $equipment) {
-                        $fullTree[$oCnt0][$c][$oCnt1]['title']
-                            = Html::a(
-                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', ' . $equipment['object']['title'],
-                            ['equipment/view', 'id' => $equipment['_id']]
-                        );
+        if (isset($_POST["selected_node"])) {
+            $folder = $_POST["folder"];
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["type"]))
+                $type = $_POST["type"];
+            else $type = 0;
 
-                        if ($user != null)
-                            $fullTree[$oCnt0][$c][$oCnt1]['user'] = Html::a(
-                                $user['name'],
-                                ['user-house/delete', 'id' => $user_house['_id']], ['target' => '_blank']
-                            );
-                        $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatusUuid'],'equipment_status');
+            if ($folder == "true" && $uuid && $type) {
+                if ($type == 'street') {
+                    $house = new House();
+                    return $this->renderAjax('_add_house_form', [
+                        'streetUuid' => $uuid,
+                        'house' => $house
+                    ]);
+                }
+                if ($type == 'house') {
+                    $object = new Objects();
+                    return $this->renderAjax('_add_object_form', [
+                        'houseUuid' => $uuid,
+                        'object' => $object
+                    ]);
+                }
+                if ($type == 'object') {
+                    $contragent = new Contragent();
+                    return $this->renderAjax('_add_contragent_form', [
+                        'objectUuid' => $uuid,
+                        'contragent' => $contragent
+                    ]);
+                }
+            }
+        }
+        return 'Нельзя добавить объект в этом месте';
+    }
 
-                        $fullTree[$oCnt0][$c][$oCnt1]['status'] = $status;
-                        $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
+     *
+     * @return mixed
+     */
+    public function actionEdit()
+    {
+        if (isset($_POST["selected_node"])) {
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["type"]))
+                $type = $_POST["type"];
+            else $type = 0;
 
-                        $measure = Measure::find()
-                            ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('date DESC')
-                            ->one();
-                        if ($measure) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                            $last_user = $measure['user']->name;
-                            $last_date = $measure['date'];
-                            $house_visited++;
-                            $visited++;
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
-                            $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
+            if ($uuid && $type) {
+                if ($type == 'street') {
+                    $street = Street::find()->where(['uuid' => $uuid])->one();
+                    if ($street) {
+                        return $this->renderAjax('_add_street_form', [
+                            'street' => $street,
+                            'streetUuid' => $uuid
+                        ]);
+                    }
+                }
+                if ($type == 'house') {
+                    $house = House::find()->where(['uuid' => $uuid])->one();
+                    if ($house) {
+                        return $this->renderAjax('_add_house_form', [
+                            'houseUuid' => $uuid,
+                            'house' => $house
+                        ]);
+                    }
+                }
+
+                if ($type == 'object') {
+                    $object = Objects::find()->where(['uuid' => $uuid])->one();
+                    if ($object) {
+                        return $this->renderAjax('_add_object_form', [
+                            'objectUuid' => $uuid,
+                            'object' => $object
+                        ]);
+                    }
+                }
+                if ($type == 'contragent') {
+                    $contragent = Contragent::find()->where(['uuid' => $uuid])->one();
+                    return $this->renderAjax('_add_contragent_form', [
+                        'contragentUuid' => $uuid,
+                        'contragent' => $contragent
+                    ]);
+                }
+            }
+        }
+        return 'Нельзя отредактировать этот объект';
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет удаление
+     *
+     * @return mixed
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public function actionRemove()
+    {
+        if (isset($_POST["selected_node"])) {
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["type"]))
+                $type = $_POST["type"];
+            else $type = 0;
+
+            if ($uuid && $type) {
+                if ($type == 'street') {
+                    $street = Street::find()->where(['uuid' => $uuid])->one();
+                    if ($street) {
+                        $house = House::find()->where(['streetUuid' => $street['uuid']])->one();
+                        if (!$house) {
+                            $street->delete();
                         }
-
-                        $photo = Photo::find()
-                            ->select('*')
-                            ->where(['objectUuid' => $equipment['uuid']])
-                            ->orderBy('createdAt DESC')
-                            ->one();
-                        if ($photo) {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a('фото',
-                                ['storage/equipment/' . $photo['uuid'] . '.jpg']
-                            );
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                            $last_user = $photo['user']->name;
-                            $photo_count++;
-                            if ($visited == 0) {
-                                $visited = 1;
-                                $house_visited++;
-                            }
-                        } else {
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
-                            $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
+                    }
+                }
+                if ($type == 'house') {
+                    $house = House::find()->where(['uuid' => $uuid])->one();
+                    if ($house) {
+                        $object = Objects::find()->where(['houseUuid' => $house['uuid']])->one();
+                        if (!$object) {
+                            $house->delete();
                         }
-                        $oCnt1++;
+                    }
+                }
+                if ($type == 'object') {
+                    $object = Objects::find()->where(['uuid' => $uuid])->one();
+                    if ($object) {
+                        $object['deleted'] = true;
+                        $object->save();
+                    }
+
+                }
+
+                if ($type == 'contragent') {
+                    $contragent = Contragent::find()->where(['uuid' => $uuid])->one();
+                    if ($contragent) {
+                        $contragent['deleted'] = true;
+                        $contragent->save();
+                    }
+
+                }
+            }
+        }
+        return 'Нельзя удалить этот объект';
+    }
+
+    /**
+     * Creates a new Object model.
+     * @return mixed
+     */
+    public
+    function actionSave()
+    {
+        if (isset($_POST["type"]))
+            $type = $_POST["type"];
+        else $type = 0;
+
+        if ($type) {
+            if ($type == 'street') {
+                if (isset($_POST['streetUuid'])) {
+                    $model = Street::find()->where(['uuid' => $_POST['streetUuid']])->one();
+                    if ($model->load(Yii::$app->request->post())) {
+                        if ($model->save(false)) {
+                            return $this->redirect(['/object/tree']);
+                        }
                     }
                 }
             }
-            $fullTree[$oCnt0]['measure_user'] = $last_user;
-            $fullTree[$oCnt0]['measure_date'] = $last_date;
-            $fullTree[$oCnt0]['photo_user'] = $last_user;
-            $fullTree[$oCnt0]['photo_date'] = $last_date;
-            $fullTree[$oCnt0]['photo'] = $photo_count;
-            $ok = 0;
-            if ($house_count > 0)
-                $ok = $house_visited * 100 / $house_count;
-            if ($ok > 100) $ok = 100;
-            if ($ok < 20) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical1">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } elseif ($ok < 45) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical2">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } elseif ($ok < 70) {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical4">' .
-                    number_format($ok, 2) . '%</div></div>';
-            } else {
-                $fullTree[$oCnt0]['status'] = '<div class="progress"><div class="critical3">' .
-                    number_format($ok, 2) . '%</div></div>';
+            if ($type == 'house') {
+                if (isset($_POST['houseUuid']))
+                    $model = House::find()->where(['uuid' => $_POST['houseUuid']])->one();
+                else
+                    $model = new House();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false)) {
+                        return $this->redirect(['/object/tree']);
+                    }
+                }
             }
-            $oCnt0++;
+            if ($type == 'object') {
+                if (isset($_POST['objectUuid']))
+                    $model = Objects::find()->where(['uuid' => $_POST['objectUuid']])->one();
+                else
+                    $model = new Objects();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false)) {
+                        return $this->redirect(['/object/tree']);
+                    }
+                }
+            }
+            if ($type == 'contragent') {
+                if (isset($_POST['contragentUuid']))
+                    $model = Contragent::find()->where(['uuid' => $_POST['contragentUuid']])->one();
+                else
+                    $model = new Contragent();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false) && isset($_POST['objectUuid'])) {
+                        $objectContragent = new ObjectContragent();
+                        $objectContragent->contragentUuid = $model['uuid'];
+                        $objectContragent->uuid = MainFunctions::GUID();
+                        $objectContragent->oid = Users::ORGANISATION_UUID;
+                        $objectContragent->objectUuid = $_POST['objectUuid'];
+                        $objectContragent->save();
+                        return $this->redirect(['/object/tree']);
+                    }
+                }
+            }
         }
-        return $this->render(
-            'tree',
-            ['equipment' => $fullTree]
-        );
+        return $this->redirect(['/object/tree']);
     }
-
 }
