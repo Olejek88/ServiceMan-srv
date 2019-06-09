@@ -93,10 +93,11 @@ use yii\helpers\Html;
                 ],
             ])->label(false);
     }
-    echo $form->field($documentation, 'path')->widget(
-        FileInput::class,
-        ['options' => ['accept' => '*'],]
-    );
+
+    echo FileInput::widget([
+        'name' => 'image',
+        'options' => ['accept' => '*']
+    ]);
     ?>
 </div>
 <div class="modal-footer">

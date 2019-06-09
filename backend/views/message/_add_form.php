@@ -1,10 +1,13 @@
 <?php
-/* @var $message \common\models\Message */
-/* @var $toUser \common\models\User */
+/* @var $message Message */
+/* @var $toUser User */
 
 use common\components\MainFunctions;
+use common\models\Message;
+use common\models\User;
 use common\models\Users;
 use kartik\select2\Select2;
+use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -13,6 +16,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => '../message/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'
@@ -50,30 +54,24 @@ use yii\helpers\Html;
     echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
     echo $form->field($message, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
-    //echo $form->field($message, 'title')->textInput(['maxlength' => true]);
+   // echo $form->field($message, 'title')->textInput(['maxlength' => true]);
     echo $form->field($message, 'text')->textInput(['maxlength' => true]);
     echo $form->field($message, 'status')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($message, 'date')->hiddenInput(['value' => date("Ymdhms")])->label(false);
+
+    echo FileInput::widget([
+            'id' => 'imageFiles',
+        'name' => 'images[]',
+        'options' => [
+                'accept' => '*',
+                'multiple' => true,
+                'id' => 'imageFile'
+        ]
+    ]);
     ?>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
-<script>
-    $(document).on("beforeSubmit", "#form", function () {
-        $.ajax({
-            url: "save",
-            type: "post",
-            data: $('form').serialize(),
-            success: function () {
-                $('#modalAddMessage').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    }).on('submit', function (e) {
-        e.preventDefault();
-    });
-</script>
 <?php ActiveForm::end(); ?>

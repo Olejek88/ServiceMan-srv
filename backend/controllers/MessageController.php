@@ -2,13 +2,18 @@
 
 namespace backend\controllers;
 
+use backend\models\MessageSearch;
 use common\components\MainFunctions;
+use common\models\Message;
 use common\models\Users;
+use Exception;
 use Yii;
+use yii\db\StaleObjectException;
+use yii\helpers\Html;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use common\models\Message;
-use backend\models\MessageSearch;
+use yii\web\UploadedFile;
 
 /**
  * MessageController implements the CRUD actions for Message model.
@@ -59,7 +64,7 @@ class MessageController extends Controller
             ->one();
 
         $messages = Message::find()->where(['status' => Message::MESSAGE_NEW])
-            ->andWhere(['OR',['fromUserUuid' => $currentUser['uuid']],['toUserUuid' => $currentUser['uuid']]])
+            ->andWhere(['OR', ['fromUserUuid' => $currentUser['uuid']], ['toUserUuid' => $currentUser['uuid']]])
             ->orderBy('date DESC')
             ->all();
 
@@ -76,12 +81,12 @@ class MessageController extends Controller
             ->all();
 
         if (isset($_GET["type"])) {
-            if ($_GET["type"]=="income")
-                $messages=$income;
-            if ($_GET["type"]=="sent")
-                $messages=$sent;
-            if ($_GET["type"]=="deleted")
-                $messages=$deleted;
+            if ($_GET["type"] == "income")
+                $messages = $income;
+            if ($_GET["type"] == "sent")
+                $messages = $sent;
+            if ($_GET["type"] == "deleted")
+                $messages = $deleted;
         }
 
         return $this->render('list', [
@@ -98,10 +103,10 @@ class MessageController extends Controller
          * [Базовые определения]
          * @var [type]
          */
-        $model             = 'Test';
+        $model = 'Test';
 
         return $this->render('search', [
-            'model'            => $model,
+            'model' => $model,
         ]);
     }
 
@@ -131,7 +136,7 @@ class MessageController extends Controller
     /**
      * @param $action
      * @return bool
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
     public function beforeAction($action)
     {
@@ -145,7 +150,6 @@ class MessageController extends Controller
 
     /**
      * Creates a new Message model in chat for all users
-     * @throws NotFoundHttpException
      * @return mixed
      */
     public function actionSend()
@@ -164,7 +168,7 @@ class MessageController extends Controller
         return $this->redirect(['/site/dashboard']);
     }
 
-/**
+    /**
      * Updates an existing Message model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
@@ -190,9 +194,9 @@ class MessageController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Exception
+     * @throws Exception
      * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -239,10 +243,28 @@ class MessageController extends Controller
     function actionSave()
     {
         $model = new Message();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect('list');
+        if ($model->load(Yii::$app->request->post())) {
+            $count = 0;
+            if ($_FILES["images"]) {
+                $files = UploadedFile::getInstancesByName('images');
+                //echo json_encode($file);
+                foreach ($files as $image) {
+                    echo json_encode($image);
+                    if ($image && $image->tempName) {
+                        $path_parts = pathinfo($image->name);
+                        $fileName = self::_saveFile($image, $model['uuid'] . '-' . $count . '.' . $path_parts['extension']);
+                        if ($fileName) {
+                            $model->text .= '<br/>';
+                            $model->text .= 'Вложение ' . Html::a('<span class="fa fa-file"></span>',
+                                    $fileName, ['title' => 'вложение']);
+                        }
+                        $count++;
+                    }
+                }
+            }
         }
-        return false;
+        $model->save();
+        return $this->redirect('list');
     }
 
     /**
@@ -251,9 +273,9 @@ class MessageController extends Controller
     function actionDeletes()
     {
         foreach ($_POST as $key => $value) {
-            if ($value=="on") {
+            if ($value == "on") {
                 if (($model = Message::findOne($key)) !== null) {
-                    $model->status=Message::MESSAGE_DELETED;
+                    $model->status = Message::MESSAGE_DELETED;
                     $model->save();
                 }
             }
@@ -261,4 +283,54 @@ class MessageController extends Controller
         return $this->redirect('list');
     }
 
+    /**
+     * Сохраняем файл согласно нашим правилам.
+     *
+     * @param $file string
+     *
+     * @param $save_filename
+     * @return string | null
+     */
+    private
+    static function _saveFile($file, $save_filename)
+    {
+        $dir = 'storage/files/';
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0755, true)) {
+                return null;
+            }
+        }
+
+        $targetDir = Yii::getAlias($dir);
+        if ($file->saveAs($targetDir . $save_filename)) {
+            return $dir . $save_filename;
+        } else {
+            return null;
+        }
+    }
+
+    function incoming_files()
+    {
+        $files = $_FILES;
+        $files2 = [];
+        foreach ($files as $input => $infoArr) {
+            $filesByInput = [];
+            foreach ($infoArr as $key => $valueArr) {
+                if (is_array($valueArr)) { // file input "multiple"
+                    foreach ($valueArr as $i => $value) {
+                        $filesByInput[$i][$key] = $value;
+                    }
+                } else { // -> string, normal file input
+                    $filesByInput[] = $infoArr;
+                    break;
+                }
+            }
+            $files2 = array_merge($files2, $filesByInput);
+        }
+        $files3 = [];
+        foreach ($files2 as $file) { // let's filter empty & errors
+            if (!$file['error']) $files3[] = $file;
+        }
+        return $files3;
+    }
 }
