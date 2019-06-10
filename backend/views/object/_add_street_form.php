@@ -1,5 +1,7 @@
 <?php
-/* @var $street */
+/*  @var $street
+ *  @var $source
+ */
 use common\components\MainFunctions;
 use common\models\DocumentationType;
 use common\models\Equipment;
@@ -39,6 +41,7 @@ use yii\helpers\Html;
     }
     //echo $form->field($street, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
     echo Html::hiddenInput("type", "street");
+    echo Html::hiddenInput("source", $source);
     echo $form->field($street, 'title')->textInput(['maxlength' => true]);
     ?>
 </div>

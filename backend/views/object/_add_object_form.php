@@ -1,5 +1,6 @@
 <?php
 /* @var $object
+ * @var $source
  * @var $houseUuid
  */
 use common\components\MainFunctions;
@@ -43,6 +44,7 @@ use yii\helpers\Html;
     echo $form->field($object, 'title')->textInput(['maxlength' => true]);
 
     echo Html::hiddenInput("type", "object");
+    echo Html::hiddenInput("source", $source);
 
     $types = ObjectType::find()->all();
     $items = ArrayHelper::map($types, 'uuid', 'title');

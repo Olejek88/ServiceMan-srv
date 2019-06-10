@@ -6,8 +6,6 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use dosamigos\datetimepicker\DateTimePicker;
 use app\commands\MainFunctions;
-use common\models\DefectType;
-use common\models\Task;
 use common\models\Users;
 use common\models\Equipment;
 

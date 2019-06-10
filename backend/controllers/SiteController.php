@@ -769,6 +769,8 @@ class SiteController extends Controller
                     return $this->renderAjax('../documentation/_add_form', [
                         'documentation' => $documentation,
                         'equipmentType' => $type,
+                        'equipmentUuid' => 0,
+                        'equipmentTypeUuid' => 0,
                         'source' => 'site/files'
                     ]);
                 }

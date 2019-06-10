@@ -3,7 +3,7 @@
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево моделей оборудования';
+$this->title = 'Дерево оборудования';
 
 /* @var $registers common\models\EquipmentRegister */
 

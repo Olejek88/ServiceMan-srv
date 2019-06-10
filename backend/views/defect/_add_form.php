@@ -5,8 +5,6 @@
 
 
 use common\components\MainFunctions;
-use common\models\AttributeType;
-use common\models\DefectType;
 use common\models\Equipment;
 use common\models\Users;
 use kartik\select2\Select2;
@@ -36,22 +34,27 @@ use yii\helpers\Html;
 
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
-    $equipment = Equipment::find()->all();
-    $items = ArrayHelper::map($equipment, 'uuid', 'title');
-    echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
-        [
-            'name' => 'kv_type',
-            'language' => 'ru',
-            'data' => $items,
-            'options' => ['placeholder' => 'Выберите оборудование ...'],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ])->label(false);
+    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
-    $user = Users::find()->all();
-    $items = ArrayHelper::map($user, 'uuid', 'name');
-    echo $form->field($model, 'userUuid')->dropDownList($items);
+    if ($equipmentUuid) {
+        echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
+    } else {
+        $equipment = Equipment::find()->all();
+        $items = ArrayHelper::map($equipment, 'uuid', 'title');
+        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+            [
+                'name' => 'kv_type',
+                'language' => 'ru',
+                'data' => $items,
+                'options' => ['placeholder' => 'Выберите оборудование ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label(false);
+    }
+    $accountUser = Yii::$app->user->identity;
+    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+    echo $form->field($model, 'userUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
 
     echo $form->field($model, 'date')
         ->hiddenInput(['value' => date("Ymd")])
@@ -59,7 +62,7 @@ use yii\helpers\Html;
     ?>
 </div>
 <div class="modal-footer">
-    <?php echo Html::submitButton(Yii::t('backend', 'Добавить'), ['class' => 'btn btn-success']) ?>
+    <?php echo Html::submitButton(Yii::t('app', 'Добавить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>

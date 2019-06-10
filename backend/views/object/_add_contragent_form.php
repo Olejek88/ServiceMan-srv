@@ -1,5 +1,6 @@
 <?php
 /* @var $contragent
+ * @var $source
  * @var $objectUuid
  */
 use common\components\MainFunctions;
@@ -47,6 +48,7 @@ use yii\helpers\Html;
     echo $form->field($contragent, 'email')->textInput(['maxlength' => true]);
 
     echo Html::hiddenInput("type", "contragent");
+    echo Html::hiddenInput("source", $source);
 
     $contragentType = ContragentType::find()->all();
     $items = ArrayHelper::map($contragentType, 'uuid', 'title');

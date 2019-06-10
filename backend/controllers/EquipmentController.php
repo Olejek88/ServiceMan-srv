@@ -5,10 +5,10 @@ namespace backend\controllers;
 use backend\models\EquipmentSearch;
 use common\components\Errors;
 use common\components\MainFunctions;
+use common\models\Contragent;
 use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentRegister;
-use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\House;
 use common\models\Measure;
@@ -22,7 +22,6 @@ use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
 use Exception as ExceptionAlias;
-use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
@@ -106,8 +105,8 @@ class EquipmentController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','testDate',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','testDate',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
 
         return $this->render(
@@ -144,8 +143,8 @@ class EquipmentController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','testDate',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','testDate',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
 
         return $this->render(
@@ -191,9 +190,9 @@ class EquipmentController extends Controller
             }
             // сохраняем запись
             if ($model->save(false)) {
-                MainFunctions::register('documentation','Добавлено оборудование',
-                    '<a class="btn btn-default btn-xs">'.$model['equipmentType']['title'].'</a> '.$model['title'].'<br/>'.
-                    'Серийный номер <a class="btn btn-default btn-xs">'.$model['serial'].'</a>');
+                MainFunctions::register('documentation', 'Добавлено оборудование',
+                    '<a class="btn btn-default btn-xs">' . $model['equipmentType']['title'] . '</a> ' . $model['title'] . '<br/>' .
+                    'Серийный номер <a class="btn btn-default btn-xs">' . $model['serial'] . '</a>');
                 return $this->redirect(['view', 'id' => $model->_id]);
             }
             echo json_encode($model->errors);
@@ -284,84 +283,37 @@ class EquipmentController extends Controller
      */
     public function actionTree()
     {
-        $c = 'children';
         $fullTree = array();
         $types = EquipmentType::find()
             ->select('*')
             ->orderBy('title')
             ->all();
-        $oCnt0 = 0;
         foreach ($types as $type) {
-            $fullTree[$oCnt0]['title'] = Html::a(
-                $type['title'],
-                ['equipment-type/view', 'id' => $type['_id']]
-            );
-            $fullTree[$oCnt0]['folder'] = true;
-            $equipments = Equipment::find()
-                ->select('*')
-                ->where(['equipmentTypeUuid' => $type['uuid']])
-                ->orderBy('serial')
-                ->all();
-            $oCnt1 = 0;
+            $fullTree['children'][] = [
+                'title' => $type['title'],
+                'address' => '',
+                'uuid' => $type['uuid'],
+                'type' => 'type',
+                'key' => $type['_id'],
+                'folder' => true,
+                'expanded' => true
+            ];
+            $childIdx = count($fullTree['children']) - 1;
+            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
             foreach ($equipments as $equipment) {
-                $fullTree[$oCnt0][$c][$oCnt1]['title']
-                    = Html::a(
-                    'ул.' . $equipment['object']['house']['street']['title'] .
-                    ', д.' . $equipment['object']['house']['number'] .
-                    ', кв.' . $equipment['object']['title'],
-                    ['equipment/view', 'id' => $equipment['_id']]
-                );
-                if ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_MOUNTED) {
-                    $class = 'critical1';
-                } elseif ($equipment['equipmentStatusUuid'] == EquipmentStatus::NOT_WORK) {
-                    $class = 'critical2';
-                } else {
-                    $class = 'critical3';
-                }
-                $fullTree[$oCnt0][$c][$oCnt1]['status'] = '<div class="progress"><div class="'
-                    . $class . '">' . $equipment['equipmentStatus']->title . '</div></div>';
-                $fullTree[$oCnt0][$c][$oCnt1]['date'] = $equipment['testDate'];
-                $fullTree[$oCnt0][$c][$oCnt1]['serial'] = $equipment['serial'];
-
-                $measure = Measure::find()
-                    ->select('*')
-                    ->where(['equipmentUuid' => $equipment['uuid']])
-                    ->orderBy('date DESC')
-                    ->one();
-                if ($measure) {
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $measure['date'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = $measure['value'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = $measure['user']->name;
-                } else {
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_date'] = $equipment['changedAt'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_value'] = "не снимались";
-                    $fullTree[$oCnt0][$c][$oCnt1]['measure_user'] = "-";
-                }
-
-                $photo = Photo::find()
-                    ->select('*')
-                    ->where(['objectUuid' => $equipment['uuid']])
-                    ->orderBy('createdAt DESC')
-                    ->one();
-                if ($photo) {
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = $photo['createdAt'];
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = Html::a(
-                        '<img width="100px" src="/storage/equipment/' . $photo['uuid'] . '.jpg" />',
-                        ['storage/equipment/' . $photo['uuid'] . '.jpg']
-                    );
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = $photo['user']->name;
-                } else {
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_date'] = 'нет фото';
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo'] = '-';
-                    $fullTree[$oCnt0][$c][$oCnt1]['photo_user'] = '-';
-                }
-                $oCnt1++;
+                $fullTree['children'][$childIdx]['children'][] =
+                    self::addEquipment($equipment);
             }
-            $oCnt0++;
         }
+        $users = Users::find()->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+
         return $this->render(
-            'tree',
-            ['equipment' => $fullTree]
+            'tree-street',
+            [
+                'equipment' => $fullTree,
+                'users' => $items
+            ]
         );
     }
 
@@ -565,7 +517,9 @@ class EquipmentController extends Controller
             ->all();
         foreach ($streets as $street) {
             $fullTree['children'][] = [
-                'title' => $street['title'],
+                'title' => 'ул.' . $street['title'],
+                'address' => $street['city']['title'] . ', ул.' . $street['title'],
+                'uuid' => $street['uuid'],
                 'type' => 'street',
                 'key' => $street['_id'],
                 'folder' => true,
@@ -575,28 +529,44 @@ class EquipmentController extends Controller
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
             orderBy('number')->all();
             foreach ($houses as $house) {
-                $user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
+                //$user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
                 $user = Users::find()->where(['uuid' =>
                     UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
+                if (!$user)
+                    $user_name=$user['name'];
+                else
+                    $user_name="";
                 $fullTree['children'][$childIdx]['children'][] =
                     [
                         'title' => $house['number'],
+                        'address' => $street['title'] . ', ' . $house['number'],
                         'type' => 'house',
+                        'expanded' => true,
+                        'user' => $user_name,
+                        'uuid' => $house['uuid'],
                         'key' => $house['_id'],
                         'folder' => true
                     ];
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                $objects = Objects::find()->select('uuid, title')->where(['houseUuid' => $house['uuid']])->all();
+                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($objects as $object) {
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                        ['title' => $object['title'], 'key' => $object['_id'] . "",
-                            'expanded' => true, 'folder' => true];
+                        [
+                            'title' => $object['objectType']['title'] . ' ' . $object['title'],
+                            'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
+                            'type' => 'object',
+                            'uuid' => $object['uuid'],
+                            'user' => $user_name,
+                            'key' => $object['_id'] . "",
+                            'expanded' => true,
+                            'folder' => true
+                        ];
                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
                     $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            self::addEquipment($equipment);
+                            self::addEquipment($equipment, $user_name);
                     }
                 }
             }
@@ -610,111 +580,6 @@ class EquipmentController extends Controller
                 'equipment' => $fullTree,
                 'users' => $items
             ]
-        );
-    }
-
-    /**
-     * Build tree of equipment by user
-     *
-     * @return mixed
-     */
-    public function actionTreeMeasure()
-    {
-        ini_set('memory_limit', '-1');
-        $fullTree = array();
-        $streets = Street::find()
-            ->select('*')
-            ->orderBy('title')
-            ->all();
-        $oCnt0 = 0;
-        foreach ($streets as $street) {
-            $house_count = 0;
-            $house_visited = 0;
-            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
-            orderBy('number')->all();
-            foreach ($houses as $house) {
-                $objects = Objects::find()->select('uuid,number')->where(['objectUuid' => $house['uuid']])->all();
-                foreach ($objects as $object) {
-                    $house_count++;
-                    $visited = 0;
-                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
-                    foreach ($equipments as $equipment) {
-                        $fullTree[$oCnt0]['title']
-                            = Html::a(
-                            'ул.' . $equipment['house']['street']['title'] . ', д.' . $equipment['house']['number'] . ', кв.' . $equipment['object']['number'],
-                            ['equipment/view', 'id' => $equipment['_id']]
-                        );
-
-                        $measures = Measure::find()
-                            ->select('*')
-                            ->where(['equipmentUuid' => $equipment['uuid']])
-                            ->orderBy('date')
-                            ->all();
-
-                        $measure_count_column = 0;
-                        $fullTree[$oCnt0]['measure_date0'] = '';
-                        $fullTree[$oCnt0]['measure_value0'] = '';
-                        $fullTree[$oCnt0]['measure_date1'] = '';
-                        $fullTree[$oCnt0]['measure_value1'] = '';
-                        $fullTree[$oCnt0]['measure_date2'] = '';
-                        $fullTree[$oCnt0]['measure_value2'] = '';
-                        $fullTree[$oCnt0]['measure_date3'] = '';
-                        $fullTree[$oCnt0]['measure_value3'] = '';
-                        $fullTree[$oCnt0]['measure_user'] = '';
-                        $measure_first = 0;
-                        $measure_last = 0;
-                        $measure_date_first = 0;
-                        $measure_date_last = 0;
-                        foreach ($measures as $measure) {
-                            $fullTree[$oCnt0]['measure_date' . $measure_count_column] = $measure['date'];
-                            $fullTree[$oCnt0]['measure_value' . $measure_count_column] = $measure['value'];
-                            $fullTree[$oCnt0]['measure_user'] = $measure['user']->name;
-                            if ($measure_count_column == 0) {
-                                $measure_first = $measure['value'];
-                                $measure_date_first = $measure['date'];
-                            } else {
-                                $measure_last = $measure['value'];
-                                $measure_date_last = $measure['date'];
-                            }
-                            $measure_count_column++;
-                            if ($measure_count_column > 3) break;
-                        }
-
-                        $datetime1 = date_create($measure_date_first);
-                        $datetime2 = date_create($measure_date_last);
-                        if ($datetime2 && $datetime1) {
-                            $diff = $datetime2->diff($datetime1);
-                            $interval = $diff->format("%h") + ($diff->days * 24);
-                            $value = number_format($measure_last - $measure_first, 2);
-                        } else {
-                            $interval = 0;
-                            $value = 0;
-                        }
-                        $fullTree[$oCnt0]['interval'] = $interval;
-                        $fullTree[$oCnt0]['value'] = $value;
-                        if ($interval > 0)
-                            $fullTree[$oCnt0]['relative'] = number_format($value / $interval, 2);
-
-                        $message = Message::find()
-                            ->select('*')
-                            ->orderBy('date DESC')
-                            ->where(['flatUuid' => $equipment['flat']['uuid']])
-                            ->one();
-                        if ($message != null) {
-                            $fullTree[$oCnt0]['message'] =
-                                mb_convert_encoding(substr($message['message'], 0, 150), 'UTF-8', 'UTF-8');
-                            if ($visited == 0)
-                                $visited = 1;
-                            $house_visited++;
-                        }
-                        $oCnt0++;
-                    }
-                }
-            }
-        }
-        return $this->render(
-            'tree-measure',
-            ['equipment' => $fullTree]
         );
     }
 
@@ -782,8 +647,8 @@ class EquipmentController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет связывание выбранного оборудования с пользователем
      *
      * @return mixed
-     * @throws ExceptionAlias
-     * @throws Throwable
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionMove()
     {
@@ -791,7 +656,7 @@ class EquipmentController extends Controller
             $node = $_POST["selected_node"];
             $user = $_POST["user"];
             if ($user && $node)
-                $this->updateUserEquipment($user, $node);
+                $this->updateUserHouse($user, $node);
         }
         $this->enableCsrfValidation = false;
         return 0;
@@ -800,15 +665,15 @@ class EquipmentController extends Controller
     /**
      * функция отрабатывает сигналы от дерева и выполняет отвязывание выбранного оборудования от пользователя
      * @return mixed
-     * @throws ExceptionAlias
-     * @throws Throwable
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionRemove()
     {
         if (isset($_POST["selected_node"])) {
             $node = $_POST["selected_node"];
             if ($node)
-                $this->updateUserEquipment(null, $node);
+                $this->updateUserHouse(null, $node);
         }
         $this->enableCsrfValidation = false;
         return 0;
@@ -844,35 +709,36 @@ class EquipmentController extends Controller
      *
      * @param $user
      * @param $node
-     * @throws ExceptionAlias
-     * @throws Throwable
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
-    function updateUserEquipment($user, $node)
+    function updateUserHouse($user, $node)
     {
-        $equipment = Equipment::find()->where(['_id' => $node])->one();
-        if ($equipment['uuid']) {
-            /*            if (!$user) {
-                            $userEquipment = UserEquipment::find()->select('*')
-                                ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->one();
-                            if ($userEquipment) {
-                                $userEquipment->delete();
-                                $this->redirect('tree');
-                            }
-                        } else {
-                            $userEquipment = UserEquipment::find()->select('*')
-                                ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->andWhere(['userUuid' => $user])
-                                ->one();
-                            if (!$userEquipment) {
-                                $userEquipment = new UserEquipment();
-                                $userEquipment->uuid = (new \app\commands\MainFunctions)->GUID();
-                                $userEquipment->equipmentUuid = $equipment['uuid'];
-                                $userEquipment->userUuid = $user;
-                                $userEquipment->save();
-                                $this->redirect('tree');
-                            }
-                        }*/
+        $house = House::find()->where(['uuid' => $node])->one();
+        if ($house['uuid']) {
+            if (!$user) {
+                $userHouse = UserHouse::find()->select('*')
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->one();
+                if ($userHouse) {
+                    $userHouse->delete();
+                    $this->redirect('tree-street');
+                }
+            } else {
+                $userHouse = UserHouse::find()->select('*')
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->andWhere(['userUuid' => $user])
+                    ->one();
+                if (!$userHouse) {
+                    $userHouse = new UserHouse();
+                    $userHouse->uuid = (new MainFunctions)->GUID();
+                    $userHouse->houseUuid = $house['uuid'];
+                    $userHouse->oid = Users::ORGANISATION_UUID;
+                    $userHouse->userUuid = $user;
+                    $userHouse->save();
+                    $this->redirect('tree-street');
+                }
+            }
         }
     }
 
@@ -881,31 +747,31 @@ class EquipmentController extends Controller
      *
      * @param $user
      * @param $node
-     * @throws ExceptionAlias
-     * @throws Throwable
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
-    function addUserEquipment($user, $node)
+    function addUserHouse($user, $node)
     {
-        $equipment = Equipment::find()->where(['_id' => $node])->one();
-        if ($equipment['uuid']) {
-            /*            if ($user) {
-                            $userEquipment = UserEquipment::find()->select('*')->where(['equipmentUuid' => $equipment['uuid']])
-                                ->andWhere(['userUuid' => $user])
-                                ->one();
-                            if (!$userEquipment) {
-                                $userEquipment = new UserEquipment();
-                                $userEquipment->uuid = (new MainFunctions)->GUID();
-                                $userEquipment->equipmentUuid = $equipment['uuid'];
-                                $userEquipment->userUuid = $user;
-                                $userEquipment->save();
-                            }
-                        } else {
-                            $userEquipment = UserEquipment::find()->select('*')
-                                ->where(['equipmentUuid' => $equipment['uuid']])
-                                ->one();
-                            if ($userEquipment)
-                                $userEquipment->delete();
-                        }*/
+        $house = House::find()->where(['uuid' => $node])->one();
+        if ($house['uuid']) {
+            if ($user) {
+                $userHouse = UserHouse::find()->select('*')->where(['houseUuid' => $house['uuid']])
+                    ->andWhere(['userUuid' => $user])
+                    ->one();
+                if (!$userHouse) {
+                    $userHouse = new UserHouse();
+                    $userHouse->uuid = (new MainFunctions)->GUID();
+                    $userHouse->houseUuid = $house['uuid'];
+                    $userHouse->userUuid = $user;
+                    $userHouse->save();
+                }
+            } else {
+                $userHouse = UserHouse::find()->select('*')
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->one();
+                if ($userHouse)
+                    $userHouse->delete();
+            }
         }
     }
 
@@ -997,6 +863,7 @@ class EquipmentController extends Controller
                 'model' => $model,
             ]);
         }
+
         if ($_POST["Equipment"]["serial"]) {
             $model = Equipment::find()->where(['_id' => $_POST["Equipment"]["_id"]])
                 ->one();
@@ -1035,41 +902,54 @@ class EquipmentController extends Controller
     {
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
-            if (isset($_POST["type"]))
-                $type_id = $_POST["selected_node"];
-            else $type_id = 0;
-            if (isset($_POST["type_uuid"]))
-                $type_uuid = $_POST["type_uuid"];
-            else $type_uuid = 0;
-            // из дерева объектов
             if (isset($_POST["uuid"]))
-                $object_uuid = $_POST["uuid"];
-            else $object_uuid = 0;
-            if ($folder == "true" && $type_id > 0) {
-                $equipmentType = new EquipmentType();
-                return $this->renderAjax('../equipment-type/_add_form', [
-                    'equipmentType' => $equipmentType,
-                    'type_id' => $type_id
-                ]);
-            }
-            if ($folder == "true" && $type_uuid) {
-                $equipment = new Equipment();
-                return $this->renderAjax('_add_form', [
-                    'equipment' => $equipment,
-                    'type_uuid' => $type_uuid,
-                    'object_uuid' => null
-                ]);
-            }
-            if ($folder == "true" && $object_uuid) {
-                $equipment = new Equipment();
-                return $this->renderAjax('_add_form', [
-                    'equipment' => $equipment,
-                    'object_uuid' => $object_uuid,
-                    'type_uuid' => null
-                ]);
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
+            if (isset($_POST["type"]))
+                $type = $_POST["type"];
+            else $type = 0;
+            if (isset($_POST["uuid"]))
+                $source = '../equipment/tree-street';
+            else $source = '../equipment/tree';
+
+            if ($folder == "true" && $uuid && $type) {
+                if ($type == 'street') {
+                    $house = new House();
+                    return $this->renderAjax('../object/_add_house_form', [
+                        'streetUuid' => $uuid,
+                        'house' => $house,
+                        'source' => $source
+                    ]);
+                }
+                if ($type == 'house') {
+                    $object = new Objects();
+                    return $this->renderAjax('../object/_add_object_form', [
+                        'houseUuid' => $uuid,
+                        'object' => $object,
+                        'source' => $source
+                    ]);
+                }
+                if ($type == 'object') {
+                    $equipment = new Equipment();
+                    return $this->renderAjax('_add_form', [
+                        'equipment' => $equipment,
+                        'objectUuid' => $uuid,
+                        'equipmentTypeUuid' => 0,
+                        'source' => $source
+                    ]);
+                }
+                if ($type == 'type') {
+                    $equipment = new Equipment();
+                    return $this->renderAjax('_add_form', [
+                        'equipment' => $equipment,
+                        'objectUuid' => 0,
+                        'equipmentTypeUuid' => $uuid,
+                        'source' => $source
+                    ]);
+                }
             }
         }
-        return 0;
+        return 'Нельзя добавить объект в этом месте';
     }
 
     /**
@@ -1079,42 +959,55 @@ class EquipmentController extends Controller
      */
     public function actionEdit()
     {
-        if (isset($_POST["selected_node"])) {
-            $folder = $_POST["folder"];
-            $reference = "equipment";
-            if (isset($_POST["reference"])) {
-                $reference = $_POST["reference"];
-            }
-            if (isset($_POST["uuid"]))
-                $uuid = $_POST["uuid"];
-            else $uuid = 0;
-            if (isset($_POST["type_uuid"]))
-                $type_uuid = $_POST["type_uuid"];
-            else $type_uuid = 0;
+        if (isset($_POST["uuid"]))
+            $source = '../equipment/tree-street';
+        else $source = '../equipment/tree';
+        if (isset($_POST["uuid"]))
+            $uuid = $_POST["uuid"];
+        else $uuid = 0;
+        if (isset($_POST["type"]))
+            $type = $_POST["type"];
+        else $type = 0;
 
-            if ($folder == "false" && $uuid) {
-                $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
-                if ($equipment)
-                    return $this->renderAjax('_add_form', [
-                        'equipment' => $equipment,
-                        'type_uuid' => null,
-                        'object_uuid' => null,
-                        'reference' => $reference
+        if ($uuid && $type) {
+            if ($type == 'street') {
+                $street = Street::find()->where(['uuid' => $uuid])->one();
+                if ($street) {
+                    return $this->renderAjax('../object/_add_street_form', [
+                        'street' => $street,
+                        'streetUuid' => $uuid,
+                        'source' => $source
                     ]);
-                return "";
+                }
             }
-            if ($folder == "true" && $type_uuid) {
-                $equipmentType = EquipmentType::find()->where(['uuid' => $type_uuid])->one();
-                if ($equipmentType)
-                    return $this->renderAjax('../equipment-model/_add_form', [
-                        'equipmentType' => $equipmentType,
-                        'type_uuid' => $equipmentType['uuid'],
-                        'object_uuid' => null,
-                        'reference' => $reference
+            if ($type == 'house') {
+                $house = House::find()->where(['uuid' => $uuid])->one();
+                if ($house) {
+                    return $this->renderAjax('../object/_add_house_form', [
+                        'houseUuid' => $uuid,
+                        'house' => $house,
+                        'source' => $source
                     ]);
-                return "";
+                }
             }
-            return "";
+            if ($type == 'object') {
+                $object = Objects::find()->where(['uuid' => $uuid])->one();
+                if ($object) {
+                    return $this->renderAjax('../object/_add_object_form', [
+                        'objectUuid' => $uuid,
+                        'object' => $object,
+                        'source' => $source
+                    ]);
+                }
+            }
+            if ($type == 'contragent') {
+                $contragent = Contragent::find()->where(['uuid' => $uuid])->one();
+                return $this->renderAjax('../object/_add_contragent_form', [
+                    'contragentUuid' => $uuid,
+                    'contragent' => $contragent,
+                    'source' => $source
+                ]);
+            }
         }
         return "";
     }
@@ -1126,44 +1019,77 @@ class EquipmentController extends Controller
     public
     function actionSave()
     {
-        if (isset($_POST['equipmentUuid']))
-            $model = Equipment::find()->where(['uuid' => $_POST['equipmentUuid']])->one();
-        else
-            $model = new Equipment();
-        if ($model->load(Yii::$app->request->post())) {
-            //TODO доделать сохранение фото
-/*            $file = UploadedFile::getInstanceByName('image');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $photo = new Photo();
-                    $photo->oid = Users::ORGANISATION_UUID;
-                    $photo->objectUuid = $model['uuid'];
-                    $accountUser = Yii::$app->user->identity;
-                    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-                    $photo->userUuid = $currentUser['uuid'];
-                    $photo->save();
+        if (isset($_POST["type"]))
+            $type = $_POST["type"];
+        else $type = 0;
+        if (isset($_POST["source"]))
+            $source = $_POST["source"];
+        else $source = 0;
+
+        if ($type) {
+            if ($type == 'street') {
+                if (isset($_POST['streetUuid'])) {
+                    $model = Street::find()->where(['uuid' => $_POST['streetUuid']])->one();
+                    if ($model->load(Yii::$app->request->post())) {
+                        if ($model->save(false)) {
+                            if ($source)
+                                return $this->redirect([$source]);
+                            return $this->redirect(['../equipment/tree-street']);
+                        }
+                    }
                 }
-            }*/
-            if ($model->save(false)) {
-                if (isset($_POST['reference']) && $_POST['reference'] == "equipment")
-                    return $this->redirect(['/equipment/tree']);
-                return $this->redirect(['/task-template/tree']);
+            }
+            if ($type == 'house') {
+                if (isset($_POST['houseUuid']))
+                    $model = House::find()->where(['uuid' => $_POST['houseUuid']])->one();
+                else
+                    $model = new House();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false)) {
+                        if ($source)
+                            return $this->redirect([$source]);
+                        return $this->redirect(['../equipment/tree-street']);
+                    }
+                }
+            }
+            if ($type == 'object') {
+                if (isset($_POST['objectUuid']))
+                    $model = Objects::find()->where(['uuid' => $_POST['objectUuid']])->one();
+                else
+                    $model = new Objects();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false)) {
+                        if ($source)
+                            return $this->redirect([$source]);
+                        return $this->redirect(['../equipment/tree-street']);
+                    }
+                }
+            }
+            if ($type == 'equipment') {
+                if (isset($_POST['equipmentUuid']))
+                    $model = Equipment::find()->where(['uuid' => $_POST['equipmentUuid']])->one();
+                else
+                    $model = new Equipment();
+                if ($model->load(Yii::$app->request->post())) {
+                    if ($model->save(false) && isset($_POST['equipmentUuid'])) {
+                        if ($source)
+                            return $this->redirect([$source]);
+                        return $this->redirect(['../equipment/tree-street']);
+                    }
+                }
             }
         }
-        return $this->render('_add_form', [
-            'model_uuid' => null,
-            'object_uuid' => null,
-            'equipment' => $model,
-            'reference' => "/equipment/tree"
-        ]);
+        if ($source)
+            return $this->redirect([$source]);
+        return $this->redirect(['/object/tree-street']);
     }
 
     /**
      * @param $equipment
+     * @param $user
      * @return array
      */
-    public function addEquipment($equipment)
+    public function addEquipment($equipment, $user)
     {
         $userSystems = UserSystem::find()
             ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
@@ -1301,7 +1227,7 @@ class EquipmentController extends Controller
         $events = [];
         $equipments = Equipment::find()->all();
         foreach ($equipments as $equipment) {
-            $events = self::actionTimeline($equipment['uuid'],0);
+            $events = self::actionTimeline($equipment['uuid'], 0);
         }
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
         return $this->render(

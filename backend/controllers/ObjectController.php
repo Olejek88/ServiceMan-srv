@@ -417,6 +417,9 @@ class ObjectController extends Controller
         if (isset($_POST["type"]))
             $type = $_POST["type"];
         else $type = 0;
+        if (isset($_POST["source"]))
+            $source = $_POST["source"];
+        else $source = 0;
 
         if ($type) {
             if ($type == 'street') {
@@ -424,6 +427,8 @@ class ObjectController extends Controller
                     $model = Street::find()->where(['uuid' => $_POST['streetUuid']])->one();
                     if ($model->load(Yii::$app->request->post())) {
                         if ($model->save(false)) {
+                            if ($source)
+                                return $this->redirect([$source]);
                             return $this->redirect(['/object/tree']);
                         }
                     }
@@ -436,6 +441,8 @@ class ObjectController extends Controller
                     $model = new House();
                 if ($model->load(Yii::$app->request->post())) {
                     if ($model->save(false)) {
+                        if ($source)
+                            return $this->redirect([$source]);
                         return $this->redirect(['/object/tree']);
                     }
                 }
@@ -447,6 +454,8 @@ class ObjectController extends Controller
                     $model = new Objects();
                 if ($model->load(Yii::$app->request->post())) {
                     if ($model->save(false)) {
+                        if ($source)
+                            return $this->redirect([$source]);
                         return $this->redirect(['/object/tree']);
                     }
                 }
@@ -464,11 +473,15 @@ class ObjectController extends Controller
                         $objectContragent->oid = Users::ORGANISATION_UUID;
                         $objectContragent->objectUuid = $_POST['objectUuid'];
                         $objectContragent->save();
+                        if ($source)
+                            return $this->redirect([$source]);
                         return $this->redirect(['/object/tree']);
                     }
                 }
             }
         }
+        if ($source)
+            return $this->redirect([$source]);
         return $this->redirect(['/object/tree']);
     }
 }

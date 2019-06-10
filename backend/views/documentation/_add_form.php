@@ -31,10 +31,6 @@ use yii\helpers\Html;
 </div>
 <div class="modal-body">
     <?php
-    if (isset($equipmentUuid) && $equipmentUuid == 0) $equipmentUuid = null;
-    if (!isset($equipmentUuid)) $equipmentUuid = null;
-    if (isset($equipmentTypeUuid) && $equipmentTypeUuid == 0) $equipmentTypeUuid = null;
-    if (!isset($equipmentTypeUuid)) $equipmentTypeUuid = null;
 
     echo $form->field($documentation, 'uuid')
         ->hiddenInput(['value' => MainFunctions::GUID()])
@@ -68,10 +64,6 @@ use yii\helpers\Html;
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
         echo $form->field($documentation, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
     }
-
-    if (isset($source))
-        echo Html::hiddenInput("source", $source);
-
     if ($equipmentTypeUuid && !$equipmentUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
     }
@@ -94,10 +86,11 @@ use yii\helpers\Html;
             ])->label(false);
     }
 
-    echo FileInput::widget([
-        'name' => 'image',
-        'options' => ['accept' => '*']
-    ]);
+    if (isset($source))
+        echo Html::hiddenInput("source", $source);
+
+    echo $form->field($documentation, 'path')
+        ->widget(FileInput::class, ['options' => ['accept' => '*']]);
     ?>
 </div>
 <div class="modal-footer">

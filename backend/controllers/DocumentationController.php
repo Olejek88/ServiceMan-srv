@@ -381,7 +381,7 @@ class DocumentationController extends Controller
             return $this->renderAjax('../documentation/_add_form', [
                 'documentation' => $documentation,
                 'equipmentUuid' => $uuid,
-                'equipmentModelUuid' => $model_uuid
+                'equipmentTypeUuid' => $model_uuid
             ]);
         }
         return 0;
@@ -415,7 +415,7 @@ class DocumentationController extends Controller
                 if (isset($_POST['source']))
                     return $this->redirect(['../site/files']);
                 else
-                    return $this->redirect(['/equipment/tree']);
+                    return $this->redirect(['/equipment/tree-street']);
             }
         }
         return $this->render('_add_form', ['model' => $model]);

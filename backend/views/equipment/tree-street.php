@@ -20,11 +20,6 @@ $this->title = 'Дерево моделей оборудования';
         </colgroup>
         <thead style="background-color: #337ab7; color: white">
         <tr>
-            <th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
-        </tr>
-        </thead>
-        <thead style="background-color: #337ab7; color: white">
-        <tr>
             <th colspan="1">
                 <?php
                 try {
@@ -127,7 +122,7 @@ try {
             'contextMenu' => [
                 'menu' => [
                     'new' => [
-                        'name' => 'Добавить новое',
+                        'name' => 'Добавить',
                         'icon' => 'add',
                         'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
@@ -341,12 +336,12 @@ $this->registerJs('$("#addButton").on("click",function() {
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==false) {
+            if (data.folder==true && data.type=="house") {
                 $.ajax({
                     url: "move",
                     type: "post",
                     data: {
-                        selected_node: data.key,
+                        selected_node: data.data.uuid,
                         user: $("#user_select").val()
                     },
                     success: function (data) {
@@ -364,7 +359,7 @@ $this->registerJs('$("#removeButton").on("click",function() {
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==false) {
+            if (data.folder==true && node.type=="house") {
                 $.ajax({
                     url: "remove",
                     type: "post",
