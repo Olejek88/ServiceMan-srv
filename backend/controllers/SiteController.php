@@ -780,17 +780,15 @@ class SiteController extends Controller
 
     /**
      * @return mixed
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionRemove()
     {
         if (!isset($_POST["types"]) && isset($_POST["selected_node"])) {
             $model = Documentation::find()->where(['_id' => $_POST["selected_node"]])->one();
             if ($model) {
-                try {
                     $model->delete();
-                } catch (StaleObjectException $e) {
-                } catch (\Throwable $e) {
-                }
             }
         }
         return self::actionFiles();

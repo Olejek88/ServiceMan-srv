@@ -28,11 +28,17 @@ use yii\helpers\Html;
 </div>
 <div class="modal-body">
     <?php
+/*    if ($message['uuid']) {
+        echo Html::hiddenInput("messageUuid", $message['uuid']);
+        echo $form->field($message, 'uuid')->hiddenInput(['value' => $message['uuid']])->label(false);
+    } else {*/
     echo $form->field($message, 'uuid')
         ->hiddenInput(['value' => MainFunctions::GUID()])
         ->label(false);
-    if (isset($toUser) && $toUser) {
-        Html::textInput('toUser', $toUser['name'],['readonly' => true]);
+    if ($message['uuid']) {
+//    if (isset($toUser) && $toUser) {
+        echo '<span style="font-weight: bold">Кому: </span>&nbsp;'.Html::textInput('toUser', $message['toUser']['name'],['readonly' => true]);
+        echo $form->field($message, 'toUserUuid')->hiddenInput(['value' => $message['fromUserUuid']])->label(false);
     } else {
         $user  = Users::find()->all();
         $items = ArrayHelper::map($user,'uuid','name');
@@ -51,11 +57,17 @@ use yii\helpers\Html;
     }
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-    echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+
+    echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $message['fromUserUuid']])->label(false);
     echo $form->field($message, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
    // echo $form->field($message, 'title')->textInput(['maxlength' => true]);
-    echo $form->field($message, 'text')->textInput(['maxlength' => true]);
+    if ($message['uuid']) {
+        //echo '<i>'.Html::textarea('textLetter',$message['text']).'</i><br/>';
+        echo $form->field($message, 'text')->textarea(['rows' => 8]);
+    } else {
+        echo $form->field($message, 'text')->textarea(['rows' => 8]);
+    }
     echo $form->field($message, 'status')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($message, 'date')->hiddenInput(['value' => date("Ymdhms")])->label(false);
 

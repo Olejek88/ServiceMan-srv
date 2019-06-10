@@ -1,10 +1,11 @@
 <?php
-/* @var $messages \common\models\Message[] */
-/* @var $income \common\models\Message[] */
-/* @var $deleted \common\models\Message[] */
+/* @var $messages Message[] */
+/* @var $income Message[] */
+/* @var $deleted Message[] */
 
-/* @var $sent \common\models\Message[] */
+/* @var $sent Message[] */
 
+use common\models\Message;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Сообщения');
@@ -118,16 +119,30 @@ $this->title = Yii::t('app', 'Сообщения');
                                     <tbody>
                                     <?php
                                     foreach ($messages as $message) {
+                                        if (strstr($message['text'], '<'))
+                                            $title = strstr($message['text'], '<', true);
+                                        else $title = $message['text'];
+                                        $title = substr($title,0,50);
+                                        $title = '<a href="/message/view?id=' . $message['_id'] . '">'.$title.'</a>';
+
                                         print '<tr><td><input type="checkbox" name="' . $message["_id"] . '"></td>';
                                         if ($message['status'] > 0)
                                             print '<td class="mailbox-star"><i class="fa fa-star text-yellow"></i></td>';
                                         else
                                             print '<td class="mailbox-star"><i class="fa fa-star-o text-yellow"></i></td>';
-                                        print '<td class="mailbox-name">
+                                        if ($message['status']==Message::MESSAGE_NEW) {
+                                            print '<td class="mailbox-name"><span style="font-weight: bold">
+                                            <a href="/users/view?id=' . $message['toUser']->id . '">' . $message['toUser']->name . '</a></span></td>';
+                                            print '<td class="mailbox-subject"><span style="font-weight: bold">' . $title . '</span></td>';
+                                            print '<td class="mailbox-attachment"></td>';
+                                            print '<td class="mailbox-date"><span style="font-weight: bold">' . $message['date'] . '</span></td></tr>';
+                                        } else {
+                                            print '<td class="mailbox-name">
                                             <a href="/users/view?id=' . $message['toUser']->id . '">' . $message['toUser']->name . '</a></td>';
-                                        print '<td class="mailbox-subject">' . $message['text'] . '</td>';
-                                        print '<td class="mailbox-attachment"></td>';
-                                        print '<td class="mailbox-date">' . $message['date'] . '</td></tr>';
+                                            print '<td class="mailbox-subject">' . $title . '</td>';
+                                            print '<td class="mailbox-attachment"></td>';
+                                            print '<td class="mailbox-date">' . $message['date'] . '</td></tr>';
+                                        }
                                     }
                                     ?>
                                     </tbody>

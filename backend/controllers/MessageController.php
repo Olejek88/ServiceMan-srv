@@ -13,6 +13,7 @@ use yii\helpers\Html;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -46,13 +47,61 @@ class MessageController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        $model = $this->findModel($id);
+        if ($model) {
+            $userImage = $model['fromUser']->getPhotoUrl();
+            if (!$userImage)
+                $userImage = Yii::$app->request->baseUrl . '/images/unknown2.png';
+
+            $accountUser = Yii::$app->user->identity;
+            $currentUser = Users::find()
+                ->where(['user_id' => $accountUser['id']])
+                ->asArray()
+                ->one();
+
+            $messages = Message::find()->where('status != '.Message::MESSAGE_DELETED)
+                ->andWhere(['OR', ['fromUserUuid' => $currentUser['uuid']], ['toUserUuid' => $currentUser['uuid']]])
+                ->orderBy('date DESC')
+                ->all();
+
+            $income = Message::find()->where(['toUserUuid' => $currentUser['uuid']])
+                ->andWhere('status != '.Message::MESSAGE_DELETED)
+                ->orderBy('date DESC')
+                ->all();
+
+            $sent = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
+                ->andWhere('status != '.Message::MESSAGE_DELETED)
+                ->orderBy('date DESC')
+                ->all();
+            $deleted = Message::find()->where(['status' => Message::MESSAGE_DELETED])
+                ->orderBy('date DESC')
+                ->all();
+
+            $model->status = Message::MESSAGE_READ;
+            $model->save();
+
+            if (isset($_GET["type"])) {
+                if ($_GET["type"] == "income")
+                    $messages = $income;
+                if ($_GET["type"] == "sent")
+                    $messages = $sent;
+                if ($_GET["type"] == "deleted")
+                    $messages = $deleted;
+            }
+
+            return $this->render('view', [
+                'model' => $model,
+                'userImage' => $userImage,
+                'messages' => $messages,
+                'income' => $income,
+                'deleted' => $deleted,
+                'sent' => $sent
+            ]);
+        }
     }
 
     /**
-     * Displays a messagebox
+     * Displays a message_box
      * @return mixed
      */
     public function actionList()
@@ -63,17 +112,18 @@ class MessageController extends Controller
             ->asArray()
             ->one();
 
-        $messages = Message::find()->where(['status' => Message::MESSAGE_NEW])
+        $messages = Message::find()->where('status != '.Message::MESSAGE_DELETED)
             ->andWhere(['OR', ['fromUserUuid' => $currentUser['uuid']], ['toUserUuid' => $currentUser['uuid']]])
             ->orderBy('date DESC')
             ->all();
 
         $income = Message::find()->where(['toUserUuid' => $currentUser['uuid']])
-            ->andWhere(['status' => Message::MESSAGE_NEW])
+            ->andWhere('status != '.Message::MESSAGE_DELETED)
             ->orderBy('date DESC')
             ->all();
+
         $sent = Message::find()->where(['fromUserUuid' => $currentUser['uuid']])
-            ->andWhere(['status' => Message::MESSAGE_NEW])
+            ->andWhere('status != '.Message::MESSAGE_DELETED)
             ->orderBy('date DESC')
             ->all();
         $deleted = Message::find()->where(['status' => Message::MESSAGE_DELETED])
@@ -201,8 +251,20 @@ class MessageController extends Controller
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
+    }
+
+    /**
+     * @return Response
+     * @throws NotFoundHttpException
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public function actionDeleteOne()
+    {
+        if (isset($_POST['id']))
+            $this->findModel($_POST['id'])->delete();
+        return $this->redirect(['list']);
     }
 
     /**
@@ -229,7 +291,10 @@ class MessageController extends Controller
     public
     function actionNew()
     {
-        $message = new Message();
+        if (!isset($_GET['id']))
+            $message = new Message();
+        else
+            $message = Message::find()->where(['_id' => $_GET['id']])->one();
         return $this->renderAjax('_add_form', [
             'message' => $message
         ]);
