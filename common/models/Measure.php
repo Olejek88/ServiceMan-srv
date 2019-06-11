@@ -82,6 +82,8 @@ class Measure extends ZhkhActiveRecord
             [['value'], 'number'],
             [['uuid', 'equipmentUuid', 'userUuid', 'date', 'oid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

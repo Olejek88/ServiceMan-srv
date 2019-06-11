@@ -113,6 +113,8 @@ class Request extends ZhkhActiveRecord
                 'max' => 45
             ],
             [['comment', 'verdict', 'result'], 'string', 'max' => 500],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

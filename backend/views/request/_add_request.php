@@ -159,7 +159,7 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
         echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
         ?>
-        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
+        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
         <?= $form->field($model, 'comment')->textInput() ?>
     </div>

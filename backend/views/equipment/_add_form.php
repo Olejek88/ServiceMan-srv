@@ -49,7 +49,7 @@ use yii\helpers\Html;
             ->hiddenInput(['value' => MainFunctions::GUID()])
             ->label(false);
     }
-    echo $form->field($equipment, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false);
+    echo $form->field($equipment, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
     echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);

@@ -4,7 +4,6 @@ namespace common\models;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "user_system".
@@ -45,6 +44,8 @@ class UserSystem extends ZhkhActiveRecord
             [['uuid', 'userUuid', 'equipmentSystemUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'equipmentSystemUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

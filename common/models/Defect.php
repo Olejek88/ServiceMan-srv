@@ -60,6 +60,8 @@ class Defect extends ZhkhActiveRecord
             [['oid','createdAt', 'changedAt'], 'safe'],
             [['uuid', 'equipmentUuid', 'userUuid', 'taskUuid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 300],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

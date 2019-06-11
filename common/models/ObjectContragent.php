@@ -43,6 +43,8 @@ class ObjectContragent extends ZhkhActiveRecord
             [['uuid', 'objectUuid', 'contragentUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'objectUuid', 'contragentUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

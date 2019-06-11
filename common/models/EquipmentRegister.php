@@ -44,6 +44,8 @@ class EquipmentRegister extends ZhkhActiveRecord
             [['data'], 'safe'],
             [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
             [['description','oid'], 'string', 'max' => 250],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

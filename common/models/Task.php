@@ -63,6 +63,8 @@ class Task extends ZhkhActiveRecord
             [['comment'], 'string'],
             [['startDate', 'taskDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
     <?php
     $houses = House::find()->all();

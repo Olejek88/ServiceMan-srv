@@ -218,7 +218,7 @@ class TaskController extends Controller
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
             $modelTU->userUuid = $user['uuid'];
-            $modelTU->oid = Users::getOid(Yii::$app->user);
+            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
@@ -381,7 +381,7 @@ class TaskController extends Controller
             if ($_POST["userUuid"])
                 $modelTU->userUuid = $_POST["userUuid"];
             $modelTU->taskUuid = $model['uuid'];
-            $modelTU->oid = Users::getOid(Yii::$app->user);
+            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();

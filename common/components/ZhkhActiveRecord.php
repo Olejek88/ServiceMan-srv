@@ -29,4 +29,17 @@ class ZhkhActiveRecord extends ActiveRecord
 
         return $aq;
     }
+
+    /**
+     * Проверка на принадлежность пользователя указанному идентификатору организации.
+     *
+     * @param $attr
+     * @param $param
+     */
+    public function checkOrganizationOwn($attr, $param)
+    {
+        if ($this->attributes[$attr] != Users::getOid(Yii::$app->user->identity)) {
+            $this->addError($attr, 'Не верный идентификатор организации.');
+        }
+    }
 }

@@ -106,6 +106,8 @@ class Message extends ZhkhActiveRecord
             ],
             [['status'], 'integer'],
             [['text'], 'string'],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\web\IdentityInterface;
 
 /**
  * Class Users
@@ -86,8 +87,10 @@ class Users extends ZhkhActiveRecord
             [['image'], 'file'],
             [['user_id','type', 'active'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin', 'whoIs'], 'string', 'max' => 45],
+            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -210,12 +213,13 @@ class Users extends ZhkhActiveRecord
     }
 
     /**
-     * @param $identity User
+     * @param $user IdentityInterface
      * @return string
      */
-    static function getOid($identity)
+    static function getOid($user)
     {
-        $oid = $identity->users->oid;
+        /** @var User $user */
+        $oid = $user->users->oid;
         return $oid;
     }
 }

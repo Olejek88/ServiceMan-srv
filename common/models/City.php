@@ -49,6 +49,8 @@ class City extends ZhkhActiveRecord
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

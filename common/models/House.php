@@ -59,6 +59,8 @@ class House extends ZhkhActiveRecord
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

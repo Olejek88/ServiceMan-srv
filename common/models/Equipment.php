@@ -128,6 +128,8 @@ class Equipment extends ZhkhActiveRecord
                 ],
                 'string', 'max' => 150
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
 
         ];
     }

@@ -76,7 +76,7 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
     <?php echo $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>

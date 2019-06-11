@@ -44,6 +44,8 @@ class TaskUser extends ZhkhActiveRecord
             [['uuid', 'userUuid', 'taskUuid'], 'required'],
             [['oid', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'taskUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

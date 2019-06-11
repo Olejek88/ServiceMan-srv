@@ -61,6 +61,8 @@ class Alarm extends ZhkhActiveRecord
             [['uuid', 'alarmTypeUuid', 'oid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'double'],
             [['comment'], 'string', 'max' => 250],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

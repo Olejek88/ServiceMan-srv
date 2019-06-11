@@ -55,6 +55,8 @@ class Street extends ZhkhActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['uuid', 'title', 'cityUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

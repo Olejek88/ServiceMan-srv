@@ -37,6 +37,8 @@ class ContragentRegister extends ZhkhActiveRecord
             [['data','oid'], 'safe'],
             [['uuid','contragentUuid', 'date'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 350],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

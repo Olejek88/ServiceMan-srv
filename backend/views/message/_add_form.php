@@ -48,7 +48,7 @@ use yii\helpers\Html;
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
     echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
-    echo $form->field($message, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false);
+    echo $form->field($message, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
 
     //echo $form->field($message, 'title')->textInput(['maxlength' => true]);
     echo $form->field($message, 'text')->textInput(['maxlength' => true]);

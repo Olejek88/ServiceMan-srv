@@ -84,6 +84,8 @@ class Operation extends ZhkhActiveRecord
                 ],
                 'string', 'max' => 45
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

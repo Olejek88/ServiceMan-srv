@@ -61,6 +61,8 @@ class Objects extends ZhkhActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

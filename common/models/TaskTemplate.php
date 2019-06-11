@@ -80,6 +80,8 @@ class TaskTemplate extends ZhkhActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'taskTypeUuid', 'oid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 100],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

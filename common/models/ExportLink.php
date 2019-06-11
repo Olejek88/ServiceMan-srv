@@ -82,10 +82,13 @@ class ExportLink extends ZhkhActiveRecord
                     'uuid',
                     'externalId',
                     'dbUuid',
-                    'table'
+                    'table',
+                    'oid',
                 ],
                 'string', 'max' => 50
-            ]
+            ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

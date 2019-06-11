@@ -72,6 +72,8 @@ class OperationTemplate extends ZhkhActiveRecord
                 ['uuid','oid'], 'string', 'max' => 45
             ],
             [['title'], 'string', 'max' => 200],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
