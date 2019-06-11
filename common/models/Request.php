@@ -89,7 +89,6 @@ class Request extends ActiveRecord
                     'contragentUuid',
                     'authorUuid',
                     'equipmentUuid',
-                    'taskUuid',
                     'comment'
                 ],
                 'required'

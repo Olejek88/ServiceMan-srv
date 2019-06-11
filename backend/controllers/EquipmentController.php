@@ -21,7 +21,6 @@ use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
-use Exception as ExceptionAlias;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
@@ -302,7 +301,7 @@ class EquipmentController extends Controller
             $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
-                    self::addEquipment($equipment);
+                    self::addEquipment($equipment,"");
             }
         }
         $users = Users::find()->all();
@@ -484,7 +483,7 @@ class EquipmentController extends Controller
                         $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                         foreach ($equipments as $equipment) {
                             $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                                self::addEquipment($equipment);
+                                self::addEquipment($equipment, $user['name']);
                         }
                     }
                 }
@@ -880,10 +879,14 @@ class EquipmentController extends Controller
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
+            if (isset($_GET["defectUuid"]))
+                $defectUuid = $_GET["defectUuid"];
+            else
+                $defectUuid = 0;
             return $this->renderAjax('_select_task', [
                 'model' => $model,
                 'equipmentUuid' => $_GET["equipmentUuid"],
-                'defectUuid' => $_GET["defectUuid"]
+                'defectUuid' => $defectUuid
             ]);
         }
         $model = new Task();
@@ -1100,12 +1103,12 @@ class EquipmentController extends Controller
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
-                'data-target' => '#modal_request',
+                'data-target' => '#modalRequest',
             ]
         );
         foreach ($userSystems as $userSystem) {
             if ($count > 0) $userEquipmentName .= ', ';
-            $userEquipmentName .= $userSystem['title'];
+            $userEquipmentName .= $userSystem['user']['name'];
             $count++;
         }
         if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
@@ -1158,7 +1161,7 @@ class EquipmentController extends Controller
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
-                'data-target' => '#modal_request',
+                'data-target' => '#modalRequest',
             ]
         );
         $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',

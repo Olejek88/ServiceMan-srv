@@ -209,6 +209,7 @@ class TaskController extends Controller
             MainFunctions::register('task','Создана задача',
                 '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
                 '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+            // TODO реализовать логику выбора пользователя
             $user = Users::find()->one();
             $modelTU = new TaskUser();
             $modelTU->uuid = (new MainFunctions)->GUID();

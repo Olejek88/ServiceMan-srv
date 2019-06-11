@@ -15,6 +15,8 @@ use yii\db\ActiveRecord;
  * @property string $equipmentSystemUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property EquipmentSystem $equipmentSystem
  */
 class UserSystem extends ActiveRecord
 {
@@ -39,8 +41,8 @@ class UserSystem extends ActiveRecord
     {
         return [
             [['uuid', 'userUuid', 'equipmentSystemUuid'], 'required'],
-            [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'userUuid', 'equipmentSystemUuid'], 'string', 'max' => 50],
+            [['oid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'userUuid', 'equipmentSystemUuid', 'oid'], 'string', 'max' => 50],
         ];
     }
 
@@ -83,4 +85,14 @@ class UserSystem extends ActiveRecord
     {
         return $this->hasOne(EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']);
     }
+
+    /**
+     * Объект связанного поля.
+     * @return ActiveQuery
+     */
+    public function getEquipmentSystem()
+    {
+        return $this->hasOne(EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']);
+    }
+
 }

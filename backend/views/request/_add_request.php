@@ -6,6 +6,7 @@
 use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\Equipment;
+use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -71,12 +72,16 @@ use yii\bootstrap\ActiveForm;
         ?>
 
         <?php
+        $objectContragent = 0;
+        if ($model['objectUuid'])
+            $objectContragent = ObjectContragent::find()->where(['objectUuid' => $model['objectUuid']])->one();
         $contragents = Contragent::find()->all();
         $items = ArrayHelper::map($contragents, 'uuid', 'title');
         echo $form->field($model, 'contragentUuid',
             ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,
             [
                 'data' => $items,
+                'value' => $objectContragent,
                 'language' => 'ru',
                 'options' => [
                     'placeholder' => 'Выберите исполнителя..'
@@ -105,53 +110,63 @@ use yii\bootstrap\ActiveForm;
         ?>
 
         <?php
-        $equipments = Equipment::find()->all();
-        $items = ArrayHelper::map($equipments, 'uuid', 'title');
-        echo $form->field($model, 'equipmentUuid',
-            ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите оборудование..'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
+        if (!$model->equipmentUuid) {
+            $equipments = Equipment::find()->all();
+            $items = ArrayHelper::map($equipments, 'uuid', 'title');
+            echo $form->field($model, 'equipmentUuid',
+                ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
+                [
+                    'data' => $items,
+                    'language' => 'ru',
+                    'options' => [
+                        'placeholder' => 'Выберите оборудование..'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
+        } else {
+            echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
+        }
         ?>
 
         <?php
-        $objects  = Objects::find()->all();
-        $items = ArrayHelper::map($objects,'uuid','title');
-        echo $form->field($model, 'objectUuid',
-            ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите объект..'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
+        if (!$model->objectUuid) {
+            $objects = Objects::find()->all();
+            $items = ArrayHelper::map($objects, 'uuid', 'title');
+            echo $form->field($model, 'objectUuid',
+                ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
+                [
+                    'data' => $items,
+                    'language' => 'ru',
+                    'options' => [
+                        'placeholder' => 'Выберите объект..'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
+        } else {
+            echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
+        }
         ?>
 
         <?php
-        $tasks = Task::find()->all();
-        $items = ArrayHelper::map($tasks, 'uuid', 'taskTemplate.title');
-        echo $form->field($model, 'taskUuid')->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Задача'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
+        if ($model->objectUuid && $model->equipmentUuid && false) {
+            $tasks = Task::find()->all();
+            $items = ArrayHelper::map($tasks, 'uuid', 'taskTemplate.title');
+            echo $form->field($model, 'taskUuid')->widget(Select2::class,
+                [
+                    'data' => $items,
+                    'language' => 'ru',
+                    'options' => [
+                        'placeholder' => 'Задача'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
+        }
         ?>
 
         <?php
@@ -176,7 +191,8 @@ use yii\bootstrap\ActiveForm;
             type: "post",
             data: $('form').serialize(),
             success: function () {
-                //$('#modalRequest').modal('hide');
+                console.log("fin");
+                $('#modalRequest').modal('hide');
             },
             error: function () {
             }

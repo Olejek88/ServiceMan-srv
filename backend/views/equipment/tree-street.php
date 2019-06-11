@@ -75,11 +75,6 @@ $this->title = 'Дерево моделей оборудования';
         </tbody>
     </table>
 
-    <div class="modal remote fade" id="modal_request">
-        <div class="modal-dialog">
-            <div class="modal-content loader-lg"></div>
-        </div>
-    </div>
     <div class="modal remote fade" id="modalChange">
         <div class="modal-dialog">
             <div class="modal-content loader-lg"></div>
@@ -228,7 +223,7 @@ try {
             'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.location);
+            $tdList.eq(1).html(node.data.tasks);
             $tdList.eq(2).html(node.data.serial);
             $tdList.eq(3).html(node.data.status);
             $tdList.eq(4).html(node.data.user);
@@ -304,6 +299,11 @@ try {
             </div>
         </div>
     </div>
+    <div class="modal remote fade" id="modalRequest">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentRequest"></div>
+        </div>
+    </div>
 
 <?php
 $this->registerJs('$("#modalRegister").on("hidden.bs.modal",
@@ -328,6 +328,11 @@ function () {
 })');
 $this->registerJs('$("#modalStatus").on("hidden.bs.modal",
 function () {
+     window.location.replace("tree-street");
+})');
+$this->registerJs('$("#modalRequest").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
      window.location.replace("tree-street");
 })');
 
