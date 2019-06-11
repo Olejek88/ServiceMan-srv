@@ -1,4 +1,5 @@
 <?php
+/** @var $content */
 
 use backend\assets\AppAsset;
 use yii\helpers\Html;

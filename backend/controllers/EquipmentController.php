@@ -22,6 +22,7 @@ use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
@@ -1248,6 +1249,7 @@ class EquipmentController extends Controller
      *
      * @param $r
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTimeline($uuid, $r)
     {

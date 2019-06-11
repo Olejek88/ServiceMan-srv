@@ -31,7 +31,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '220px',
         'value' => function ($data) {
-            return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
+            return 'ул.' . $data['object']['house']['street']->title . ', д.' . $data['object']['house']->number;
         },
         'header' => 'Адрес',
         'format' => 'raw',
@@ -42,68 +42,10 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '180px',
         'header' => 'Объект',
-        'format' => 'raw',
-    ],
-    [
-        'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'objectStatusUuid',
-        'header' => 'Статус',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'width' => '180px',
-        'value' => function ($model, $key, $index, $widget) {
-            $color = 'background-color: yellow';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_DEFAULT)
-                $color = 'background-color: gray';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_NO_ENTRANCE ||
-                ObjectStatus::OBJECT_STATUS_NO_ENTRANCE)
-                $color = 'background-color: lightred';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_OK)
-                $color = 'background-color: green';
-            return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;  
-                        " . $model['objectStatus']->title;
+        'value' => function ($data) {
+            return $data['object']->title;
         },
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(ObjectStatus::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'format' => 'raw'
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'objectTypeUuid',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'width' => '180px',
-        'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Тип',
-        'filter' => ArrayHelper::map(ObjectType::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'editableOptions' => function ($model, $key, $index, $widget) {
-            $models = ArrayHelper::map(ObjectType::find()->orderBy('title')->all(), 'uuid', 'title');
-            return [
-                'header' => 'Тип объекта',
-                'size' => 'lg',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $models,
-                'data' => $models
-            ];
-        },
     ],
     [
         'class' => 'kartik\grid\DataColumn',
