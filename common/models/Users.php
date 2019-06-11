@@ -208,4 +208,14 @@ class Users extends ZhkhActiveRecord
     {
         return $this->hasOne(Organization::class, ['uuid' => 'oid']);
     }
+
+    /**
+     * @param $identity User
+     * @return string
+     */
+    static function getOid($identity)
+    {
+        $oid = $identity->users->oid;
+        return $oid;
+    }
 }

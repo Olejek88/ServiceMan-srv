@@ -32,7 +32,7 @@ use dosamigos\datetimepicker\DateTimePicker;
             echo $form->field($model, 'uuid')->textInput(['maxlength' => true, 'value' => (new MainFunctions)->GUID()]);
         }
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
 
     <?php
     $user  = Users::find()->all();

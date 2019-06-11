@@ -26,7 +26,7 @@ use common\models\Equipment;
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
 
     <?php
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);

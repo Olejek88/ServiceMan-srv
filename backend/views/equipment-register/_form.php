@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
         ['rows' => 4, 'style' => 'resize: none;']
     );
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user)])->label(false); ?>
 
     <div class="form-group text-center">
 
