@@ -2,11 +2,13 @@
 
 namespace common\models;
 
+use Yii;
+use yii\base\Exception;
+
 /**
  * Class UserTokenAuth
  * @package common\models
  *
- * @property integer $type
  */
 class UserTokenAuth extends UserToken
 {
@@ -21,7 +23,7 @@ class UserTokenAuth extends UserToken
                 ['valid_till'],
                 'default',
                 'value' => function () {
-                    return date(DATE_W3C, strtotime('+1 week'));
+                    return date('Y-m-d H:i:s', strtotime('+1 week'));
                 }
             ],
             [['token'], 'string', 'max' => 32],
@@ -37,12 +39,13 @@ class UserTokenAuth extends UserToken
 
     /**
      * @inheritdoc
+     * @throws Exception
      */
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
             if ($insert) {
-                $this->setAttribute('token', \Yii::$app->security->generateRandomString());
+                $this->setAttribute('token', Yii::$app->security->generateRandomString());
             }
             return true;
         }

@@ -87,7 +87,7 @@ use common\models\requestStatus;
         ?>
     </div>
     <?= $form->field($model, 'comment')->textInput() ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
     <div class="form-group text-center">
 

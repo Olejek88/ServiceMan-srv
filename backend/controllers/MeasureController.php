@@ -10,6 +10,8 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
+use yii\base\InvalidConfigException;
+use Throwable;
 
 /**
  * MeasureController implements the CRUD actions for Measure model.
@@ -98,6 +100,7 @@ class MeasureController extends Controller
     /**
      * Displays a trend of value
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTrend()
     {
@@ -142,7 +145,7 @@ class MeasureController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)

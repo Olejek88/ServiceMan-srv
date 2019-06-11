@@ -36,7 +36,7 @@ use yii\helpers\Html;
             ->label(false);
         echo Html::hiddenInput("taskTemplateUuid", $taskTemplateUuid);
     }
-    echo $form->field($operationTemplate, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    echo $form->field($operationTemplate, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
     echo $form->field($operationTemplate, 'title')->textInput();
     echo $form->field($operationTemplate, 'description')->textArea(['rows' => '8']);
 //    echo Html::hiddenInput("equipment_uuid", $equipment_uuid);

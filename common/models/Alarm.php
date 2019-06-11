@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -28,7 +28,7 @@ use yii\db\Expression;
  * @property AlarmType $alarmType
  * @property Photo $photo
  */
-class Alarm extends ActiveRecord
+class Alarm extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -61,6 +61,8 @@ class Alarm extends ActiveRecord
             [['uuid', 'alarmTypeUuid', 'oid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'double'],
             [['comment'], 'string', 'max' => 250],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

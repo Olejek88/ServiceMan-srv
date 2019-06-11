@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class City extends ActiveRecord
+class City extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -49,6 +49,8 @@ class City extends ActiveRecord
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

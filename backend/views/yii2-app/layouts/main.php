@@ -15,6 +15,11 @@ if (Yii::$app->controller->action->id === 'login' || Yii::$app->controller->acti
         'main-login',
         ['content' => $content]
     );
+} else if (Yii::$app->controller->action->id === 'signup') {
+    echo $this->render(
+        'main-signup',
+        ['content' => $content]
+    );
 } else {
 
     if (class_exists('backend\assets\AppAsset')) {

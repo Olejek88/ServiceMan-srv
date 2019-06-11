@@ -1,9 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -17,7 +17,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class OperationTemplate extends ActiveRecord
+class OperationTemplate extends ZhkhActiveRecord
 {
     /**
      * Behaviors
@@ -72,6 +72,8 @@ class OperationTemplate extends ActiveRecord
                 ['uuid','oid'], 'string', 'max' => 45
             ],
             [['title'], 'string', 'max' => 200],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

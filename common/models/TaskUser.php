@@ -1,8 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "task_user".
@@ -14,8 +15,11 @@ use yii\db\ActiveRecord;
  * @property string $taskUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $task
  */
-class TaskUser extends ActiveRecord
+class TaskUser extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.
@@ -40,6 +44,8 @@ class TaskUser extends ActiveRecord
             [['uuid', 'userUuid', 'taskUuid'], 'required'],
             [['oid', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'taskUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

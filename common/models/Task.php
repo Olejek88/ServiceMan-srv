@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
@@ -30,7 +31,7 @@ use yii\db\ActiveRecord;
  * @property Equipment $equipment
  * @property Operation $operations
  */
-class Task extends ActiveRecord
+class Task extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -62,6 +63,8 @@ class Task extends ActiveRecord
             [['comment'], 'string'],
             [['startDate', 'taskDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

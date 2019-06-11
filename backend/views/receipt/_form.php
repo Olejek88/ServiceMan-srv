@@ -63,7 +63,7 @@ use common\models\requestStatus;
 
     echo $form->field($model, 'closed')->hiddenInput(['value' => false])->label(false);
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
     <div class="form-group text-center">
 

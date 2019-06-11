@@ -14,7 +14,6 @@ use yii\db\Expression;
  * @property string $title
  * @property string $createdAt
  * @property string $changedAt
- * @property string $icon
  */
 
 class DocumentationType extends ActiveRecord

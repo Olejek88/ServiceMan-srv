@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -22,7 +22,7 @@ use yii\db\Expression;
  *
  * @property TaskType $taskType
  */
-class TaskTemplate extends ActiveRecord
+class TaskTemplate extends ZhkhActiveRecord
 {
     const DEFAULT_TASK = "138C39D3-F0F0-443C-95E7-698A5CAC6E74";
 
@@ -80,6 +80,8 @@ class TaskTemplate extends ActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'taskTypeUuid', 'oid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 100],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

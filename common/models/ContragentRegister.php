@@ -2,12 +2,13 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "contragent_register".
  *
+ * @property int $_id
  * @property string $uuid
  * @property string $oid идентификатор организации
  * @property string $contragentUuid
@@ -16,8 +17,7 @@ use yii\db\ActiveRecord;
  * @property string $createdAt
  * @property string $changedAt
  */
-
-class ContragentRegister extends ActiveRecord
+class ContragentRegister extends ZhkhActiveRecord
 {
     /**
      * @inheritdoc
@@ -37,6 +37,8 @@ class ContragentRegister extends ActiveRecord
             [['data','oid'], 'safe'],
             [['uuid','contragentUuid', 'date'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 350],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

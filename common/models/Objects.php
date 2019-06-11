@@ -2,10 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -26,9 +26,10 @@ use yii\db\Expression;
  * @property House $house
  * @property ObjectStatus $objectStatus
  * @property Photo $photo
+ * @property string $fullTitle
  * @property ObjectType $objectType
  */
-class Objects extends ActiveRecord
+class Objects extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -60,6 +61,8 @@ class Objects extends ActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
