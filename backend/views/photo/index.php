@@ -1,10 +1,10 @@
 <?php
-/* @var $searchModel common\models\PhotoFlat */
+/* @var $searchModel backend\models\PhotoSearch */
 
 use yii\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Типы измерений');
+$this->title = Yii::t('app', 'Фотографии');
 ?>
 <div class="equipment-index box-padding-index">
 
@@ -13,11 +13,6 @@ $this->title = Yii::t('app', 'Типы измерений');
             <h3 class="text-center" style="color: #333;">
                 <?= Html::encode($this->title) ?>
             </h3>
-
-            <ul class="nav nav-tabs" style="width: 301px; margin: 0 auto;">
-                <li class=""><a href="/measure">Измерения</a></li>
-                <li class="active"><a href="/measure-type">Типы измерений</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 
@@ -48,14 +43,47 @@ $this->title = Yii::t('app', 'Типы измерений');
                                     }
                                 ],
                                 [
-                                    'attribute' => 'title',
+                                    'attribute' => 'objectUuid',
                                     'contentOptions' => [
                                         'class' => 'table_class',
+                                        'hAlign' => 'center',
+                                        'style' => 'width: 200px'
                                     ],
                                     'headerOptions' => ['class' => 'text-center'],
                                     'content' => function ($data) {
-                                        return $data->title;
+                                        return $data['equipment']['equipmentType']->title . ' [' .
+                                            $data['equipment']['flat']['house']['street']->title . ', ' .
+                                            $data['equipment']['flat']['house']->number . ', ' .
+                                            $data['equipment']['flat']['number'] . ']';
+
                                     }
+                                ],
+                                [
+                                    'attribute' => 'userUuid',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 200px'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value' => 'user.name'
+                                ],
+                                [
+                                    'attribute' => 'latitude',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 100px'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value' => 'latitude'
+                                ],
+                                [
+                                    'attribute' => 'longitude',
+                                    'contentOptions' => [
+                                        'class' => 'table_class',
+                                        'style' => 'width: 100px'
+                                    ],
+                                    'headerOptions' => ['class' => 'text-center'],
+                                    'value' => 'longitude'
                                 ],
                                 [
                                     'class' => 'yii\grid\ActionColumn',

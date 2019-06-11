@@ -321,7 +321,7 @@ class TaskController extends Controller
                         $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
                         $user_names='';
                         foreach ($taskUsers as $taskUser) {
-                             $user_names.=$taskUser['user']['title'];
+                             $user_names.=$taskUser['user']['name'];
                             }
                         $childIdx4 = count($tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
                         $operations = Operation::find()->where(['taskUuid' => $task['uuid']])->all();

@@ -1,6 +1,7 @@
 <?php
-/*  @var $model \common\models\PhotoEquipment */
+/*  @var $model Photo */
 
+use common\models\Photo;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -41,8 +42,7 @@ $this->title = 'Фото';
                             'attributes' => [
                                 '_id',
                                 'uuid',
-                                'userUuid',
-                                'equipmentUuid',
+                                'objectUuid',
                                 'latitude',
                                 'longitude',
                                 'createdAt',

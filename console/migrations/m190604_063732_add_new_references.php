@@ -15,7 +15,7 @@ class m190604_063732_add_new_references extends Migration
     public function safeUp()
     {
         $currentTime = date('Y-m-d\TH:i:s');
-/*
+
         $this->dropColumn('task_template', 'normative');
         $this->addColumn('task_template', 'normative', $this->double()->defaultValue(1));
 
@@ -34,7 +34,7 @@ class m190604_063732_add_new_references extends Migration
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_TO,
             'Техобслуживание', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_OVERHAUL,
-            'Технический ремонт', $currentTime, $currentTime);*/
+            'Технический ремонт', $currentTime, $currentTime);
 
         $this->insertIntoTaskTemplate('D1C0ED69-A5E7-4CAA-A48B-E03D854AF983','Локализация аварийных повреждений ХВС/ГВС',
             'Локализация аварийных повреждений внутридомовых инженерных систем холодного и горячего водоснабжения и водоотведения',
