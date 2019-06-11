@@ -20,6 +20,8 @@ use common\models\Task;
 use common\models\Equipment;
 use common\models\Operation;
 use backend\models\TaskSearch;
+use yii\base\InvalidConfigException;
+use Throwable;
 
 class TaskController extends Controller
 {
@@ -51,7 +53,7 @@ class TaskController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -81,6 +83,7 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableUser()
     {
@@ -200,6 +203,7 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -214,7 +218,7 @@ class TaskController extends Controller
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
             $modelTU->userUuid = $user['uuid'];
-            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->oid = Users::getOid(Yii::$app->user);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
@@ -261,7 +265,7 @@ class TaskController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
@@ -293,6 +297,7 @@ class TaskController extends Controller
      * Build tree of equipment
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTree()
     {
@@ -350,6 +355,7 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionAddTask()
     {
@@ -375,7 +381,7 @@ class TaskController extends Controller
             if ($_POST["userUuid"])
                 $modelTU->userUuid = $_POST["userUuid"];
             $modelTU->taskUuid = $model['uuid'];
-            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->oid = Users::getOid(Yii::$app->user);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
