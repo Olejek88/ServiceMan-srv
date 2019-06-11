@@ -1,9 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class ExportLink extends ActiveRecord
+class ExportLink extends ZhkhActiveRecord
 {
     /**
      * Behaviors.
@@ -82,10 +82,13 @@ class ExportLink extends ActiveRecord
                     'uuid',
                     'externalId',
                     'dbUuid',
-                    'table'
+                    'table',
+                    'oid',
                 ],
                 'string', 'max' => 50
-            ]
+            ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

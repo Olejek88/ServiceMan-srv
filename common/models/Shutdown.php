@@ -1,9 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -22,7 +22,7 @@ use yii\db\Expression;
  *
  * @property Contragent $contragent
  */
-class Shutdown extends ActiveRecord
+class Shutdown extends ZhkhActiveRecord
 {
     /**
      * Behaviors
@@ -80,6 +80,8 @@ class Shutdown extends ActiveRecord
                 ],
                 'string', 'max' => 45
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

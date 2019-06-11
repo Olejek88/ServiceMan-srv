@@ -1,9 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "user_system".
@@ -15,8 +15,13 @@ use yii\db\ActiveRecord;
  * @property string $equipmentSystemUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $system
+ *
+ * @property EquipmentSystem $equipmentSystem
  */
-class UserSystem extends ActiveRecord
+class UserSystem extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.
@@ -41,6 +46,8 @@ class UserSystem extends ActiveRecord
             [['uuid', 'userUuid', 'equipmentSystemUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'equipmentSystemUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -83,4 +90,14 @@ class UserSystem extends ActiveRecord
     {
         return $this->hasOne(EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']);
     }
+
+    /**
+     * Объект связанного поля.
+     * @return ActiveQuery
+     */
+    public function getEquipmentSystem()
+    {
+        return $this->hasOne(EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']);
+    }
+
 }

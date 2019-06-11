@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ca45a5d25b5cc3a816c35a234da9ba8",
+    "content-hash": "6b644b9976fb6c7c3ed5f3285ef64b05",
     "packages": [
         {
             "name": "2amigos/yii2-date-time-picker-widget",
@@ -352,6 +352,94 @@
             "time": "2019-03-11T18:01:44+00:00"
         },
         {
+            "name": "bower-asset/angular",
+            "version": "v1.7.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/angular/bower-angular.git",
+                "reference": "56690b5e545ad36d04e369a65171de1adbe3ce64"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/angular/bower-angular/zipball/56690b5e545ad36d04e369a65171de1adbe3ce64",
+                "reference": "56690b5e545ad36d04e369a65171de1adbe3ce64",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "./angular.js",
+                "bower-asset-ignore": []
+            },
+            "license": [
+                "MIT"
+            ],
+            "time": "2019-03-11T11:40:48+00:00"
+        },
+        {
+            "name": "bower-asset/angular-latest",
+            "version": "v1.5.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/angular/angular.js.git",
+                "reference": "22b669407c3547f1e7c62a32d401a4f60528ad7c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/angular/angular.js/zipball/22b669407c3547f1e7c62a32d401a4f60528ad7c",
+                "reference": "22b669407c3547f1e7c62a32d401a4f60528ad7c",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "license": [
+                "MIT"
+            ],
+            "time": "2016-07-22T15:01:46+00:00"
+        },
+        {
+            "name": "bower-asset/angular-ui-tree",
+            "version": "2.1.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/angular-ui-tree/angular-ui-tree.git",
+                "reference": "521998da41cb9f71f7ad6fb9e55c719d92ef8e2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/angular-ui-tree/angular-ui-tree/zipball/521998da41cb9f71f7ad6fb9e55c719d92ef8e2d",
+                "reference": "521998da41cb9f71f7ad6fb9e55c719d92ef8e2d",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/angular": ">=1.2.0",
+                "bower-asset/es5-shim": "2.3.0"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "dist/angular-ui-tree.js",
+                    "dist/angular-ui-tree.min.css"
+                ],
+                "bower-asset-ignore": [
+                    "node_modules",
+                    "bower_components",
+                    "test",
+                    "tests"
+                ]
+            },
+            "description": "Tree directive for the angular.js",
+            "keywords": [
+                "NestedSortable",
+                "angular",
+                "drag",
+                "drop",
+                "nested",
+                "node",
+                "sortable",
+                "tree"
+            ],
+            "time": "2014-07-31T11:44:53+00:00"
+        },
+        {
             "name": "bower-asset/blueimp-canvas-to-blob",
             "version": "v3.14.0",
             "source": {
@@ -528,6 +616,53 @@
                 "web"
             ],
             "time": "2019-02-13T15:55:38+00:00"
+        },
+        {
+            "name": "bower-asset/css-element-queries",
+            "version": "0.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/marcj/css-element-queries.git",
+                "reference": "e5d44a784f897204935e05b207f4e43c970297b1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/marcj/css-element-queries/zipball/e5d44a784f897204935e05b207f4e43c970297b1",
+                "reference": "e5d44a784f897204935e05b207f4e43c970297b1",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "./src/ElementQueries.js",
+                    "./src/ResizeSensor.js"
+                ],
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "_*",
+                    "Gruntfile.js",
+                    "composer.json",
+                    "package.json",
+                    "*.html"
+                ]
+            },
+            "time": "2016-01-31T20:41:39+00:00"
+        },
+        {
+            "name": "bower-asset/es5-shim",
+            "version": "v2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/es-shims/es5-shim.git",
+                "reference": "16e070c763588290718a907d0fa0a132993e5d6a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/es-shims/es5-shim/zipball/16e070c763588290718a907d0fa0a132993e5d6a",
+                "reference": "16e070c763588290718a907d0fa0a132993e5d6a",
+                "shasum": ""
+            },
+            "type": "bower-asset-library"
         },
         {
             "name": "bower-asset/fancytree",
@@ -869,6 +1004,34 @@
             "time": "2019-01-21T20:59:53+00:00"
         },
         {
+            "name": "bower-asset/moment-range",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gf3/moment-range.git",
+                "reference": "b4f32628132bb2aee0fb92dbf6cf13dda1e976c8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gf3/moment-range/zipball/b4f32628132bb2aee0fb92dbf6cf13dda1e976c8",
+                "reference": "b4f32628132bb2aee0fb92dbf6cf13dda1e976c8",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/moment": ">=1"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "./dist/moment-range.js",
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "node_modules",
+                    "components"
+                ]
+            },
+            "time": "2015-06-01T18:00:33+00:00"
+        },
+        {
             "name": "bower-asset/patternfly-bootstrap-treeview",
             "version": "v2.1.8",
             "source": {
@@ -1206,6 +1369,60 @@
                 "yii2"
             ],
             "time": "2018-07-24T14:47:13+00:00"
+        },
+        {
+            "name": "dragonmantank/cron-expression",
+            "version": "v2.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dragonmantank/cron-expression.git",
+                "reference": "72b6fbf76adb3cf5bc0db68559b33d41219aba27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/72b6fbf76adb3cf5bc0db68559b33d41219aba27",
+                "reference": "72b6fbf76adb3cf5bc0db68559b33d41219aba27",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Cron\\": "src/Cron/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Chris Tankersley",
+                    "email": "chris@ctankersley.com",
+                    "homepage": "https://github.com/dragonmantank"
+                }
+            ],
+            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
+            "keywords": [
+                "cron",
+                "schedule"
+            ],
+            "time": "2019-03-31T00:38:28+00:00"
         },
         {
             "name": "execut/yii2-base",
@@ -3892,6 +4109,53 @@
                 "xlsx"
             ],
             "time": "2019-01-02T04:42:54+00:00"
+        },
+        {
+            "name": "professionalweb/schedule-widget-yii2",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SergioMadness/ScheduleWidgetYII2.git",
+                "reference": "1d2928dabbb7538b5f2ef06e4b6b61d1c388767a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SergioMadness/ScheduleWidgetYII2/zipball/1d2928dabbb7538b5f2ef06e4b6b61d1c388767a",
+                "reference": "1d2928dabbb7538b5f2ef06e4b6b61d1c388767a",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/angular-latest": "1.5.8",
+                "bower-asset/angular-ui-tree": "2.1.5",
+                "bower-asset/css-element-queries": "0.3.2",
+                "bower-asset/moment-range": "~1",
+                "yiisoft/yii2": "^2.0"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "professionalweb\\ScheduleWidget\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Zinchenko",
+                    "email": "info@web-development.pw",
+                    "homepage": "http://web-development.pw"
+                }
+            ],
+            "description": "Wrapper for angular-gantt",
+            "keywords": [
+                "Gantt diagramm",
+                "angular-gantt",
+                "professional web",
+                "yii2"
+            ],
+            "time": "2016-09-01T21:32:54+00:00"
         },
         {
             "name": "psr/log",
@@ -7414,11 +7678,14 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "professionalweb/schedule-widget-yii2": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "ext-json": "*"
     },
     "platform-dev": []
 }

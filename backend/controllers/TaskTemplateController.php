@@ -3,16 +3,11 @@
 namespace backend\controllers;
 
 use backend\models\TaskSearchTemplate;
+use backend\models\TaskSearchType;
 use common\components\MainFunctions;
 use common\models\Equipment;
-use common\models\EquipmentStage;
 use common\models\EquipmentType;
-use common\models\ExternalEvent;
-use common\models\ExternalTag;
 use common\models\OperationTemplate;
-use common\models\StageOperation;
-use common\models\StageTemplate;
-use common\models\TaskEquipmentStage;
 use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
@@ -80,6 +75,9 @@ class TaskTemplateController extends Controller
     public function actionCreate()
     {
         $model = new TaskTemplate();
+        $searchModel = new TaskSearchTemplate();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -88,6 +86,7 @@ class TaskTemplateController extends Controller
                 'create',
                 [
                     'model' => $model,
+                    'dataProvider' => $dataProvider
                 ]
             );
         }
@@ -630,7 +629,7 @@ class TaskTemplateController extends Controller
             if (isset($_POST["task_id"]))
                 $task_id = $_POST["task_id"];
             if (isset($_POST["task_template_equipment"]))
-                $task_template_equipment  = $_POST["task_template_equipment"];
+                $task_template_equipment = $_POST["task_template_equipment"];
             // оборудование
             if ($equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();

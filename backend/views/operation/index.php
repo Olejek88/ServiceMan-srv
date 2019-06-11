@@ -1,10 +1,10 @@
 <?php
 
+use backend\models\OperationSearch;
 use yii\helpers\Html;
 use yii\grid\GridView;
-use \common\models\OperationFile;
 
-/* @var $searchModel \backend\models\OperationSearch */
+/* @var $searchModel OperationSearch */
 
 $this->title = Yii::t('app', 'Операция');
 ?>

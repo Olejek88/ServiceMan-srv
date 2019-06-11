@@ -4,6 +4,7 @@ namespace common\models;
 use common\components\IPhoto;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -11,7 +12,6 @@ use yii\db\Expression;
  * This is the model class for table "photo".
  *
  * @property integer $_id
- * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $objectUuid
  * @property string $userUuid
@@ -141,7 +141,7 @@ class Photo extends ActiveRecord implements IPhoto
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getObject()
     {
@@ -151,7 +151,7 @@ class Photo extends ActiveRecord implements IPhoto
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {

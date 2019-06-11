@@ -49,6 +49,22 @@ class ShutdownController extends Controller
      */
     public function actionIndex()
     {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Shutdown::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'contragent') {
+                $model['contragentUuid'] = $_POST['Shutdown'][$_POST['editableIndex']]['contragent'];
+            }
+            if ($_POST['editableAttribute'] == 'startDate') {
+                $model['startDate'] = $_POST['Shutdown'][$_POST['editableIndex']]['startDate'];
+            }
+            if ($_POST['editableAttribute'] == 'endDate') {
+                $model['endDate'] = $_POST['Shutdown'][$_POST['editableIndex']]['endDate'];
+            }
+            $model->save();
+            return json_encode('');
+        }
         $searchModel = new ShutdownSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 100;
@@ -145,6 +161,29 @@ class ShutdownController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    public function actionForm()
+    {
+        $model = new Shutdown();
+        return $this->renderAjax('_add_shutdown', ['model' => $model]);
+    }
+
+    /**
+     * Creates a new Shutdown model.
+     * @return mixed
+     * @var $model Shutdown
+     */
+    public
+    function actionNew()
+    {
+        if (isset($_POST['shutdownUuid']))
+            $model = Shutdown::find()->where(['uuid' => $_POST['shutdownUuid']])->one();
+        else
+            $model = new Shutdown();
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save(false);
         }
     }
 }

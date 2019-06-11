@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -25,9 +25,10 @@ use yii\db\Expression;
  * @property Street $street
  * @property HouseStatus $houseStatus
  * @property Photo $photo
+ * @property string $fullTitle
  * @property HouseType $houseType
  */
-class House extends ActiveRecord
+class House extends ZhkhActiveRecord
 {
     public function behaviors()
     {
@@ -58,6 +59,8 @@ class House extends ActiveRecord
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

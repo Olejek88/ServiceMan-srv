@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\PhotoFlatSearch */
+/* @var $model backend\models\PhotoSearch */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -23,9 +23,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'longitude') ?>
 
-    <?= $form->field($model, 'flatUuid') ?>
-
-    <?= $form->field($model, 'userUuid') ?>
+    <?= $form->field($model, 'objectUuid') ?>
 
     <?= $form->field($model, 'createdAt') ?>
 

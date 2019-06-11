@@ -5,15 +5,15 @@ namespace backend\controllers;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
-use common\models\Equipment;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
 use common\models\Message;
-use common\models\Objects;
 use common\models\Photo;
+use common\models\TaskUser;
 use common\models\UserHouse;
 use common\models\Users;
+use common\models\UserSystem;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
@@ -22,6 +22,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
+use Throwable;
+use yii\base\InvalidConfigException;
 
 /**
  * UsersController implements the CRUD actions for Users model.
@@ -212,59 +214,41 @@ class UsersController extends Controller
 
     /**
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionDashboard()
     {
-        $users = Users::find()->where('name!="sUser"')->orderBy('createdAt DESC')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->orderBy('createdAt DESC')
+            ->all();
         $user_property[][] = '';
         $count = 0;
         foreach ($users as $user) {
             $user_photo = Photo::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['photos'] = $user_photo;
-            $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['alarms'] = $user_alarms;
-            $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property[$count]['messages'] = $user_messages;
+//            $user_alarms = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
+//            $user_property[$count]['alarms'] = $user_alarms;
+//            $user_messages = Message::find()->where(['userUuid' => $user['uuid']])->count();
+//            $user_property[$count]['messages'] = $user_messages;
 
             $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->
             andWhere('date > NOW() - INTERVAL 7 DAY')->count();
             $user_property[$count]['measure'] = $user_measure;
+            $user_systems = UserSystem::find()->where(['userUuid' => $user['uuid']])->all();
+            $user_property[$count]['systems'] = "";
+            foreach ($user_systems as $user_system) {
+                $user_property[$count]['systems'] .=
+                    '<span class="pull-right badge bg-blue">'.$user_system['equipmentSystem']['titleUser'].'</span>';
+            }
+            $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['alarms'] = $user_houses;
 
             $user_tracks = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['tracks'] = $user_tracks;
 
-            $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->all();
-            $user_property[$count]['houses'] = $user_houses;
-            $user_flats = 0;
-            $visited = 0;
-            foreach ($user_houses as $user_house) {
-                //$user_flats += Flat::find()->where(['houseUuid' => $user_house['houseUuid']])->count();
-                $flats = Objects::find()->where(['uuid' => $user_house['houseUuid']])->all();
-                foreach ($flats as $flat) {
-                    $user_flats++;
-                    $equipment = Equipment::find()->where(['objectUuid' => $flat['uuid']])->orderBy('createdAt DESC')->one();
-                    if ($equipment) {
-                        $user_measure = Measure::find()->where(['equipmentUuid' => $equipment['uuid']])->
-                        andWhere('date > NOW() - INTERVAL 14 DAY')->count();
-                        if ($user_measure > 0)
-                            $visited++;
-                        else {
-                            $user_message = Message::find()->where(['objectUuid' => $flat['uuid']])->
-                            andWhere('date > NOW() - INTERVAL 14 DAY')->count();
-                            if ($user_message > 0)
-                                $visited++;
-                        }
-                    }
-                }
-            }
-            $user_property[$count]['objects'] = $user_flats;
-            $user_property[$count]['visited'] = $visited;
-
-            $user_property[$count]['complete'] = 0;
-            if ($user_flats > 0) {
-                $user_property[$count]['complete'] = number_format($user_property[$count]['measure'] * 100 / $user_flats, 2);
-                $user_property[$count]['visited_total'] = number_format($visited * 100 / $user_flats, 2);
-            }
+            $user_tasks = TaskUser::find()->where(['userUuid' => $user['uuid']])->count();
+            $user_property[$count]['tasks'] = $user_tasks;
 
             $count++;
         }
@@ -369,7 +353,7 @@ class UsersController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
@@ -570,5 +554,34 @@ class UsersController extends Controller
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';
         return $event;
+    }
+
+    /**
+     *
+     * @return mixed
+     */
+    public function actionAddSystem()
+    {
+        $model = new UserSystem();
+        if (isset($_POST["uuid"])) {
+            if ($model->load(Yii::$app->request->post())) {
+                if (!$model->validate()) {
+                    echo json_encode($model->errors);
+                }
+                $userSystem = UserSystem::find()->where(['userUuid' => $model['userUuid']])
+                    ->andWhere(['equipmentSystemUuid' => $model['equipmentSystemUuid']])
+                    ->one();
+                echo json_encode($userSystem);
+                if (!$userSystem) {
+                    $model->save();
+                }
+                exit(0);
+                //return $this->render('dashboard');
+            }
+        } else {
+            if (isset($_GET["userUuid"]))
+                $model->userUuid = $_GET["userUuid"];
+            return $this->renderAjax('_add_system', ['model' => $model]);
+        }
     }
 }

@@ -15,7 +15,7 @@ use common\models\Equipment;
 use common\models\requestStatus;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Request */
+/* @var $model common\models\Shutdown */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -87,7 +87,7 @@ use common\models\requestStatus;
         ?>
     </div>
     <?= $form->field($model, 'comment')->textInput() ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
 
     <div class="form-group text-center">
 

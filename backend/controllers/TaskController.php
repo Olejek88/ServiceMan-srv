@@ -20,6 +20,8 @@ use common\models\Task;
 use common\models\Equipment;
 use common\models\Operation;
 use backend\models\TaskSearch;
+use yii\base\InvalidConfigException;
+use Throwable;
 
 class TaskController extends Controller
 {
@@ -51,7 +53,7 @@ class TaskController extends Controller
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -81,6 +83,7 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableUser()
     {
@@ -100,8 +103,8 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=','startDate',$_GET['start_time']]);
+            $dataProvider->query->andWhere(['<','startDate',$_GET['end_time']]);
         }
         $dataProvider->query->andWhere(['=','workStatusUuid',WorkStatus::COMPLETE]);
         $dataProvider->pagination->pageParam = 'dp1';
@@ -110,8 +113,8 @@ class TaskController extends Controller
         $dataProvider2->pagination->pageSize = 25;
         $dataProvider2->query->andWhere(['<>','workStatusUuid',WorkStatus::COMPLETE]);
         if (isset($_GET['start_time'])) {
-            $dataProvider2->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider2->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider2->query->andWhere(['>=','startDate',$_GET['start_time']]);
+            $dataProvider2->query->andWhere(['<','startDate',$_GET['end_time']]);
         }
         $dataProvider2->pagination->pageParam = 'dp2';
 
@@ -200,6 +203,7 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -209,12 +213,13 @@ class TaskController extends Controller
             MainFunctions::register('task','Создана задача',
                 '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
                 '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+            // TODO реализовать логику выбора пользователя
             $user = Users::find()->one();
             $modelTU = new TaskUser();
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
             $modelTU->userUuid = $user['uuid'];
-            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
@@ -261,7 +266,7 @@ class TaskController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
@@ -293,6 +298,7 @@ class TaskController extends Controller
      * Build tree of equipment
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTree()
     {
@@ -320,7 +326,7 @@ class TaskController extends Controller
                         $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
                         $user_names='';
                         foreach ($taskUsers as $taskUser) {
-                             $user_names.=$taskUser['user']['title'];
+                             $user_names.=$taskUser['user']['name'];
                             }
                         $childIdx4 = count($tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
                         $operations = Operation::find()->where(['taskUuid' => $task['uuid']])->all();
@@ -350,6 +356,7 @@ class TaskController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionAddTask()
     {
@@ -375,7 +382,7 @@ class TaskController extends Controller
             if ($_POST["userUuid"])
                 $modelTU->userUuid = $_POST["userUuid"];
             $modelTU->taskUuid = $model['uuid'];
-            $modelTU->oid = Users::ORGANISATION_UUID;
+            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();

@@ -1,8 +1,9 @@
 <?php
-/* @var $users \common\models\Users[] */
+/* @var $users Users[] */
 
 /* @var $user_property */
 
+use common\models\Users;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Пользователи');
@@ -31,36 +32,22 @@ $this->title = Yii::t('app', 'Пользователи');
         print '</div>';
         print '<h3 class="widget-user-username" style="color: white; font-size: 24px">' . $user['name'] . '</h3>';
         print '<h5 class="widget-user-desc" style="color: white; font-size: 14px">' . $user['contact'] . '</h5>';
+
         print '</div>
                         <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
-                            <li><a href="#">Фотографий
-                            <span class="pull-right badge bg-blue">' . $user_property[$count]['photos'] . '</span></a></li>
-                            <li><a href="#">Сообщений 
-                            <span class="pull-right badge bg-green">' . $user_property[$count]['messages'] . '</span></a></li>
-                            <li><a href="#">Домов/квартир 
-                            <span class="pull-right badge bg-orange">' . count($user_property[$count]['houses']) . ' / ' .
-            $user_property[$count]['objects'] . '</span></a>
-                            </li>
-                            <li>'.Html::a('Посещено <span class="pull-right badge bg-green">' . $user_property[$count]['visited'] . ' / ' .
-                            $user_property[$count]['visited_total'] . '%</span>',
-                            ['/users/table', 'id' => Html::encode($user['_id']),
-                                'date_start' => '2018-09-27 00:00:00',
-                                'date_end' => '2018-10-07 00:00:00']).' 
+                                <li>'.Html::a('Специализация ' . $user_property[$count]['systems'],
+                                ['/users/add-system', 'userUuid' => $user['uuid']],
+                                [ 'title' => 'Добавить специализацию', 'data-toggle' => 'modal',
+                                    'data-target' => '#modalAddSystem']
+                                ).'</li>
+                            <li><a href="#">Домов привязано 
+                            <span class="pull-right badge bg-green">' . $user_property[$count]['alarms'] . '</span></a></li>
+                            <li><a href="#">Задач
+                            <span class="pull-right badge bg-orange">' . $user_property[$count]['tasks'] . '</span></a>
                             </li>
                             <li><a href="#">Треков передвижения 
                             <span class="pull-right badge bg-yellow">' . $user_property[$count]['tracks'] . '</span></a></li>
-                            <li>'.Html::a('Обход №1 2018/09/27 - 2018/10/03',
-                ['/users/table', 'id' => Html::encode($user['_id']),
-                    'date_start' => '2018-09-27 00:00:00',
-                    'date_end' => '2018-10-03 23:50:00']).' 
-                            </li>
-                            <li>'.Html::a('Обход №2 2018/10/04 - 2018/10/18',
-                ['/users/table', 'id' => Html::encode($user['_id']),
-                    'date_start' => '2018-10-04 00:00:00',
-                    'date_end' => '2018-10-18 00:00:00']).' 
-                            </li>
-                            
                         </ul>
                     </div>
                     </div>
@@ -68,4 +55,11 @@ $this->title = Yii::t('app', 'Пользователи');
         $count++;
     }
     ?>
+</div>
+
+<div class="modal remote fade" id="modalAddSystem">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg" id="modalContentSystem">
+        </div>
+    </div>
 </div>

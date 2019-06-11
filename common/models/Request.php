@@ -1,10 +1,10 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -38,7 +38,7 @@ use yii\db\Expression;
  * @property Object $object
  * @property Task $task
  */
-class Request extends ActiveRecord
+class Request extends ZhkhActiveRecord
 {
     /**
      * Behaviors
@@ -89,7 +89,6 @@ class Request extends ActiveRecord
                     'contragentUuid',
                     'authorUuid',
                     'equipmentUuid',
-                    'taskUuid',
                     'comment'
                 ],
                 'required'
@@ -113,6 +112,8 @@ class Request extends ActiveRecord
                 'max' => 45
             ],
             [['comment', 'verdict', 'result'], 'string', 'max' => 500],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

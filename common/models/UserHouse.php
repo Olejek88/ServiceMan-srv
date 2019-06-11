@@ -1,8 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "user_house".
@@ -14,8 +15,11 @@ use yii\db\ActiveRecord;
  * @property string $houseUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $user
+ * @property ActiveQuery $house
  */
-class UserHouse extends ActiveRecord
+class UserHouse extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.
@@ -40,6 +44,8 @@ class UserHouse extends ActiveRecord
             [['uuid', 'userUuid', 'houseUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'userUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

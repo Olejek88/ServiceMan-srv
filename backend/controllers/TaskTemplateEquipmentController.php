@@ -5,9 +5,11 @@ namespace backend\controllers;
 use app\commands\MainFunctions;
 use backend\models\TaskTemplateEquipmentSearch;
 use common\components\Errors;
+use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
+use Cron\CronExpression;
 use DateTime;
 use Exception;
 use Yii;
@@ -15,7 +17,6 @@ use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii2fullcalendar\models\Event;
 
 /**
  * TaskTemplateEquipmentController implements the CRUD actions for
@@ -259,65 +260,87 @@ class TaskTemplateEquipmentController extends Controller
         } else return Errors::WRONG_INPUT_PARAMETERS;
     }
 
-    public function actionCalendar()
+    public function actionCalendarGantt()
     {
         $events = [];
+        $categories = [];
+
         $taskTemplateEquipments = TaskTemplateEquipment::find()
             ->select('*')
+            ->groupBy('equipmentUuid')
             ->all();
+
+        $task_equipment_count=0;
         foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
-            // в этой версии периодичность назначается только типовым задачам
-/*            $period = $taskTemplateEquipment["period"];
+            $period = $taskTemplateEquipment["period"];
+            $selected_user = $taskTemplateEquipment->getUser();
+            if ($selected_user)
+                $user = $selected_user['name'];
+            else
+                $user = 'Не назначен';
             try {
-                $last = new DateTime($taskEquipmentStage["last_date"]);
-                $cron = CronExpression::factory($period);
-                $first_date = $cron->getPreviousRunDate();
-                foreach ($cron->getMultipleRunDates(5, $last, false) as $date) {
-                    //echo $last->format('Y-m-d H:i:s') . PHP_EOL;
-                    //$diff = date_diff($cron->getNextRunDate(),$cron->getPreviousRunDate(),true);
-                    //$next_date = $first_date->add($diff)->format('Y-m-d H:i:s');
-                    $event = new Event();
-                    $event->id = $taskEquipmentStage['_id'];
-                    $event->title = '[' . $taskEquipmentStage['equipmentStage']['equipmentModel']['title'] . '] '
-                        . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['title'];
-                    $event->start = $date->format('Y-m-d H:i:s');
-                    $event->backgroundColor = 'gray';
-                    //TODO реальная продолжительность задачи
-                    //$event->end = $next_date->add(new \DateInterval(3600,))->format('Y-m-d H:i:s')
-                    //$event->url = '/task-equipment-stage/' . $taskEquipmentStage['_id'];
-                    $event->url = '/stage-template/view?id=' . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['_id'];
-                    $event->color = '#333333';
-                    $events[] = $event;
-                }
+                $last = new DateTime($taskTemplateEquipment["last_date"]);
             } catch (Exception $e) {
-                //echo $e;
             }
-
-            $stages = Stage::find()
-                ->select('*')
-                ->where(['stageTemplateUuid' => $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplateUuid']])
-                ->all();
-            foreach ($stages as $stage) {
-                $event = new Event();
-                $event->id = $taskEquipmentStage['_id'];
-                $event->title = '[' . $stage['equipment']['title'] . '] '
-                    . $taskEquipmentStage['equipmentStage']['stageOperation']['stageTemplate']['title'];
-                $event->start = $stage['startDate'];
-                $event->backgroundColor = 'gray';
-                if ($stage['stageStatusUuid'] == StageStatus::COMPLETE)
-                    $event->backgroundColor = 'green';
-                if ($stage['stageStatusUuid'] == StageStatus::UN_COMPLETE)
-                    $event->backgroundColor = 'lightred';
-                if ($stage['stageStatusUuid'] == StageStatus::IN_WORK)
-                    $event->backgroundColor = 'orange';
-                $event->url = '/stage-template/view?id=' . $taskEquipmentStage['_id'];
-                $event->color = '#333333';
-                $events[] = $event;
-            }*/
+            $tasks=[];
+            $taskTemplateEquipment->formDates();
+            $dates = $taskTemplateEquipment->getDates();
+            if ($dates) {
+                $count = 0;
+                while ($count < count($dates)) {
+                    $taskTemplates = TaskTemplateEquipment::find()
+                        ->select('*')
+                        ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                        ->all();
+                    foreach ($taskTemplates as $taskTemplate) {
+                        $start = strtotime($dates[$count]);
+                        //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
+                        $finish = $start + 3600*24;
+                        $end_date =date("Y-m-d H:i:s",$finish);
+                        $tasks[] = [
+                            'title' => 'TO',
+                            'start' => $start*1000,
+                            'end' => $finish*1000,
+                            'id' => $taskTemplate['_id'],
+                            'y' => $task_equipment_count,
+                            'user' => $user
+                        ];
+                    }
+                    $count++;
+                    if ($count>5) break;
+                }
+                $all_tasks = Task::find()
+                    ->select('*')
+                    ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                    ->all();
+                foreach ($all_tasks as $task) {
+                    $start = strtotime($task["startDate"])*1000;
+                    $finish = strtotime($task["endDate"])*1000;
+                    $tasks[] = [
+                        'title' => 'TO',
+                        'start' => $start,
+                        'end' => $finish,
+                        'id' => $task['_id'],
+                        'completed' => 0,
+                        'y' => $task_equipment_count,
+                        'user' => $user
+                    ];
+                }
+                $events[] = [
+                    'title' => $taskTemplateEquipment['equipment']['title'],
+                    'period' => $period,
+                    'data' => $tasks
+                ];
+            }
+            $task_equipment_count++;
         }
-
-        return $this->render('calendar', [
-            'events' => $events
+        $max=0;
+        if ($task_equipment_count>0) $max=$task_equipment_count-1;
+        //echo json_encode($events);
+        return $this->render('calendar-gantt', [
+            'events' => $events,
+            'categories' => $categories,
+            'max' => $max
         ]);
     }
 
@@ -346,4 +369,5 @@ class TaskTemplateEquipmentController extends Controller
         }
         return false;
     }
+
 }

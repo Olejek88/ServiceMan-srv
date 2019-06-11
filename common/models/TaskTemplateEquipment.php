@@ -22,6 +22,7 @@ use yii\db\Expression;
  *
  * @property Equipment $equipment
  * @property TaskTemplate $taskTemplate
+ * @property Users $user
  * @property string[] $dates
  */
 
@@ -153,6 +154,30 @@ class TaskTemplateEquipment extends ActiveRecord
     }
 
     /**
+     * Ищем пользователя который может выполнить эту задачу
+     *
+     * @return array|ActiveRecord
+     */
+    public function getUser()
+    {
+        $equipmentSystem = $this->equipment['equipmentType']['equipmentSystem'];
+        $house = $this->equipment['object']['house'];
+        $userHouses = UserHouse::find()->where(['houseUuid' => $house['uuid']])->all();
+        foreach ($userHouses as $userHouse) {
+            $userSystems = UserSystem::find()->where(['userUuid' => $userHouse['userUuid']])->all();
+            // если в специализации пользователя есть нужная - выберем пользователя по-умолчанию
+            foreach ($userSystems as $userSystem) {
+                if ($equipmentSystem['uuid']==$userSystem['equipmentSystemUuid']) {
+                    $user = Users::find()->where(['uuid' => $userHouse['userUuid']])->one();
+                    if ($user)
+                        return $user;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Link
      *
      * @return string[]
@@ -213,13 +238,16 @@ class TaskTemplateEquipment extends ActiveRecord
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $count = count($dates);
+            if (strlen($this->next_dates)<6) $count=0;
             while (self::TASK_DEEP - $count) {
                 if ($count>0)
                     $last_date = strtotime($dates[$count-1]);
                 else
                     $last_date = strtotime($this->last_date);
                 $next_date = $last_date + $this->period*3600;
+                if ($count>0) $next_dates.=',';
                 $next_dates.=date("Y-m-d H:i:s",$next_date);
+                $dates[$count]=date("Y-m-d H:i:s",$next_date);
                 $count++;
             }
             $this->next_dates = $next_dates;

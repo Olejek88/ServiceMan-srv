@@ -2,12 +2,14 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "equipment_register".
  *
+ * @property int $_id
  * @property string $uuid
  * @property string $oid идентификатор организации
  * @property string $equipmentUuid
@@ -15,13 +17,14 @@ use yii\db\ActiveRecord;
  * @property string $userUuid
  * @property string $date
  * @property string $description
+ * @property int $createdAt
+ * @property int $changedAt
  *
  * @property User $user
+ * @property ActiveQuery $registerType
  * @property Equipment $equipment
- * @property EquipmentRegisterType $equipmentRegisterType
  */
-
-class EquipmentRegister extends ActiveRecord
+class EquipmentRegister extends ZhkhActiveRecord
 {
     /**
      * @inheritdoc
@@ -41,6 +44,8 @@ class EquipmentRegister extends ActiveRecord
             [['data'], 'safe'],
             [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
             [['description','oid'], 'string', 'max' => 250],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

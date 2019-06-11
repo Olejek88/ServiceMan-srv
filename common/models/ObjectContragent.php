@@ -1,8 +1,9 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "object_contragent".
@@ -13,9 +14,11 @@ use yii\db\ActiveRecord;
  * @property string $objectUuid
  * @property string $contragentUuid
  * @property string $createdAt
+ * @property ActiveQuery $object
+ * @property ActiveQuery $contragent
  * @property string $changedAt
  */
-class ObjectContragent extends ActiveRecord
+class ObjectContragent extends ZhkhActiveRecord
 {
     /**
      * Название таблицы.
@@ -40,6 +43,8 @@ class ObjectContragent extends ActiveRecord
             [['uuid', 'objectUuid', 'contragentUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'objectUuid', 'contragentUuid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

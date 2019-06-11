@@ -2,10 +2,12 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\web\IdentityInterface;
 
 /**
  * Class Users
@@ -23,14 +25,14 @@ use yii\db\Expression;
  * @property integer $createdAt
  * @property integer $changedAt
  * @property string $image
- * @property boolean $deleted
  *
  * @property integer $id
  * @property string $photoUrl
  * @property null|string $imageDir
  * @property User $user
+ * @property Organization|null $organization
  */
-class Users extends ActiveRecord
+class Users extends ZhkhActiveRecord
 {
     private static $_IMAGE_ROOT = 'users';
     public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
@@ -84,10 +86,11 @@ class Users extends ActiveRecord
             ],
             [['image'], 'file'],
             [['user_id','type', 'active'], 'integer'],
-            [['deleted'], 'boolean'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin', 'whoIs'], 'string', 'max' => 45],
+            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -142,7 +145,7 @@ class Users extends ActiveRecord
     /**
      * Связываем пользователей из yii с пользователями из sman.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -162,6 +165,7 @@ class Users extends ActiveRecord
             return false;
         }
     }
+
     /**
      * Возвращает id.
      *
@@ -198,5 +202,24 @@ class Users extends ActiveRecord
         }
 
         return $url;
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
+    }
+
+    /**
+     * @param $user IdentityInterface
+     * @return string
+     */
+    static function getOid($user)
+    {
+        /** @var User $user */
+        $oid = $user->users->oid;
+        return $oid;
     }
 }

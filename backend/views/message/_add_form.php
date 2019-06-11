@@ -1,10 +1,13 @@
 <?php
-/* @var $message \common\models\Message */
-/* @var $toUser \common\models\User */
+/* @var $message Message */
+/* @var $toUser User */
 
 use common\components\MainFunctions;
+use common\models\Message;
+use common\models\User;
 use common\models\Users;
 use kartik\select2\Select2;
+use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -13,6 +16,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => '../message/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'
@@ -24,11 +28,17 @@ use yii\helpers\Html;
 </div>
 <div class="modal-body">
     <?php
+/*    if ($message['uuid']) {
+        echo Html::hiddenInput("messageUuid", $message['uuid']);
+        echo $form->field($message, 'uuid')->hiddenInput(['value' => $message['uuid']])->label(false);
+    } else {*/
     echo $form->field($message, 'uuid')
         ->hiddenInput(['value' => MainFunctions::GUID()])
         ->label(false);
-    if (isset($toUser) && $toUser) {
-        Html::textInput('toUser', $toUser['name'],['readonly' => true]);
+    if ($message['uuid']) {
+//    if (isset($toUser) && $toUser) {
+        echo '<span style="font-weight: bold">Кому: </span>&nbsp;'.Html::textInput('toUser', $message['toUser']['name'],['readonly' => true]);
+        echo $form->field($message, 'toUserUuid')->hiddenInput(['value' => $message['fromUserUuid']])->label(false);
     } else {
         $user  = Users::find()->all();
         $items = ArrayHelper::map($user,'uuid','name');
@@ -47,33 +57,34 @@ use yii\helpers\Html;
     }
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-    echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
-    echo $form->field($message, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
 
-    //echo $form->field($message, 'title')->textInput(['maxlength' => true]);
-    echo $form->field($message, 'text')->textInput(['maxlength' => true]);
+    //echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $message['fromUserUuid']])->label(false);
+    echo $form->field($message, 'fromUserUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+    echo $form->field($message, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
+
+   // echo $form->field($message, 'title')->textInput(['maxlength' => true]);
+    if ($message['uuid']) {
+        //echo '<i>'.Html::textarea('textLetter',$message['text']).'</i><br/>';
+        echo $form->field($message, 'text')->textarea(['rows' => 8]);
+    } else {
+        echo $form->field($message, 'text')->textarea(['rows' => 8]);
+    }
     echo $form->field($message, 'status')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($message, 'date')->hiddenInput(['value' => date("Ymdhms")])->label(false);
+
+    echo FileInput::widget([
+            'id' => 'imageFiles',
+        'name' => 'images[]',
+        'options' => [
+                'accept' => '*',
+                'multiple' => true,
+                'id' => 'imageFile'
+        ]
+    ]);
     ?>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
-<script>
-    $(document).on("beforeSubmit", "#form", function () {
-        $.ajax({
-            url: "save",
-            type: "post",
-            data: $('form').serialize(),
-            success: function () {
-                $('#modalAddMessage').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    }).on('submit', function (e) {
-        e.preventDefault();
-    });
-</script>
 <?php ActiveForm::end(); ?>

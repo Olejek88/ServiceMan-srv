@@ -5,7 +5,9 @@ namespace backend\controllers;
 use backend\models\RequestTypeSearch;
 use common\models\RequestStatus;
 use common\models\RequestType;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -99,6 +101,7 @@ class RequestTypeController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -120,6 +123,9 @@ class RequestTypeController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -151,6 +157,7 @@ class RequestTypeController extends Controller
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {

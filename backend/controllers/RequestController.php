@@ -7,7 +7,6 @@ use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
-use common\models\RequestStatus;
 use common\models\Users;
 use Yii;
 use yii\db\StaleObjectException;
@@ -15,7 +14,6 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
-use yii\web\UploadedFile;
 
 /**
  * RequestController implements the CRUD actions for Request model.
@@ -171,14 +169,17 @@ class RequestController extends Controller
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
         } else {
             $model = new Request();
-            if (isset($_GET["equipmentUuid"]))
-                $model->equipmentUuid = $_GET["equipmentUuid"];
             if (isset($_GET["objectUuid"]))
                 $model->objectUuid = $_GET["objectUuid"];
             if (isset($_GET["user"]))
                 $model->userUuid = $_GET["user"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
+            if (isset($_GET["equipmentUuid"])) {
+                $model->equipmentUuid = $_GET["equipmentUuid"];
+                $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
+                $model->objectUuid = $equipment['object']['uuid'];
+            }
         }
         return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid]);
     }

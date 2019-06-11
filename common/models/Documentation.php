@@ -13,7 +13,6 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $oid идентификатор организации
  * @property string $equipmentUuid
  * @property string $documentationTypeUuid
  * @property string $title
@@ -191,36 +190,6 @@ class Documentation extends ActiveRecord
     }
 
     /**
-     * URL изображения.
-     *
-     * @return string | null
-     */
-    public function getDocUrl()
-    {
-        $dbName = \Yii::$app->session->get('user.dbname');
-        if ($this->equipmentTypeUuid != null) {
-            $typeUuid = $this->equipmentTypeUuid;
-        } else if ($this->equipment->equipmentTypeUuid != null) {
-            $typeUuid = $this->equipment->equipmentTypeUuid;
-        } else {
-            return null;
-        }
-
-        $localPath = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/' . $this->path;
-        if (file_exists(Yii::getAlias($localPath))) {
-            $userName = \Yii::$app->user->identity->username;
-            $dir = 'storage/' . $userName . '/' . self::$_IMAGE_ROOT . '/'
-                . $typeUuid . '/' . $this->path;
-            $url = Yii::$app->request->BaseUrl . '/' . $dir;
-        } else {
-            // такого в штатном режиме быть не должно!
-            $url = null;
-        }
-        return $url;
-    }
-
-    /**
      * Возвращает каталог в котором должен находится файл изображения,
      * относительно папки web.
      *
@@ -228,17 +197,15 @@ class Documentation extends ActiveRecord
      */
     public function getDocDir()
     {
-        if ($this->equipmentTypeUuid != null) {
+        /* if ($this->equipmentTypeUuid != null) {
             $typeUuid = $this->equipmentTypeUuid;
         } else if ($this->equipment->equipmentTypeUuid != null) {
             $typeUuid = $this->equipment->equipmentTypeUuid;
         } else {
             return null;
-        }
-
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/';
+        }*/
+        // валим все в одну папку - сомневаюсь, что будет много
+        $dir = 'storage/doc/';
         return $dir;
     }
 
@@ -252,9 +219,8 @@ class Documentation extends ActiveRecord
      */
     public function getDocDirType($typeUuid)
     {
-        $dbName = \Yii::$app->session->get('user.dbname');
-        $dir = 'storage/' . $dbName . '/' . self::$_IMAGE_ROOT . '/'
-            . $typeUuid . '/';
+        // валим все в одну папку - сомневаюсь, что будет много
+        $dir = 'storage/doc/';
         return $dir;
     }
 }

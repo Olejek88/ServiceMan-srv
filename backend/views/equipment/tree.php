@@ -3,27 +3,11 @@
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево моделей оборудования';
+$this->title = 'Дерево оборудования';
 
 /* @var $registers common\models\EquipmentRegister */
 
 ?>
-<script type="text/javascript">
-    $("modalDefects").on("click", function (e) {
-        //var detailId;
-
-        e.preventDefault();
-
-        // we can use jQuery's built in .data() method to retrieve the detail-id
-        //detailId = $(this).data("data-id");
-        $('#modalDefects').load('index.php?id=1', function () {
-            // call some kind of overlay code that displays the popup?
-            // this way the popup will show then the content from popup.php has
-            // finished loading.
-        });
-    });
-</script>
-
 <table id="tree" style="width: 100%">
     <colgroup>
         <col width="*">
@@ -67,7 +51,9 @@ $this->title = 'Дерево моделей оборудования';
     'options' => [
         'id' => 'tree',
         'source' => $equipment,
-        'extensions' => ['dnd', "glyph", "table"],
+        'extensions' => ['dnd', "glyph", "table", 'contextMenu'],
+        'checkbox' => true,
+        'selectMode' => 3,
         'glyph' => 'glyph_opts',
         'dnd' => [
             'preventVoidMoves' => true,

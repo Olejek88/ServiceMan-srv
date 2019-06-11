@@ -1,10 +1,10 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -30,9 +30,10 @@ use yii\db\Expression;
  * @property EquipmentType $equipmentType
  * @property Object $object
  * @property string $nextDate
+ * @property string $fullTitle
  * @property Photo $photo
  */
-class Equipment extends ActiveRecord
+class Equipment extends ZhkhActiveRecord
 {
 
     /**
@@ -127,6 +128,8 @@ class Equipment extends ActiveRecord
                 ],
                 'string', 'max' => 150
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
 
         ];
     }

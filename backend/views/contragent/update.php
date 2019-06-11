@@ -1,10 +1,9 @@
 <?php
-/* @var $model common\models\City */
+/* @var $model common\models\Contragent */
 
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Обновить город');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Города'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Обновить контрагента');
 ?>
 <div class="task-update box-padding">
 

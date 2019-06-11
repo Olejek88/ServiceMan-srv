@@ -1,15 +1,16 @@
 <?php
-/*  @var $model \common\models\PhotoEquipment */
+/* @var $model common\models\Photo */
 
 use yii\helpers\Html;
 
+$this->title = Yii::t('app', 'Создать фото');
 ?>
-<div class="critical-type-update box-padding">
+<div class="critical-type-create box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
-                <?= Html::encode(" Обновить") ?>
+                <?= Html::encode($this->title) ?>
             </h3>
         </div>
         <div class="panel-body">
@@ -23,6 +24,8 @@ use yii\helpers\Html;
                     </h6>
                 </div>
             </div>
+
         </div>
     </div>
+
 </div>

@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -23,10 +23,11 @@ use yii\db\Expression;
  * @property string $contragentTypeUuid
  * @property integer $deleted
  * @property string $createdAt
+ * @property mixed $contragentType
  * @property string $changedAt
  *
  */
-class Contragent extends ActiveRecord
+class Contragent extends ZhkhActiveRecord
 {
     /**
      * Table name.
@@ -68,6 +69,8 @@ class Contragent extends ActiveRecord
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
             [['address'], 'string', 'max' => 250],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -92,6 +95,7 @@ class Contragent extends ActiveRecord
             'changedAt',
         ];
     }
+
     /**
      * Метки для свойств.
      *

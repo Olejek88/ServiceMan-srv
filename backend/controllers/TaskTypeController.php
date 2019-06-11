@@ -5,8 +5,10 @@ use common\components\TypeTreeHelper;
 use common\models\TaskTemplate;
 use common\models\TaskTypeTree;
 use common\models\TaskVerdict;
+use Exception;
 use Yii;
 use yii\base\DynamicModel;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\TaskType;
@@ -49,21 +51,10 @@ class TaskTypeController extends Controller
      */
     public function actionView($id)
     {
-        $parentId = TypeTreeHelper::getParentId(
-            $id, TaskType::class, TaskTypeTree::class
-        );
-        $parentType = TaskType::findOne($parentId);
-        if ($parentType) {
-            $parentType = $parentType->title;
-        } else {
-            $parentType = 'Корень';
-        }
-
         return $this->render(
             'view',
             [
                 'model' => $this->findModel($id),
-                'parentType' => $parentType,
             ]
         );
     }
@@ -103,39 +94,13 @@ class TaskTypeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if (Yii::$app->request->isPost) {
-            // $model->load(Yii::$app->request->post()) && $model->save()
-            $model->load(Yii::$app->request->post());
-            $parentModel = new DynamicModel(['parentUuid']);
-            $parentModel->addRule(['parentUuid'], 'string', ['max' => 45]);
-            $parentModel->load(Yii::$app->request->post());
-            TypeTreeHelper::moveTree(
-                $id, $parentModel['parentUuid'], TaskType::class, TaskTypeTree::class
-            );
-            $model->save();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
-            // открываем форму для редактирования
-            $parentModel = new DynamicModel(['parentUuid']);
-            $parentModel->addRule(['parentUuid'], 'string', ['max' => 45]);
-            // получаем id родителя
-            $parentId = TypeTreeHelper::getParentId(
-                $id, TaskType::class, TaskTypeTree::class
-            );
-            if ($parentId > 0) {
-                $parentUuid = TaskType::findOne($parentId)->uuid;
-            } else {
-                $parentUuid = '00000000-0000-0000-0000-000000000000';
-            }
-
-            $parentModel['parentUuid'] = $parentUuid;
-            return $this->render(
-                'update',
-                [
-                    'parentModel' => $parentModel,
-                    'model' => $model,
-                ]
-            );
+            return $this->render('update', [
+                'model' => $model,
+            ]);
         }
     }
 
@@ -147,60 +112,13 @@ class TaskTypeController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Exception
-     * @throws \yii\db\StaleObjectException
+     * @throws Exception
+     * @throws StaleObjectException
+     * @throws \Throwable
      */
     public function actionDelete($id)
     {
-        $type = TaskType::findOne($id);
-
-        // можно перевесить потомков под родителя удаляемого элемента
-        // может вообще дать возможность удалять целиком ветку?
-
-        // проверяем на наличие шаблонов задач с таким типом
-        $items = TaskTemplate::find()->where(['taskTypeUuid' => $type->uuid])->all();
-        if (count($items) > 0) {
-            $msg = 'Невозможно удалить, так как есть шаблоны задач данного типа!';
-            return $this->render(
-                'delete',
-                [
-                    'message' => $msg,
-                ]
-            );
-        }
-
-        // проверяем на наличие вердиктов с таким типом
-        $items = TaskVerdict::find()->where(['taskTypeUuid' => $type->uuid])->all();
-        if (count($items) > 0) {
-            $msg = 'Невозможно удалить, так как есть ведикты данного типа!';
-            return $this->render(
-                'delete',
-                [
-                    'message' => $msg,
-                ]
-            );
-        }
-
-        // проверяем на наличие потомков
-        $children = TaskTypeTree::find()->where(['parent' => $id])->all();
-        if (count($children) == 1) {
-            // удаляем ссылки на родителей
-            // т.е. одну ссылку где наш элемент является сам себе
-            // и родителем и потомком, и все ссылки где он потомок
-            // от других типов
-            TaskTypeTree::deleteAll(['child' => $id]);
-            // удаляем сам тип
-            $this->findModel($id)->delete();
-        } else {
-            $msg = 'Невозможно удалить, так как есть потомки у этого типа!';
-            return $this->render(
-                'delete',
-                [
-                    'message' => $msg,
-                ]
-            );
-        }
-
+        $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
 

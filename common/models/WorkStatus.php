@@ -6,6 +6,8 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
+
 /**
  * This is the model class for table "work_status".
  *
@@ -14,6 +16,8 @@ use yii\db\ActiveRecord;
  * @property string $title
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveQuery $workStatus
  */
 class WorkStatus extends ActiveRecord
 {
@@ -69,6 +73,9 @@ class WorkStatus extends ActiveRecord
         ];
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getWorkStatus()
     {
         return $this->hasOne(WorkStatus::class, ['uuid' => 'workStatusUuid']);

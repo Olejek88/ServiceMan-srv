@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-class ObjectType extends ActiveRecord
+class ObjectType extends ZhkhActiveRecord
 {
     const OBJECT_TYPE_GENERAL = "42686CFC-34D0-45FF-95A4-04B0D865EC35";
     const OBJECT_TYPE_COMMERCE = "587B526B-A5C2-4B30-92DD-C63F796333A6";
@@ -53,6 +53,8 @@ class ObjectType extends ActiveRecord
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid'], 'string', 'max' => 50],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

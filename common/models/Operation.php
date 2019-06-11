@@ -1,10 +1,12 @@
 <?php
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "operation".
@@ -17,8 +19,12 @@ use yii\db\Expression;
  * @property string $operationTemplateUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property ActiveRecord $task
+ * @property ActiveQuery $operationTemplate
+ * @property ActiveQuery $workStatus
  */
-class Operation extends ActiveRecord
+class Operation extends ZhkhActiveRecord
 {
     /**
      * Behaviors
@@ -78,6 +84,8 @@ class Operation extends ActiveRecord
                 ],
                 'string', 'max' => 45
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

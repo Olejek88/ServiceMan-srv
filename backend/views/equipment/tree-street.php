@@ -20,11 +20,6 @@ $this->title = 'Дерево моделей оборудования';
         </colgroup>
         <thead style="background-color: #337ab7; color: white">
         <tr>
-            <th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
-        </tr>
-        </thead>
-        <thead style="background-color: #337ab7; color: white">
-        <tr>
             <th colspan="1">
                 <?php
                 try {
@@ -80,11 +75,6 @@ $this->title = 'Дерево моделей оборудования';
         </tbody>
     </table>
 
-    <div class="modal remote fade" id="modal_request">
-        <div class="modal-dialog">
-            <div class="modal-content loader-lg"></div>
-        </div>
-    </div>
     <div class="modal remote fade" id="modalChange">
         <div class="modal-dialog">
             <div class="modal-content loader-lg"></div>
@@ -127,7 +117,7 @@ try {
             'contextMenu' => [
                 'menu' => [
                     'new' => [
-                        'name' => 'Добавить новое',
+                        'name' => 'Добавить',
                         'icon' => 'add',
                         'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
@@ -233,7 +223,7 @@ try {
             'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).text(node.data.location);
+            $tdList.eq(1).html(node.data.tasks);
             $tdList.eq(2).html(node.data.serial);
             $tdList.eq(3).html(node.data.status);
             $tdList.eq(4).html(node.data.user);
@@ -309,6 +299,11 @@ try {
             </div>
         </div>
     </div>
+    <div class="modal remote fade" id="modalRequest">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentRequest"></div>
+        </div>
+    </div>
 
 <?php
 $this->registerJs('$("#modalRegister").on("hidden.bs.modal",
@@ -335,18 +330,23 @@ $this->registerJs('$("#modalStatus").on("hidden.bs.modal",
 function () {
      window.location.replace("tree-street");
 })');
+$this->registerJs('$("#modalRequest").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+     window.location.replace("tree-street");
+})');
 
 $this->registerJs('$("#addButton").on("click",function() {
         var sel = $.ui.fancytree.getTree().getSelectedNodes();
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==false) {
+            if (data.folder==true && data.type=="house") {
                 $.ajax({
                     url: "move",
                     type: "post",
                     data: {
-                        selected_node: data.key,
+                        selected_node: data.data.uuid,
                         user: $("#user_select").val()
                     },
                     success: function (data) {
@@ -364,7 +364,7 @@ $this->registerJs('$("#removeButton").on("click",function() {
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==false) {
+            if (data.folder==true && node.type=="house") {
                 $.ajax({
                     url: "remove",
                     type: "post",

@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\ObjectsSearch */
 
+use common\models\EquipmentType;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
 use kartik\editable\Editable;
@@ -15,6 +16,7 @@ $gridColumns = [
         'attribute' => '_id',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class',
             'style' => 'width: 50px; text-align: center'
@@ -42,6 +44,9 @@ $gridColumns = [
         'width' => '180px',
         'header' => 'Объект',
         'format' => 'raw',
+        'value' => function ($data) {
+            return $data['objectType']['title'] . ' ' . $data['title'];
+        }
     ],
     [
         'class' => 'kartik\grid\DataColumn',
@@ -107,6 +112,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'changedAt',
+        'mergeHeader' => true,
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'headerOptions' => ['class' => 'kv-sticky-column'],

@@ -1,8 +1,9 @@
 <?php
 
 use yii\helpers\Html;
+use yii\web\View;
 
-/* @var $this \yii\web\View */
+/* @var $this View */
 /* @var $content string */
 
 if (Yii::$app->controller->action->id === 'login' || Yii::$app->controller->action->id === 'error') {
@@ -12,6 +13,11 @@ if (Yii::$app->controller->action->id === 'login' || Yii::$app->controller->acti
      */
     echo $this->render(
         'main-login',
+        ['content' => $content]
+    );
+} else if (Yii::$app->controller->action->id === 'signup') {
+    echo $this->render(
+        'main-signup',
         ['content' => $content]
     );
 } else {

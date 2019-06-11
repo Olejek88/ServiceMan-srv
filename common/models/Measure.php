@@ -2,10 +2,11 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "measure".
@@ -22,9 +23,10 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property Users $user
+ * @property ActiveQuery $measureType
  * @property Equipment $equipment
  */
-class Measure extends ActiveRecord
+class Measure extends ZhkhActiveRecord
 {
 
     /**
@@ -80,6 +82,8 @@ class Measure extends ActiveRecord
             [['value'], 'number'],
             [['uuid', 'equipmentUuid', 'userUuid', 'date', 'oid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
