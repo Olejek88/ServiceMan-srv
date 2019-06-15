@@ -12,6 +12,7 @@ use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -176,6 +177,7 @@ class ObjectController extends Controller
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTree()
     {
@@ -217,6 +219,7 @@ class ObjectController extends Controller
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
                             'title' => $object['objectType']['title'] . ' ' . $object['title'],
                             'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
+                            'square' => $object['square'],
                             'type' => 'object',
                             'uuid' => $object['uuid'],
                             'folder' => true
@@ -297,6 +300,7 @@ class ObjectController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionEdit()
     {
@@ -410,6 +414,7 @@ class ObjectController extends Controller
     /**
      * Creates a new Object model.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public
     function actionSave()

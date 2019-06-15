@@ -256,7 +256,7 @@ echo GridView::widget([
     'hover' => true,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="fa fa-tasks"></i>&nbsp; Журнал диспетчера',
+        'heading' => '<i class="fa fa-tasks"></i>&nbsp; Журнал личного приема',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

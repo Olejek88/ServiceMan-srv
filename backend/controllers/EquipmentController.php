@@ -75,6 +75,7 @@ class EquipmentController extends Controller
      * Lists all Equipment models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -95,10 +96,13 @@ class EquipmentController extends Controller
                 $model['equipmentStatusUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentStatusUuid'];
             }
             if ($_POST['editableAttribute'] == 'testDate') {
-                $model['testDate'] = date("Y-m-d H:i:s", $_POST['Equipment'][$_POST['editableIndex']]['testDate']);
+                $model['testDate'] = $_POST['Equipment'][$_POST['editableIndex']]['testDate'];
+            }
+            if ($_POST['editableAttribute'] == 'inputDate') {
+                $model['inputDate'] = $_POST['Equipment'][$_POST['editableIndex']]['inputDate'];
             }
             $model->save();
-            return json_encode('');
+            return json_encode($model['inputDate']);
         }
 
         $searchModel = new EquipmentSearch();
@@ -122,6 +126,7 @@ class EquipmentController extends Controller
      * Lists all Equipment models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndexCheck()
     {
@@ -280,6 +285,7 @@ class EquipmentController extends Controller
      * Build tree of equipment
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTree()
     {
@@ -309,7 +315,7 @@ class EquipmentController extends Controller
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
         return $this->render(
-            'tree-street',
+            'tree',
             [
                 'equipment' => $fullTree,
                 'users' => $items
@@ -324,6 +330,7 @@ class EquipmentController extends Controller
      * @param $date_start
      * @param $date_end
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTable($id, $date_start, $date_end)
     {
@@ -445,6 +452,7 @@ class EquipmentController extends Controller
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTreeUser()
     {
@@ -506,6 +514,7 @@ class EquipmentController extends Controller
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTreeStreet()
     {
@@ -682,6 +691,7 @@ class EquipmentController extends Controller
     /**
      * функция отрабатывает сигналы от дерева и выполняет переименование оборудования
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionRename()
     {
@@ -802,6 +812,10 @@ class EquipmentController extends Controller
         }
     }
 
+    /**
+     * @return bool|string
+     * @throws InvalidConfigException
+     */
     public
     function actionOperations()
     {
@@ -832,6 +846,10 @@ class EquipmentController extends Controller
         return true;
     }
 
+    /**
+     * @return bool|string
+     * @throws InvalidConfigException
+     */
     public
     function actionStatus()
     {
@@ -853,6 +871,10 @@ class EquipmentController extends Controller
         return false;
     }
 
+    /**
+     * @return bool|string
+     * @throws InvalidConfigException
+     */
     public
     function actionSerial()
     {
@@ -960,6 +982,7 @@ class EquipmentController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionEdit()
     {
@@ -1019,6 +1042,7 @@ class EquipmentController extends Controller
     /**
      * Creates a new Equipment model.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public
     function actionSave()
@@ -1092,6 +1116,7 @@ class EquipmentController extends Controller
      * @param $equipment
      * @param $user
      * @return array
+     * @throws InvalidConfigException
      */
     public function addEquipment($equipment, $user)
     {
@@ -1218,14 +1243,18 @@ class EquipmentController extends Controller
             'uuid' => $equipment['uuid'],
             'type_uuid' => $equipment['equipmentType']['uuid'],
             'docs' => $docs,
-            'start' => "" . date_format(date_create($equipment['testDate']), "Y-m-d H:i:s"),
-            'location' => $equipment['object']->title,
+            'start' => "" . date_format(date_create($equipment['inputDate']), "d-m-Y"),
+            'location' => $equipment['object']->getFullTitle(),
             'tasks' => $task,
             'user' => $userEquipmentName,
             'links' => $links,
             'status' => $status];
     }
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
     public function actionTimelineAll()
     {
         $events = [];

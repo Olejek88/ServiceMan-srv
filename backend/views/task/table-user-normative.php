@@ -32,6 +32,7 @@ $gridColumns = [
     [
         'attribute' => 'taskTemplateUuid',
         'vAlign' => 'middle',
+        'header' => 'Задача',
         'contentOptions' => [
             'class' => 'table_class'
         ],

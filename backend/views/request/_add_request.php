@@ -133,7 +133,9 @@ use yii\bootstrap\ActiveForm;
         <?php
         if (!$model->objectUuid) {
             $objects = Objects::find()->all();
-            $items = ArrayHelper::map($objects, 'uuid', 'title');
+            $items = ArrayHelper::map($objects, 'uuid', function ($object) {
+                return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['title'];
+            });
             echo $form->field($model, 'objectUuid',
                 ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
                 [

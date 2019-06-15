@@ -44,9 +44,11 @@ $gridColumns = [
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
-        'value' => function ($model) {
-            //return "<span class='badge' style='background-color: gray; height: 22px'>".$model->createdAt."</span>";
-            return $model->createdAt;
+        'content' => function ($data) {
+            if (strtotime($data->createdAt)>0)
+                return date("d-m-Y H:m", strtotime($data->createdAt));
+            else
+                return 'не открыт';
         },
         'contentOptions' => [
             'class' => 'table_class'
@@ -64,6 +66,19 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data['user']->title . '<br/> [' . $data['user']->phone . ']';
+        }
+    ],
+    [
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'header' => 'ФИО лица ведущего прием',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['author']->name . '<br/> [' . $data['author']->whoIs . ']';
         }
     ],
     [
@@ -119,19 +134,19 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Оборудование / Объект',
+        'header' => 'Объект',
         'mergeHeader' => true,
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'value' => function ($model) {
             if ($model->equipmentUuid) {
                 if ($model['equipment']['equipmentStatusUuid'] == EquipmentStatus::WORK)
-                    return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']->title . "</span>";
+                    return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']->getFullTitle() . "</span>";
                 else
-                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['equipment']->title . "</span>";
+                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['equipment']->getFullTitle() . "</span>";
             } else {
                 if ($model->objectUuid)
-                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->title . "</span>";
+                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
                 else
                     return "<span class='badge' style='background-color: grey; height: 22px; width: 100px'>нет</span>";
             }
@@ -252,20 +267,6 @@ $gridColumns = [
         ],
     ],
     [
-        'attribute' => 'author',
-        'vAlign' => 'middle',
-        'hAlign' => 'center',
-        'header' => '',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['author']->name;
-        }
-    ],
-    [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'buttons'=>[
@@ -340,7 +341,7 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
-     window.location.replace("index");
+     window.location.replace("../request/index");
 })');
 ?>
 <div class="modal remote fade" id="modalRequest">

@@ -15,7 +15,7 @@ $this->title = 'Дерево абонентов системы';
         <col width="120px">
         <col width="130px">
         <col width="160px">
-        <col width="130px">
+        <col width="*">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
@@ -27,8 +27,8 @@ $this->title = 'Дерево абонентов системы';
         <th>ИНН</th>
         <th>Телефон</th>
         <th>Е-мэйл</th>
-        <th>Тип</th>
-        <th>Дата</th>
+        <th>Тип объекта</th>
+        <th>Комментарий</th>
     </tr>
     </thead>
     <tbody>
@@ -163,8 +163,8 @@ echo FancytreeWidget::widget([
             "innColumnIdx" => "3",
             "phoneColumnIdx" => "4",
             "emailColumnIdx" => "5",
-            "typeColumnIdx" => "6",
-            "dateColumnIdx" => "7"
+            "contragentTypeColumnIdx" => "6",
+            "directorColumnIdx" => "7"
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
@@ -173,8 +173,8 @@ echo FancytreeWidget::widget([
             $tdList.eq(2).html(node.data.inn);
             $tdList.eq(3).html(node.data.phone);
             $tdList.eq(4).text(node.data.email);
-            $tdList.eq(5).html(node.data.type);
-            $tdList.eq(6).html(node.data.date);
+            $tdList.eq(5).html(node.data.contragentType);
+            $tdList.eq(6).html(node.data.director);
         }')
     ]
 ]);

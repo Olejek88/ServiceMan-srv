@@ -44,10 +44,10 @@ $gridColumns = [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'objectUuid',
         'vAlign' => 'middle',
-        'width' => '180px',
+        'width' => '280px',
         'mergeHeader' => true,
         'value' => function ($data) {
-            return $data['object']['house']['street']->title . ', ' . $data['object']['house']->number . '-' . $data['object']->title;
+            return $data['object']['house']['street']->title . ', ' . $data['object']['house']->number . ' - ' . $data['object']->title;
         },
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/object/create?from=equipment/index',
@@ -62,7 +62,7 @@ $gridColumns = [
         'width' => '180px',
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Тип ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Тип оборудования ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/equipment-type/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
@@ -147,15 +147,46 @@ $gridColumns = [
         'mergeHeader' => true,
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            return date("d-m-Y", strtotime($data->testDate));
+        },
         'editableOptions' => [
-            'header' => 'Дата поверки',
+            'header' => 'Дата предыдущей поверки',
             'size' => 'md',
             'inputType' => Editable::INPUT_WIDGET,
             'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATE,
-                'displayFormat' => 'dd.MM.yyyy',
-                'saveFormat' => 'php:Y-m-d',
+                'displayFormat' => 'dd-MM-yyyy',
+                'saveFormat' => 'php:Y-m-d H:m:s',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ],
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'inputDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            return date("d-m-Y", strtotime($data->inputDate));
+        },
+        'editableOptions' => [
+            'header' => 'Дата ввода в эксплуатацию',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' => 'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATE,
+                'displayFormat' => 'dd-MM-yyyy',
+                'saveFormat' => 'php:Y-m-d H:m:s',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true

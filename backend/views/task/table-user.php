@@ -35,6 +35,7 @@ $gridColumns = [
     [
         'attribute' => 'taskTemplateUuid',
         'vAlign' => 'middle',
+        'header' => 'Задача',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -55,6 +56,19 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data['equipment']['title'];
+        }
+    ],
+    [
+        'attribute' => 'taskTemplateUuid',
+        'vAlign' => 'middle',
+        'header' => 'Адрес',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['equipment']['object']->getFullTitle();
         }
     ],
     [
@@ -206,12 +220,6 @@ $gridColumns = [
                 return 'неизвестно';
             }
         }
-    ],
-    [
-        'class' => 'kartik\grid\ActionColumn',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'header' => '',
-        'template' => '{delete}'
     ]
 ];
 
