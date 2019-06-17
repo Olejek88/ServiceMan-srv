@@ -9,6 +9,7 @@ use common\models\Receipt;
 use common\models\Request;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -50,6 +51,7 @@ class RequestController extends Controller
     /**
      * Lists all Request models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -69,6 +71,9 @@ class RequestController extends Controller
             }
             if ($_POST['editableAttribute'] == 'verdict') {
                 $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
+            }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
             }
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];

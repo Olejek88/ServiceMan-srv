@@ -7,7 +7,7 @@ use common\models\Photo;
 use common\models\PhotoEquipment;
 use yii\helpers\Html;
 
-/* @var $model \common\models\Equipment */
+/* @var $model Equipment */
 
 $equipment = Equipment::find()
     ->where(['uuid' => $model['uuid']])
@@ -125,6 +125,16 @@ $categories .= "]";
                                     </script>
                                 </td>
                             </tr>
+                        </table>
+                    </div>
+                    <div class="col-sm-3">
+                        <table class="table table-bordered table-condensed table-hover small kv-table">
+                            <tr class="success">
+                                <th colspan="2" class="text-center text-info">Информация</th>
+                            </tr>
+                            <tr><td>Дата ввода в эксплуатацию</td><td class="text-right"><?php echo date ('d-m-Y',strtotime($equipment['inputDate'])) ?></td></tr>
+                            <tr><td>Дата поверки</td><td class="text-right"><?php echo date ('d-m-Y',strtotime($equipment['testDate'])) ?></td></tr>
+                            <tr><td>Дата следущей поверки</td><td class="text-right"><?php echo $equipment['nextDate'] ?></td></tr>
                         </table>
                     </div>
                 </div>

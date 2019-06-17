@@ -106,11 +106,11 @@ class Contragent extends ZhkhActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'title' => Yii::t('app', 'Название'),
+            'title' => Yii::t('app', 'Наименование/ФИО'),
             'address' => Yii::t('app', 'Адрес'),
             'phone' => Yii::t('app', 'Телефон'),
             'inn' => Yii::t('app', 'ИНН'),
-            'director' => Yii::t('app', 'Директор'),
+            'director' => Yii::t('app', 'Комментарий'),
             'email' => Yii::t('app', 'Е-мэйл'),
             'contragentTypeUuid' => Yii::t('app', 'Тип'),
             'contragentType' => Yii::t('app', 'Тип'),

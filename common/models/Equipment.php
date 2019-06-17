@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property string $serial
  * @property string $tag
  * @property string $equipmentStatusUuid
+ * @property string $inputDate
  * @property string $testDate
  * @property integer $period
  * @property string $replaceDate
@@ -83,7 +84,7 @@ class Equipment extends ZhkhActiveRecord
             'equipmentStatus' => function ($model) {
                 return $model->equipmentStatus;
             },
-            'serial', 'period', 'testDate', 'replaceDate', 'tag', 'deleted',
+            'serial', 'period', 'testDate', 'inputDate', 'replaceDate', 'tag', 'deleted',
             'createdAt', 'changedAt'
         ];
     }
@@ -107,7 +108,7 @@ class Equipment extends ZhkhActiveRecord
                 ],
                 'required'
             ],
-            [['testDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
+            [['testDate', 'inputDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['period'], 'integer'],
             [
@@ -147,8 +148,9 @@ class Equipment extends ZhkhActiveRecord
             'title' => Yii::t('app', 'Название'),
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип'),
-            'testDate' => Yii::t('app', 'Дата последней поверки'),
+            'testDate' => Yii::t('app', 'Дата ввода в эксплуатацию'),
             'period' => Yii::t('app', 'Период'),
+            'inputDate' => Yii::t('app', 'Дата поверки'),
             'nextDate' => Yii::t('app', 'Дата следущей поверки'),
             'replaceDate' => Yii::t('app', 'Дата замены'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),

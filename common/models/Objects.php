@@ -16,6 +16,7 @@ use yii\db\Expression;
  * @property string $oid идентификатор организации
  * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
+ * @property double $square
  * @property string $objectStatusUuid
  * @property string $houseUuid
  * @property string $createdAt
@@ -58,7 +59,7 @@ class Objects extends ZhkhActiveRecord
     {
         return [
             [['uuid', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'required'],
-            [['createdAt', 'changedAt'], 'safe'],
+            [['square', 'createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
@@ -72,6 +73,7 @@ class Objects extends ZhkhActiveRecord
             '_id',
             'uuid',
             'title',
+            'square',
             'objectStatusUuid',
             'objectStatus' => function ($model) {
                 return $model->objectStatus;
@@ -108,6 +110,7 @@ class Objects extends ZhkhActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
+            'square' => Yii::t('app', 'Площадь'),
             'objectStatusUuid' => Yii::t('app', 'Статус объекта'),
             'objectStatus' => Yii::t('app', 'Статус объекта'),
             'objectTypeUuid' => Yii::t('app', 'Тип объекта'),

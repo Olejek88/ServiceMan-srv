@@ -27,11 +27,10 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'contragent',
+        'attribute' => 'contragentUuid',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'header' => 'Исполнитель',
-        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -66,7 +65,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->startDate)>0)
-                return date("Y-m-d h:m", strtotime($data->startDate));
+                return date("d-m-Y h:m", strtotime($data->startDate));
             else
                 return 'нет даты начала';
         },
@@ -77,7 +76,7 @@ $gridColumns = [
             'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'yyyy-MM-dd hh:mm',
+                'displayFormat' => 'dd-MM-yyyy hh:mm',
                 'saveFormat' => 'php:Y-m-d h:m',
                 'options' => [
                     'pluginOptions' => [
@@ -99,7 +98,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate)>0)
-                return date("Y-m-d h:m", strtotime($data->endDate));
+                return date("d-m-Y h:m", strtotime($data->endDate));
             else
                 return 'нет даты окончания';
         },
@@ -110,7 +109,7 @@ $gridColumns = [
             'widgetClass' =>  'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'yyyy-MM-dd hh:mm',
+                'displayFormat' => 'dd-MM-yyyy hh:mm',
                 'saveFormat' => 'php:Y-m-d h:m',
                 'options' => [
                     'pluginOptions' => [
@@ -121,6 +120,7 @@ $gridColumns = [
         ],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'comment',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -140,6 +140,9 @@ $gridColumns = [
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
+        'content' => function ($data) {
+            return date("d-m-Y h:m", strtotime($data->changedAt));
+        },
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -200,7 +203,7 @@ echo GridView::widget([
 ]);
 $this->registerJs('$("#modal_shutdown").on("hidden.bs.modal",
 function () {
-     window.location.replace("shutdown/index");
+     window.location.replace("index");
 })');
 
 echo '<div class="modal remote fade" id="modal_shutdown">

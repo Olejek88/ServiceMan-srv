@@ -53,10 +53,10 @@ $this->title = 'Дерево моделей оборудования';
         <tr style="background-color: #3c8dbc; color: whitesmoke">
             <th align="center">Оборудование</th>
             <th>Задачи</th>
-            <th>Серийный</th>
+            <th>Заводской номер</th>
             <th>Статус</th>
             <th>Исполнители</th>
-            <th>Дата ввода</th>
+            <th>Дата ввода в эксплуатацию</th>
             <th>Файлы</th>
             <th>Действия</th>
         </tr>

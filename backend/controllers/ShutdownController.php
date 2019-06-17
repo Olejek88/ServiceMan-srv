@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\ShutdownSearch;
 use common\models\Shutdown;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -46,6 +47,7 @@ class ShutdownController extends Controller
     /**
      * Lists all Shutdown models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -173,7 +175,7 @@ class ShutdownController extends Controller
     /**
      * Creates a new Shutdown model.
      * @return mixed
-     * @var $model Shutdown
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
