@@ -45,8 +45,9 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'value' => function ($model) {
-            //return "<span class='badge' style='background-color: gray; height: 22px'>".$model->createdAt."</span>";
-            return $model->createdAt;
+            return "<span class='badge' style='background-color: gray; height: 22px'>".
+                date('d-m-Y H:m', strtotime($model->date))."</span>";
+//            return $model->date;
         },
         'contentOptions' => [
             'class' => 'table_class'

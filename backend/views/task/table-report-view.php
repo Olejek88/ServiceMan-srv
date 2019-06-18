@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\TaskSearch */
 
 use common\components\MainFunctions;
+use common\models\Contragent;
 use common\models\Operation;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -23,7 +24,6 @@ $gridColumns = [
             'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'mergeHeader' => true,
         'content' => function ($data) {
             return $data->_id;
         }
@@ -35,11 +35,62 @@ $gridColumns = [
         'mergeHeader' => true,
         'header' => 'Дата осмотра',
         'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            if (strtotime($data->startDate)>0)
+                return date("d-m-Y H:m", strtotime($data->startDate));
+            else
+                return 'не открыт';
+        },
+        'editableOptions' => [
+            'header' => 'Дата назначения',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd-MM-yyyy HH:mm',
+                'saveFormat' => 'php:Y-m-d H:m:s',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ],
+    ],
+    [
+        'attribute' => 'deadlineDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Дата осмотра',
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            if (strtotime($data->deadlineDate)>0)
+                return date("d-m-Y H:m", strtotime($data->deadlineDate));
+            else
+                return 'не открыт';
+        },
+        'editableOptions' => [
+            'header' => 'Срок',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd-MM-yyyy HH:mm',
+                'saveFormat' => 'php:Y-m-d H:m:s',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ],
     ],
     [
         'vAlign' => 'middle',
         'header' => 'Объект',
-        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -88,7 +139,6 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             $users = $data['users'];
@@ -100,9 +150,41 @@ $gridColumns = [
                 $cnt++;
             }
             return $users_list;
+        },
+    ],
+    [
+        'attribute' => 'openDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            if (strtotime($data->openDate)>0)
+                return date("d-m-Y H:m", strtotime($data->openDate));
+            else
+                return 'не открыт';
+        }
+    ],
+    [
+        'attribute' => 'closeDate',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            if (strtotime($data->closeDate)>0)
+                return date("d-m-Y H:m", strtotime($data->closeDate));
+            else
+                return 'не закрыт';
         }
     ]
- ];
+];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,

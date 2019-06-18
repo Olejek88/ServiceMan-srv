@@ -21,6 +21,8 @@ $photo = Photo::find()
     ->where(['objectUuid' => $equipment['uuid']])
     ->orderBy('createdAt DESC')
     ->one();
+$this->registerJsFile('/js/vendor/lib/HighCharts/highcharts.js');
+$this->registerJsFile('/js/vendor/lib/HighCharts/modules/exporting.js');
 
 $categories = "[";
 $values = "name: 'Значения', data: [";
@@ -39,6 +41,9 @@ foreach ($measures as $measure) {
 $values .= "]";
 $categories .= "]";
 ?>
+<script src="/js/vendor/lib/HighCharts/highcharts.js"></script>
+<script src="/js/vendor/lib/HighCharts/modules/exporting.js"></script>
+
 <div class="kv-expand-row kv-grid-demo">
     <div class="kv-expand-detail skip-export kv-grid-demo">
         <div class="skip-export kv-expanded-row kv-grid-demo" data-index="0" data-key="1">

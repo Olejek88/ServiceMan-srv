@@ -143,7 +143,7 @@ echo GridView::widget([
     'floatHeader' => false,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Отчет о показаниях приборов',
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Отчет о поверках приборов',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

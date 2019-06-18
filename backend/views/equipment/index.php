@@ -42,6 +42,14 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'title',
+        'vAlign' => 'middle',
+        'header' => 'Оборудование',
+        'mergeHeader' => true,
+        'format' => 'raw',
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
         'attribute' => 'objectUuid',
         'vAlign' => 'middle',
         'width' => '280px',
@@ -215,8 +223,15 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-        /*            Html::a('Добавить недостающие', ['/equipment/new'], ['class'=>'btn btn-success']),*/
-            Html::a('Новое', ['/equipment/create'], ['class' => 'btn btn-success']),
+            Html::a('Добавить',
+                ['../equipment/add'],
+                [
+                    'class' => 'btn btn-success',
+                    'title' => 'Добавить оборудование',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalAdd',
+                ]
+            ),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -243,3 +258,16 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);
+
+$this->registerJs('$("#modalAdd").on("hidden.bs.modal",
+function () {
+     window.location.replace("../equipment/index");
+})');
+?>
+
+<div class="modal remote fade" id="modalAdd">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+

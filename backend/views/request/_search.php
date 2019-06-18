@@ -21,6 +21,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'comment') ?>
 
+    <?= $form->field($model, 'userCheck') ?>
+
     <?= $form->field($model, 'userUuid') ?>
 
     <?= $form->field($model, 'equipmentUuid') ?>

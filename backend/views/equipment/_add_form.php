@@ -55,17 +55,10 @@ use yii\helpers\Html;
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
     echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);
 
-    echo '<label class="control-label">Фотография</label>';
-    echo FileInput::widget([
-        'name' => 'image',
-        'options' => ['accept' => '*']
-    ]);
-
     echo $form->field($equipment, 'serial')->textInput(['maxlength' => true]);
     echo $form->field($equipment, 'period')->textInput(['maxlength' => true]);
     echo Html::hiddenInput("source", $source);
     echo Html::hiddenInput("type", "equipment");
-
 
     if (isset($objectUuid)) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
@@ -107,7 +100,23 @@ use yii\helpers\Html;
     ?>
 
     <div class="pole-mg">
-        <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
+        <p style="width: 300px; margin-bottom: 0;">Дата ввода в эксплуатацию</p>
+        <?php echo DatePicker::widget(
+            [
+                'model' => $equipment,
+                'attribute' => 'inputDate',
+                'language' => 'ru',
+                'size' => 'ms',
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd',
+                ]
+            ]
+        );
+        ?>
+    </div>
+    <div class="pole-mg">
+        <p style="width: 300px; margin-bottom: 0;">Дата последней поверки</p>
         <?php echo DatePicker::widget(
             [
                 'model' => $equipment,

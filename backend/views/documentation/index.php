@@ -2,6 +2,7 @@
 
 use backend\controllers\EquipmentController;
 use common\models\DocumentationType;
+use common\models\Equipment;
 use common\models\EquipmentType;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -61,20 +62,24 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'mergeHeader' => true,
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
         'content' => function ($data) {
             return $data->equipment['title'];
-        }
+        },
+        'filter' => ArrayHelper::map(Equipment::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
     ],
     [
         'attribute' => 'equipmentTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
-        'mergeHeader' => true,
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),

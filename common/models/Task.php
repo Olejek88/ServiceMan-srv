@@ -6,7 +6,6 @@ use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
-use yii\db\ActiveRecord;
 /**
  * This is the model class for table "task".
  *
@@ -20,6 +19,7 @@ use yii\db\ActiveRecord;
  * @property string $taskTemplateUuid
  * @property string $taskDate
  * @property string $startDate
+ * @property string $deadlineDate
  * @property string $endDate
  * @property string $createdAt
  * @property string $changedAt
@@ -61,7 +61,7 @@ class Task extends ZhkhActiveRecord
         return [
             [['uuid', 'workStatusUuid'], 'required'],
             [['comment'], 'string'],
-            [['startDate', 'taskDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['startDate', 'taskDate', 'deadlineDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'workStatusUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
@@ -88,7 +88,7 @@ class Task extends ZhkhActiveRecord
             'equipment' => function ($model) {
                 return $model->equipment;
             },
-            'startDate', 'endDate', 'createdAt', 'changedAt',
+            'startDate', 'deadlineDate', 'endDate', 'createdAt', 'changedAt',
             'operations' => function ($model) {
                 return $model->operations;
             },
@@ -112,6 +112,7 @@ class Task extends ZhkhActiveRecord
             'taskVerdict' => Yii::t('app', 'Вердикт'),
             'taskTemplateUuid' => Yii::t('app', 'Шаблон'),
             'taskTemplate' => Yii::t('app', 'Шаблон'),
+            'deadlineDate' => Yii::t('app', 'Срок'),
             'startDate' => Yii::t('app', 'Начало'),
             'endDate' => Yii::t('app', 'Окончание'),
             'createdAt' => Yii::t('app', 'Создан'),

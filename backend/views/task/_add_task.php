@@ -8,6 +8,7 @@ use common\models\TaskTemplate;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
+use dosamigos\datetimepicker\DateTimePicker;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -50,6 +51,39 @@ use yii\helpers\Html;
     echo $form->field($model, 'comment')
         ->textarea(['rows' => 4, 'style' => 'resize: none;'])
     ?>
+
+    <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
+        <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <?= DateTimePicker::widget([
+            'model' => $model,
+            'attribute' => 'startDate',
+            'language' => 'ru',
+            'size' => 'ms',
+            'clientOptions' => [
+                'autoclose' => true,
+                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                'todayBtn' => true
+            ]
+        ]);
+        ?>
+    </div>
+
+    <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
+        <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <?= DateTimePicker::widget([
+            'model' => $model,
+            'attribute' => 'deadlineDate',
+            'language' => 'ru',
+            'size' => 'ms',
+            'clientOptions' => [
+                'autoclose' => true,
+                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                'todayBtn' => true
+            ]
+        ]);
+        ?>
+    </div>
+
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>

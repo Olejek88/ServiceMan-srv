@@ -1390,5 +1390,22 @@ class EquipmentController extends Controller
         $event .= '</div></li>';
         return $event;
     }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
+     *
+     * @return mixed
+     */
+    public
+    function actionAdd()
+    {
+        $source = '../equipment';
+        $equipment = new Equipment();
+        return $this->renderAjax('_add_form', [
+            'equipment' => $equipment,
+            'type' => 'equipment',
+            'source' => $source
+        ]);
+    }
 }
 

@@ -53,15 +53,6 @@ $this->title = Yii::t('app', 'Создать тип заявки');
                                 }
                             ],
                             [
-                                'contentOptions' => [
-                                    'class' => 'table_class'
-                                ],
-                                'headerOptions' => ['class' => 'text-center'],
-                                'content' => function ($data) {
-                                    return $data['taskTemplate']['title'];
-                                }
-                            ],
-                            [
                                 'class' => 'yii\grid\ActionColumn',
                                 'header' => 'Действия',
                                 'headerOptions' => ['class' => 'text-center', 'width' => '70'],

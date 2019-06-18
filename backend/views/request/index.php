@@ -78,7 +78,8 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['author']->name . '<br/> [' . $data['author']->whoIs . ']';
+            //return $data['user']->name . '<br/> [' . $data['author']->whoIs . ']';
+            return $data['userCheck'];
         }
     ],
     [
@@ -222,7 +223,7 @@ $gridColumns = [
             );
         },
     ],
-    [
+/*    [
         'attribute' => 'contragent',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -243,7 +244,7 @@ $gridColumns = [
             'pluginOptions' => ['allowClear' => true],
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'verdict',

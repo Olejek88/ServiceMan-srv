@@ -1,7 +1,11 @@
 <?php
 
 use common\models\ContragentType;
+use common\models\Request;
+use common\models\RequestType;
+use yii\base\InvalidConfigException;
 use yii\db\Migration;
+use yii\db\StaleObjectException;
 
 /**
  * Class m190617_070258_new_changes
@@ -10,19 +14,33 @@ class m190617_070258_new_changes extends Migration
 {
     /**
      * {@inheritdoc}
+     * @throws Throwable
+     * @throws InvalidConfigException
+     * @throws StaleObjectException
      */
     public function safeUp()
     {
         $tableOptions = null;
 
-        $this->alterColumn('contragents','inn', $this->string()->defaultValue(''));
-        $this->alterColumn('request_type','taskTemplateUuid', $this->string()->notNull());
+        $this->alterColumn('contragent','inn', $this->string()->defaultValue(''));
+        $this->addColumn('request_type','taskTemplateUuid', $this->string()->notNull());
+        $this->addColumn('request','userCheck', $this->string()->defaultValue('не назначен'));
+        $this->dropColumn('request','contragentUuid');
 
         $this->createIndex(
             'idx-taskTemplateUuid',
             'request_type',
             'taskTemplateUuid'
         );
+
+/*        $requests = Request::find()->all();
+        foreach ($requests as $request) {
+            $request->delete();
+        }
+        $requestTypes = RequestType::find()->all();
+        foreach ($requestTypes as $requestType) {
+            $requestType->delete();
+        }*/
 
         $this->addForeignKey(
             'fk-request_task-taskTemplateUuid',

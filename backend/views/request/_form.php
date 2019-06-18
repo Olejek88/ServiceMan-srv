@@ -67,8 +67,8 @@ use common\models\requestStatus;
         ]);
     ?>
 
-    <?php
-    $contragents = Contragent::find()->all();
+<!--    --><?php
+/*    $contragents = Contragent::find()->all();
     $items = ArrayHelper::map($contragents, 'uuid', 'title');
     echo $form->field($model, 'contragentUuid',
         ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,
@@ -82,7 +82,7 @@ use common\models\requestStatus;
                 'allowClear' => true
             ],
         ]);
-    ?>
+    */?>
 
     <?php
     $type = RequestType::find()->all();
@@ -158,7 +158,7 @@ use common\models\requestStatus;
     echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
     ?>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-
+    <?= $form->field($model, 'userCheck')->textInput() ?>
     <?= $form->field($model, 'comment')->textInput() ?>
 
     <div class="form-group text-center">
