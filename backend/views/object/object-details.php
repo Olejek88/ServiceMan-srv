@@ -1,12 +1,8 @@
 <?php
 
 use common\models\ObjectContragent;
-use common\models\ObjectStatus;
-use common\models\ObjectType;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 /* @var $model */
@@ -24,23 +20,7 @@ $gridColumns = [
             return $data->_id;
         }
     ],
-
     [
-        'class' => 'kartik\grid\ExpandRowColumn',
-        'width' => '50px',
-        'value' => function ($model, $key, $index, $column) {
-            return GridView::ROW_COLLAPSED;
-        },
-        'detail' => function ($model, $key, $index, $column) {
-            return Yii::$app->controller->renderPartial('subject-details', ['model' => $model]);
-        },
-        'expandIcon' => '<span class="glyphicon glyphicon-expand"></span>',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'expandOneOnly' => true
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'title',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
@@ -48,11 +28,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->title;
+            return $data['contragent']['title'];
         }
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'address',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -61,11 +40,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->address;
+            return $data['contragent']['address'];
         }
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'phone',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -74,11 +52,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->phone;
+            return $data['contragent']['phone'];
         }
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'inn',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -87,11 +64,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->inn;
+            return $data['contragent']['inn'];
         }
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'director',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -100,11 +76,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->director;
+            return $data['contragent']['director'];
         }
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'email',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -113,11 +88,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->email;
+            return $data['contragent']['email'];
         }
     ],
     [
-        'attribute' => 'contragentTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
@@ -125,7 +99,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data->contragentType->title;
+            return $data['contragent']['contragentType']['title'];
         }
     ],
     [
@@ -137,8 +111,8 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->changedAt) > 0)
-                return date("Y-m-d h:m", strtotime($data->changedAt));
+            if (strtotime($data['contragent']['changedAt']) > 0)
+                return date("Y-m-d h:m", strtotime($data['contragent']['changedAt']));
             else
                 return 'не открыт';
         }
@@ -170,7 +144,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/object/create'], ['class' => 'btn btn-success'])
+            Html::a('Новый', ['/contragent/create'], ['class' => 'btn btn-success'])
         ],
     ],
     'pjax' => true,

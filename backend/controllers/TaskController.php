@@ -6,6 +6,7 @@ use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\Request;
 use common\models\TaskUser;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -71,7 +72,7 @@ class TaskController extends Controller
         $dataProvider->pagination->pageSize = 25;
 
         return $this->render(
-            'table',
+            'table-report-view',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -395,4 +396,41 @@ class TaskController extends Controller
             );
         }
     }
+
+    /**
+     * @return string
+     */
+    public function actionForm()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = new Task();
+            return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                'requestUuid' => $_GET["requestUuid"]]);
+        }
+        return "";
+    }
+
+    /**
+     * Creates a new Task model.
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public
+    function actionNew()
+    {
+        if (isset($_POST['taskUuid']))
+            $model = Task::find()->where(['uuid' => $_POST['taskUuid']])->one();
+        else
+            $model = new Task();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false)) {
+                $request = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
+                $request['taskUuid']=$model['uuid'];
+                $request->save();
+                return true;
+            }
+        }
+        return true;
+    }
+
 }

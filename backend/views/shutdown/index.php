@@ -200,6 +200,10 @@ echo GridView::widget([
         'heading' => '<i class="glyphicon glyphicon-wrench"></i>&nbsp; Аварийные отключения',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
+    'rowOptions' => function($model) {
+        if (date("Y-m-d H:i:s")>=$model['startDate'] && date("Y-m-d H:i:s")<$model['endDate'])
+                return ['class' => 'danger'];
+    }
 ]);
 $this->registerJs('$("#modal_shutdown").on("hidden.bs.modal",
 function () {

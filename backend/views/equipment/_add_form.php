@@ -67,7 +67,7 @@ use yii\helpers\Html;
     echo Html::hiddenInput("type", "equipment");
 
 
-    if ($objectUuid) {
+    if (isset($objectUuid)) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
     } else {
         $object = Objects::find()->all();
@@ -87,7 +87,7 @@ use yii\helpers\Html;
             ]);
     }
 
-    if ($equipmentTypeUuid) {
+    if (isset($equipmentTypeUuid)) {
         echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
     } else {
         $equipmentType = EquipmentType::find()->all();

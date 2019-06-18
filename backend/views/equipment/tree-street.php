@@ -82,11 +82,13 @@ $this->title = 'Дерево моделей оборудования';
     </div>
 
 <?php
-$this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js', ['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
+$this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js',
+    ['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
 $this->registerJsFile('/js/custom/modules/list/jquery.contextMenu.min.js',
     ['depends' => ['yii\jui\JuiAsset']]);
 $this->registerCssFile('/css/custom/modules/list/ui.fancytree.css');
 $this->registerCssFile('/css/custom/modules/list/jquery.contextMenu.min.css');
+
 try {
     echo FancytreeWidget::widget([
         'options' => [
@@ -302,6 +304,11 @@ try {
     <div class="modal remote fade" id="modalRequest">
         <div class="modal-dialog">
             <div class="modal-content loader-lg" id="modalContentRequest"></div>
+        </div>
+    </div>
+    <div class="modal remote fade" id="modalMeasure">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentMeasure"></div>
         </div>
     </div>
 

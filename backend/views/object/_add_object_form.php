@@ -42,6 +42,7 @@ use yii\helpers\Html;
     }
     echo $form->field($object, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
     echo $form->field($object, 'title')->textInput(['maxlength' => true]);
+    echo $form->field($object, 'square')->textInput(['maxlength' => true]);
 
     echo Html::hiddenInput("type", "object");
     echo Html::hiddenInput("source", $source);

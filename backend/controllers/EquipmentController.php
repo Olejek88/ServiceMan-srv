@@ -1035,6 +1035,15 @@ class EquipmentController extends Controller
                     'source' => $source
                 ]);
             }
+            if ($type == 'equipment') {
+                $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+                return $this->renderAjax('../equipment/_add_form', [
+                    'contragentUuid' => $uuid,
+                    'equipment' => $equipment,
+                    'reference' => '../equipment/tree-street',
+                    'source' => $source
+                ]);
+            }
         }
         return "";
     }
@@ -1222,6 +1231,15 @@ class EquipmentController extends Controller
                 'data-target' => '#modalTasks',
             ]
         );
+        $links .= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+            ['/measure/add', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Добавить измерение',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalMeasure',
+            ]
+        );
+
         if ($equipment["serial"]) {
             $serial = $equipment["serial"];
         } else {
@@ -1240,6 +1258,7 @@ class EquipmentController extends Controller
             'serial' => $serial,
             'title' => $equipment["title"],
             'tag' => $equipment['tag'],
+            'type' => 'equipment',
             'uuid' => $equipment['uuid'],
             'type_uuid' => $equipment['equipmentType']['uuid'],
             'docs' => $docs,

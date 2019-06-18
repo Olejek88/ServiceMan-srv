@@ -2,7 +2,6 @@
 /* @var $cityCount
  * @var $streetCount
  * @var $flatCount
- * @var $subjectCount
  * @var $equipmentCount
  * @var $equipmentTypeCount
  * @var $contragentCount

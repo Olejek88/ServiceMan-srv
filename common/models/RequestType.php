@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -11,8 +12,10 @@ use yii\db\ActiveRecord;
  * @property integer $_id
  * @property string $uuid
  * @property string $title
+ * @property string $taskTemplateUuid
  * @property string $createdAt
  * @property string $changedAt
+ * @property TaskTemplate $taskTemplate
  */
 class RequestType extends ActiveRecord
 {
@@ -64,8 +67,21 @@ class RequestType extends ActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
+            'taskTemplate' => Yii::t('app', 'Шаблон задачи'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return ActiveQuery
+     */
+    public function getTaskTaskTemplate()
+    {
+        return $this->hasOne(
+            TaskTemplate::class, ['uuid' => 'taskTemplateUuid']
+        );
     }
 }

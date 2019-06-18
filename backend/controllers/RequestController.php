@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
+use common\models\Defect;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
+use common\models\TaskUser;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -167,6 +169,10 @@ class RequestController extends Controller
         }
     }
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
     public function actionForm()
     {
         $receiptUuid = "";
@@ -192,7 +198,7 @@ class RequestController extends Controller
     /**
      * Creates a new Request model.
      * @return mixed
-     * @var $model Request
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
@@ -213,6 +219,19 @@ class RequestController extends Controller
                         $model_receipt["requestUuid"] = $model['uuid'];
                         $model_receipt->save();
                     }
+                }
+                if ($model['requestType']['taskTemplateUuid']) {
+                    $user = $model['equipment']->getUser();
+                    if ($user) {
+                        $task = MainFunctions::createTask($model['requestType']['taskTemplateUuid'], $model->equipmentUuid,
+                            $model->comment, $model->oid, $user['uuid']);
+                    }
+                    MainFunctions::register('task','Создана задача',
+                        '<a class="btn btn-default btn-xs">'.$model['requestType']['taskTemplate']['taskType']['title'].'</a> '.
+                        $model['requestType']['taskTemplate']['title'].'<br/>'.
+                        '<a class="btn btn-default btn-xs">'.$model['requestType']['equipment']['title'].'</a> '.$model['comment']);
+                    if ($task)
+                        $model['taskUuid']=$task['uuid'];
                 }
                 return true;
             }

@@ -3,9 +3,11 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "equipment".
@@ -33,6 +35,7 @@ use yii\db\Expression;
  * @property string $nextDate
  * @property string $fullTitle
  * @property Photo $photo
+ * @property User $user
  */
 class Equipment extends ZhkhActiveRecord
 {
@@ -230,4 +233,21 @@ class Equipment extends ZhkhActiveRecord
     {
         return $this['object']->getFullTitle().' ['.$this['title'].']';
     }
+
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
+    public function getUser()
+    {
+        $userSystems = UserSystem::find()
+            ->where(['equipmentSystemUuid' => $this->equipmentType['equipmentSystem']['uuid']])
+            ->all();
+        foreach ($userSystems as $userSystem) {
+            if ($userSystem['user']['active'])
+                return $userSystem['user'];
+        }
+        return null;
+    }
+
 }

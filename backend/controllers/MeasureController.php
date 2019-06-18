@@ -3,7 +3,11 @@
 namespace backend\controllers;
 
 use backend\models\MeasureSearch;
+use common\models\Equipment;
+use common\models\House;
 use common\models\Measure;
+use common\models\Objects;
+use common\models\Street;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
@@ -169,5 +173,36 @@ class MeasureController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @return bool|string
+     */
+    public
+    function actionAdd()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = new Measure();
+            return $this->renderAjax('_add_form', [
+                'model' => $model,
+                'equipmentUuid' => $_GET["equipmentUuid"]
+            ]);
+        }
+        return false;
+    }
+
+    /**
+     * Creates a new Measure model.
+     * @return mixed
+     */
+    public
+    function actionSave()
+    {
+        $model = new Measure();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false))
+                return $this->redirect(['../equipment/tree-street']);
+            }
+        return $this->redirect(['../equipment/tree-street']);
     }
 }

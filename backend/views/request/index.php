@@ -212,11 +212,15 @@ $gridColumns = [
                     return $order;
                 }
             }
-            return "<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>";
+            return Html::a("<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>",
+                ['../task/form', 'equipmentUuid' => $model['equipmentUuid'], 'requestUuid' => $model['uuid']],
+                [
+                    'title' => 'Добавить задачу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalTask',
+                ]
+            );
         },
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
     ],
     [
         'attribute' => 'contragent',
@@ -343,6 +347,11 @@ $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      window.location.replace("../request/index");
 })');
+$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+function () {
+     window.location.replace("../request/index");
+})');
+
 ?>
 <div class="modal remote fade" id="modalRequest">
     <div class="modal-dialog">
@@ -350,3 +359,8 @@ function () {
     </div>
 </div>
 
+<div class="modal remote fade" id="modalTask">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
