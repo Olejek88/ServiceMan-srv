@@ -6,6 +6,7 @@ use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Request;
 use common\models\WorkStatus;
+use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -44,8 +45,9 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'value' => function ($model) {
-            //return "<span class='badge' style='background-color: gray; height: 22px'>".$model->createdAt."</span>";
-            return $model->createdAt;
+            return "<span class='badge' style='background-color: gray; height: 22px'>".
+                date('d-m-Y H:m', strtotime($model->date))."</span>";
+//            return $model->date;
         },
         'contentOptions' => [
             'class' => 'table_class'
@@ -151,6 +153,41 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'date',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Дата приема',
+        'format' => 'raw',
+        'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'content' => function ($data) {
+            if (strtotime($data->date))
+                return date("d-m-Y h:m", strtotime($data->date));
+            else
+                return 'не назначен';
+        },
+        'editableOptions' => [
+            'header' => 'Дата назначения',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATE,
+                'displayFormat' => 'dd-MM-yyyy',
+                'saveFormat' => 'php:Y-m-d h:m:s',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ]
     ],
     [
         'class' => 'kartik\grid\EditableColumn',

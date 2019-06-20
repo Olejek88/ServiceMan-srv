@@ -3,6 +3,7 @@
 
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
+use common\models\UserSystem;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -39,6 +40,14 @@ $gridColumns = [
         'expandIcon' => '<span class="glyphicon glyphicon-expand"></span>',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'expandOneOnly' => true
+    ],
+    [
+        'class' => 'kartik\grid\DataColumn',
+        'attribute' => 'title',
+        'vAlign' => 'middle',
+        'header' => 'Оборудование',
+        'mergeHeader' => true,
+        'format' => 'raw',
     ],
     [
         'class' => 'kartik\grid\DataColumn',
@@ -196,6 +205,35 @@ $gridColumns = [
         ],
     ],
     [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Исполнитель',
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            $userSystems = UserSystem::find()
+                ->where(['equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid']])
+                ->all();
+            $count = 0;
+            $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+                ['../task/form', 'equipmentUuid' => $data['uuid']],
+                [
+                    'title' => 'Добавить задачу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalTask',
+                ]
+            );
+            foreach ($userSystems as $userSystem) {
+                if ($count > 0) $userEquipmentName .= ', ';
+                $userEquipmentName .= $userSystem['user']['name'];
+                $count++;
+            }
+            if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+            return $userEquipmentName;
+        },
+    ],
+    [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -215,8 +253,15 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-        /*            Html::a('Добавить недостающие', ['/equipment/new'], ['class'=>'btn btn-success']),*/
-            Html::a('Новое', ['/equipment/create'], ['class' => 'btn btn-success']),
+            Html::a('Добавить',
+                ['../equipment/add'],
+                [
+                    'class' => 'btn btn-success',
+                    'title' => 'Добавить оборудование',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalAdd',
+                ]
+            ),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],
@@ -243,3 +288,26 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);
+
+$this->registerJs('$("#modalAdd").on("hidden.bs.modal",
+function () {
+     window.location.replace("../equipment/index");
+})');
+
+$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+function () {
+window.location.replace("../equipment/index");
+})');
+?>
+
+<div class="modal remote fade" id="modalAdd">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalTask">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>

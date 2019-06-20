@@ -12,6 +12,7 @@ use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
@@ -180,6 +181,7 @@ class TaskTemplateController extends Controller
      * @param string $linkField Поле через которое связывается
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public
     static function addEquipmentStageToTree($tree, $modelClass, $entityClass, $linkField)
@@ -284,6 +286,7 @@ class TaskTemplateController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionAdd()
     {
@@ -399,7 +402,7 @@ class TaskTemplateController extends Controller
     /**
      * Creates a new TaskTemplate and correlation model.
      * @return mixed
-     * @var $model TaskTemplate
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
@@ -451,7 +454,7 @@ class TaskTemplateController extends Controller
     /**
      * Creates a new OperationTemplate and correlation model.
      * @return mixed
-     * @var $model OperationTemplate
+     * @throws InvalidConfigException
      */
     public
     function actionOperation()
@@ -493,6 +496,7 @@ class TaskTemplateController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет добавление существующего шаблона этапа
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionChoose()
     {
@@ -615,6 +619,7 @@ class TaskTemplateController extends Controller
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования, шаблона задачи или операции
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionEdit()
     {

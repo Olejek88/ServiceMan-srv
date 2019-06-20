@@ -1,5 +1,7 @@
 <?php
 
+use common\models\TaskTemplate;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
@@ -22,6 +24,11 @@ use app\commands\MainFunctions;
     ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <?php
+    $taskTemplate = TaskTemplate::find()->all();
+    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
+    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
+    ?>
 
     <div class="form-group text-center">
 

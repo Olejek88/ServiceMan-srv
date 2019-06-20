@@ -1,27 +1,28 @@
 <?php
+
 namespace backend\controllers;
 
 use ArrayObject;
+use backend\models\TaskSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
+use common\models\Equipment;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\Operation;
+use common\models\Request;
+use common\models\Task;
 use common\models\TaskUser;
 use common\models\Users;
 use common\models\WorkStatus;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\UnauthorizedHttpException;
-
-use common\models\Task;
-use common\models\Equipment;
-use common\models\Operation;
-use backend\models\TaskSearch;
-use yii\base\InvalidConfigException;
-use Throwable;
 
 class TaskController extends Controller
 {
@@ -71,7 +72,7 @@ class TaskController extends Controller
         $dataProvider->pagination->pageSize = 25;
 
         return $this->render(
-            'table',
+            'table-report-view',
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -103,18 +104,18 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','startDate',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','startDate',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'startDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'startDate', $_GET['end_time']]);
         }
-        $dataProvider->query->andWhere(['=','workStatusUuid',WorkStatus::COMPLETE]);
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
         $dataProvider->pagination->pageParam = 'dp1';
 
         $dataProvider2 = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider2->pagination->pageSize = 25;
-        $dataProvider2->query->andWhere(['<>','workStatusUuid',WorkStatus::COMPLETE]);
+        $dataProvider2->query->andWhere(['<>', 'workStatusUuid', WorkStatus::COMPLETE]);
         if (isset($_GET['start_time'])) {
-            $dataProvider2->query->andWhere(['>=','startDate',$_GET['start_time']]);
-            $dataProvider2->query->andWhere(['<','startDate',$_GET['end_time']]);
+            $dataProvider2->query->andWhere(['>=', 'startDate', $_GET['start_time']]);
+            $dataProvider2->query->andWhere(['<', 'startDate', $_GET['end_time']]);
         }
         $dataProvider2->pagination->pageParam = 'dp2';
 
@@ -131,23 +132,33 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableUserNormative()
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
+
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'endDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'endDate', $_GET['end_time']]);
         }
-        if (isset($_GET['user'])) {
-            $dataProvider->query->andWhere(['=', 'userUuid', $_GET['user']]);
+        if (isset($_GET['user']) && $_GET['user']!='') {
+            $taskUsers = TaskUser::find()->select('taskUuid')->where(['userUuid' => $_GET['user']])->all();
+            $list=[];
+            foreach ($taskUsers as $taskUser) {
+                $list[] = $taskUser['taskUuid'];
+            }
+            $dataProvider->query->andWhere(['uuid' => $list])->all();
         }
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
         return $this->render(
             'table-user-normative',
             [
-                'dataProvider' => $dataProvider
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel
             ]
         );
     }
@@ -156,6 +167,7 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableReportView()
     {
@@ -163,10 +175,10 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
-            $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
         }
-        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
+        $dataProvider->query->orderBy('_id DESC');
         return $this->render(
             'table-report-view',
             [
@@ -210,9 +222,9 @@ class TaskController extends Controller
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            MainFunctions::register('task','Создана задача',
-                '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
-                '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+            MainFunctions::register('task', 'Создана задача',
+                '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
+                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
             // TODO реализовать логику выбора пользователя
             $user = Users::find()->one();
             $modelTU = new TaskUser();
@@ -321,13 +333,15 @@ class TaskController extends Controller
                     foreach ($tasks as $task) {
                         $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
                             ['title' => $task['taskTemplate']['title'], 'key' => $task['_id'], 'folder' => true,
-                                'startDate' => $task['startDate'], 'closeDate' => $task['endDate']
+                                'startDate' => $task['startDate'], 'closeDate' => $task['endDate'],
+                                'level' => 'task'
+
                             ];
                         $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
-                        $user_names='';
+                        $user_names = '';
                         foreach ($taskUsers as $taskUser) {
-                             $user_names.=$taskUser['user']['name'];
-                            }
+                            $user_names .= $taskUser['user']['name'];
+                        }
                         $childIdx4 = count($tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
                         $operations = Operation::find()->where(['taskUuid' => $task['uuid']])->all();
                         foreach ($operations as $operation) {
@@ -336,6 +350,7 @@ class TaskController extends Controller
                                     'title' => $operation['operationTemplate']['title'],
                                     'key' => $operation['_id'],
                                     'folder' => false,
+                                    'level' => 'operation',
                                     'types' => '',
                                     'info' => '',
                                     'user' => $user_names,
@@ -362,7 +377,7 @@ class TaskController extends Controller
     {
         $model = new Task();
         if ($model->load(Yii::$app->request->post())) {
-            $task = MainFunctions::createTask($model->taskTemplateUuid, $model->equipmentUuid,
+            $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
                 $model->comment, $model->oid, $_POST['userUuid']);
             if (isset($_POST["defectUuid"]) && $task) {
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
@@ -371,9 +386,9 @@ class TaskController extends Controller
                     $defect->save();
                 }
             }
-            MainFunctions::register('task','Создана задача',
-                '<a class="btn btn-default btn-xs">'.$model['taskTemplate']['taskType']['title'].'</a> '.$model['taskTemplate']['title'].'<br/>'.
-                '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+            MainFunctions::register('task', 'Создана задача',
+                '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
+                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
 
             $user = Users::find()->one();
             $modelTU = new TaskUser();
@@ -394,5 +409,101 @@ class TaskController extends Controller
                 ]
             );
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function actionForm()
+    {
+        if (isset($_GET["equipmentUuid"])) {
+            $model = new Task();
+            if (isset($_GET["requestUuid"]))
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                    'requestUuid' => $_GET["requestUuid"]]);
+            else
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"]]);
+        }
+        return "";
+    }
+
+    /**
+     * Creates a new Task model.
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public
+    function actionNew()
+    {
+        if (isset($_POST['taskUuid']))
+            $model = Task::find()->where(['uuid' => $_POST['taskUuid']])->one();
+        else
+            $model = new Task();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false)) {
+                if (isset($_POST['requestUuid'])) {
+                    $request = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
+                    $request['taskUuid'] = $model['uuid'];
+                    $request->save();
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Удаляет все прееданные объекты из дерева
+     * @throws Throwable
+     */
+    function actionRemove()
+    {
+        if (isset($_POST["level"]) && isset($_POST["selected_node"])) {
+            if ($_POST["level"] == 'task')
+                self::deleteTask($_POST["selected_node"]);
+            if ($_POST["level"] == 'operation')
+                self::deleteOperation($_POST["selected_node"]);
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * @param $id
+     * @throws StaleObjectException
+     * @throws Throwable
+     */
+    function deleteTask($id)
+    {
+        $task = Task::find()
+            ->where(['_id' => $id])
+            ->one();
+        if ($task) {
+            $taskUsers = TaskUser::find()
+                ->where(['taskUuid' => $task['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskUser->delete();
+            }
+            $operations = Operation::find()
+                ->where(['taskUuid' => $task['uuid']])
+                ->all();
+            foreach ($operations as $operation) {
+                $operation->delete();
+            }
+        }
+        $task->delete();
+    }
+
+    /**
+     * @param $id
+     * @throws StaleObjectException
+     * @throws Throwable
+     */
+    function deleteOperation($id)
+    {
+        $operation = Operation::find()->where(['_id' => $id])->one();
+        if ($operation)
+            $operation->delete();
     }
 }

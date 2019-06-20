@@ -609,7 +609,7 @@ class EquipmentController extends Controller
         $equipment = $this->findModel($id);
         $photos = Photo::find()
             ->select('*')
-            ->where(['equipmentUuid' => $equipment['uuid']])
+            ->where(['objectUuid' => $equipment['uuid']])
             ->all();
         foreach ($photos as $photo) {
             $photo->delete();
@@ -623,7 +623,10 @@ class EquipmentController extends Controller
             $measure->delete();
         }
 
-        $this->findModel($id)->delete();
+        $equipment = $this->findModel($id);
+        $equipment['deleted'] = true;
+        $equipment->save();
+
         return $this->redirect(['index']);
     }
 
@@ -1035,6 +1038,15 @@ class EquipmentController extends Controller
                     'source' => $source
                 ]);
             }
+            if ($type == 'equipment') {
+                $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+                return $this->renderAjax('../equipment/_add_form', [
+                    'contragentUuid' => $uuid,
+                    'equipment' => $equipment,
+                    'reference' => '../equipment/tree-street',
+                    'source' => $source
+                ]);
+            }
         }
         return "";
     }
@@ -1222,6 +1234,15 @@ class EquipmentController extends Controller
                 'data-target' => '#modalTasks',
             ]
         );
+        $links .= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+            ['/measure/add', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Добавить измерение',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalMeasure',
+            ]
+        );
+
         if ($equipment["serial"]) {
             $serial = $equipment["serial"];
         } else {
@@ -1240,6 +1261,7 @@ class EquipmentController extends Controller
             'serial' => $serial,
             'title' => $equipment["title"],
             'tag' => $equipment['tag'],
+            'type' => 'equipment',
             'uuid' => $equipment['uuid'],
             'type_uuid' => $equipment['equipmentType']['uuid'],
             'docs' => $docs,
@@ -1370,6 +1392,23 @@ class EquipmentController extends Controller
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';
         return $event;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
+     *
+     * @return mixed
+     */
+    public
+    function actionAdd()
+    {
+        $source = '../equipment';
+        $equipment = new Equipment();
+        return $this->renderAjax('_add_form', [
+            'equipment' => $equipment,
+            'type' => 'equipment',
+            'source' => $source
+        ]);
     }
 }
 

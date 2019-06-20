@@ -3,6 +3,7 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
@@ -135,7 +136,8 @@ class Operation extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveRecord
+     * @return ActiveRecord
+     * @throws InvalidConfigException
      */
     public function getTask()
     {

@@ -167,6 +167,10 @@ class RequestController extends Controller
         }
     }
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
     public function actionForm()
     {
         $receiptUuid = "";
@@ -192,7 +196,7 @@ class RequestController extends Controller
     /**
      * Creates a new Request model.
      * @return mixed
-     * @var $model Request
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
@@ -212,6 +216,22 @@ class RequestController extends Controller
                     if ($model_receipt) {
                         $model_receipt["requestUuid"] = $model['uuid'];
                         $model_receipt->save();
+                    }
+                }
+                if ($model['requestType']['taskTemplateUuid']) {
+                    $user = $model['equipment']->getUser();
+                    $task=null;
+                    if ($user) {
+                        $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
+                            $model->comment, $model->oid, $user['uuid']);
+                    }
+                    MainFunctions::register('task','Создана задача',
+                        '<a class="btn btn-default btn-xs">'.$model['requestType']['taskTemplate']['taskType']['title'].'</a> '.
+                        $model['requestType']['taskTemplate']['title'].'<br/>'.
+                        '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+                    if ($task) {
+                        $model['taskUuid'] = $task['uuid'];
+                        $model->save();
                     }
                 }
                 return true;

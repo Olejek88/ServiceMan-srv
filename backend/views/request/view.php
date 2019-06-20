@@ -47,6 +47,10 @@ $this->params['breadcrumbs'][] = [
                                         'value' => $model->comment
                                     ],
                                     [
+                                        'label' => 'ФИО лица ведущего прием',
+                                        'value' => $model->userCheck
+                                    ],
+                                    [
                                         'label' => 'Пользователь',
                                         'value' => $model['user']['name']
                                     ],

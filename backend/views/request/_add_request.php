@@ -71,8 +71,8 @@ use yii\bootstrap\ActiveForm;
             ]);
         ?>
 
-        <?php
-        $objectContragent = 0;
+<!--        --><?php
+/*        $objectContragent = 0;
         if ($model['objectUuid'])
             $objectContragent = ObjectContragent::find()->where(['objectUuid' => $model['objectUuid']])->one();
         $contragents = Contragent::find()->all();
@@ -90,7 +90,7 @@ use yii\bootstrap\ActiveForm;
                     'allowClear' => true
                 ],
             ]);
-        ?>
+        */?>
 
         <?php
         $type = RequestType::find()->all();
@@ -178,7 +178,7 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
         ?>
         <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-
+        <?= $form->field($model, 'userCheck')->textInput() ?>
         <?= $form->field($model, 'comment')->textInput() ?>
     </div>
     <div class="modal-footer">
@@ -193,7 +193,6 @@ use yii\bootstrap\ActiveForm;
             type: "post",
             data: $('form').serialize(),
             success: function () {
-                console.log("fin");
                 $('#modalRequest').modal('hide');
             },
             error: function () {

@@ -4,7 +4,6 @@ use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\Measure;
 use common\models\Photo;
-use common\models\PhotoEquipment;
 use yii\helpers\Html;
 
 /* @var $model Equipment */
@@ -21,6 +20,8 @@ $photo = Photo::find()
     ->where(['objectUuid' => $equipment['uuid']])
     ->orderBy('createdAt DESC')
     ->one();
+$this->registerJsFile('/js/vendor/lib/HighCharts/highcharts.js');
+$this->registerJsFile('/js/vendor/lib/HighCharts/modules/exporting.js');
 
 $categories = "[";
 $values = "name: 'Значения', data: [";
@@ -43,7 +44,7 @@ $categories .= "]";
     <div class="kv-expand-detail skip-export kv-grid-demo">
         <div class="skip-export kv-expanded-row kv-grid-demo" data-index="0" data-key="1">
             <div class="kv-detail-content">
-                <h3><?php echo $equipment['equipmentType']->title ?></h3>
+                <h3><?php echo $equipment->title ?></h3>
                 <div class="row">
                     <div class="col-sm-2">
                         <div class="img-thumbnail img-rounded text-center">
@@ -134,7 +135,7 @@ $categories .= "]";
                             </tr>
                             <tr><td>Дата ввода в эксплуатацию</td><td class="text-right"><?php echo date ('d-m-Y',strtotime($equipment['inputDate'])) ?></td></tr>
                             <tr><td>Дата поверки</td><td class="text-right"><?php echo date ('d-m-Y',strtotime($equipment['testDate'])) ?></td></tr>
-                            <tr><td>Дата следущей поверки</td><td class="text-right"><?php echo $equipment['nextDate'] ?></td></tr>
+                            <tr><td>Дата следущей поверки</td><td class="text-right"><?php echo date ('d-m-Y',strtotime($equipment['nextDate'])) ?></td></tr>
                         </table>
                     </div>
                 </div>

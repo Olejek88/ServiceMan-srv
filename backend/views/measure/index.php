@@ -27,7 +27,6 @@ $gridColumns = [
         'attribute' => 'equipment.serial',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Серийный номер',
         'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
     ],

@@ -3,9 +3,11 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "equipment".
@@ -33,6 +35,7 @@ use yii\db\Expression;
  * @property string $nextDate
  * @property string $fullTitle
  * @property Photo $photo
+ * @property User $user
  */
 class Equipment extends ZhkhActiveRecord
 {
@@ -148,9 +151,9 @@ class Equipment extends ZhkhActiveRecord
             'title' => Yii::t('app', 'Название'),
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип'),
-            'testDate' => Yii::t('app', 'Дата ввода в эксплуатацию'),
-            'period' => Yii::t('app', 'Период'),
-            'inputDate' => Yii::t('app', 'Дата поверки'),
+            'testDate' => Yii::t('app', 'Дата последней поверки'),
+            'period' => Yii::t('app', 'Период поверки'),
+            'inputDate' => Yii::t('app', 'Дата ввода в эксплуатацию'),
             'nextDate' => Yii::t('app', 'Дата следущей поверки'),
             'replaceDate' => Yii::t('app', 'Дата замены'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
@@ -158,7 +161,7 @@ class Equipment extends ZhkhActiveRecord
             'objectUuid' => Yii::t('app', 'Объект'),
             'object' => Yii::t('app', 'Объект'),
             'tag' => Yii::t('app', 'Метка'),
-            'serial' => Yii::t('app', 'Серийный номер'),
+            'serial' => Yii::t('app', 'Заводской номер'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -230,4 +233,21 @@ class Equipment extends ZhkhActiveRecord
     {
         return $this['object']->getFullTitle().' ['.$this['title'].']';
     }
+
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
+    public function getUser()
+    {
+        $userSystems = UserSystem::find()
+            ->where(['equipmentSystemUuid' => $this->equipmentType['equipmentSystem']['uuid']])
+            ->all();
+        foreach ($userSystems as $userSystem) {
+            if ($userSystem['user']['active'])
+                return $userSystem['user'];
+        }
+        return null;
+    }
+
 }

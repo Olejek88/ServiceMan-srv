@@ -20,7 +20,7 @@ $gridColumns = [
         }
     ],
     [
-        'attribute' => 'title',
+        'header' => 'Название операции',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'

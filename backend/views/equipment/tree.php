@@ -309,6 +309,11 @@ try {
             <div class="modal-content loader-lg" id="modalContentRequest"></div>
         </div>
     </div>
+    <div class="modal remote fade" id="modalMeasure">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentMeasure"></div>
+        </div>
+    </div>
 
 <?php
 $this->registerJs('$("#modalRegister").on("hidden.bs.modal",

@@ -1,7 +1,6 @@
 <?php
 /* @var $searchModel backend\models\RequestSearch */
 
-use common\models\Contragent;
 use common\models\EquipmentStatus;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -78,7 +77,8 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['author']->name . '<br/> [' . $data['author']->whoIs . ']';
+            //return $data['user']->name . '<br/> [' . $data['author']->whoIs . ']';
+            return $data['userCheck'];
         }
     ],
     [
@@ -159,7 +159,7 @@ $gridColumns = [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'comment',
         'vAlign' => 'middle',
-        'header' => ' Причина обращения',
+        'header' => 'Причина обращения',
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
@@ -212,13 +212,17 @@ $gridColumns = [
                     return $order;
                 }
             }
-            return "<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>";
+            return Html::a("<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>",
+                ['../task/form', 'equipmentUuid' => $model['equipmentUuid'], 'requestUuid' => $model['uuid']],
+                [
+                    'title' => 'Добавить задачу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalTask',
+                ]
+            );
         },
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
     ],
-    [
+/*    [
         'attribute' => 'contragent',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -239,7 +243,7 @@ $gridColumns = [
             'pluginOptions' => ['allowClear' => true],
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'verdict',
@@ -343,6 +347,11 @@ $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      window.location.replace("../request/index");
 })');
+$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+function () {
+     window.location.replace("../request/index");
+})');
+
 ?>
 <div class="modal remote fade" id="modalRequest">
     <div class="modal-dialog">
@@ -350,3 +359,8 @@ function () {
     </div>
 </div>
 
+<div class="modal remote fade" id="modalTask">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>

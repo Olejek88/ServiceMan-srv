@@ -65,7 +65,7 @@ class Contragent extends ZhkhActiveRecord
         return [
             ['deleted', 'default', 'value' => Status::STATUS_DEFAULT],
             ['deleted', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
-            [['uuid', 'title', 'inn', 'contragentTypeUuid', 'deleted'], 'required'],
+            [['uuid', 'title', 'contragentTypeUuid', 'deleted'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
             [['address'], 'string', 'max' => 250],

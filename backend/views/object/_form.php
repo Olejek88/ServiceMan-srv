@@ -47,22 +47,8 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
-
-    <?php
-    $statuses = ObjectStatus::find()->all();
-    $items = ArrayHelper::map($statuses, 'uuid', 'title');
-    echo $form->field($model, 'objectStatusUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите статус..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    ?>
+    <?php echo $form->field($model, 'objectStatusUuid')
+        ->hiddenInput(['value' => ObjectStatus::OBJECT_STATUS_OK])->label(false); ?>
 
     <?php
     $types = ObjectType::find()->all();
@@ -79,6 +65,7 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
+    <?php echo $form->field($model, 'square')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-center">
         <?php

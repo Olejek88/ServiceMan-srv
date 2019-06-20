@@ -73,7 +73,7 @@ class TaskUser extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -82,7 +82,7 @@ class TaskUser extends ZhkhActiveRecord
 
     /**
      * Объект связанного поля.
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getTask()
     {

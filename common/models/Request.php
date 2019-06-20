@@ -15,8 +15,8 @@ use yii\db\Expression;
  * @property string $uuid
  * @property integer $type
  * @property string $userUuid
- * @property string $contragentUuid
  * @property string $authorUuid
+ * @property string $userCheck
  * @property string $requestStatusUuid
  * @property string $requestTypeUuid
  * @property string $comment
@@ -30,7 +30,6 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property Users $user
- * @property Contragent $contragent
  * @property Contragent $author
  * @property RequestStatus $requestStatus
  * @property RequestType $requestType
@@ -86,7 +85,6 @@ class Request extends ZhkhActiveRecord
                     'comment',
                     'requestStatusUuid',
                     'requestTypeUuid',
-                    'contragentUuid',
                     'authorUuid',
                     'equipmentUuid',
                     'comment'
@@ -103,9 +101,9 @@ class Request extends ZhkhActiveRecord
                     'objectUuid',
                     'closeDate',
                     'requestTypeUuid',
-                    'contragentUuid',
                     'authorUuid',
                     'taskUuid',
+                    'userCheck',
                     'oid',
                 ],
                 'string',
@@ -125,6 +123,7 @@ class Request extends ZhkhActiveRecord
     public function fields()
     {
         return ['_id', 'uuid', 'comment',
+            'userCheck',
             'userUuid',
             'user' => function ($model) {
                 return $model->user;
@@ -136,10 +135,6 @@ class Request extends ZhkhActiveRecord
             'requestTypeUuid',
             'requestType' => function ($model) {
                 return $model->requestType;
-            },
-            'contragentUuid',
-            'contragent' => function ($model) {
-                return $model->contragent;
             },
             'authorUuid',
             'author' => function ($model) {
@@ -176,6 +171,7 @@ class Request extends ZhkhActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'userUuid' => Yii::t('app', 'Пользователь'),
             'user' => Yii::t('app', 'Пользователь'),
+            'userCheck' => Yii::t('app', 'ФИО лица ведущего прием'),
             'type' => Yii::t('app', 'Тип'),
             'requestTypeUuid' => Yii::t('app', 'Характер обращения'),
             'requestType' => Yii::t('app', 'Характер обращения'),
@@ -187,8 +183,6 @@ class Request extends ZhkhActiveRecord
             'object' => Yii::t('app', 'Объект'),
             'authorUuid' => Yii::t('app', 'Автор заявки'),
             'author' => Yii::t('app', 'Автор заявки'),
-            'contragentUuid' => Yii::t('app', 'Исполнитель'),
-            'contragent' => Yii::t('app', 'Исполнитель'),
             'taskUuid' => Yii::t('app', 'Задача'),
             'task' => Yii::t('app', 'Задача'),
             'closeDate' => Yii::t('app', 'Дата закрытия заявки'),
@@ -207,18 +201,6 @@ class Request extends ZhkhActiveRecord
     {
         return $this->hasOne(
             Contragent::class, ['uuid' => 'userUuid']
-        );
-    }
-
-    /**
-     * Объект связанного поля.
-     *
-     * @return ActiveQuery
-     */
-    public function getContragent()
-    {
-        return $this->hasOne(
-            Contragent::class, ['uuid' => 'contragentUuid']
         );
     }
 
