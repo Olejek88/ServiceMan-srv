@@ -1,7 +1,6 @@
 <?php
 /* @var $searchModel backend\models\RequestSearch */
 
-use common\models\Contragent;
 use common\models\EquipmentStatus;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -160,7 +159,7 @@ $gridColumns = [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'comment',
         'vAlign' => 'middle',
-        'header' => ' Причина обращения',
+        'header' => 'Причина обращения',
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,

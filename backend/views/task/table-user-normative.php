@@ -1,12 +1,9 @@
 <?php
+/* @var $searchModel backend\models\EquipmentSearch */
 
 use common\components\MainFunctions;
-use common\models\MeasureType;
-use common\models\Operation;
+use common\models\TaskTemplate;
 use common\models\Users;
-use common\models\WorkStatus;
-use kartik\datecontrol\DateControl;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
 use kartik\widgets\DateTimePicker;
@@ -36,11 +33,16 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data['taskTemplate']->title;
-        }
+        },
+        'filter' => ArrayHelper::map(TaskTemplate::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
     ],
     [
         'header' => 'Исполнитель',
@@ -73,7 +75,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['equipment']['title'];
+            return $data['equipment']->getFullTitle();
         }
     ],
     [
@@ -122,7 +124,6 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Норматив',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
@@ -162,7 +163,7 @@ $gridColumns = [
                 $timeFirst = strtotime($model["startDate"]);
                 $timeSecond = strtotime($model["endDate"]);
                 if ($model["taskTemplate"]["normative"])
-                    return 100*($timeSecond - $timeFirst)/$model["taskTemplate"]["normative"];
+                    return 100*($timeSecond - $timeFirst)/($model["taskTemplate"]["normative"]*60);
                 return "-";
             }
         }
@@ -174,6 +175,7 @@ $items = ArrayHelper::map($users, 'uuid', 'name');
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'columns' => $gridColumns,
     'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px'],
     'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
@@ -182,7 +184,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/task/table-user"><table style="width: 100%; padding: 3px"><tr><td>' .
+            '<form action="/task/table-user-normative"><table style="padding: 3px; margin: 3px"><tr><td style="width: 300px">' .
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
@@ -191,8 +193,26 @@ echo GridView::widget([
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ]) . '</td><td>&nbsp;</td><td>'.Html::submitButton(Yii::t('app', 'Выбрать'), [
-                'class' => 'btn btn-success']).'</td><td style="text-align: right">{export}</td></tr></table></form>',
+            ]) . '</td><td style="width: 300px">' .
+            DateTimePicker::widget([
+                'name' => 'start_time',
+                'value' => '2018-12-01 00:00:00',
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd hh:ii:ss'
+                ]
+            ]).'</td><td style="width: 300px">'.
+            DateTimePicker::widget([
+                'name' => 'end_time',
+                'value' => '2021-12-31 00:00:00',
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd hh:ii:ss'
+                ]
+            ]).'</td><td style="width: 100px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-success']).'</td><td style="width: 100px">{export}</td></tr></table></form>',
             'options' => ['style' => 'width:100%']
         ],
     ],

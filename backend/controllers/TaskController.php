@@ -11,7 +11,6 @@ use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\Operation;
 use common\models\Request;
-use common\models\Stage;
 use common\models\Task;
 use common\models\TaskUser;
 use common\models\Users;
@@ -133,23 +132,33 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableUserNormative()
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
+
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
-            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'endDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'endDate', $_GET['end_time']]);
         }
-        if (isset($_GET['user'])) {
-            $dataProvider->query->andWhere(['=', 'userUuid', $_GET['user']]);
+        if (isset($_GET['user']) && $_GET['user']!='') {
+            $taskUsers = TaskUser::find()->select('taskUuid')->where(['userUuid' => $_GET['user']])->all();
+            $list=[];
+            foreach ($taskUsers as $taskUser) {
+                $list[] = $taskUser['taskUuid'];
+            }
+            $dataProvider->query->andWhere(['uuid' => $list])->all();
         }
+        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
         return $this->render(
             'table-user-normative',
             [
-                'dataProvider' => $dataProvider
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel
             ]
         );
     }
@@ -158,6 +167,7 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTableReportView()
     {
@@ -168,7 +178,7 @@ class TaskController extends Controller
             $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
         }
-        $dataProvider->query->andWhere(['=', 'workStatusUuid', WorkStatus::COMPLETE]);
+        $dataProvider->query->orderBy('_id DESC');
         return $this->render(
             'table-report-view',
             [
@@ -408,8 +418,11 @@ class TaskController extends Controller
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
-            return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                'requestUuid' => $_GET["requestUuid"]]);
+            if (isset($_GET["requestUuid"]))
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                    'requestUuid' => $_GET["requestUuid"]]);
+            else
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"]]);
         }
         return "";
     }
@@ -428,10 +441,12 @@ class TaskController extends Controller
             $model = new Task();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save(false)) {
-                $request = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
-                $request['taskUuid'] = $model['uuid'];
-                $request->save();
-                return true;
+                if (isset($_POST['requestUuid'])) {
+                    $request = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
+                    $request['taskUuid'] = $model['uuid'];
+                    $request->save();
+                    return true;
+                }
             }
         }
         return true;

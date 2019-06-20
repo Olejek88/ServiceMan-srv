@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Task;
@@ -18,7 +19,7 @@ class TaskSearch extends Task
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'comment', 'workStatusUuid', 'startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'comment', 'workStatusUuid', 'taskTemplateUuid', 'startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -37,6 +38,7 @@ class TaskSearch extends Task
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {
@@ -59,6 +61,7 @@ class TaskSearch extends Task
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'taskTemplateUuid' => $this->taskTemplateUuid,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'createdAt' => $this->createdAt,

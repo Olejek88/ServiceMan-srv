@@ -1,7 +1,6 @@
 <?php
 
 use common\components\MainFunctions;
-use common\models\MeasureType;
 use common\models\Operation;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -183,26 +182,6 @@ $gridColumns = [
                 return date("Y-m-d h:m", strtotime($data->endDate));
             else
                 return 'не закрыта';
-        }
-    ],
-    [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Операции',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            $operation_list = "";
-            $count = 1;
-            $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
-            foreach ($operations as $operation) {
-                $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
-                $count++;
-            }
-            return $operation_list;
         }
     ],
     [

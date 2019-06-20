@@ -3,6 +3,7 @@
 
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
+use common\models\UserSystem;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -204,6 +205,35 @@ $gridColumns = [
         ],
     ],
     [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Исполнитель',
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'content' => function ($data) {
+            $userSystems = UserSystem::find()
+                ->where(['equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid']])
+                ->all();
+            $count = 0;
+            $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+                ['../task/form', 'equipmentUuid' => $data['uuid']],
+                [
+                    'title' => 'Добавить задачу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalTask',
+                ]
+            );
+            foreach ($userSystems as $userSystem) {
+                if ($count > 0) $userEquipmentName .= ', ';
+                $userEquipmentName .= $userSystem['user']['name'];
+                $count++;
+            }
+            if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+            return $userEquipmentName;
+        },
+    ],
+    [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -263,6 +293,11 @@ $this->registerJs('$("#modalAdd").on("hidden.bs.modal",
 function () {
      window.location.replace("../equipment/index");
 })');
+
+$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+function () {
+window.location.replace("../equipment/index");
+})');
 ?>
 
 <div class="modal remote fade" id="modalAdd">
@@ -271,3 +306,8 @@ function () {
     </div>
 </div>
 
+<div class="modal remote fade" id="modalTask">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>

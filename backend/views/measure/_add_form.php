@@ -55,7 +55,7 @@ use yii\helpers\Html;
         ]);
     ?>
     <?php
-    $users = Users::find()->all();
+/*    $users = Users::find()->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->widget(Select2::class,
         [
@@ -68,11 +68,15 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
-
+*/
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-
-    <div class="pole-mg" style="margin: 0 -15px 20px -15px;">
+    <?php
+    $accountUser = Yii::$app->user->identity;
+    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
+    echo $form->field($model, 'userUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+    ?>
+    <div class="pole-mg" style="margin: 0 -5px 20px -5px;">
         <p style="width: 200px; margin-bottom: 0;">Дата измерения</p>
         <?= DateTimePicker::widget([
             'model' => $model,

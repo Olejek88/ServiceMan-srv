@@ -25,7 +25,7 @@ use yii\widgets\ActiveForm;
 
     <?php // echo $form->field($model, 'taskVerdictUuid') ?>
 
-    <?= $form->field($model, 'taskStatusUuid') ?>
+    <?= $form->field($model, 'workStatusUuid') ?>
 
     <?php // echo $form->field($model, 'createdAt') ?>
 

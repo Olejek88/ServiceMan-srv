@@ -609,7 +609,7 @@ class EquipmentController extends Controller
         $equipment = $this->findModel($id);
         $photos = Photo::find()
             ->select('*')
-            ->where(['equipmentUuid' => $equipment['uuid']])
+            ->where(['objectUuid' => $equipment['uuid']])
             ->all();
         foreach ($photos as $photo) {
             $photo->delete();
@@ -623,7 +623,10 @@ class EquipmentController extends Controller
             $measure->delete();
         }
 
-        $this->findModel($id)->delete();
+        $equipment = $this->findModel($id);
+        $equipment['deleted'] = true;
+        $equipment->save();
+
         return $this->redirect(['index']);
     }
 

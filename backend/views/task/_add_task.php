@@ -39,7 +39,7 @@ use yii\helpers\Html;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
     <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
     <?php echo $form->field($model, 'taskVerdictUuid')->hiddenInput(['value' => TaskVerdict::NOT_DEFINED])->label(false); ?>
-    <?php echo Html::hiddenInput("requestUuid", $requestUuid); ?>
+    <?php if (isset($requestUuid)) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
 
     <?php
     $taskTemplate = TaskTemplate::find()->all();
@@ -53,10 +53,10 @@ use yii\helpers\Html;
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-        <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <p style="width: 0; margin-bottom: 0;">Дата назначения</p>
         <?= DateTimePicker::widget([
             'model' => $model,
-            'attribute' => 'startDate',
+            'attribute' => 'taskDate',
             'language' => 'ru',
             'size' => 'ms',
             'clientOptions' => [
@@ -69,7 +69,7 @@ use yii\helpers\Html;
     </div>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-        <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <p style="width: 0; margin-bottom: 0;">Срок</p>
         <?= DateTimePicker::widget([
             'model' => $model,
             'attribute' => 'deadlineDate',

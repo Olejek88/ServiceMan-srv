@@ -5,6 +5,7 @@ namespace common\models;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\Expression;
 
 /**
@@ -115,7 +116,7 @@ class TaskTemplate extends ZhkhActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
             'description' => Yii::t('app', 'Описание'),
-            'normative' => Yii::t('app', 'Норматив'),
+            'normative' => Yii::t('app', 'Норматив (мин)'),
             'taskTypeUuid' => Yii::t('app', 'Тип задачи'),
             'taskType' => Yii::t('app', 'Тип задачи'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -126,7 +127,7 @@ class TaskTemplate extends ZhkhActiveRecord
     /**
      * Link
      *
-     * @return \yii\db\ActiveQuery | \common\models\TaskType
+     * @return ActiveQuery | TaskType
      */
     public function getTaskType()
     {

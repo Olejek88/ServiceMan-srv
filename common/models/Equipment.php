@@ -161,7 +161,7 @@ class Equipment extends ZhkhActiveRecord
             'objectUuid' => Yii::t('app', 'Объект'),
             'object' => Yii::t('app', 'Объект'),
             'tag' => Yii::t('app', 'Метка'),
-            'serial' => Yii::t('app', 'Серийный номер'),
+            'serial' => Yii::t('app', 'Заводской номер'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
