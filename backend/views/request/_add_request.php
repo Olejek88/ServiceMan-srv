@@ -6,7 +6,6 @@
 use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\Equipment;
-use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -178,7 +177,6 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
         ?>
         <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-        <?= $form->field($model, 'userCheck')->textInput() ?>
         <?= $form->field($model, 'comment')->textInput() ?>
     </div>
     <div class="modal-footer">

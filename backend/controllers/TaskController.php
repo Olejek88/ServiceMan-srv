@@ -12,6 +12,8 @@ use common\models\EquipmentType;
 use common\models\Operation;
 use common\models\Request;
 use common\models\Task;
+use common\models\TaskTemplate;
+use common\models\TaskType;
 use common\models\TaskUser;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -174,6 +176,13 @@ class TaskController extends Controller
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        $taskTemplates = TaskTemplate::find()->select('uuid,taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
+        $list=[];
+        foreach ($taskTemplates as $taskTemplate) {
+            $list[] = $taskTemplate['uuid'];
+        }
+        $dataProvider->query->andWhere(['taskTemplateUuid' => $list])->all();
+
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
@@ -183,7 +192,34 @@ class TaskController extends Controller
             'table-report-view',
             [
                 'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel
+                'searchModel' => $searchModel,
+                'titles' => 'Журнал осмотров'
+            ]
+        );
+    }
+
+    /**
+     * Lists all Task models.
+     *
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public function actionTable()
+    {
+        $searchModel = new TaskSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
+        }
+        $dataProvider->query->orderBy('_id DESC');
+        return $this->render(
+            'table-report-view',
+            [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'titles' => 'Журнал задач'
             ]
         );
     }

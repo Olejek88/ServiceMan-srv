@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
+use Yii;
 use yii\db\ActiveQuery;
 
 /**
@@ -12,6 +13,7 @@ use yii\db\ActiveQuery;
  * @property string $oid идентификатор организации
  * @property string $uuid
  * @property string $contragentUuid
+ * @property string $userCheck
  * @property string $userUuid
  * @property string $requestUuid
  * @property string $description
@@ -44,7 +46,7 @@ class Receipt extends ZhkhActiveRecord
             [['uuid', 'userUuid', 'contragentUuid', 'date', 'description'], 'required'],
             [['description', 'userUuid', 'contragentUuid', 'result'], 'string'],
             [['date','closed','oid'], 'safe'],
-            [['userUuid', 'contragentUuid'], 'string', 'max' => 50],
+            [['userUuid', 'contragentUuid', 'userCheck'], 'string', 'max' => 50],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -59,6 +61,7 @@ class Receipt extends ZhkhActiveRecord
             '_id' => '№',
             'userUuid' => 'Пользователь',
             'user' => 'Пользователь',
+            'userCheck' => Yii::t('app', 'ФИО лица ведущего прием'),
             'contragentUuid' => 'Контрагент',
             'contragent' => 'Контрагент',
             'description' => 'Описание',

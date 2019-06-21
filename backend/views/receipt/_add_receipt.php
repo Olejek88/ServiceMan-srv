@@ -57,12 +57,13 @@ use yii\bootstrap\ActiveForm;
                 'language' => 'ru',
                 'size' => 'ms',
                 'pluginOptions' => [
-                    'format' => 'yyyy-mm-dd H:ii:ss',
+                    'format' => 'yyyy-mm-dd H:ii',
                     'todayHighlight' => true
                 ]
             ]);
             ?>
         </div>
+        <?= $form->field($model, 'userCheck')->textInput() ?>
 
         <?php
         $accountUser = Yii::$app->user->identity;

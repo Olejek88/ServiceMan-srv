@@ -208,7 +208,7 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Исполнитель',
+        'header' => 'Ответственный исполнитель',
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
@@ -216,14 +216,7 @@ $gridColumns = [
                 ->where(['equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid']])
                 ->all();
             $count = 0;
-            $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-                ['../task/form', 'equipmentUuid' => $data['uuid']],
-                [
-                    'title' => 'Добавить задачу',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#modalTask',
-                ]
-            );
+            $userEquipmentName = '';
             foreach ($userSystems as $userSystem) {
                 if ($count > 0) $userEquipmentName .= ', ';
                 $userEquipmentName .= $userSystem['user']['name'];
@@ -236,8 +229,22 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
+        'buttons'=>[
+            'add' => function ($url,$model) {
+                return Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+                    ['../task/form', 'equipmentUuid' => $model['uuid']],
+                    [
+                        'title' => 'Добавить задачу',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalTask',
+                    ]
+                );
+            }
+        ],
+        'template' => '{add} {update} ',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
+
 ];
 
 echo GridView::widget([

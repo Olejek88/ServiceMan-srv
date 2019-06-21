@@ -8,6 +8,7 @@ use common\models\Task;
 use common\models\WorkStatus;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use kartik\widgets\DatePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -54,6 +55,30 @@ $gridColumns = [
         ],
     ],
     [
+        'attribute' => 'type',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'header' => 'Тип заявки',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            $types = [
+                0 => "Бесплатная заявка", 1 => "Платная заявка"
+            ];
+            return $types[$data["type"]];
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => [
+            0 => "Бесплатная заявка", 1 => "Платная заявка"
+        ],
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой']
+    ],
+    [
         'attribute' => 'user',
         'vAlign' => 'middle',
         'hAlign' => 'center',
@@ -68,17 +93,17 @@ $gridColumns = [
         }
     ],
     [
+        'attribute' => 'author',
         'vAlign' => 'middle',
         'hAlign' => 'center',
-        'header' => 'ФИО лица ведущего прием',
+        'header' => 'Диспетчер',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            //return $data['user']->name . '<br/> [' . $data['author']->whoIs . ']';
-            return $data['userCheck'];
+            return $data['author']->name;
         }
     ],
     [
@@ -134,16 +159,16 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Объект',
+        'header' => 'Адрес',
         'mergeHeader' => true,
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'value' => function ($model) {
             if ($model->equipmentUuid) {
                 if ($model['equipment']['equipmentStatusUuid'] == EquipmentStatus::WORK)
-                    return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']->getFullTitle() . "</span>";
+                    return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']['object']->getFullTitle() . "</span>";
                 else
-                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['equipment']->getFullTitle() . "</span>";
+                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['equipment']['object']->getFullTitle() . "</span>";
             } else {
                 if ($model->objectUuid)
                     return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
@@ -290,6 +315,16 @@ $gridColumns = [
     ]
 ];
 
+$start_date = '2018-12-31';
+$end_date = '2021-12-31';
+$type = '';
+if (isset($_GET['type']))
+    $type = $_GET['type'];
+if (isset($_GET['end_time']))
+    $end_date = $_GET['end_time'];
+if (isset($_GET['start_time']))
+    $start_date = $_GET['start_time'];
+
 echo GridView::widget([
     'id' => 'requests-table',
     'dataProvider' => $dataProvider,
@@ -303,6 +338,26 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
+            '<form action="/request"><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
+            DatePicker::widget([
+                'name' => 'start_time',
+                'value' => $start_date,
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd'
+                ]
+            ]).'</td><td style="width: 300px">'.
+            DatePicker::widget([
+                'name' => 'end_time',
+                'value' => $end_date,
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd'
+                ]
+            ]).'</td><td style="width: 100px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-info']).'</td><td style="width: 150px">'.
             Html::a('Новая',
                 ['../request/form'],
                 [
@@ -312,8 +367,10 @@ echo GridView::widget([
                     'data-target' => '#modalRequest',
                 ]
             )
+            .'</td>
+            <td style="width: 100px">{export}</td></tr></table></form>',
+            'options' => ['style' => 'width:100%']
         ],
-        '{export}',
     ],
     'export' => [
         'fontAwesome' => true,

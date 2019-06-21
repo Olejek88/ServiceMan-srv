@@ -54,6 +54,22 @@ $gridColumns = [
         ],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'attribute' => 'userCheck',
+        'header' => 'ФИО лица ведущего прием',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            //return $data['user']->name . '<br/> [' . $data['author']->whoIs . ']';
+            return $data['userCheck'];
+        }
+    ],
+    [
         'attribute' => 'user',
         'vAlign' => 'middle',
         'hAlign' => 'center',

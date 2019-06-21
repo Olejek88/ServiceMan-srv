@@ -19,7 +19,7 @@ class RequestSearch extends Request
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'requestStatusUuid', 'requestTypeUuid', 'authorUuid', 'comment', 'userUuid', 'taskUuid',
+            [['uuid', 'type', 'requestStatusUuid', 'requestTypeUuid', 'authorUuid', 'comment', 'userUuid', 'taskUuid',
                 'equipmentUuid', 'objectUuid', 'stageUuid', 'closeDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
@@ -62,6 +62,7 @@ class RequestSearch extends Request
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'type' => $this->type,
             'requestStatusUuid' => $this->requestStatusUuid,
             'requestTypeUuid' => $this->requestTypeUuid,
             'comment' => $this->comment,
@@ -76,11 +77,7 @@ class RequestSearch extends Request
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'comment', $this->comment])
-            ->andFilterWhere(['like', 'requestStatusUuid', $this->requestStatusUuid])
-            ->andFilterWhere(['like', 'userUuid', $this->userUuid])
-            ->andFilterWhere(['like', 'equipmentUuid', $this->equipmentUuid])
-            ->andFilterWhere(['like', 'objectUuid', $this->objectUuid]);
+            ->andFilterWhere(['like', 'comment', $this->comment]);
 
         $query->andFilterWhere(['=', 'closeDate', $this->closeDate]);
 
