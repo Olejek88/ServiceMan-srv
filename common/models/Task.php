@@ -4,7 +4,9 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 /**
  * This is the model class for table "task".
@@ -148,6 +150,10 @@ class Task extends ZhkhActiveRecord
         return $this->hasMany(Operation::class, ['taskUuid' => 'uuid']);
     }
 
+    /**
+     * @return array|ActiveRecord[]
+     * @throws InvalidConfigException
+     */
     public function getUsers()
     {
         $taskUsers = TaskUser::find()->select('userUuid')->where(['taskUuid' => $this->uuid])->all();

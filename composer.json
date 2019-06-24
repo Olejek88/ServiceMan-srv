@@ -44,7 +44,7 @@
     "2amigos/yii2-leaflet-extension": "~1.0",
     "2amigos/yii2-leaflet-geocoder-plugin": "~1.0",
     "dragonmantank/cron-expression": "^2.3",
-    "ext-json": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "yiisoft/yii2-debug": "~2.0.0",

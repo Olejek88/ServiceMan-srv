@@ -20,7 +20,10 @@ use yii\db\Expression;
  */
 class HouseType extends ZhkhActiveRecord
 {
-    const HOUSE_TYPE_PRIVATE = "6A0AB43B-AEA7-44BE-8E6C-001F4F854A4F";
+    public const HOUSE_TYPE_PRIVATE = "6A0AB43B-AEA7-44BE-8E6C-001F4F854A4F";
+    public const HOUSE_TYPE_MKD = "583C8D20-CE23-401D-8E90-0FFCDAA6BE50";
+    public const HOUSE_TYPE_COMMERCE = "A156A75E-CE7A-4ED9-87D5-0FCEF89DBC9F";
+    public const HOUSE_TYPE_BUDGET = "9AA5A1B4-224C-4BF4-B79D-2039CF314C40";
 
     public function behaviors()
     {

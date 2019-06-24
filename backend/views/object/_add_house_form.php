@@ -4,12 +4,8 @@
  * @var $streetUuid
  */
 use common\components\MainFunctions;
-use common\models\DocumentationType;
-use common\models\Equipment;
-use common\models\EquipmentStatus;
 use common\models\HouseStatus;use common\models\HouseType;use common\models\Users;
 use kartik\select2\Select2;
-use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -61,6 +57,48 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
+
+    echo '<label class="control-label" style="font-weight: bold">Для МКД</label></br>';
+    echo '<label class="control-label">Квартир</label>';
+    echo Html::textInput("flats");
+    echo '</br>';
+    echo '<label class="control-label">Этажей</label>';
+    echo Html::textInput("stages");
+    echo '</br>';
+    echo '<label class="control-label">Подъездов</label>';
+    echo Html::textInput("entrances");
+    echo '</br>';
+    echo '<label class="control-label">Тип плит / наличие газа</label>';
+    $types = [
+        '0' => 'Электричество',
+        '1' => 'Газ'
+    ];
+    echo Select2::widget(
+        [
+                'name' => 'energy',
+            'data' => $types,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    echo '</br>';
+    echo Html::checkbox('water_counter',true,['label' => 'Квартирные счетчики воды']);
+    echo '</br>';
+    echo Html::checkbox('balcony',true,['label' => 'Балконы']);
+    echo '</br>';
+    echo Html::checkbox('water_system',true,['label' => 'Система водоснабжения']);
+    echo '</br>';
+    echo Html::checkbox('yard',true,['label' => 'Придомовая территория']);
+    echo '</br>';
+    echo Html::checkbox('internet',true,['label' => 'Интернет']);
+    echo '</br>';
+    echo Html::checkbox('tv',true,['label' => 'ТВ']);
+    echo '</br>';
+    echo Html::checkbox('domophones',true,['label' => 'Домофоны']);
     ?>
 </div>
 <div class="modal-footer">

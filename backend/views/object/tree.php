@@ -99,7 +99,8 @@ echo FancytreeWidget::widget([
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    type: node.type
+                                    type: node.type,
+                                    source: "../object/tree"
                                 },
                                 success: function (data) { 
                                     $(\'#modalAdd\').modal(\'show\');
@@ -121,7 +122,8 @@ echo FancytreeWidget::widget([
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    type: node.type                                    
+                                    type: node.type,
+                                    source: "../object/tree"                                    
                                 },
                                 success: function (data) { 
                                     $(\'#modalAdd\').modal(\'show\');
