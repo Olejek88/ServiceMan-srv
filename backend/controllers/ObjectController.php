@@ -667,9 +667,6 @@ class ObjectController extends Controller
                                     }
                                 }
                             }
-                            echo Html::checkbox('water_counter', true, ['label' => 'Квартирные счетчики воды']);
-                            echo '</br>';
-                            echo Html::checkbox('balcony', true, ['label' => 'Балконы']);
                         }
 
                         if ($source)

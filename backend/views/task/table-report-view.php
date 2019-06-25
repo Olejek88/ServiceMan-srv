@@ -14,6 +14,8 @@ use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+if (!isset($titles))
+    $titles = "Журнал задач";
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::'.$titles);
 
 $gridColumns = [
@@ -232,7 +234,13 @@ $gridColumns = [
                 return $users_list;
             else {
                 $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
-                $link = Html::a($name, ['../t/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
+                $link = Html::a($name,
+                    ['../task/user', 'equipmentUuid' => $data['uuid']],
+                    [
+                        'title' => 'Исполнители',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalUser'
+                    ]);
                 return $link;
             }
         },
@@ -255,6 +263,14 @@ $gridColumns = [
             } else
                 return "без заявки";
         },
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'comment',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Комментарий'
     ],
     [
         'hAlign' => 'center',
@@ -360,3 +376,15 @@ echo GridView::widget([
         }
     }
 ]);
+
+$this->registerJs('$("#modalUser").on("hidden.bs.modal",
+function () {
+     window.location.replace("../task/table");
+})');
+
+?>
+<div class="modal remote fade" id="modalUser">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>

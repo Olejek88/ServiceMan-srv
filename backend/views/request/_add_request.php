@@ -111,7 +111,9 @@ use yii\bootstrap\ActiveForm;
         <?php
         if (!$model->equipmentUuid) {
             $equipments = Equipment::find()->all();
-            $items = ArrayHelper::map($equipments, 'uuid', 'title');
+            $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                return $equipment->getFullTitle();
+            });
             echo $form->field($model, 'equipmentUuid',
                 ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
                 [

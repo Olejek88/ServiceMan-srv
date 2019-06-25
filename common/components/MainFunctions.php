@@ -244,16 +244,17 @@ class MainFunctions
             MainFunctions::log("request.log", json_encode($task->errors));
             return null;
         } else {
-            $taskUser = new TaskUser();
-            $taskUser->uuid = MainFunctions::GUID();
-            $taskUser->taskUuid = $task->uuid;
-            $taskUser->userUuid = $userUuid;
-            $taskUser->oid = $oid;
-            if (!$taskUser->save()) {
-                MainFunctions::log("request.log", json_encode($taskUser->errors));
-                return null;
+            if ($userUuid) {
+                $taskUser = new TaskUser();
+                $taskUser->uuid = MainFunctions::GUID();
+                $taskUser->taskUuid = $task->uuid;
+                $taskUser->userUuid = $userUuid;
+                $taskUser->oid = $oid;
+                if (!$taskUser->save()) {
+                    MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    return null;
+                }
             }
-
             $operationTemplates = OperationTemplate::find()
                 ->where(['uuid' => $task['taskTemplateUuid']])
                 ->all();

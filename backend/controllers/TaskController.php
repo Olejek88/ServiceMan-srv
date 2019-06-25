@@ -66,12 +66,14 @@ class TaskController extends Controller
      * Lists all Task models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        $dataProvider->query->orderBy('_id DESC');
 
         return $this->render(
             'table-report-view',
@@ -541,5 +543,16 @@ class TaskController extends Controller
         $operation = Operation::find()->where(['_id' => $id])->one();
         if ($operation)
             $operation->delete();
+    }
+
+    /**
+     * @return string
+     */
+    public function actionUser()
+    {
+        if (isset($_GET["equipmentUuid"]))
+            return $this->renderAjax('_add_user', ['equipmentUuid' => $_GET["equipmentUuid"]]);
+        else
+            return self::actionIndex();
     }
 }
