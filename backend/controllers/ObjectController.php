@@ -17,7 +17,6 @@ use common\models\ObjectType;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
-use kartik\select2\Select2;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
@@ -226,9 +225,13 @@ class ObjectController extends Controller
                 $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($objects as $object) {
                     if (!$object['deleted']) {
+                        if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
+                            $title = $object['objectType']['title'] . ' ' . $object['title'];
+                        else
+                            $title = $object['title'];
                         $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
-                            'title' => $object['objectType']['title'] . ' ' . $object['title'],
+                            'title' => $title,
                             'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
                             'square' => $object['square'],
                             'source' => '../object/tree',
@@ -468,7 +471,7 @@ class ObjectController extends Controller
                 }
                 if ($model->load(Yii::$app->request->post())) {
                     if ($model->save(false)) {
-                        if ($new && $model['houseType']==HouseType::HOUSE_TYPE_MKD) {
+                        if ($new && $model['houseTypeUuid']==HouseType::HOUSE_TYPE_MKD) {
                             if (isset($_POST['flats']) && $_POST['flats'] > 0) {
                                 for ($flat_num=0; $flat_num<$_POST['flats']; $flat_num++) {
                                     $objectUuid = self::createFlat($model['uuid'],$flat_num+1);
@@ -529,9 +532,124 @@ class ObjectController extends Controller
                                     EquipmentType::EQUIPMENT_ROOF_WATER_PIPE);
                             }
 
+                            $objectRoofUuid = self::createObject($model['uuid'], 'Внешний фасад',
+                                ObjectType::OBJECT_TYPE_SYSTEM_WALL);
+                            if ($objectRoofUuid) {
+                                self::createEquipment($objectRoofUuid, "Стены, конструкции, перекрытия",
+                                    EquipmentType::EQUIPMENT_WALL);
+                                self::createEquipment($objectRoofUuid, "Водостоки",
+                                    EquipmentType::EQUIPMENT_WALL_WATER);
+                            }
+
+                            if (isset($_POST['yard']) && $_POST['yard']) {
+                                $objectYardUuid = self::createObject($model['uuid'], 'Придомовая территория',
+                                    ObjectType::OBJECT_TYPE_SYSTEM_YARD);
+                                if ($objectYardUuid) {
+                                    self::createEquipment($objectYardUuid, "Дворовая территория",
+                                        EquipmentType::EQUIPMENT_YARD);
+                                    self::createEquipment($objectYardUuid, "Дренажная система",
+                                        EquipmentType::EQUIPMENT_YARD_DRENAGE);
+                                    self::createEquipment($objectYardUuid, "Площадки для ТБО",
+                                        EquipmentType::EQUIPMENT_YARD_TBO);
+                                }
+                            }
+
+                            $objectSewerUuid = self::createObject($model['uuid'], 'Канализация',
+                                ObjectType::OBJECT_TYPE_SYSTEM_SEWER);
+                            if ($objectSewerUuid) {
+                                self::createEquipment($objectSewerUuid, "Стояки канализация",
+                                    EquipmentType::EQUIPMENT_SEWER_PIPE);
+                                self::createEquipment($objectSewerUuid, "Основной узел",
+                                    EquipmentType::EQUIPMENT_SEWER_MAIN);
+                                self::createEquipment($objectSewerUuid, "Колодец канализации",
+                                    EquipmentType::EQUIPMENT_SEWER_WELL);
+                            }
+
+                            $objectPowerUuid = self::createObject($model['uuid'], 'Электричество',
+                                ObjectType::OBJECT_TYPE_SYSTEM_ELECTRO);
+                            if ($objectPowerUuid) {
+                                self::createEquipment($objectPowerUuid, "Счетчик электроэнергии",
+                                    EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER);
+                                self::createEquipment($objectPowerUuid, "ВРУ",
+                                    EquipmentType::EQUIPMENT_ELECTRICITY_VRU);
+                                self::createEquipment($objectPowerUuid, "Освещение",
+                                    EquipmentType::EQUIPMENT_ELECTRICITY_LIGHT);
+                            }
+
+                            $objectMediaUuid = self::createObject($model['uuid'], 'Остальные системы',
+                                ObjectType::OBJECT_TYPE_SYSTEM_ELECTRO);
+                            if ($objectMediaUuid) {
+                                if (isset($_POST['internet']) && $_POST['internet']) {
+                                    self::createEquipment($objectMediaUuid, "Интернет коммуникации",
+                                        EquipmentType::EQUIPMENT_INTERNET);
+                                }
+                                if (isset($_POST['domophones']) && $_POST['domophones']) {
+                                    self::createEquipment($objectMediaUuid, "Домофоны",
+                                        EquipmentType::EQUIPMENT_DOMOPHONE);
+                                }
+                                if (isset($_POST['tv']) && $_POST['tv']) {
+                                    self::createEquipment($objectMediaUuid, "Телевидение",
+                                        EquipmentType::EQUIPMENT_TV);
+                                }
+                            }
+
+                            $objectConditionerUuid = self::createObject($model['uuid'], 'Вентиляция и дымоудаление',
+                                ObjectType::OBJECT_TYPE_SYSTEM_SMOKE);
+                            if ($objectConditionerUuid) {
+                                self::createEquipment($objectConditionerUuid, "Вентиляционные каналы",
+                                    EquipmentType::EQUIPMENT_CONDITIONER);
+                            }
+
+                            if (isset($_POST['energy']) && $_POST['energy'] == 'Газ') {
+                                $objectGasUuid = self::createObject($model['uuid'], 'Газоснабжение',
+                                    ObjectType::OBJECT_TYPE_SYSTEM_GAS);
+                                if ($objectGasUuid) {
+                                    self::createEquipment($objectGasUuid, "Газовое оборудование",
+                                        EquipmentType::EQUIPMENT_GAS);
+                                }
+                            }
+
+                            $objectBasementUuid = self::createObject($model['uuid'], 'Подвал',
+                                ObjectType::OBJECT_TYPE_SYSTEM_BASEMENT);
+                            if ($objectBasementUuid) {
+                                self::createEquipment($objectBasementUuid, "Окна",
+                                    EquipmentType::EQUIPMENT_BASEMENT_WINDOWS);
+                                self::createEquipment($objectBasementUuid, "Помещение",
+                                    EquipmentType::EQUIPMENT_BASEMENT_ROOM);
+                                self::createEquipment($objectBasementUuid, "Фундамент",
+                                    EquipmentType::EQUIPMENT_BASEMENT);
+                            }
+
                             if ((isset($_POST['stages']) && $_POST['stages'] > 0) &&
                                 (isset($_POST['entrances']) && $_POST['entrances'] > 0)) {
                                 for ($entrances_num=0; $entrances_num<$_POST['entrances']; $entrances_num++) {
+                                    $objectEntranceUuid = self::createObject($model['uuid'], 'Подъезд №'.($entrances_num+1),
+                                        ObjectType::OBJECT_TYPE_SYSTEM_ENTRANCE);
+                                    if ($objectPowerUuid) {
+                                        self::createEquipment($objectPowerUuid, "Осветительные приборы входной группы",
+                                            EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT);
+                                        self::createEquipment($objectPowerUuid, "Стояки с проводкой",
+                                            EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_PIPE);
+                                    }
+
+                                    if ($objectEntranceUuid) {
+                                        self::createEquipment($objectEntranceUuid, "Окна",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_WINDOWS);
+                                        self::createEquipment($objectEntranceUuid, "Дверь подъезда",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_DOOR);
+                                        self::createEquipment($objectEntranceUuid, "Дверь тамбура",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR);
+                                        self::createEquipment($objectEntranceUuid, "Мусоропровод",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE);
+                                        self::createEquipment($objectEntranceUuid, "Лестничная клетка",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_STAIRS);
+                                        self::createEquipment($objectEntranceUuid, "Входная группа",
+                                            EquipmentType::EQUIPMENT_ENTRANCE_MAIN);
+                                        if (isset($_POST['lift']) && $_POST['lift']) {
+                                            self::createEquipment($objectEntranceUuid, "Лифт",
+                                                EquipmentType::EQUIPMENT_LIFT);
+                                        }
+                                    }
                                     if ($objectHUuid) {
                                         self::createEquipment($objectHUuid, "Стояки ХВС",
                                             EquipmentType::EQUIPMENT_HVS_TOWER);
@@ -541,46 +659,17 @@ class ObjectController extends Controller
                                             EquipmentType::EQUIPMENT_GVS_TOWER);
                                     }
                                     for ($stages_num=0; $stages_num<$_POST['stages']; $stages_num++) {
-                                        self::createObject($model['uuid'], '', );
+                                        if ($objectPowerUuid) {
+                                            self::createEquipment($objectPowerUuid,
+                                                "Щиток электрический (п.".($entrances_num+1)." - э.".($stages_num+1).")",
+                                                EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD);
+                                        }
                                     }
                                 }
                             }
-                            echo '<label class="control-label">Этажей</label>';
-                            echo Html::textInput("stages");
-                            echo '</br>';
-                            echo '<label class="control-label">Подъездов</label>';
-                            echo Html::textInput("entrances");
-                            echo '</br>';
-                            echo '<label class="control-label">Тип плит / наличие газа</label>';
-                            $types = [
-                                '0' => 'Электричество',
-                                '1' => 'Газ'
-                            ];
-                            echo Select2::widget(
-                                [
-                                    'name' => 'energy',
-                                    'data' => $types,
-                                    'language' => 'ru',
-                                    'options' => [
-                                        'placeholder' => 'Выберите тип'
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                ]);
-                            echo '</br>';
                             echo Html::checkbox('water_counter', true, ['label' => 'Квартирные счетчики воды']);
                             echo '</br>';
                             echo Html::checkbox('balcony', true, ['label' => 'Балконы']);
-                            echo '</br>';
-                            echo '</br>';
-                            echo Html::checkbox('yard', true, ['label' => 'Придомовая территория']);
-                            echo '</br>';
-                            echo Html::checkbox('internet', true, ['label' => 'Интернет']);
-                            echo '</br>';
-                            echo Html::checkbox('tv', true, ['label' => 'ТВ']);
-                            echo '</br>';
-                            echo Html::checkbox('domophones', true, ['label' => 'Домофоны']);
                         }
 
                         if ($source)
@@ -622,9 +711,9 @@ class ObjectController extends Controller
                 }
             }
         }
-        if ($source)
+/*        if ($source)
             return $this->redirect([$source]);
-        return $this->redirect(['/object/tree']);
+        return $this->redirect(['/object/tree']);*/
     }
 
     function createFlat($houseUuid, $flat_num) {
@@ -672,10 +761,14 @@ class ObjectController extends Controller
         $equipment->replaceDate = date("Y-m-d H:i:s");
         $equipment->inputDate = date("Y-m-d H:i:s");
         $equipment->testDate = date("Y-m-d H:i:s");
+        $equipment->deleted = 0;
+        $equipment->serial = "-";
         $equipment->save();
         if ($equipment->errors==[])
             return $equipment->uuid;
-        else
+        else {
+            echo json_encode($equipment->errors);
             return null;
+        }
     }
 }

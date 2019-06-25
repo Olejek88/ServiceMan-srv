@@ -14,6 +14,7 @@ use common\models\House;
 use common\models\Measure;
 use common\models\Message;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\Photo;
 use common\models\Street;
 use common\models\Task;
@@ -560,9 +561,13 @@ class EquipmentController extends Controller
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
                 $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
                 foreach ($objects as $object) {
+                    if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
+                        $title = $object['objectType']['title'] . ' ' . $object['title'];
+                    else
+                        $title = $object['title'];
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
                         [
-                            'title' => $object['objectType']['title'] . ' ' . $object['title'],
+                            'title' => $title,
                             'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
                             'type' => 'object',
                             'uuid' => $object['uuid'],

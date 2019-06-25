@@ -59,13 +59,13 @@ use yii\helpers\Html;
         ]);
 
     echo '<label class="control-label" style="font-weight: bold">Для МКД</label></br>';
-    echo '<label class="control-label">Квартир</label>';
+    echo '<label class="control-label">Квартир</label>&nbsp;&nbsp;';
     echo Html::textInput("flats");
     echo '</br>';
-    echo '<label class="control-label">Этажей</label>';
+    echo '<label class="control-label">Этажей</label>&nbsp;&nbsp;';
     echo Html::textInput("stages");
     echo '</br>';
-    echo '<label class="control-label">Подъездов</label>';
+    echo '<label class="control-label">Подъездов</label>&nbsp;&nbsp;';
     echo Html::textInput("entrances");
     echo '</br>';
     echo '<label class="control-label">Тип плит / наличие газа</label>';
@@ -85,6 +85,8 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
+    echo '</br>';
+    echo Html::checkbox('lift',true,['label' => 'Лифт']);
     echo '</br>';
     echo Html::checkbox('water_counter',true,['label' => 'Квартирные счетчики воды']);
     echo '</br>';
