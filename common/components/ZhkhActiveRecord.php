@@ -1,6 +1,5 @@
 <?php
 
-
 namespace common\components;
 
 use common\models\Users;
@@ -8,6 +7,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\web\Application;
 
 class ZhkhActiveRecord extends ActiveRecord
 {
@@ -18,13 +18,17 @@ class ZhkhActiveRecord extends ActiveRecord
      */
     public static function find()
     {
-        $aq = Yii::createObject(ActiveQuery::class, [Users::class]);
-        $users = $aq->where(['user_id' => Yii::$app->user->id])->one();
-        $aq = Yii::createObject(ZhkhActiveQuery::class, [get_called_class()]);
-        if ($users) {
-            $aq->andWhere(['oid' => $users->oid]);
+        if (Yii::$app instanceof Application) {
+            $aq = Yii::createObject(ActiveQuery::class, [Users::class]);
+            $users = $aq->where(['user_id' => Yii::$app->user->id])->one();
+            $aq = Yii::createObject(ZhkhActiveQuery::class, [get_called_class()]);
+            if ($users) {
+                $aq->andWhere(['oid' => $users->oid]);
+            } else {
+                $aq->andWhere(['oid' => -1]);
+            }
         } else {
-            $aq->andWhere(['oid' => -1]);
+            $aq = Yii::createObject(ActiveQuery::class, [get_called_class()]);
         }
 
         return $aq;
@@ -38,8 +42,12 @@ class ZhkhActiveRecord extends ActiveRecord
      */
     public function checkOrganizationOwn($attr, $param)
     {
-        if ($this->attributes[$attr] != Users::getOid(Yii::$app->user->identity)) {
-            $this->addError($attr, 'Не верный идентификатор организации.');
+        if (Yii::$app instanceof Application) {
+            if ($this->attributes[$attr] != Users::getOid(Yii::$app->user->identity)) {
+                $this->addError($attr, 'Не верный идентификатор организации.');
+            }
+        } else {
+            // TODO: как проверить что создаваемая запись принадлежит той организации которой она должна принадлежать?
         }
     }
 }

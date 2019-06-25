@@ -91,6 +91,8 @@ class Users extends ZhkhActiveRecord
             [['name', 'contact'], 'string', 'max' => 100],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
+            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id']],
+            [['user_id'], 'unique'],
         ];
     }
 

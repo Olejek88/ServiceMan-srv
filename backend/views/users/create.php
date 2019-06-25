@@ -1,5 +1,8 @@
 <?php
-/* @var $model common\models\Users */
+/* @var $model backend\models\UserArm */
+/* @var $role backend\models\Role */
+
+/* @var $roleList array */
 
 use yii\helpers\Html;
 
@@ -21,6 +24,8 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Пользовате
                     <h6>
                         <?= $this->render('_form', [
                             'model' => $model,
+                            'role' => $role,
+                            'roleList' => $roleList,
                         ]) ?>
                     </h6>
                 </div>

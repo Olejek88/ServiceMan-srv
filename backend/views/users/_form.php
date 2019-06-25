@@ -1,67 +1,41 @@
 <?php
 
-use app\commands\MainFunctions;
-use common\models\User;
-use kartik\widgets\FileInput;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use backend\models\Role;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Users */
+/* @var $model backend\models\UserArm */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $role Role */
+/* @var $roleList array */
 ?>
 
-<div class="users-form">
+<div class="user-form">
 
-    <?php $form = ActiveForm::begin(
-        [
-            'id' => 'form-input-documentation',
-            'options' => [
-                'class' => 'form-horizontal col-lg-12 col-sm-12 col-xs-12',
-                'enctype' => 'multipart/form-data'
-            ],
-        ]
-    );
+    <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+
+    <?php echo $form->field($model, 'login')->textInput() ?>
+
+    <?php echo $form->field($model, 'password')->passwordInput(['autofocus' => true]) ?>
+
+    <?php echo $form->field($model, 'pin')->textInput([]) ?>
+
+    <?php echo $form->field($model, 'name')->textInput([]) ?>
+
+    <?php echo $form->field($model, 'whoIs')->textInput([]) ?>
+
+    <?php echo $form->field($model, 'contact')->textInput([]) ?>
+
+    <?php //= $form->field($model, 'userId')->textInput([]) ?>
+
+    <?php echo $form->field($role, 'role')
+        ->label(Yii::t('app', 'Права пользователя в системе'))
+        ->dropDownList($roleList);
     ?>
-
-    <?php
-    if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
-    } else {
-        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
-    }
-    ?>
-
-    <?php echo $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?php echo $form->field($model, 'pin')->textInput(['maxlength' => true]) ?>
-
-    <?php
-    $users = User::find()->all();
-    $items = ArrayHelper::map($users, '_id', 'username');
-    echo $form->field($model, 'user_id')->dropDownList($items);
-    ?>
-
-    <?php
-    echo $form->field($model, 'image')->widget(
-        FileInput::class,
-        ['options' => ['accept' => '*'],]
-    ); ?>
-
-    <?php echo $form->field($model, 'contact')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-center">
-
-        <?php echo Html::submitButton(
-            $model->isNewRecord
-                ? Yii::t('app', 'Создать') : Yii::t('app', 'Обновить'),
-            [
-                'class' => $model->isNewRecord
-                    ? 'btn btn-success' : 'btn btn-primary'
-            ]
-        ) ?>
-
+        <?= Html::submitButton(is_numeric($model->id) ? 'Обновить' : 'Создать', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

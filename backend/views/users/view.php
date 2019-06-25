@@ -3,8 +3,13 @@
 use common\models\User;
 use common\models\Users;
 use yii\helpers\Html;
+use backend\models\UserArm;
+use backend\models\Role;
 
 /* @var $model Users */
+/* @var $userArm UserArm */
+/* @var $role Role */
+/* @var $roleList array */
 /* @var $user_property */
 /* @var $orders */
 /* @var $events */
@@ -174,7 +179,11 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                             <div class="post">
                                 <div class="user-block">
                                     <?= $this->render('_form', [
-                                        'model' => $model, ['class' => 'form-horizontal']
+                                        'model' => $userArm,
+                                        'role' => $role,
+                                        'roleList' => $roleList,
+                                        ['class' => 'form-horizontal']
+
                                     ]) ?>
                                 </div>
                             </div>
