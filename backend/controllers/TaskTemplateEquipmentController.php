@@ -13,6 +13,7 @@ use Cron\CronExpression;
 use DateTime;
 use Exception;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
@@ -173,6 +174,7 @@ class TaskTemplateEquipmentController extends Controller
      * POST string $uuid - задачи
      * POST string $param - новое название
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionEditTask()
     {

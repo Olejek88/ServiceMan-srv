@@ -6,7 +6,6 @@
 use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\Equipment;
-use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -112,7 +111,9 @@ use yii\bootstrap\ActiveForm;
         <?php
         if (!$model->equipmentUuid) {
             $equipments = Equipment::find()->all();
-            $items = ArrayHelper::map($equipments, 'uuid', 'title');
+            $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                return $equipment->getFullTitle();
+            });
             echo $form->field($model, 'equipmentUuid',
                 ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
                 [
@@ -178,7 +179,6 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
         ?>
         <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-        <?= $form->field($model, 'userCheck')->textInput() ?>
         <?= $form->field($model, 'comment')->textInput() ?>
     </div>
     <div class="modal-footer">

@@ -5,7 +5,7 @@ use yii\grid\GridView;
 
 /* @var $searchModel  backend\models\TaskSearchTemplate */
 
-$this->title = Yii::t('app', 'Шаблоны операций');
+$this->title = Yii::t('app', 'Шаблоны задач');
 ?>
 <div class="orders-index box-padding-index">
     <?php
@@ -75,7 +75,7 @@ $this->title = Yii::t('app', 'Шаблоны операций');
                                         'contentOptions' => [
                                             'class' => 'text-center',
                                         ],
-                                        'template' => '{view} {update} {delete}{link}',
+                                        'template' => '{update}{link}',
                                     ],
                                 ],
                             ]

@@ -16,7 +16,6 @@ use yii\db\Expression;
  * @property integer $type
  * @property string $userUuid
  * @property string $authorUuid
- * @property string $userCheck
  * @property string $requestStatusUuid
  * @property string $requestTypeUuid
  * @property string $comment
@@ -103,7 +102,6 @@ class Request extends ZhkhActiveRecord
                     'requestTypeUuid',
                     'authorUuid',
                     'taskUuid',
-                    'userCheck',
                     'oid',
                 ],
                 'string',
@@ -169,9 +167,8 @@ class Request extends ZhkhActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'userUuid' => Yii::t('app', 'Пользователь'),
-            'user' => Yii::t('app', 'Пользователь'),
-            'userCheck' => Yii::t('app', 'ФИО лица ведущего прием'),
+            'userUuid' => Yii::t('app', 'Заявитель'),
+            'user' => Yii::t('app', 'Заявитель'),
             'type' => Yii::t('app', 'Тип'),
             'requestTypeUuid' => Yii::t('app', 'Характер обращения'),
             'requestType' => Yii::t('app', 'Характер обращения'),
@@ -179,8 +176,8 @@ class Request extends ZhkhActiveRecord
             'requestStatus' => Yii::t('app', 'Статус заявки'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
             'equipment' => Yii::t('app', 'Оборудование'),
-            'objectUuid' => Yii::t('app', 'Объект'),
-            'object' => Yii::t('app', 'Объект'),
+            'objectUuid' => Yii::t('app', 'Адрес'),
+            'object' => Yii::t('app', 'Адрес'),
             'authorUuid' => Yii::t('app', 'Автор заявки'),
             'author' => Yii::t('app', 'Автор заявки'),
             'taskUuid' => Yii::t('app', 'Задача'),
@@ -188,7 +185,7 @@ class Request extends ZhkhActiveRecord
             'closeDate' => Yii::t('app', 'Дата закрытия заявки'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
-            'comment' =>  Yii::t('app', 'Коментарий'),
+            'comment' =>  Yii::t('app', 'Причина обращения'),
         ];
     }
 

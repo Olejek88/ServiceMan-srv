@@ -1,5 +1,7 @@
 <?php
-/* @var $searchModel backend\models\TaskSearch */
+/* @var $searchModel backend\models\TaskSearch
+ * @var $titles
+ */
 
 use common\components\MainFunctions;
 use common\models\Objects;
@@ -12,7 +14,9 @@ use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'ТОИРУС ЖКХ::Журнал осмотров');
+if (!isset($titles))
+    $titles = "Журнал задач";
+$this->title = Yii::t('app', 'ТОИРУС ЖКХ::'.$titles);
 
 $gridColumns = [
     [
@@ -76,7 +80,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy HH:mm',
-                'saveFormat' => 'php:Y-m-d H:m:s',
+                'saveFormat' => 'php:Y-m-d H:i:s',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -107,7 +111,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy HH:mm',
-                'saveFormat' => 'php:Y-m-d H:m:s',
+                'saveFormat' => 'php:Y-m-d H:i:s',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -226,7 +230,19 @@ $gridColumns = [
                 $users_list .= $user['name'];
                 $cnt++;
             }
-            return $users_list;
+            if ($cnt>0)
+                return $users_list;
+            else {
+                $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
+                $link = Html::a($name,
+                    ['../task/user', 'equipmentUuid' => $data['uuid']],
+                    [
+                        'title' => 'Исполнители',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalUser'
+                    ]);
+                return $link;
+            }
         },
     ],
     [
@@ -247,6 +263,14 @@ $gridColumns = [
             } else
                 return "без заявки";
         },
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'comment',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Комментарий'
     ],
     [
         'hAlign' => 'center',
@@ -294,7 +318,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/task/table-report-view"><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
+            '<form action=""><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'start_time',
                 'value' => '2018-12-01 00:00:00',
@@ -342,7 +366,7 @@ echo GridView::widget([
     </div>',*/
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Журнал осмотров',
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; '.$titles,
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
     'rowOptions' => function($model) {
@@ -352,3 +376,15 @@ echo GridView::widget([
         }
     }
 ]);
+
+$this->registerJs('$("#modalUser").on("hidden.bs.modal",
+function () {
+     window.location.replace("../task/table");
+})');
+
+?>
+<div class="modal remote fade" id="modalUser">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>

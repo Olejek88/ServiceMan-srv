@@ -90,6 +90,10 @@ class RequestController extends Controller
         $searchModel = new RequestSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=', 'createdAt', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'createdAt', $_GET['end_time']]);
+        }
         $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -148,6 +152,7 @@ class RequestController extends Controller
      * Creates a new Request model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -220,16 +225,17 @@ class RequestController extends Controller
                 }
                 if ($model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
-                    $task=null;
-                    if ($user) {
+                    if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
                             $model->comment, $model->oid, $user['uuid']);
-                    }
-                    MainFunctions::register('task','Создана задача',
-                        '<a class="btn btn-default btn-xs">'.$model['requestType']['taskTemplate']['taskType']['title'].'</a> '.
-                        $model['requestType']['taskTemplate']['title'].'<br/>'.
-                        '<a class="btn btn-default btn-xs">'.$model['equipment']['title'].'</a> '.$model['comment']);
+                    else
+                        $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
+                            $model->comment, $model->oid, null);
                     if ($task) {
+                        MainFunctions::register('task', 'Создана задача',
+                            '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .
+                            $model['requestType']['taskTemplate']['title'] . '<br/>' .
+                            '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
                         $model['taskUuid'] = $task['uuid'];
                         $model->save();
                     }

@@ -22,13 +22,13 @@ class m190604_063732_add_new_references extends Migration
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_VIEW,
             'Осмотр', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_CONTROL,
-            'Контроль', $currentTime, $currentTime);
+            'Контроль и проверка', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_REPAIR,
-            'Ремонт', $currentTime, $currentTime);
+            'Устранение аварий', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_REPLACE,
             'Замена', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_INSTALL,
-            'Установка', $currentTime, $currentTime);
+            'Монтаж', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_UNINSTALL,
             'Демонтаж', $currentTime, $currentTime);
         $this->insertIntoType('task_type',TaskType::TASK_TYPE_TO,

@@ -36,7 +36,7 @@ $this->title = Yii::t('app', 'Пользователи');
         print '</div>
                         <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
-                                <li>'.Html::a('Специализация ' . $user_property[$count]['systems'],
+                                <li style="height:100px">'.Html::a('Специализация ' . $user_property[$count]['systems'],
                                 ['/users/add-system', 'userUuid' => $user['uuid']],
                                 [ 'title' => 'Добавить специализацию', 'data-toggle' => 'modal',
                                     'data-target' => '#modalAddSystem']
@@ -56,6 +56,13 @@ $this->title = Yii::t('app', 'Пользователи');
     }
     ?>
 </div>
+
+<?php
+$this->registerJs('$("#modalAddSystem").on("hidden.bs.modal",
+function () {
+window.location.replace("dashboard");
+})');
+?>
 
 <div class="modal remote fade" id="modalAddSystem">
     <div class="modal-dialog">

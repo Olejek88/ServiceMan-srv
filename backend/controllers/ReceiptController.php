@@ -65,6 +65,9 @@ class ReceiptController extends Controller
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Receipt'][$_POST['editableIndex']]['result'];
             }
+            if ($_POST['editableAttribute'] == 'userCheck') {
+                $model['userCheck'] = $_POST['Receipt'][$_POST['editableIndex']]['userCheck'];
+            }
             if ($_POST['editableAttribute'] == 'closed') {
                 $model['closed'] = $_POST['Receipt'][$_POST['editableIndex']]['closed'];
             }

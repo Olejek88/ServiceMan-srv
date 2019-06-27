@@ -20,7 +20,7 @@ $gridColumns = [
         'attribute' => 'serial',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Серийный номер',
+        'header' => 'Заводской номер',
         'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
     ],
@@ -46,7 +46,7 @@ $gridColumns = [
         'content' => function ($data) {
             if ($data['testDate']) {
                 $testDate = strtotime($data['testDate']);
-                return "<span class='badge' style='background-color: darkblue; height: 22px; margin-top: -3px'>" .
+                return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
                     date('Y-m-d', $testDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";
@@ -64,7 +64,7 @@ $gridColumns = [
         'content' => function ($data) {
             if ($data['nextDate']) {
                 $nextDate = strtotime($data['nextDate']);
-                return "<span class='badge' style='background-color: darkblue; height: 22px; margin-top: -3px'>" .
+                return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
                     date('Y-m-d', $nextDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";
@@ -82,7 +82,7 @@ $gridColumns = [
         'content' => function ($data) {
             if ($data['replaceDate']) {
                 $replaceDate = strtotime($data['replaceDate']);
-                return "<span class='badge' style='background-color: yellow; height: 22px; margin-top: -3px'>" .
+                return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
                     date('Y-m-d', $replaceDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";

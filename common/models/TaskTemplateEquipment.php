@@ -1,6 +1,7 @@
 <?php
 namespace common\models;
 
+use Cron\CronExpression;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -244,10 +245,19 @@ class TaskTemplateEquipment extends ActiveRecord
                     $last_date = strtotime($dates[$count-1]);
                 else
                     $last_date = strtotime($this->last_date);
-                $next_date = $last_date + $this->period*3600;
+
                 if ($count>0) $next_dates.=',';
-                $next_dates.=date("Y-m-d H:i:s",$next_date);
-                $dates[$count]=date("Y-m-d H:i:s",$next_date);
+
+                if (is_numeric($this->period)) {
+                    $next_date = $last_date + $this->period * 3600;
+                    $next_dates.=date("Y-m-d H:i:s",$next_date);
+                    $dates[$count]=date("Y-m-d H:i:s",$next_date);
+                } else {
+                    $cron = CronExpression::factory($this->period);
+                    $next_date = $cron->getNextRunDate(strtotime($last_date));
+                    $next_dates.=$next_date->format('Y-m-d H:i:s');
+                    $dates[$count]=$next_date->format('Y-m-d H:i:s');
+                }
                 $count++;
             }
             $this->next_dates = $next_dates;
