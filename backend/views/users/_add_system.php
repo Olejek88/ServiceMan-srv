@@ -67,7 +67,7 @@ use yii\widgets\ActiveForm;
                     type: "post",
                     data: $('form').serialize(),
                     success: function () {
-                        //$('#modalAddSystem').modal('hide');
+                        $('#modalAddSystem').modal('hide');
                     },
                     error: function () {
                     }

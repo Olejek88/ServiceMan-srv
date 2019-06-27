@@ -209,6 +209,28 @@ try {
                                 }
                             });
                     }')
+                    ],
+                    'task' => [
+                        'name' => 'Периодическая задача',
+                        'icon' => 'add',
+                        'callback' => new JsExpression('function(key, opt) {
+                            var node = $.ui.fancytree.getNode(opt.$trigger);
+                            $.ajax({
+                                url: "../task/add-periodic",
+                                type: "post",
+                                data: {
+                                    selected_node: node.key,
+                                    folder: node.folder,
+                                    uuid: node.data.uuid,
+                                    model_uuid: node.data.model_uuid,
+                                    type_uuid: node.data.type_uuid                                                                                                            
+                                },
+                                success: function (data) { 
+                                    $(\'#modalAddPeriodicTask\').modal(\'show\');
+                                    $(\'#modalContent\').html(data);
+                                }
+                            });
+                    }')
                     ]
                 ]
             ],
@@ -277,6 +299,12 @@ try {
     <div class="modal remote fade" id="modalAddTask">
         <div class="modal-dialog" style="width: 400px; height: 300px">
             <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
+        </div>
+    </div>
+    <div class="modal remote fade" id="modalAddPeriodicTask">
+        <div class="modal-dialog" style="width: 600px; height: 300px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px" id="modalContent">
             </div>
         </div>
     </div>

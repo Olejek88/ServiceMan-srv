@@ -2,12 +2,12 @@
 
 /* @var $events */
 
-$this->title = "История оборудования";
+$this->title = "Журнал задач";
 ?>
 <div class="content-wrapper" style="padding-top: 20px">
     <section class="content-header">
         <h1>
-            История работы над оборудованием
+           Журнал задач
         </h1>
     </section>
 

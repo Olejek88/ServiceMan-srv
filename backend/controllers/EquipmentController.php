@@ -183,6 +183,7 @@ class EquipmentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -1287,9 +1288,15 @@ class EquipmentController extends Controller
         $events = [];
         $equipments = Equipment::find()->all();
         foreach ($equipments as $equipment) {
-            $events = self::actionTimeline($equipment['uuid'], 0);
+            $new_events = self::actionTimeline($equipment['uuid'], 0);
+            foreach ($new_events as $new_event) {
+                array_push($events, $new_event);
+            }
+            //echo json_encode($events);
         }
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
+        //echo json_encode($events);
+
         return $this->render(
             'timeline',
             [
@@ -1383,6 +1390,9 @@ class EquipmentController extends Controller
             $event .= '<i class="fa fa-bar-chart bg-aqua"></i>';
         if ($type == 'register')
             $event .= '<i class="fa fa-calendar bg-green"></i>';
+        if ($type == 'task')
+            $event .= '<i class="fa fa-calendar bg-green"></i>';
+
 
         $event .= '<div class="timeline-item">';
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';

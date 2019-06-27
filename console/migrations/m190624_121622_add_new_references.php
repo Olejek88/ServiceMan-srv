@@ -1,6 +1,7 @@
 <?php
 
-use common\models\HouseType;
+use common\models\EquipmentSystem;
+use common\models\EquipmentType;
 use yii\db\Migration;
 
 /**
@@ -13,13 +14,12 @@ class m190624_121622_add_new_references extends Migration
      */
     public function safeUp()
     {
-        $currentTime = date('Y-m-d\TH:i:s');
-        $this->insertIntoType('house_type', HouseType::HOUSE_TYPE_MKD,
-            'Многокваритирный дом', $currentTime, $currentTime);
-        $this->insertIntoType('house_type', HouseType::HOUSE_TYPE_COMMERCE,
-            'Коммерческий объект', $currentTime, $currentTime);
-        $this->insertIntoType('house_type', HouseType::HOUSE_TYPE_BUDGET,
-            'Бюджетное учереждение', $currentTime, $currentTime);
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_ELECTRICITY_HERD, EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
+            'Электроплита');
+/*        $organisations = Organization::find()->all();
+        foreach ($organisations as $organisation) {
+            ReferenceFunctions::loadReferences($organisation['uuid']);
+        }*/
     }
 
     /**
@@ -29,15 +29,19 @@ class m190624_121622_add_new_references extends Migration
     {
         echo "m190624_121622_add_new_references cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
-    private function insertIntoType($table, $uuid, $title, $createdAt, $changedAt) {
-        $this->insert($table, [
+    private function insertIntoEquipmentType($uuid, $equipmentSystemUuid, $title) {
+        $currentTime = date('Y-m-d\TH:i:s');
+        $this->insert('equipment_type', [
             'uuid' => $uuid,
             'title' => $title,
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt
+            'equipmentSystemUuid' => $equipmentSystemUuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
         ]);
     }
+
+
 }

@@ -13,6 +13,7 @@ use common\models\Operation;
 use common\models\Request;
 use common\models\Task;
 use common\models\TaskTemplate;
+use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use common\models\TaskUser;
 use common\models\Users;
@@ -466,6 +467,20 @@ class TaskController extends Controller
     }
 
     /**
+     * @return string
+     */
+    public function actionAddPeriodic()
+    {
+        if (isset($_POST["uuid"]) && isset($_POST["type_uuid"])) {
+            $model = new TaskTemplateEquipment();
+            return $this->renderAjax('_add_task_periodic', ['model' => $model,
+                'type_uuid' => $_POST["type_uuid"],
+                'equipmentUuid' => $_POST["uuid"]]);
+        }
+        return "";
+    }
+
+    /**
      * Creates a new Task model.
      * @return mixed
      * @throws InvalidConfigException
@@ -485,6 +500,23 @@ class TaskController extends Controller
                     $request->save();
                     return true;
                 }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Creates a new Task model.
+     * @return mixed
+     */
+    public
+    function actionNewPeriodic()
+    {
+        $model = new TaskTemplateEquipment();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->save(false)) {
+                $model->formDates();
+                $model->save();
             }
         }
         return true;
@@ -547,6 +579,7 @@ class TaskController extends Controller
 
     /**
      * @return string
+     * @throws InvalidConfigException
      */
     public function actionUser()
     {
