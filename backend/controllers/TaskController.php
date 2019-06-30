@@ -12,6 +12,7 @@ use common\models\EquipmentType;
 use common\models\Operation;
 use common\models\Request;
 use common\models\Task;
+use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
@@ -209,6 +210,29 @@ class TaskController extends Controller
      */
     public function actionTable()
     {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Task::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'workStatusUuid') {
+                $status = $_POST['Task'][$_POST['editableIndex']]['workStatusUuid'];
+                if ($status==WorkStatus::COMPLETE) {
+                    $model['startDate'] = $model['taskDate'];
+                    $model['endDate'] = date("Y-m-d H:i:s");
+                }
+                $model['workStatusUuid'] = $_POST['Task'][$_POST['editableIndex']]['workStatusUuid'];
+            }
+            if ($_POST['editableAttribute'] == 'taskDate') {
+                $model['taskDate'] = $_POST['Task'][$_POST['editableIndex']]['taskDate'];
+            }
+            if ($_POST['editableAttribute'] == 'deadlineDate') {
+                $model['deadlineDate'] = $_POST['Task'][$_POST['editableIndex']]['deadlineDate'];
+            }
+
+            $model->save();
+            return json_encode('');
+        }
+
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
@@ -417,7 +441,7 @@ class TaskController extends Controller
         $model = new Task();
         if ($model->load(Yii::$app->request->post())) {
             $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
-                $model->comment, $model->oid, $_POST['userUuid']);
+                $model->comment, $model->oid, $_POST['userUuid'], $model);
             if (isset($_POST["defectUuid"]) && $task) {
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
@@ -429,16 +453,6 @@ class TaskController extends Controller
                 '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
                 '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
 
-            $user = Users::find()->one();
-            $modelTU = new TaskUser();
-            $modelTU->uuid = (new MainFunctions)->GUID();
-            $modelTU->userUuid = $user['uuid'];
-            if ($_POST["userUuid"])
-                $modelTU->userUuid = $_POST["userUuid"];
-            $modelTU->taskUuid = $model['uuid'];
-            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
-            $modelTU->save();
-            //echo json_encode($modelTU->errors);
             return self::actionIndex();
         } else {
             return $this->render(
@@ -587,5 +601,21 @@ class TaskController extends Controller
             return $this->renderAjax('_add_user', ['equipmentUuid' => $_GET["equipmentUuid"]]);
         else
             return self::actionIndex();
+    }
+
+    /**
+     * Displays a single Task model.
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public function actionInfo()
+    {
+        if (isset($_GET["task"])) {
+            $task = Task::find()
+                ->where(['uuid' => $_GET["task"]])
+                ->one();
+            if ($task)
+                return $this->renderAjax('_task_info', ['task' => $task]);
+        }
     }
 }

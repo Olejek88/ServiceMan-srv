@@ -28,7 +28,7 @@ $this->title = Yii::t('app', 'Связь задачи с типом оборуд
 
                     <p class="text-center">
                         <?php echo Html::a(
-                            Yii::t('app', 'Создать связь задачи с оборудованием'),
+                            Yii::t('app', 'Создать связь задачи с элементом'),
                             ['create'],
                             ['class' => 'btn btn-success']
                         ) ?>
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Связь задачи с типом оборуд
                                             'value' => 'taskTemplate.title'
                                         ],
                                         [
-                                            'label' => 'Оборудование',
+                                            'label' => 'Элементы',
                                             'contentOptions' => [
                                                 'class' => 'table_class'
                                             ],

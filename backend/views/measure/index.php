@@ -17,7 +17,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'content' => function ($data) {
             return $data['equipment']['title'];

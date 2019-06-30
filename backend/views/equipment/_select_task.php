@@ -1,11 +1,12 @@
 <?php
 
+use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\TaskTemplate;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
-use kartik\select2\Select2;
+use dosamigos\datetimepicker\DateTimePicker;use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -31,6 +32,13 @@ use yii\widgets\ActiveForm;
 
     <?php
     echo $form->field($model, '_id')->hiddenInput(['value' => $model["_id"]])->label(false);
+    if (!$model->isNewRecord) {
+        echo $form->field($model, 'uuid')
+            ->textInput(['maxlength' => true, 'readonly' => true]);
+    } else {
+        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
+    }
+
     if (isset($_GET["equipmentUuid"]))
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $_GET["equipmentUuid"]])->label(false);
     else {
@@ -41,7 +49,7 @@ use yii\widgets\ActiveForm;
                 'name' => 'kv_type',
                 'language' => 'ru',
                 'data' => $items,
-                'options' => ['placeholder' => 'Выберите оборудование ...'],
+                'options' => ['placeholder' => 'Выберите элементы ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
@@ -56,6 +64,11 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
     echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
 
+    ?>
+    <?php
+    $accountUser = Yii::$app->user->identity;
+    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+    echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
     ?>
 
     <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
@@ -80,8 +93,42 @@ use yii\widgets\ActiveForm;
     if (isset($_GET["defectUuid"])) {
         echo Html::hiddenInput('defectUuid', $_GET["defectUuid"]);
     }
+    ?>
 
-    echo $form->field($model, 'comment')
+    <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
+        <p style="width: 0; margin-bottom: 0;">Дата назначения</p>
+        <?= DateTimePicker::widget([
+            'model' => $model,
+            'attribute' => 'taskDate',
+            'language' => 'ru',
+            'size' => 'ms',
+            'clientOptions' => [
+                'autoclose' => true,
+                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                'todayBtn' => true
+            ]
+        ]);
+        ?>
+    </div>
+
+    <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
+        <p style="width: 0; margin-bottom: 0;">Срок</p>
+        <?= DateTimePicker::widget([
+            'model' => $model,
+            'attribute' => 'deadlineDate',
+            'language' => 'ru',
+            'size' => 'ms',
+            'clientOptions' => [
+                'autoclose' => true,
+                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                'todayBtn' => true
+            ]
+        ]);
+        ?>
+    </div>
+
+    <?php
+        echo $form->field($model, 'comment')
         ->textarea(['rows' => 4, 'style' => 'resize: none;']);
     ?>
 

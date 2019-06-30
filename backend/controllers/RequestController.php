@@ -227,10 +227,10 @@ class RequestController extends Controller
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, $user['uuid']);
+                            $model->comment, $model->oid, $user['uuid'],null);
                     else
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, null);
+                            $model->comment, $model->oid, null,null);
                     if ($task) {
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .

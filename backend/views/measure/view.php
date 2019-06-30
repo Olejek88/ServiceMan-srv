@@ -29,7 +29,7 @@ $this->title = 'Измеренное значение';
                 '_id',
                 'uuid',
                 [
-                    'label' => 'Оборудование',
+                    'label' => 'Элементы',
                     'value' => $model['equipment']['equipmentType']->title
                 ],
                 [

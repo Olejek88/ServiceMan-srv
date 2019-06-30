@@ -36,7 +36,7 @@ use common\models\Equipment;
             'name' => 'kv_type',
             'language' => 'ru',
             'data' => $items,
-            'options' => ['placeholder' => 'Выберите оборудование ...'],
+            'options' => ['placeholder' => 'Выберите элементы ...'],
             'pluginOptions' => [
                 'allowClear' => true
             ],

@@ -69,7 +69,7 @@ $this->title = Yii::t('app', 'Карта');
                                 <li class="divider"></li>
                                 <li role="presentation" class="dropdown-header">Единицы</li>
                                 <li><a href="/users">Пользователи</a></li>
-                                <li><a href="/equipment">Оборудование</a></li>
+                                <li><a href="/equipment">Элементы</a></li>
                                 <li><a href="/residents">Абоненты</a></li>
                                 <li><a href="/measure">Измерения</a></li>
                                 <li class="divider"></li>

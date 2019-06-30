@@ -3,18 +3,7 @@
  * @var $receiptUuid string
  */
 
-use common\components\MainFunctions;
-use common\models\Contragent;
-use common\models\Equipment;
-use common\models\Objects;
-use common\models\RequestStatus;
-use common\models\RequestType;
-use common\models\Task;
-use common\models\Users;
-use kartik\widgets\Select2;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+use common\components\MainFunctions;use common\models\Contragent;use common\models\Equipment;use common\models\Objects;use common\models\RequestStatus;use common\models\RequestType;use common\models\Task;use common\models\Users;use kartik\widgets\Select2;use yii\bootstrap\ActiveForm;use yii\helpers\ArrayHelper;use yii\helpers\Html;
 
 ?>
 
@@ -41,20 +30,6 @@ use yii\bootstrap\ActiveForm;
         <?php
         echo Html::hiddenInput("receiptUuid", $receiptUuid);
 
-        echo $form->field($model, 'type')->widget(Select2::class,
-            [
-                'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите тип..'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-        ?>
-
-        <?php
         $users = Contragent::find()->orderBy('title DESC')->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
         echo $form->field($model, 'userUuid')->widget(Select2::class,
@@ -68,9 +43,30 @@ use yii\bootstrap\ActiveForm;
                     'allowClear' => true
                 ],
             ]);
-        ?>
 
-<!--        --><?php
+        if (!$model->objectUuid) {
+            $objects = Objects::find()->all();
+            $items = ArrayHelper::map($objects, 'uuid', function ($object) {
+                return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['title'];
+            });
+            echo $form->field($model, 'objectUuid',
+                ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
+                [
+                    'data' => $items,
+                    'language' => 'ru',
+                    'options' => [
+                        'placeholder' => 'Выберите объект..'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
+        } else {
+            echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
+        }
+
+        echo $form->field($model, 'comment')->textInput();
+
 /*        $objectContragent = 0;
         if ($model['objectUuid'])
             $objectContragent = ObjectContragent::find()->where(['objectUuid' => $model['objectUuid']])->one();
@@ -120,7 +116,7 @@ use yii\bootstrap\ActiveForm;
                     'data' => $items,
                     'language' => 'ru',
                     'options' => [
-                        'placeholder' => 'Выберите оборудование..'
+                        'placeholder' => 'Выберите элементы..'
                     ],
                     'pluginOptions' => [
                         'allowClear' => true
@@ -129,30 +125,21 @@ use yii\bootstrap\ActiveForm;
         } else {
             echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
         }
+
+        echo $form->field($model, 'type')->widget(Select2::class,
+            [
+                'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите тип..'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+
         ?>
 
-        <?php
-        if (!$model->objectUuid) {
-            $objects = Objects::find()->all();
-            $items = ArrayHelper::map($objects, 'uuid', function ($object) {
-                return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['title'];
-            });
-            echo $form->field($model, 'objectUuid',
-                ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
-                [
-                    'data' => $items,
-                    'language' => 'ru',
-                    'options' => [
-                        'placeholder' => 'Выберите объект..'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]);
-        } else {
-            echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
-        }
-        ?>
 
         <?php
         if ($model->objectUuid && $model->equipmentUuid && false) {
@@ -179,7 +166,6 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
         ?>
         <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
-        <?= $form->field($model, 'comment')->textInput() ?>
     </div>
     <div class="modal-footer">
         <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
@@ -188,6 +174,8 @@ use yii\bootstrap\ActiveForm;
 
 <script>
     $(document).on("beforeSubmit", "#form", function () {
+        e.preventDefault();
+    }).on('submit', function(e){
         $.ajax({
             url: "../request/new",
             type: "post",
@@ -198,8 +186,6 @@ use yii\bootstrap\ActiveForm;
             error: function () {
             }
         })
-    }).on('submit', function(e){
-        e.preventDefault();
     });
 </script>
 <?php ActiveForm::end(); ?>

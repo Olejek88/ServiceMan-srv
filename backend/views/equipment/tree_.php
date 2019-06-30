@@ -21,10 +21,10 @@ $this->title = 'Дерево оборудования';
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Оборудование</th>
+        <th align="center" colspan="11" style="background-color: #3c8dbc; color: whitesmoke">Элементы</th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke">
-        <th align="center">Оборудование</th>
+        <th align="center">Элементы</th>
         <th>Серийный</th>
         <th>Статус</th>
         <th>Дата обхода</th>

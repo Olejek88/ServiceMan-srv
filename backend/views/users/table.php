@@ -1,12 +1,23 @@
 <?php
 /* @var $searchModel backend\models\UsersSearch */
 
+use backend\controllers\AccessController;
 use common\models\User;
 use common\models\Users;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 
 $this->title = Yii::t('app', 'Управление пользователями');
+
+$editableOptions = function ($model) {
+    $options = [
+        'inputType' => kartik\editable\Editable::INPUT_CHECKBOX,
+        'options' => [
+            'label' => 'Активен ',
+        ],
+    ];
+    return $options;
+};
 
 $gridColumns = [
     [
@@ -90,10 +101,12 @@ $gridColumns = [
         ],
     ],
     [
-        'class' => 'kartik\grid\BooleanColumn',
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'active',
         'mergeHeader' => true,
-        'vAlign' => 'middle'
+        'format' => 'html',
+        'vAlign' => 'middle',
+        'editableOptions' => $editableOptions
     ],
 /*    [
         'class' => 'kartik\grid\EditableColumn',

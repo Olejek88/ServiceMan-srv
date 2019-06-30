@@ -229,7 +229,7 @@ class MainFunctions
      * @return Task|null
      * @throws InvalidConfigException
      */
-    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid)
+    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model)
     {
         $task = new Task();
         $task->uuid = MainFunctions::GUID();
@@ -238,8 +238,13 @@ class MainFunctions
         $task->equipmentUuid = $equipmentUuid;
         $task->workStatusUuid = WorkStatus::NEW;
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
-        $task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
+        //$task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
         $task->comment = $comment;
+        if ($model) {
+            $task->authorUuid = $model->authorUuid;
+            $task->taskDate = $model->taskDate;
+            $task->deadlineDate = $model->deadlineDate;
+        }
         if (!$task->save()) {
             MainFunctions::log("request.log", json_encode($task->errors));
             return null;

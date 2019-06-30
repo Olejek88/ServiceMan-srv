@@ -30,8 +30,7 @@ $this->title = Yii::t('app', 'Создание документации');
                     </h6>
                     <h6 class='text-center'>
                         * Если вы не нашли
-                        <b><?php echo Html::a('оборудование', ['/equipment/create'], ['target' => '_blank',]) ?></b>,
-                        <b><?php echo Html::a('модель оборудования', ['/equipment-model/create'], ['target' => '_blank',]) ?></b>,
+                        <b><?php echo Html::a('элементы', ['/equipment/create'], ['target' => '_blank',]) ?></b>,
                         <b><?php echo Html::a('тип документации', ['/documentation-type/create'], ['target' => '_blank',]) ?></b>,
                         создайте их!
                     </h6>

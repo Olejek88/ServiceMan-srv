@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel backend\models\TaskTemplateEquipmentSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Связь задачи с оборудованием');
+$this->title = Yii::t('app', 'Связь задачи с элементами');
 ?>
 <div class="task-equipment-stage-index box-padding-index">
 
@@ -28,7 +28,7 @@ $this->title = Yii::t('app', 'Связь задачи с оборудовани�
 
                     <p class="text-center">
                         <?php echo Html::a(
-                            Yii::t('app', 'Создать связь задачи с оборудованием'),
+                            Yii::t('app', 'Создать связь задачи с элементами'),
                             ['create'],
                             ['class' => 'btn btn-success']
                         ) ?>
@@ -68,7 +68,7 @@ $this->title = Yii::t('app', 'Связь задачи с оборудовани�
                                             'value' => 'taskTemplate.title'
                                         ],
                                         [
-                                            'label' => 'Оборудование',
+                                            'label' => 'Элементы',
                                             'contentOptions' => [
                                                 'class' => 'table_class'
                                             ],

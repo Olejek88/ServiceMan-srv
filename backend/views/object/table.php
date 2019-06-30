@@ -45,10 +45,11 @@ $gridColumns = [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'house',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'value' => function ($data) {
             return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
         },
-        'header' => 'Адрес',
+        'header' => 'Дом',
         'format' => 'raw',
     ],
     [
@@ -124,7 +125,7 @@ $gridColumns = [
         },
     ],
     [
-            'class' => 'kartik\grid\DataColumn',
+        'class' => 'kartik\grid\EditableColumn',
             'width' => '180px',
             'attribute' => 'square',
             'mergeHeader' => true,
@@ -150,6 +151,7 @@ $gridColumns = [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'template' => '{update} {delete}'
     ]
 ];
 

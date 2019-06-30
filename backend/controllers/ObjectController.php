@@ -14,6 +14,7 @@ use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
+use common\models\Request;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
@@ -61,6 +62,7 @@ class ObjectController extends Controller
     /**
      * Lists all Object models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -70,9 +72,24 @@ class ObjectController extends Controller
     /**
      * Lists all Object models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTable()
     {
+        if (isset($_POST['editableAttribute'])) {
+            $model = Objects::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'square') {
+                $model['square'] = $_POST['Objects'][$_POST['editableIndex']]['square'];
+            }
+            if ($_POST['editableAttribute'] == 'objectTypeUuid') {
+                $model['objectTypeUuid'] = $_POST['Objects'][$_POST['editableIndex']]['objectTypeUuid'];
+            }
+            if ($model->save())
+                return json_encode('success');
+            return json_encode('failed');
+        }
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 1200;

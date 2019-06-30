@@ -69,6 +69,7 @@ class RequestType extends ActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
             'taskTemplate' => Yii::t('app', 'Шаблон задачи'),
+            'taskTemplateUuid' => Yii::t('app', 'Шаблон задачи'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];

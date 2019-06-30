@@ -106,7 +106,6 @@ class Equipment extends ZhkhActiveRecord
                     'title',
                     'equipmentTypeUuid',
                     'equipmentStatusUuid',
-                    'serial',
                     'replaceDate',
                 ],
                 'required'

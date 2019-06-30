@@ -38,7 +38,7 @@ $this->title = $model['title'];
                                 ],
                                 'date',
                                 [
-                                    'label' => 'Оборудование',
+                                    'label' => 'Элементы',
                                     'value' => $model['equipment']['title']
                                 ],
                                 'defectStatus',

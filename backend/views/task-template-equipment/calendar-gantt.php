@@ -47,7 +47,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
 
                                 <label>Название задачи <input id="inputName" type="text" /></label>
 
-                                <label>Оборудование
+                                <label>Элементы
                                     <?php
                                     $equipments = Equipment::find()->all();
                                     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
@@ -59,7 +59,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                                             'data' => $items,
                                             'language' => 'ru',
                                             'options' => [
-                                                'placeholder' => 'Выберите оборудование..'
+                                                'placeholder' => 'Выберите элементы..'
                                             ],
                                             'pluginOptions' => [
                                                 'allowClear' => true
@@ -275,7 +275,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 borderWidth: 1,
                 columns: [{
                     title: {
-                        text: 'Оборудование'
+                        text: 'Элементы'
                     },
                     categories: map(series,function (s) {
                         return s.title;

@@ -3,21 +3,21 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\Request */
+/* @var $this yii\web\View */
+/* @var $model common\models\TaskOperation */
 
-$this->title = $model->comment;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Заявки'),
-    'url' => ['index']
-];
+$this->title = $model->taskTemplate['title'];
 ?>
-<div class="task-request-view box-padding">
+<div class="Task-operation-view box-padding">
 
     <div class="panel panel-default">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
                 <?php echo Html::encode($this->title) ?>
             </h3>
+            <div class="box-tools pull-right">
+                <span class="label label-default"></span>
+            </div>
         </div>
         <div class="panel-body">
 
@@ -43,32 +43,12 @@ $this->params['breadcrumbs'][] = [
                                         'value' => $model->uuid
                                     ],
                                     [
-                                        'label' => 'Комментарий',
-                                        'value' => $model->comment
+                                        'label' => 'Шаблон этапа',
+                                        'value' => $model->taskTemplate->title
                                     ],
                                     [
-                                        'label' => 'ФИО лица ведущего прием',
-                                        'value' => $model->userCheck
-                                    ],
-                                    [
-                                        'label' => 'Пользователь',
-                                        'value' => $model['user']['name']
-                                    ],
-                                    [
-                                        'label' => 'Элементы',
-                                        'value' => $model['equipment']['title']
-                                    ],
-                                    [
-                                        'label' => 'Статус',
-                                        'value' => $model['requestStatus']['title']
-                                    ],
-                                    [
-                                        'label' => 'Объект',
-                                        'value' => $model['object']['title']
-                                    ],
-                                    [
-                                        'label' => 'Дата закрытия',
-                                        'value' => $model->closeDate
+                                        'label' => 'Шаблон операции',
+                                        'value' => $model->operationTemplate->title
                                     ],
                                     [
                                         'label' => 'Создан',
@@ -84,8 +64,6 @@ $this->params['breadcrumbs'][] = [
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
-
 </div>

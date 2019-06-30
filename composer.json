@@ -44,6 +44,7 @@
     "2amigos/yii2-leaflet-extension": "~1.0",
     "2amigos/yii2-leaflet-geocoder-plugin": "~1.0",
     "dragonmantank/cron-expression": "^2.3",
+    "kartik-v/yii2-detail-view": "^1.7.7",
     "ext-json": "*"
   },
   "require-dev": {
