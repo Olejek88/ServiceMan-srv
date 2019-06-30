@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = [
                                     ],
                                     'date',
                                     [
-                                        'label' => 'Оборудование',
+                                        'label' => 'Элементы',
                                         'value' => $model['equipment']->title
                                     ],
                                     'fromParameterUuid',

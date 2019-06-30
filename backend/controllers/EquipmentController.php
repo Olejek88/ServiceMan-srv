@@ -969,7 +969,7 @@ class EquipmentController extends Controller
                     return $this->renderAjax('_add_form', [
                         'equipment' => $equipment,
                         'objectUuid' => $uuid,
-                        'equipmentTypeUuid' => 0,
+                        'equipmentTypeUuid' => null,
                         'source' => $source
                     ]);
                 }
@@ -1209,13 +1209,22 @@ class EquipmentController extends Controller
             ]
         );
         $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+            ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
+            [
+                'title' => 'Дефекты',
+                'data-toggle' => 'modal',
+                'data-target' => '#modalDefects',
+            ]
+        );
+/*
+        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
             ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Добавить запись',
                 'data-toggle' => 'modal',
                 'data-target' => '#modalChange',
             ]
-        );
+        );*/
         $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
             ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
             [

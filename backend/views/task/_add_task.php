@@ -23,22 +23,27 @@ use yii\helpers\Html;
 ?>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4 class="modal-title">Добавить задачу</h4>
+    <h4 class="modal-title">Добавить задачу !</h4>
 </div>
 <div class="modal-body">
     <?php
-    if (!$model->isNewRecord) {
+/*    if (!$model->isNewRecord) {
         echo $form->field($model, 'uuid')
             ->textInput(['maxlength' => true, 'readonly' => true]);
     } else {
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
-    }
+    }*/
     ?>
 
     <?php echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false); ?>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
     <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
     <?php echo $form->field($model, 'taskVerdictUuid')->hiddenInput(['value' => TaskVerdict::NOT_DEFINED])->label(false); ?>
+    <?php
+        $accountUser = Yii::$app->user->identity;
+        $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+        echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+        ?>
     <?php if (isset($requestUuid)) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
 
     <?php
@@ -92,7 +97,7 @@ use yii\helpers\Html;
 <script>
     $(document).on("beforeSubmit", "#form", function () {
         $.ajax({
-            url: "../task/new",
+            url: "../task/add-task",
             type: "post",
             data: $('form').serialize(),
             success: function () {

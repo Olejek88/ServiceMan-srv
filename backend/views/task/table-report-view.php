@@ -213,6 +213,20 @@ $gridColumns = [
         }
     ],*/
     [
+        'attribute'=>'authorUuid',
+        'contentOptions' =>[
+            'class' => 'table_class'
+        ],
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            if ($data['authorUuid'])
+                return $data['author']->name;
+            else
+                return 'отсутствует';
+        }
+    ],
+    [
         'header' => 'Исполнитель',
         'vAlign' => 'middle',
         'hAlign' => 'center',

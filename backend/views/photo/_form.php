@@ -45,7 +45,7 @@ use yii\widgets\ActiveForm;
             'data' => $items,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите оборудование..'
+                'placeholder' => 'Выберите элементы..'
             ],
             'pluginOptions' => [
                 'allowClear' => true

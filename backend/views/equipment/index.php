@@ -10,7 +10,7 @@ use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Оборудование');
+$this->title = Yii::t('app', 'Элементы');
 
 $gridColumns = [
     [
@@ -45,7 +45,7 @@ $gridColumns = [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'title',
         'vAlign' => 'middle',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'format' => 'raw',
     ],
@@ -264,7 +264,7 @@ echo GridView::widget([
                 ['../equipment/add'],
                 [
                     'class' => 'btn btn-success',
-                    'title' => 'Добавить оборудование',
+                    'title' => 'Добавить элементы',
                     'data-toggle' => 'modal',
                     'data-target' => '#modalAdd',
                 ]
@@ -291,7 +291,7 @@ echo GridView::widget([
     'hover' => true,
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Оборудование',
+        'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Элементы',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);

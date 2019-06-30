@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model Equipment */
 /* @var $equipments Equipment[] */
 
-$this->title = 'Добавляем оборудование';
+$this->title = 'Добавляем элементы';
 ?>
 <div class="order-status-view box-padding">
 

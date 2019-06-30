@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\RequestSearch */
 
 use common\models\EquipmentStatus;
+use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
@@ -157,14 +158,35 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой'],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'objectUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'header' => 'Адрес',
         'mergeHeader' => true,
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'editableOptions' => function () {
+            $list = [];
+            $objects = Objects::find()->orderBy('houseUuid,title')->all();
+            foreach ($objects as $object) {
+                $list[] = $object->getFullTitle();
+            }
+            return [
+                'size' => 'md',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $list,
+                'data' => $list
+            ];
+        },
+
         'value' => function ($model) {
-            if ($model->equipmentUuid) {
+            if ($model->objectUuid)
+                return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
+            else
+                return "<span class='badge' style='background-color: grey; height: 22px; width: 100px'>нет</span>";
+
+    /*            if ($model->equipmentUuid) {
                 if ($model['equipment']['equipmentStatusUuid'] == EquipmentStatus::WORK)
                     return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']['object']->getFullTitle() . "</span>";
                 else
@@ -174,7 +196,7 @@ $gridColumns = [
                     return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
                 else
                     return "<span class='badge' style='background-color: grey; height: 22px; width: 100px'>нет</span>";
-            }
+            }*/
         },
         'contentOptions' => [
             'class' => 'table_class'
@@ -223,10 +245,17 @@ $gridColumns = [
             if ($model['taskUuid']) {
                 $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
                 if ($task) {
-                    $order = Html::a('Задача №' . $task['_id'],
+/*                    $order = Html::a('Задача №' . $task['_id'],
                         ['../task', 'uuid' => $task['uuid']],
                         [
                             'title' => 'Редактировать заявку',
+                        ]);*/
+                    $order = Html::a('Задача №' . $task['_id'],
+                        ['../task/info', 'task' => $task['uuid']],
+                        [
+                            'title' => 'Просмотреть задачу',
+                            'data-toggle' => 'modal',
+                            'data-target' => '#modalTaskInfo',
                         ]);
                     $order.=' ';
                     if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
@@ -417,6 +446,12 @@ function () {
 </div>
 
 <div class="modal remote fade" id="modalTask">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalTaskInfo">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
     </div>

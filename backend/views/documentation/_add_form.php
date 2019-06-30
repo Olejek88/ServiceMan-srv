@@ -79,7 +79,7 @@ use yii\helpers\Html;
                 'name' => 'kv_type',
                 'language' => 'ru',
                 'data' => $items,
-                'options' => ['placeholder' => 'Выберите оборудование ...'],
+                'options' => ['placeholder' => 'Выберите элемент ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],

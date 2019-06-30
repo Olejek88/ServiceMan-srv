@@ -23,6 +23,7 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Название',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -32,7 +33,20 @@ $gridColumns = [
         }
     ],
     [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Тип контрагента',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['contragent']['contragentType']['title'];
+        }
+    ],
+    [
         'attribute' => 'address',
+        'header' => 'Адрес',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
@@ -47,6 +61,7 @@ $gridColumns = [
         'attribute' => 'phone',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Телефон',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -59,6 +74,7 @@ $gridColumns = [
         'attribute' => 'inn',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'ИНН',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -71,6 +87,7 @@ $gridColumns = [
         'attribute' => 'director',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Директор',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -83,6 +100,7 @@ $gridColumns = [
         'attribute' => 'email',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Е-мэйл',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -92,20 +110,10 @@ $gridColumns = [
         }
     ],
     [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['contragent']['contragentType']['title'];
-        }
-    ],
-    [
         'attribute' => 'changedAt',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'header' => 'Изменен',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -121,6 +129,14 @@ $gridColumns = [
         'class' => 'kartik\grid\ActionColumn',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'header' => 'Действия',
+        'buttons' => [
+            'delete2' => function ($url,$model) {
+                return Html::a(
+                    '<span class="glyphicon glyphicon-trash"></span>',
+                    'object-contragent/delete?id='.$model["_id"]);
+            },
+        ],
+        'template' => '{delete2}'
     ]
 ];
 

@@ -16,11 +16,11 @@ class m190621_043620_add_object_references extends Migration
     {
         $currentTime = date('Y-m-d\TH:i:s');
 
-/*        $this->alterColumn('object_type','oid', $this->string(45));
+        $this->alterColumn('object_type','oid', $this->string(45));
         $this->dropForeignKey('fk-object_type-organization-oid','object_type');
         $this->dropColumn('object_type','oid');
         $this->dropColumn('object_type','gis_id');
-
+/*
         $this->insertIntoType('object_type','80237148-9DBB-4315-A99D-D83CA5258C69',
             'Квартира', $currentTime, $currentTime);
         $this->insertIntoType('object_type','42686CFC-34D0-45FF-95A4-04B0D865EC35',
@@ -56,10 +56,10 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoType('object_type','3D163AC7-3061-4796-B535-0B39C08E9377',
             'Подвал', $currentTime, $currentTime);
 
-        $this->insertIntoEquipmentSystem('equipment_system', EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
+/*        $this->insertIntoEquipmentSystem('equipment_system', EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
             'Электрика','Электрик', $currentTime, $currentTime);
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_GAS,
-            'Газовое оборудование','Газовщик', $currentTime, $currentTime);
+            'Газовое оборудование','Газовщик', $currentTime, $currentTime);*/
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Система водоснабжения','Сантехник', $currentTime, $currentTime);
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_HEAT,

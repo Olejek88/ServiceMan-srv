@@ -47,7 +47,7 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
@@ -144,7 +144,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'yyyy-MM-dd hh:mm:ss',
-                'saveFormat' => 'php:Y-m-d h:i:s',
+                'saveFormat' => 'php:Y-m-d H:i:s',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -182,6 +182,19 @@ $gridColumns = [
                 return date("Y-m-d h:m", strtotime($data->endDate));
             else
                 return 'не закрыта';
+        }
+    ],
+    [
+        'attribute'=>'authorUuid',
+        'contentOptions' =>[
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            if ($data['author'])
+                return $data['author']->name;
+            else
+                return 'отсуттствует';
         }
     ],
     [

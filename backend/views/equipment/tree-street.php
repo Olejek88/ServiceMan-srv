@@ -46,12 +46,12 @@ $this->title = 'Дерево моделей оборудования';
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
         </th>
-        <th colspan="9" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Оборудование
+        <th colspan="9" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы
             системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke">
-        <th align="center">Оборудование</th>
+        <th align="center">Элементы</th>
         <th>Задачи</th>
         <th>Заводской номер</th>
         <th>Статус</th>

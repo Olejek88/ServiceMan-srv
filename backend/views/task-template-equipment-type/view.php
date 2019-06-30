@@ -46,7 +46,7 @@ $this->title = $model->_id;
                                     'value' => $model->taskTemplate->title
                                 ],
                                 [
-                                    'label' => 'Оборудование',
+                                    'label' => 'Элементы',
                                     'value' => $model->equipmentType->title
                                 ],
                                 [

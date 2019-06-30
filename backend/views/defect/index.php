@@ -28,7 +28,7 @@ $gridColumns = [
     ],
     [
         'attribute' => 'equipment.title',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [

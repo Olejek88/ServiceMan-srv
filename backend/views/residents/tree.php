@@ -21,7 +21,7 @@ $this->title = 'Дерево абонентов системы';
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="10">Объекты системы - оборудование</th>
+        <th align="center" colspan="10">Объекты системы - элементы</th>
     </tr>
     <tr>
         <th align="center">Объект</th>

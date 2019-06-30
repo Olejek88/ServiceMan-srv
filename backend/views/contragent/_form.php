@@ -2,6 +2,7 @@
 
 use app\commands\MainFunctions;
 use common\models\ContragentType;
+use common\models\Objects;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -25,6 +26,25 @@ use yii\widgets\ActiveForm;
     }
     ?>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
+
+    <?php
+    $object = Objects::find()->all();
+    $items = ArrayHelper::map($object, 'uuid', function ($model) {
+        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
+    });
+    echo Select2::widget(
+        [
+            'data' => $items,
+            'name' => 'objectUuid',
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите объект..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    ?>
 
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 

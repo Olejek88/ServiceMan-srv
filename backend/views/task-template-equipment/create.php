@@ -4,7 +4,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\TaskTemplateEquipment */
 
-$this->title = Yii::t('app', 'Создать связь задачи с оборудованием');
+$this->title = Yii::t('app', 'Создать связь задачи с элементами');
 ?>
 <div class="task-equipment-stage-create box-padding">
 

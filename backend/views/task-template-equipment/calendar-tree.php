@@ -23,7 +23,7 @@ $this->title = 'Дерево задач';
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
-        <th align="center" style="font-weight: normal">Оборудование / Шаблоны</th>
+        <th align="center" style="font-weight: normal">Элементы / Шаблоны</th>
         <th>Последний</th>
         <th>Следующий</th>
         <th>Период</th>

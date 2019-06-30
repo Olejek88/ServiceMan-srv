@@ -68,7 +68,7 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'

@@ -12,7 +12,7 @@ $gridColumns = [
         'attribute' => 'title',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
     ],
