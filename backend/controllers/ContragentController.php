@@ -57,6 +57,7 @@ class ContragentController extends Controller
 
     /**
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTable()
     {
@@ -82,6 +83,9 @@ class ContragentController extends Controller
             if ($_POST['editableAttribute'] == 'address') {
                 $model['address'] = $_POST['Contragent'][$_POST['editableIndex']]['address'];
             }
+            if ($_POST['editableAttribute'] == 'account') {
+                $model['account'] = $_POST['Contragent'][$_POST['editableIndex']]['account'];
+            }
             if ($_POST['editableAttribute'] == 'email') {
                 $model['email'] = $_POST['Contragent'][$_POST['editableIndex']]['email'];
             }
@@ -103,6 +107,7 @@ class ContragentController extends Controller
      * Displays a single Contragent model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {

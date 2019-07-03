@@ -14,9 +14,12 @@ class m190703_094956_add_new_fields extends Migration
     public function safeUp()
     {
         $tableOptions = null;
+        if ($this->db->driverName === 'mysql') {
+            $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
+        }
 
-        $this->addColumn('receipt','userCheckWho', $this->string()->defaultValue('не указана'));
-        $this->addColumn('contragent','account', $this->string()->defaultValue('не указан'));
+        $this->addColumn('receipt', 'userCheckWho', $this->string()->defaultValue('не указана'));
+        $this->addColumn('contragent', 'account', $this->string()->defaultValue('не указан'));
         $this->createTable('defect_type', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
@@ -25,15 +28,21 @@ class m190703_094956_add_new_fields extends Migration
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
 
-        $this->insertIntoType('defect_type', DefectType::DEFECT_DEFAULT,'Не отпределен');
-        $this->addColumn('defect','defectTypeUuid', $this->string()->notNull()->defaultValue(DefectType::DEFECT_DEFAULT));
+        $this->insertIntoType('defect_type', DefectType::DEFECT_DEFAULT, 'Не отпределен');
+        $this->addColumn('defect', 'defectTypeUuid', $this->string(45)->notNull()->defaultValue(DefectType::DEFECT_DEFAULT));
 
         $this->createIndex(
             'idx-defectTypeUuid',
             'defect',
             'defectTypeUuid'
         );
-
+        $this->dropColumn('defect', 'defectTypeUuid');
+        $this->addColumn('defect', 'defectTypeUuid', $this->string(45)->notNull()->defaultValue(DefectType::DEFECT_DEFAULT));
+        $this->createIndex(
+            'idx-defectTypeUuid',
+            'defect',
+            'defectTypeUuid'
+        );
         $this->addForeignKey(
             'fk-defect-defectTypeUuid',
             'defect',
@@ -52,10 +61,11 @@ class m190703_094956_add_new_fields extends Migration
     {
         echo "m190703_094956_add_new_fields cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
-    private function insertIntoType($table, $uuid, $title) {
+    private function insertIntoType($table, $uuid, $title)
+    {
         $currentTime = date('Y-m-d\TH:i:s');
         $this->insert($table, [
             'uuid' => $uuid,

@@ -129,7 +129,7 @@ class Defect extends ZhkhActiveRecord
     {
         return $this->hasOne(Task::class, ['uuid' => 'taskUuid']);
     }
-    
+
     public function getDefectType()
     {
         return $this->hasOne(DefectType::class, ['uuid' => 'defectTypeUuid']);

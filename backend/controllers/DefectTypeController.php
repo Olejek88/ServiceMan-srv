@@ -3,8 +3,10 @@
 namespace backend\controllers;
 
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
 use common\models\DefectType;
+use yii\web\Controller;
 use backend\models\DefectSearchType;
 
 /**
@@ -17,6 +19,7 @@ class DefectTypeController extends Controller
     /**
      * Lists all DefectType models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -38,20 +41,8 @@ class DefectTypeController extends Controller
      */
     public function actionView($id)
     {
-        $uuid      = DefectType::find()
-                            ->select('equipmentTypeUuid')
-                            ->where(['_id' => $id])
-                            ->asArray()
-                            ->one();
-
-        $equipmentType = EquipmentType::find()
-                            ->select('title')
-                            ->where(['uuid' => $uuid['equipmentTypeUuid']])
-                            ->asArray()
-                            ->one();
         return $this->render('view', [
-            'equipmentType'   => $equipmentType,
-            'model'    => $this->findModel($id),
+            'model'    => $this->findModel($id)
         ]);
     }
 
@@ -59,6 +50,7 @@ class DefectTypeController extends Controller
      * Creates a new DefectType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {

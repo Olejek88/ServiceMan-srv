@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\DefectType;
@@ -38,6 +39,7 @@ class DefectSearchType extends DefectType
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {
@@ -65,7 +67,6 @@ class DefectSearchType extends DefectType
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
             ->andFilterWhere(['like', 'title', $this->title]);
 
         return $dataProvider;

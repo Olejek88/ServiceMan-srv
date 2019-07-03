@@ -2,13 +2,13 @@
 
 namespace common\models;
 
-use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
- * This is the model class for table "defecttype".
+ * This is the model class for table "defect_type".
  *
  * @property integer $_id
  * @property string $uuid
@@ -18,7 +18,7 @@ use yii\db\Expression;
  *
  * @method static find()
  */
-class DefectType extends ZhkhActiveRecord
+class DefectType extends ActiveRecord
 {
     const DEFECT_DEFAULT = "A0DB029F-BD49-4CE8-B25B-DA8066114931";
 

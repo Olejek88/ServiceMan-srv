@@ -86,6 +86,19 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'account',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data->account;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'director',
         'hAlign' => 'center',
         'vAlign' => 'middle',
