@@ -71,7 +71,7 @@ $gridColumns = [
         'width' => '180px',
         'value' => 'equipmentType.title',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Тип оборудования ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
+        'header' => 'Тип элементов ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/equipment-type/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
         'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),

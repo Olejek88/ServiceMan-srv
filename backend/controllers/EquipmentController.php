@@ -940,6 +940,9 @@ class EquipmentController extends Controller
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
             if (isset($_POST["type"]))
                 $type = $_POST["type"];
             else $type = 0;
@@ -970,16 +973,16 @@ class EquipmentController extends Controller
                         'equipment' => $equipment,
                         'objectUuid' => $uuid,
                         'equipmentTypeUuid' => null,
-                        'source' => $source
+                        'source' => '../equipment/tree-street'
                     ]);
                 }
                 if ($type == 'type') {
                     $equipment = new Equipment();
                     return $this->renderAjax('_add_form', [
                         'equipment' => $equipment,
-                        'objectUuid' => 0,
+                        'objectUuid' => null,
                         'equipmentTypeUuid' => $uuid,
-                        'source' => $source
+                        'source' => '../equipment/tree'
                     ]);
                 }
             }

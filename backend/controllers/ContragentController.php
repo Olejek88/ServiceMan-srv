@@ -8,6 +8,7 @@ use common\models\Contragent;
 use common\models\ObjectContragent;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -193,4 +194,17 @@ class ContragentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
+    public function actionPhone()
+    {
+        if (isset($_POST['id']))
+        if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+            return $model['phone'];
+        } else return '';
+    }
+
 }

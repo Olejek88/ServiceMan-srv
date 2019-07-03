@@ -19,6 +19,7 @@ use yii\db\Expression;
  * @property string $date
  * @property string $taskUuid
  * @property string $equipmentUuid
+ * @property string $defectTypeUuid
  * @property integer $defectStatus
  * @property string $createdAt
  * @property string $changedAt
@@ -27,6 +28,7 @@ use yii\db\Expression;
  * @property Users $user
  * @property ActiveQuery $photo
  * @property Equipment $equipment
+ * @property DefectType $defectType
  */
 class Defect extends ZhkhActiveRecord
 {
@@ -58,7 +60,7 @@ class Defect extends ZhkhActiveRecord
         return [
             [['uuid', 'date', 'equipmentUuid', 'defectStatus'], 'required'],
             [['oid','createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'equipmentUuid', 'userUuid', 'taskUuid'], 'string', 'max' => 45],
+            [['uuid', 'equipmentUuid', 'userUuid', 'taskUuid', 'defectTypeUuid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 300],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
@@ -77,6 +79,8 @@ class Defect extends ZhkhActiveRecord
             'date' => Yii::t('app', 'Дата фиксации'),
             'equipment' => Yii::t('app', 'Оборудование'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
+            'defectType' => Yii::t('app', 'Тип дефекта'),
+            'defectTypeUuid' => Yii::t('app', 'Тип дефекта'),
             'task' => Yii::t('app', 'Задача'),
             'taskUuid' => Yii::t('app', 'Задача'),
             'defectStatus' => Yii::t('app', 'Статус дефекта'),
@@ -103,6 +107,9 @@ class Defect extends ZhkhActiveRecord
             'task' => function ($model) {
                 return $model->task;
             },
+            'defectType' => function ($model) {
+                return $model->defectType;
+            },
             'createdAt',
             'changedAt',
         ];
@@ -121,6 +128,11 @@ class Defect extends ZhkhActiveRecord
     public function getTask()
     {
         return $this->hasOne(Task::class, ['uuid' => 'taskUuid']);
+    }
+    
+    public function getDefectType()
+    {
+        return $this->hasOne(DefectType::class, ['uuid' => 'defectTypeUuid']);
     }
 
     /**

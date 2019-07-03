@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
+use common\models\Contragent;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
@@ -223,6 +224,14 @@ class RequestController extends Controller
                         $model_receipt->save();
                     }
                 }
+                if (isset($_POST['phoneNumber'])) {
+                    $model_contragent =  $model['user'];
+                    if ($model_contragent && ($model_contragent['phone']!=$_POST['phoneNumber'])) {
+                        $model_contragent["phone"] = $_POST['phoneNumber'];
+                        $model_contragent->save();
+                    }
+                }
+
                 if ($model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
                     if ($user)

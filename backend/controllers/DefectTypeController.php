@@ -2,27 +2,25 @@
 
 namespace backend\controllers;
 
-use backend\models\TaskSearch;
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use common\models\TaskVerdict;
-use backend\models\TaskSearchVerdict;
+use common\models\DefectType;
+use backend\models\DefectSearchType;
 
 /**
- * TaskVerdictController implements the CRUD actions for TaskVerdict model.
+ * DefectTypeController implements the CRUD actions for DefectType model.
  */
-class TaskVerdictController extends Controller
+class DefectTypeController extends Controller
 {
-    protected $modelClass = TaskVerdict::class;
+    protected $modelClass = DefectType::class;
 
     /**
-     * Lists all TaskVerdict models.
+     * Lists all DefectType models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new TaskSearchVerdict();
+        $searchModel = new DefectSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -33,48 +31,55 @@ class TaskVerdictController extends Controller
     }
 
     /**
-     * Displays a single TaskVerdict model.
+     * Displays a single DefectType model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
-        $taskVerdict   = TaskVerdict::find()
+        $uuid      = DefectType::find()
+                            ->select('equipmentTypeUuid')
                             ->where(['_id' => $id])
                             ->asArray()
                             ->one();
 
+        $equipmentType = EquipmentType::find()
+                            ->select('title')
+                            ->where(['uuid' => $uuid['equipmentTypeUuid']])
+                            ->asArray()
+                            ->one();
         return $this->render('view', [
-            'taskVerdict' => $taskVerdict,
-            'model' => $this->findModel($id),
+            'equipmentType'   => $equipmentType,
+            'model'    => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new TaskVerdict model.
+     * Creates a new DefectType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new TaskVerdict();
+        $model = new DefectType();
+        $searchModel = new DefectSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
-            $searchModel = new TaskSearchVerdict();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 25;
-
             return $this->render('create', [
-                'model' => $model, 'dataProvider' => $dataProvider
+                'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }
 
     /**
-     * Updates an existing TaskVerdict model.
+     * Updates an existing DefectType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -94,12 +99,13 @@ class TaskVerdictController extends Controller
     }
 
     /**
-     * Deletes an existing TaskVerdict model.
+     * Deletes an existing DefectType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Exception
+     * @throws \Throwable
      * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
@@ -110,15 +116,15 @@ class TaskVerdictController extends Controller
     }
 
     /**
-     * Finds the TaskVerdict model based on its primary key value.
+     * Finds the DefectType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return TaskVerdict the loaded model
+     * @return DefectType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = TaskVerdict::findOne($id)) !== null) {
+        if (($model = DefectType::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

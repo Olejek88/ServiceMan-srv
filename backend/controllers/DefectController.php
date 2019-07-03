@@ -6,12 +6,8 @@ use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\DefectType;
-use common\models\Equipment;
-use common\models\Orders;
-use common\models\Stage;
-use common\models\Task;
-use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -26,6 +22,7 @@ class DefectController extends Controller
     /**
      * Lists all Defect models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -43,6 +40,7 @@ class DefectController extends Controller
      * Lists all Defect models.
      * @param $equipmentUuid
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionList($equipmentUuid)
     {
@@ -72,6 +70,7 @@ class DefectController extends Controller
      * Creates a new Defect model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -156,6 +155,7 @@ class DefectController extends Controller
     /**
      * Displays a schedule for all users
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionPie()
     {
@@ -204,6 +204,7 @@ class DefectController extends Controller
     /**
      * Display defects as bar
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionBargraph()
     {
@@ -220,8 +221,9 @@ class DefectController extends Controller
     }
 
     /** Check add defect
-     * @var $model Defect
+     *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionSave()
     {

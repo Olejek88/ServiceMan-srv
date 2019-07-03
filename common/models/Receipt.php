@@ -15,6 +15,7 @@ use yii\db\ActiveQuery;
  * @property string $contragentUuid
  * @property string $userCheck
  * @property string $userUuid
+ * @property string $userCheckWho
  * @property string $requestUuid
  * @property string $description
  * @property string $result
@@ -44,7 +45,7 @@ class Receipt extends ZhkhActiveRecord
     {
         return [
             [['uuid', 'userUuid', 'contragentUuid', 'date', 'description'], 'required'],
-            [['description', 'userUuid', 'contragentUuid', 'result'], 'string'],
+            [['description', 'userUuid', 'contragentUuid', 'result', 'userCheckWho'], 'string'],
             [['date','closed','oid'], 'safe'],
             [['userUuid', 'contragentUuid', 'userCheck'], 'string', 'max' => 50],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
@@ -64,6 +65,7 @@ class Receipt extends ZhkhActiveRecord
             'userCheck' => Yii::t('app', 'ФИО лица ведущего прием'),
             'contragentUuid' => 'Контрагент',
             'contragent' => 'Контрагент',
+            'userCheckWho' => 'Должность лица ведущего прием',
             'description' => 'Описание',
             'result' => 'Результат',
             'closed' => 'Закрыта',

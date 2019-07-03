@@ -42,7 +42,26 @@ use common\components\MainFunctions;use common\models\Contragent;use common\mode
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) { 
+                        $.ajax({
+                                url: '../contragent/phone',
+                                type: 'post',
+                                data: {
+                                    id: data.params.data.id
+                                },
+                                success: function (data) {
+                                    console.log(data);
+                                    $('#phoneNumber').val(data);               
+                                }
+                            });
+                    //console.log(data.params.data.id);
+                    //$('#phoneNumber').val(data.params.data.id);
+                  }"]
             ]);
+        echo '<label>Номер телефона заявителя</label></br>';
+        echo Html::textInput("phoneNumber",'',['id' => 'phoneNumber']);
+        echo '</br>';
 
         if (!$model->objectUuid) {
             $objects = Objects::find()->all();
@@ -174,8 +193,8 @@ use common\components\MainFunctions;use common\models\Contragent;use common\mode
 
 <script>
     $(document).on("beforeSubmit", "#form", function () {
-        e.preventDefault();
     }).on('submit', function(e){
+        e.preventDefault();
         $.ajax({
             url: "../request/new",
             type: "post",

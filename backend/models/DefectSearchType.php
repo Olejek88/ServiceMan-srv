@@ -2,15 +2,15 @@
 
 namespace backend\models;
 
-use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use common\models\Defect;
+use common\models\DefectType;
 
 /**
- * DefectSearch represents the model behind the search form about `common\models\Defect`.
+ * DefectSearchType represents the model behind the search form about `common\models\DefectType`.
+ * @method validate()
  */
-class DefectSearch extends Defect
+class DefectSearchType extends DefectType
 {
     /**
      * @inheritdoc
@@ -19,7 +19,7 @@ class DefectSearch extends Defect
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'userUuid', 'date', 'equipmentUuid', 'defectStatus', 'title', 'taskUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -29,7 +29,7 @@ class DefectSearch extends Defect
     public function scenarios()
     {
         // bypass scenarios() implementation in the parent class
-        return Model::scenarios();
+        return (new Model)->scenarios();
     }
 
     /**
@@ -38,11 +38,10 @@ class DefectSearch extends Defect
      * @param array $params
      *
      * @return ActiveDataProvider
-     * @throws InvalidConfigException
      */
     public function search($params)
     {
-        $query = Defect::find();
+        $query = DefectType::find();
 
         // add conditions that should always apply here
 
@@ -66,9 +65,9 @@ class DefectSearch extends Defect
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'equipmentUuid', $this->equipmentUuid])
-            ->andFilterWhere(['like', 'defectStatus', $this->defectStatus]);
-        $query->orderBy('changedAt DESC');
+            ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
+            ->andFilterWhere(['like', 'title', $this->title]);
+
         return $dataProvider;
     }
 }

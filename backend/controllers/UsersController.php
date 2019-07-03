@@ -177,6 +177,7 @@ class UsersController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -261,6 +262,7 @@ class UsersController extends Controller
     /**
      * Build tree of equipment by user
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTable()
     {

@@ -18,6 +18,7 @@ use yii\db\Expression;
  * @property string $address
  * @property string $phone
  * @property string $inn
+ * @property string account
  * @property string $director
  * @property string $email
  * @property string $contragentTypeUuid
@@ -68,7 +69,7 @@ class Contragent extends ZhkhActiveRecord
             [['uuid', 'title', 'contragentTypeUuid', 'deleted'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
-            [['address'], 'string', 'max' => 250],
+            [['address','account'], 'string', 'max' => 250],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -84,6 +85,7 @@ class Contragent extends ZhkhActiveRecord
             'address',
             'phone',
             'inn',
+            'account',
             'director',
             'email',
             'contragentTypeUuid',
@@ -108,6 +110,7 @@ class Contragent extends ZhkhActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Наименование/ФИО'),
             'address' => Yii::t('app', 'Адрес'),
+            'account' => Yii::t('app', 'Номер счета'),
             'phone' => Yii::t('app', 'Телефон'),
             'inn' => Yii::t('app', 'ИНН'),
             'director' => Yii::t('app', 'Комментарий'),
