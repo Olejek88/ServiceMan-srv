@@ -21,7 +21,18 @@ use common\models\WorkStatus;
         <tbody>
         <?php foreach ($tasks as $task): ?>
             <tr>
-                <td><?= "?" ?></td>
+                <td><?php
+                    $users = $task['users'];
+                    $users_list="";
+                    $cnt=0;
+                    foreach ($users as $user) {
+                        if ($cnt>0) $users_list .= ',';
+                        $users_list .= $user['name'];
+                        $cnt++;
+                    }
+                    if ($cnt>0)
+                        echo $users_list;
+                    ?></td>
                 <td><?= $task['taskTemplate']['title'] ?></td>
                 <td><?php
                     $class = "critical2";

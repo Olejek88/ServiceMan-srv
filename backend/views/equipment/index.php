@@ -51,13 +51,9 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'objectUuid',
+        'attribute' => 'address',
         'vAlign' => 'middle',
         'width' => '280px',
-        'mergeHeader' => true,
-        'value' => function ($data) {
-            return $data['object']['house']['street']->title . ', ' . $data['object']['house']->number . ' - ' . $data['object']->title;
-        },
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
                 '/object/create?from=equipment/index',
                 ['title' => Yii::t('app', 'Добавить')]),
@@ -104,9 +100,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
         'editableOptions' => function () {
@@ -134,6 +128,14 @@ $gridColumns = [
                 'data' => $list
             ];
         },
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(EquipmentStatus::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'format' => 'raw'
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -153,12 +155,30 @@ $gridColumns = [
         'attribute' => 'testDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             return date("d-m-Y", strtotime($data->testDate));
         },
+        'options' => [
+            'format' => 'YYYY-MM-DD',
+        ],
+        'filterType' => GridView::FILTER_DATE_RANGE,
+        'filterWidgetOptions' => ([
+            'attribute' => 'testDate',
+            'presetDropdown' => true,
+            'convertFormat' => false,
+            'pluginOptions' => [
+                'separator' => ' - ',
+                'format' => 'YYYY-MM-DD',
+                'locale' => [
+                    'format' => 'YYYY-MM-DD'
+                ],
+            ],
+            'pluginEvents' => [
+                "apply.daterangepicker" => "function() { apply_filter('testDate') }",
+            ],
+        ]),
         'editableOptions' => [
             'header' => 'Дата предыдущей поверки',
             'size' => 'md',
@@ -174,19 +194,37 @@ $gridColumns = [
                     ]
                 ]
             ]
-        ],
+        ]
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'inputDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             return date("d-m-Y", strtotime($data->inputDate));
         },
+        'options' => [
+            'format' => 'YYYY-MM-DD',
+        ],
+        'filterType' => GridView::FILTER_DATE_RANGE,
+        'filterWidgetOptions' => ([
+            'attribute' => 'inputDate',
+            'presetDropdown' => true,
+            'convertFormat' => false,
+            'pluginOptions' => [
+                'separator' => ' - ',
+                'format' => 'YYYY-MM-DD',
+                'locale' => [
+                    'format' => 'YYYY-MM-DD'
+                ],
+            ],
+            'pluginEvents' => [
+                "apply.daterangepicker" => "function() { apply_filter('inputDate') }",
+            ],
+        ]),
         'editableOptions' => [
             'header' => 'Дата ввода в эксплуатацию',
             'size' => 'md',
@@ -229,8 +267,8 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
-        'buttons'=>[
-            'add' => function ($url,$model) {
+        'buttons' => [
+            'add' => function ($url, $model) {
                 return Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
                     ['../task/form', 'equipmentUuid' => $model['uuid']],
                     [
@@ -239,9 +277,40 @@ $gridColumns = [
                         'data-target' => '#modalTask',
                     ]
                 );
+            },
+            'defects' => function ($url, $model) {
+                return Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+                    ['/defect/list', 'equipmentUuid' => $model['uuid']],
+                    [
+                        'title' => 'Дефекты',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalDefects',
+                    ]
+                );
+            },
+            'new' => function ($url, $model) {
+                return Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+                    ['/defect/add-table', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'Дефект',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalAdd',
+                    ]
+                );
+            },
+            'tasks' => function ($url, $model) {
+                return Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+                    ['/equipment/operations', 'equipmentUuid' => $model['uuid']],
+                    [
+                        'title' => 'Перечень операций',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalTasks',
+                    ]
+
+                );
             }
         ],
-        'template' => '{add} {update} ',
+        'template' => '{add} {update} {defects} {new} {tasks}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 
@@ -305,6 +374,12 @@ $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
 window.location.replace("../equipment/index");
 })');
+
+$this->registerJs('$("#modalTasks").on("hidden.bs.modal",
+function () {
+    $(this).removeData();
+})');
+
 ?>
 
 <div class="modal remote fade" id="modalAdd">
@@ -316,5 +391,18 @@ window.location.replace("../equipment/index");
 <div class="modal remote fade" id="modalTask">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalDefects">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalTasks">
+    <div class="modal-dialog" style="width: 1000px">
+        <div class="modal-content loader-lg">
+        </div>
     </div>
 </div>

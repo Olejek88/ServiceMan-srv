@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use common\models\Equipment;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -18,7 +19,7 @@ class EquipmentSearch extends Equipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentTypeUuid', 'objectUuid', 'testDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'equipmentTypeUuid', 'objectUuid', 'testDate', 'inputDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -37,6 +38,7 @@ class EquipmentSearch extends Equipment
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {
@@ -70,6 +72,18 @@ class EquipmentSearch extends Equipment
             ->andFilterWhere(['like', 'serial', $this->serial])
             ->orderBy(['changedAt' => SORT_DESC]);
 
+        if(isset ($this->testDate)&&$this->testDate!=''){
+            $date_explode=explode(" - ",$this->testDate);
+            $date1=trim($date_explode[0]);
+            $date2=trim($date_explode[1]);
+            $query->andFilterWhere(['between','testDate',$date1,$date2]);
+        }
+        if(isset ($this->inputDate)&&$this->inputDate!=''){
+            $date_explode=explode(" - ",$this->inputDate);
+            $date1=trim($date_explode[0]);
+            $date2=trim($date_explode[1]);
+            $query->andFilterWhere(['between','inputDate',$date1,$date2]);
+        }
         return $dataProvider;
     }
 }

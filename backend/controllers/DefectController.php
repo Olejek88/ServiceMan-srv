@@ -5,7 +5,6 @@ namespace backend\controllers;
 use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
-use common\models\DefectType;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
@@ -88,7 +87,7 @@ class DefectController extends Controller
         $searchModel = new DefectSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 10;
-        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
+        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id, 'uuid' => $model->uuid]);
         } else {
@@ -272,6 +271,18 @@ class DefectController extends Controller
             }
         }
         return "Выберите в дереве оборудование";
+    }
+
+    public function actionAddTable()
+    {
+        if (isset($_GET["uuid"]))
+            $uuid = $_GET["uuid"];
+        else $uuid = 0;
+        $defect = new Defect();
+        return $this->renderAjax('../defect/_add_form', [
+            'model' => $defect,
+            'equipmentUuid' => $uuid
+        ]);
     }
 
 }

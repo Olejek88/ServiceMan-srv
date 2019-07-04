@@ -47,7 +47,7 @@ use yii\helpers\Html;
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ])->label(false);
+        ]);
 
     if ($equipmentUuid) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
@@ -63,7 +63,7 @@ use yii\helpers\Html;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ])->label(false);
+            ]);
     }
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
