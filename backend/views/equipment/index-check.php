@@ -47,7 +47,7 @@ $gridColumns = [
             if ($data['testDate']) {
                 $testDate = strtotime($data['testDate']);
                 return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
-                    date('Y-m-d', $testDate) . "</span>";
+                    date('d-m-Y', $testDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";
         }
@@ -65,7 +65,7 @@ $gridColumns = [
             if ($data['nextDate']) {
                 $nextDate = strtotime($data['nextDate']);
                 return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
-                    date('Y-m-d', $nextDate) . "</span>";
+                    date('d-m-Y', $nextDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";
         }
@@ -83,7 +83,7 @@ $gridColumns = [
             if ($data['replaceDate']) {
                 $replaceDate = strtotime($data['replaceDate']);
                 return "<span class='badge' style='background-color: lightblue; height: 22px; margin-top: -3px'>" .
-                    date('Y-m-d', $replaceDate) . "</span>";
+                    date('d-m-Y', $replaceDate) . "</span>";
             }
             return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>не указана</span>";
         }

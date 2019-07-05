@@ -1,14 +1,13 @@
 <?php
 
 use backend\controllers\EquipmentController;
+use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
 use common\models\EquipmentType;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Url;
-use common\components\MyHelpers;
 
 /* @var $searchModel */
 /* @var $dataProvider */
@@ -68,8 +67,37 @@ $gridColumns = [
         'content' => function ($data) {
             return $data->equipment['title'];
         },
+        'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(Equipment::find()->orderBy('title')->all(),
             'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+    ],
+    [
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'header' => 'Местоположение',
+        'content' => function ($data) {
+            if ($data && $data['equipment'])
+              return $data->equipment['object']->getFullTitle();
+            else
+                return "";
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => function() {
+            $models = Documentation::find()->all();
+            $filters =[];
+            foreach ($models as $model) {
+                $filters[] = [$model['uuid'] => $model['equipment']['object']->getFullTitle()];
+
+            }
+        },
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],

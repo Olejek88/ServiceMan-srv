@@ -1,14 +1,7 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
-use common\models\EquipmentStatus;
-use common\models\EquipmentType;
-use common\models\UserSystem;
-use kartik\datecontrol\DateControl;
-use kartik\editable\Editable;
-use kartik\grid\GridView;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Html;
+use common\models\EquipmentStatus;use common\models\EquipmentType;use common\models\UserSystem;use kartik\datecontrol\DateControl;use kartik\editable\Editable;use kartik\grid\GridView;use yii\helpers\ArrayHelper;use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Элементы');
 
@@ -308,9 +301,20 @@ $gridColumns = [
                     ]
 
                 );
+            },
+            'edit' => function ($url, $model) {
+                return Html::a('<span class="glyphicon glyphicon-edit"></span>&nbsp',
+                    ['/equipment/edit-table', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'Редактировать',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalAdd',
+                    ]
+
+                );
             }
         ],
-        'template' => '{add} {update} {defects} {new} {tasks}',
+        'template' => '{add} {edit} {defects} {new} {tasks}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 
@@ -375,6 +379,11 @@ function () {
 window.location.replace("../equipment/index");
 })');
 
+$this->registerJs('$("#modalAddEquipment").on("hidden.bs.modal",
+function () {
+window.location.replace("../equipment/index");
+})');
+
 $this->registerJs('$("#modalTasks").on("hidden.bs.modal",
 function () {
     $(this).removeData();
@@ -403,6 +412,13 @@ function () {
 <div class="modal remote fade" id="modalTasks">
     <div class="modal-dialog" style="width: 1000px">
         <div class="modal-content loader-lg">
+        </div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalAddEquipment">
+    <div class="modal-dialog">
+        <div class="modal-content loader-lg" id="modalContentEquipment">
         </div>
     </div>
 </div>
