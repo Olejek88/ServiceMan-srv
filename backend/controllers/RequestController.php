@@ -4,7 +4,6 @@ namespace backend\controllers;
 
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
-use common\models\Contragent;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
@@ -180,6 +179,7 @@ class RequestController extends Controller
     public function actionForm()
     {
         $receiptUuid = "";
+        $source = 'table';
         if (isset($_GET["uuid"])) {
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
         } else {
@@ -190,13 +190,16 @@ class RequestController extends Controller
                 $model->userUuid = $_GET["user"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
+            if (isset($_GET["source"]))
+                $source = $_GET["source"];
             if (isset($_GET["equipmentUuid"])) {
                 $model->equipmentUuid = $_GET["equipmentUuid"];
                 $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
                 $model->objectUuid = $equipment['object']['uuid'];
             }
         }
-        return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid]);
+        return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid,
+            'source' => $source]);
     }
 
     /**

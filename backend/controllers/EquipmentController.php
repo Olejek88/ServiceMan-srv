@@ -1220,7 +1220,7 @@ class EquipmentController extends Controller
             ->all();
         $count = 0;
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
@@ -1278,7 +1278,7 @@ class EquipmentController extends Controller
         }
 
         $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
