@@ -77,32 +77,34 @@ class Task extends ZhkhActiveRecord
 
     public function fields()
     {
-        return ['_id','uuid', 'comment',
-            'workStatusUuid',
-            'workStatus' => function ($model) {
-                return $model->workStatus;
-            },
-            'taskVerdictUuid',
-            'taskVerdict' => function ($model) {
-                return $model->taskVerdict;
-            },
-            'taskTemplateUuid',
-            'taskTemplate' => function ($model) {
-                return $model->taskTemplate;
-            },
-            'equipmentUuid',
-            'comment',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'author' => function ($model) {
-                return $model->author;
-            },
-            'startDate', 'authorUuid', 'deadlineDate', 'endDate', 'createdAt', 'changedAt',
-            'operations' => function ($model) {
-                return $model->operations;
-            },
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id','uuid', 'comment',
+//            'workStatusUuid',
+//            'workStatus' => function ($model) {
+//                return $model->workStatus;
+//            },
+//            'taskVerdictUuid',
+//            'taskVerdict' => function ($model) {
+//                return $model->taskVerdict;
+//            },
+//            'taskTemplateUuid',
+//            'taskTemplate' => function ($model) {
+//                return $model->taskTemplate;
+//            },
+//            'equipmentUuid',
+//            'comment',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'author' => function ($model) {
+//                return $model->author;
+//            },
+//            'startDate', 'authorUuid', 'deadlineDate', 'endDate', 'createdAt', 'changedAt',
+//            'operations' => function ($model) {
+//                return $model->operations;
+//            },
+//        ];
     }
 
     /**
@@ -174,9 +176,9 @@ class Task extends ZhkhActiveRecord
         $taskUsers = TaskUser::find()->select('userUuid')->where(['taskUuid' => $this->uuid])->all();
         $taskUserList = [];
         foreach ($taskUsers as $taskUser) {
-            $taskUserList[]=$taskUser['userUuid'];
+            $taskUserList[] = $taskUser['userUuid'];
         }
-        $users = Users::find()->where(['IN','uuid', $taskUserList])->all();
+        $users = Users::find()->where(['IN', 'uuid', $taskUserList])->all();
         return $users;
     }
 

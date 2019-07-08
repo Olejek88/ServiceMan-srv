@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -7,7 +8,6 @@ use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
-use yii\helpers\Html;
 
 /**
  * This is the model class for table "equipment".
@@ -74,22 +74,24 @@ class Equipment extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid', 'title',
-            'objectUuid',
-            'object' => function ($model) {
-                return $model->object;
-            },
-            'equipmentTypeUuid',
-            'equipmentType' => function ($model) {
-                return $model->equipmentType;
-            },
-            'equipmentStatusUuid',
-            'equipmentStatus' => function ($model) {
-                return $model->equipmentStatus;
-            },
-            'serial', 'period', 'testDate', 'inputDate', 'replaceDate', 'tag', 'deleted',
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid', 'title',
+//            'objectUuid',
+//            'object' => function ($model) {
+//                return $model->object;
+//            },
+//            'equipmentTypeUuid',
+//            'equipmentType' => function ($model) {
+//                return $model->equipmentType;
+//            },
+//            'equipmentStatusUuid',
+//            'equipmentStatus' => function ($model) {
+//                return $model->equipmentStatus;
+//            },
+//            'serial', 'period', 'testDate', 'inputDate', 'replaceDate', 'tag', 'deleted',
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -167,20 +169,6 @@ class Equipment extends ZhkhActiveRecord
     }
 
     /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Объект связанного поля.
      *
      * @return ActiveQuery
@@ -214,12 +202,14 @@ class Equipment extends ZhkhActiveRecord
         return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
-    public function getPhoto() {
+    public function getPhoto()
+    {
         return $this->hasMany(Photo::class, ['equipmentUuid' => 'uuid']);
     }
 
-    public function getNextDate() {
-        $seconds = strtotime($this->testDate)+($this->period*3600*24);
+    public function getNextDate()
+    {
+        $seconds = strtotime($this->testDate) + ($this->period * 3600 * 24);
         return date('Y-m-d', $seconds);
     }
 
@@ -230,7 +220,7 @@ class Equipment extends ZhkhActiveRecord
      */
     public function getFullTitle()
     {
-        return $this['object']->getFullTitle().' ['.$this['title'].']';
+        return $this['object']->getFullTitle() . ' [' . $this['title'] . ']';
     }
 
     /**

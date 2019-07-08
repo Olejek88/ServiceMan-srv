@@ -85,7 +85,7 @@ class Users extends ZhkhActiveRecord
                 'required'
             ],
             [['image'], 'file'],
-            [['user_id','type', 'active'], 'integer'],
+            [['user_id', 'type', 'active'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
@@ -125,23 +125,25 @@ class Users extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'name',
-            'active',
-            'type',
-            'pin',
-            'user_id',
-            'contact',
-            'active',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'createdAt',
-            'changedAt',
-            'image',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'name',
+//            'active',
+//            'type',
+//            'pin',
+//            'user_id',
+//            'contact',
+//            'active',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'createdAt',
+//            'changedAt',
+//            'image',
+//        ];
     }
 
     /**
@@ -152,20 +154,6 @@ class Users extends ZhkhActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['_id' => 'user_id']);
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

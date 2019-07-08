@@ -44,20 +44,6 @@ class MeasureType extends ActiveRecord
     }
 
     /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * @inheritdoc
      */
     public function attributeLabels()

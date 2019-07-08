@@ -15,7 +15,6 @@ use yii\db\ActiveRecord;
  * @property string $taskTemplateUuid
  * @property string $createdAt
  * @property string $changedAt
-
  * @property TaskTemplate $taskTemplate
  */
 class RequestType extends ActiveRecord
@@ -43,20 +42,6 @@ class RequestType extends ActiveRecord
             [['uuid'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 100],
         ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

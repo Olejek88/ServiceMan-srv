@@ -45,7 +45,7 @@ class Receipt extends ZhkhActiveRecord
         return [
             [['uuid', 'userUuid', 'contragentUuid', 'date', 'description'], 'required'],
             [['description', 'userUuid', 'contragentUuid', 'result'], 'string'],
-            [['date','closed','oid'], 'safe'],
+            [['date', 'closed', 'oid'], 'safe'],
             [['userUuid', 'contragentUuid', 'userCheck'], 'string', 'max' => 50],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],

@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Cron\CronExpression;
@@ -7,6 +8,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "task_template_equipment".
@@ -26,7 +28,6 @@ use yii\db\Expression;
  * @property Users $user
  * @property string[] $dates
  */
-
 class TaskTemplateEquipment extends ActiveRecord
 {
     const TASK_DEEP = 20;
@@ -158,6 +159,7 @@ class TaskTemplateEquipment extends ActiveRecord
      * Ищем пользователя который может выполнить эту задачу
      *
      * @return array|ActiveRecord
+     * @throws InvalidConfigException
      */
     public function getUser()
     {
@@ -168,7 +170,7 @@ class TaskTemplateEquipment extends ActiveRecord
             $userSystems = UserSystem::find()->where(['userUuid' => $userHouse['userUuid']])->all();
             // если в специализации пользователя есть нужная - выберем пользователя по-умолчанию
             foreach ($userSystems as $userSystem) {
-                if ($equipmentSystem['uuid']==$userSystem['equipmentSystemUuid']) {
+                if ($equipmentSystem['uuid'] == $userSystem['equipmentSystemUuid']) {
                     $user = Users::find()->where(['uuid' => $userHouse['userUuid']])->one();
                     if ($user)
                         return $user;
@@ -200,7 +202,7 @@ class TaskTemplateEquipment extends ActiveRecord
         $dates = explode(',', $this->next_dates);
         if ($dates)
             $count = count($dates);
-        if ($count<self::TASK_DEEP) {
+        if ($count < self::TASK_DEEP) {
             $this->next_dates .= $date;
             return true;
         }
@@ -213,13 +215,13 @@ class TaskTemplateEquipment extends ActiveRecord
      */
     public function popDate()
     {
-        $next_dates="";
+        $next_dates = "";
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $first = true;
             foreach ($dates as $date) {
                 if (!$first)
-                    $next_dates.=$date;
+                    $next_dates .= $date;
                 $first = false;
             }
             $this->next_dates = $next_dates;
@@ -235,28 +237,28 @@ class TaskTemplateEquipment extends ActiveRecord
      */
     public function formDates()
     {
-        $next_dates=$this->next_dates;
+        $next_dates = $this->next_dates;
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $count = count($dates);
-            if (strlen($this->next_dates)<6) $count=0;
+            if (strlen($this->next_dates) < 6) $count = 0;
             while (self::TASK_DEEP - $count) {
-                if ($count>0)
-                    $last_date = strtotime($dates[$count-1]);
+                if ($count > 0)
+                    $last_date = strtotime($dates[$count - 1]);
                 else
                     $last_date = strtotime($this->last_date);
 
-                if ($count>0) $next_dates.=',';
+                if ($count > 0) $next_dates .= ',';
 
                 if (is_numeric($this->period)) {
                     $next_date = $last_date + $this->period * 3600;
-                    $next_dates.=date("Y-m-d H:i:s",$next_date);
-                    $dates[$count]=date("Y-m-d H:i:s",$next_date);
+                    $next_dates .= date("Y-m-d H:i:s", $next_date);
+                    $dates[$count] = date("Y-m-d H:i:s", $next_date);
                 } else {
                     $cron = CronExpression::factory($this->period);
                     $next_date = $cron->getNextRunDate(strtotime($last_date));
-                    $next_dates.=$next_date->format('Y-m-d H:i:s');
-                    $dates[$count]=$next_date->format('Y-m-d H:i:s');
+                    $next_dates .= $next_date->format('Y-m-d H:i:s');
+                    $dates[$count] = $next_date->format('Y-m-d H:i:s');
                 }
                 $count++;
             }
@@ -275,14 +277,14 @@ class TaskTemplateEquipment extends ActiveRecord
      */
     public function changeDate($date, $index)
     {
-        $next_dates=$this->next_dates;
+        $next_dates = $this->next_dates;
         $dates = explode(',', $this->next_dates);
-        if ($dates && count($dates)>$index) {
+        if ($dates && count($dates) > $index) {
             $dates[$index] = $date;
             $count = 0;
-            while ($count<count($dates)) {
-                if ($count>0) $next_dates.=',';
-                $next_dates.=$dates[$count];
+            while ($count < count($dates)) {
+                if ($count > 0) $next_dates .= ',';
+                $next_dates .= $dates[$count];
                 $count++;
             }
             $this->next_dates = $next_dates;
@@ -299,12 +301,12 @@ class TaskTemplateEquipment extends ActiveRecord
      */
     public function removeDate($index)
     {
-        $next_dates=$this->next_dates;
+        $next_dates = $this->next_dates;
         $dates = explode(',', $this->next_dates);
-        if ($dates && count($dates)>$index) {
+        if ($dates && count($dates) > $index) {
             $count = 0;
-            while ($count<count($dates)) {
-                if ($count!=$index) {
+            while ($count < count($dates)) {
+                if ($count != $index) {
                     if ($count > 0) $next_dates .= ',';
                     $next_dates .= $dates[$count];
                 }

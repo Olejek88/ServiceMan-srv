@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -75,7 +76,7 @@ class Operation extends ZhkhActiveRecord
                 ],
                 'required'
             ],
-            [['oid','createdAt', 'changedAt'], 'safe'],
+            [['oid', 'createdAt', 'changedAt'], 'safe'],
             [
                 [
                     'uuid',
@@ -97,17 +98,19 @@ class Operation extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid', 'taskUuid',
-            'workStatusUuid',
-            'workStatus' => function ($model) {
-                return $model->operationStatus;
-            },
-            'operationTemplateUuid',
-            'operationTemplate' => function ($model) {
-                return $model->operationTemplate;
-            },
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid', 'taskUuid',
+//            'workStatusUuid',
+//            'workStatus' => function ($model) {
+//                return $model->operationStatus;
+//            },
+//            'operationTemplateUuid',
+//            'operationTemplate' => function ($model) {
+//                return $model->operationTemplate;
+//            },
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -151,7 +154,7 @@ class Operation extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getWorkStatus()
     {
@@ -163,7 +166,7 @@ class Operation extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getOperationTemplate()
     {

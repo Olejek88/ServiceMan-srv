@@ -1,10 +1,12 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "messages".
@@ -63,15 +65,17 @@ class Message extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid', 'date', 'text', 'status',
-            'fromUserUuid' => function ($model) {
-                return $model->name;
-            },
-            'toUserUuid' => function ($model) {
-                return $model->name;
-            },
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid', 'date', 'text', 'status',
+//            'fromUserUuid' => function ($model) {
+//                return $model->name;
+//            },
+//            'toUserUuid' => function ($model) {
+//                return $model->name;
+//            },
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -132,23 +136,9 @@ class Message extends ZhkhActiveRecord
     }
 
     /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getFromUser()
     {
@@ -160,7 +150,7 @@ class Message extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getToUser()
     {

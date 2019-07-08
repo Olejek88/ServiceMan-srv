@@ -5,6 +5,7 @@ namespace common\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "{{%user_token}}".
@@ -64,7 +65,7 @@ class UserToken extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {

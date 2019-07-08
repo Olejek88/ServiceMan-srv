@@ -6,6 +6,7 @@ use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "house".
@@ -66,25 +67,27 @@ class House extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'number',
-            'houseStatusUuid',
-            'houseStatus' => function ($model) {
-                return $model->houseStatus;
-            },
-            'houseTypeUuid',
-            'houseType' => function ($model) {
-                return $model->houseType;
-            },
-            'streetUuid',
-            'street' => function ($model) {
-                return $model->street;
-            },
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'number',
+//            'houseStatusUuid',
+//            'houseStatus' => function ($model) {
+//                return $model->houseStatus;
+//            },
+//            'houseTypeUuid',
+//            'houseType' => function ($model) {
+//                return $model->houseType;
+//            },
+//            'streetUuid',
+//            'street' => function ($model) {
+//                return $model->street;
+//            },
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getHouseStatus()
@@ -118,7 +121,7 @@ class House extends ZhkhActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getPhoto()
     {
@@ -126,14 +129,15 @@ class House extends ZhkhActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHouseType()
     {
         return $this->hasOne(HouseType::class, ['uuid' => 'houseTypeUuid']);
     }
 
-    public function getFullTitle() {
-        return 'ул.'.$this->street['title'].', д.'.$this->number;
+    public function getFullTitle()
+    {
+        return 'ул.' . $this->street['title'] . ', д.' . $this->number;
     }
 }

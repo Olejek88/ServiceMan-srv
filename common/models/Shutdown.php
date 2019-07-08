@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -6,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "shutdown".
@@ -72,7 +74,7 @@ class Shutdown extends ZhkhActiveRecord
                 ],
                 'required'
             ],
-            [['oid','createdAt', 'changedAt','comment'], 'safe'],
+            [['oid', 'createdAt', 'changedAt', 'comment'], 'safe'],
             [
                 [
                     'uuid',
@@ -92,15 +94,17 @@ class Shutdown extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid',
-            'contragentUuid',
-            'contragent' => function ($model) {
-                return $model->contragent;
-            },
-            'startDate',
-            'endDate',
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid',
+//            'contragentUuid',
+//            'contragent' => function ($model) {
+//                return $model->contragent;
+//            },
+//            'startDate',
+//            'endDate',
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -128,6 +132,7 @@ class Shutdown extends ZhkhActiveRecord
      * Объект связанного поля.
      *
      * @return ActiveRecord
+     * @throws InvalidConfigException
      */
     public function getContragent()
     {

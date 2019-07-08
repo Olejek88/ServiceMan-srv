@@ -38,6 +38,7 @@ class WorkStatus extends ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */

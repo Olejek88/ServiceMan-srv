@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -69,27 +70,13 @@ class OperationTemplate extends ZhkhActiveRecord
             [['description'], 'string'],
             [['createdAt', 'changedAt'], 'safe'],
             [
-                ['uuid','oid'], 'string', 'max' => 45
+                ['uuid', 'oid'], 'string', 'max' => 45
             ],
             [['title'], 'string', 'max' => 200],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
     }
-
-    /**
-     * Fields
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return ['_id', 'uuid',
-            'title', 'description',
-            'createdAt', 'changedAt'
-        ];
-    }
-
 
     /**
      * Attribute labels
@@ -108,19 +95,5 @@ class OperationTemplate extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
-    }
-
-    /**
-     * Upload
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

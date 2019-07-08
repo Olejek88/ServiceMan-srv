@@ -56,18 +56,20 @@ class Resident extends ActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'flatUuid',
-            'flat' => function ($model) {
-                return $model->flat;
-            },
-            'owner',
-            'inn',
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'flatUuid',
+//            'flat' => function ($model) {
+//                return $model->flat;
+//            },
+//            'owner',
+//            'inn',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getFlat()

@@ -13,12 +13,12 @@ class ReferenceFunctions
 {
     public static function loadReferences($oid)
     {
-/*        self::insertIntoHouseType(HouseType::HOUSE_TYPE_MKD,
+        self::insertIntoHouseType(HouseType::HOUSE_TYPE_MKD,
             'Многокваритирный дом', $oid);
         self::insertIntoHouseType(HouseType::HOUSE_TYPE_COMMERCE,
             'Коммерческий объект', $oid);
         self::insertIntoHouseType(HouseType::HOUSE_TYPE_BUDGET,
-            'Бюджетное учереждение', $oid);*/
+            'Бюджетное учереждение', $oid);
 
         self::insertIntoTaskTemplate('Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
@@ -171,7 +171,7 @@ class ReferenceFunctions
     private static function insertIntoTaskTemplate($title, $description, $normative, $taskTypeUuid, $equipmentTypeUuid,
                                                    $organizationUuid) {
         $taskTemplate = new TaskTemplate();
-        $taskTemplate->uuid = \common\components\MainFunctions::GUID();
+        $taskTemplate->uuid = MainFunctions::GUID();
         $taskTemplate->title = $title;
         $taskTemplate->description = $description;
         $taskTemplate->normative = $normative;
@@ -182,7 +182,7 @@ class ReferenceFunctions
         $taskTemplateEquipmentType = new TaskTemplateEquipmentType();
         $taskTemplateEquipmentType->equipmentTypeUuid = $equipmentTypeUuid;
         $taskTemplateEquipmentType->taskTemplateUuid = $taskTemplate->uuid;
-        $taskTemplateEquipmentType->uuid = \common\components\MainFunctions::GUID();
+        $taskTemplateEquipmentType->uuid = MainFunctions::GUID();
         $taskTemplateEquipmentType->save();
 
     }

@@ -93,13 +93,15 @@ class TaskTemplate extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return [
-            '_id', 'uuid', 'title', 'description', 'taskTypeUuid',
-            'normative',
-            'taskType' => function ($model) {
-                return $model->taskType;
-            }, 'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id', 'uuid', 'title', 'description', 'taskTypeUuid',
+//            'normative',
+//            'taskType' => function ($model) {
+//                return $model->taskType;
+//            }, 'createdAt', 'changedAt'
+//        ];
     }
 
     /**
