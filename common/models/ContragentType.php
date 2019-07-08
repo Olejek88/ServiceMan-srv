@@ -18,6 +18,7 @@ use yii\db\Expression;
  */
 class ContragentType extends ActiveRecord
 {
+    const WORKER = "D9B906FB-0559-4DD3-A632-BAEE215FA3A7";
 
     public function behaviors()
     {

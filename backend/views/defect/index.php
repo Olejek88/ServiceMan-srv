@@ -28,25 +28,26 @@ $gridColumns = [
     ],
     [
         'attribute' => 'equipment.title',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'width' => '300px',
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
-        'attribute' => 'user.name',
-        'header' => 'Исполнитель',
+        'header' => 'Адрес',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'width' => '200px',
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
+        'value' => function ($model) {
+            return $model['equipment']['object']->getFullTitle();
+        },
+
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -80,6 +81,17 @@ $gridColumns = [
                 'data' => $models
             ];
         },
+    ],
+    [
+        'attribute' => 'user.name',
+        'header' => 'Исполнитель',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'width' => '200px',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
     ],
     [
         'class' => 'kartik\grid\DataColumn',

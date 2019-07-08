@@ -3,8 +3,7 @@
 
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Обновить квартиру');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Квартира'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Обновить объект');
 ?>
 <div class="task-update box-padding">
 

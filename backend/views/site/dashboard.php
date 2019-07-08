@@ -2,7 +2,6 @@
 /* @var $cityCount
  * @var $streetCount
  * @var $flatCount
- * @var $subjectCount
  * @var $equipmentCount
  * @var $equipmentTypeCount
  * @var $contragentCount
@@ -63,7 +62,7 @@ $this->title = Yii::t('app', 'Сводная');
             <a href="/equipment"><span class="info-box-icon bg-red"><i class="fa fa-plug"></i></span></a>
 
             <div class="info-box-content">
-                <a href="/equipment"><span class="info-box-text">Оборудование</span></a>
+                <a href="/equipment"><span class="info-box-text">Элементов</span></a>
                 <span><a href="/equipment-type">Типов <?= $equipmentTypeCount; ?></a></span><br/>
                 <span class="info-box-number"><?= $equipmentCount ?></span>
             </div>
@@ -296,7 +295,7 @@ $this->title = Yii::t('app', 'Сводная');
                             <th>ID</th>
                             <th>Дата</th>
                             <th>Адрес</th>
-                            <th>Оборудование</th>
+                            <th>Элементы</th>
                             <th>Данные</th>
                             <th>Исполнитель</th>
                         </tr>
@@ -334,7 +333,7 @@ $this->title = Yii::t('app', 'Сводная');
     <div class="col-md-4">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Недавно добавленное оборудование</h3>
+                <h3 class="box-title">Недавно добавленные элементы</h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -365,7 +364,7 @@ $this->title = Yii::t('app', 'Сводная');
             </div>
             <!-- /.box-body -->
             <div class="box-footer text-center">
-                <?php echo Html::a('Все оборудование', ['/equipment'],
+                <?php echo Html::a('Все элементы', ['/equipment'],
                     ['class' => 'btn btn-sm btn-info btn-flat pull-left']); ?>
             </div>
             <!-- /.box-footer -->

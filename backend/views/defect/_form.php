@@ -6,8 +6,6 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use dosamigos\datetimepicker\DateTimePicker;
 use app\commands\MainFunctions;
-use common\models\DefectType;
-use common\models\Task;
 use common\models\Users;
 use common\models\Equipment;
 
@@ -38,7 +36,7 @@ use common\models\Equipment;
             'name' => 'kv_type',
             'language' => 'ru',
             'data' => $items,
-            'options' => ['placeholder' => 'Выберите оборудование ...'],
+            'options' => ['placeholder' => 'Выберите элементы ...'],
             'pluginOptions' => [
                 'allowClear' => true
             ],

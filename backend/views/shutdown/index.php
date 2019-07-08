@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\ShutdownSearch */
 
 use common\models\Contragent;
+use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -26,11 +27,10 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'contragent',
+        'attribute' => 'contragentUuid',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'header' => 'Исполнитель',
-        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -54,6 +54,7 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой'],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'startDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -64,12 +65,29 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->startDate)>0)
-                return date("Y-m-d h:m", strtotime($data->startDate));
+                return date("d-m-Y h:m", strtotime($data->startDate));
             else
                 return 'нет даты начала';
-        }
+        },
+        'editableOptions' => [
+            'header' => 'Дата начала',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' => 'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd-MM-yyyy hh:mm',
+                'saveFormat' => 'php:Y-m-d h:m',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ]
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'endDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -80,12 +98,29 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate)>0)
-                return date("Y-m-d h:m", strtotime($data->endDate));
+                return date("d-m-Y h:m", strtotime($data->endDate));
             else
                 return 'нет даты окончания';
-        }
+        },
+        'editableOptions' => [
+            'header' => 'Дата окончания',
+            'size' => 'md',
+            'inputType' => Editable::INPUT_WIDGET,
+            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'options' => [
+                'type' => DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd-MM-yyyy hh:mm',
+                'saveFormat' => 'php:Y-m-d h:m',
+                'options' => [
+                    'pluginOptions' => [
+                        'autoclose' => true
+                    ]
+                ]
+            ]
+        ],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'comment',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -105,6 +140,9 @@ $gridColumns = [
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
+        'content' => function ($data) {
+            return date("d-m-Y h:m", strtotime($data->changedAt));
+        },
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -130,7 +168,15 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новая', ['/shutdown/create'], ['class' => 'btn btn-success'])
+            Html::a('Новое отключение',
+                ['/shutdown/form'],
+                [
+                    'title' => 'Добавить заявку',
+                    'class' => 'btn btn-success',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modal_shutdown',
+                ]
+            )
         ],
         '{export}',
     ],
@@ -154,4 +200,19 @@ echo GridView::widget([
         'heading' => '<i class="glyphicon glyphicon-wrench"></i>&nbsp; Аварийные отключения',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
+    'rowOptions' => function($model) {
+        if (date("Y-m-d H:i:s")>=$model['startDate'] && date("Y-m-d H:i:s")<$model['endDate'])
+                return ['class' => 'danger'];
+    }
 ]);
+$this->registerJs('$("#modal_shutdown").on("hidden.bs.modal",
+function () {
+     window.location.replace("index");
+})');
+
+echo '<div class="modal remote fade" id="modal_shutdown">
+            <div class="modal-dialog" style="width: 600px; height: 300px">
+                <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+                </div>
+            </div>
+    </div>';

@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Objects */
 
-$this->title = $model['number'];
+$this->title = 'ул.' . $model['house']['street']->title . ', д.' . $model['house']->number;
 ?>
 <div class="task-view box-padding">
 
@@ -32,10 +32,10 @@ $this->title = $model['number'];
                             'attributes' => [
                                 '_id',
                                 'uuid',
-                                'number',
+                                'title',
                                 'houseUuid',
-                                'flatStatusUuid',
-                                'flatTypeUuid',
+                                'objectStatusUuid',
+                                'objectTypeUuid',
                                 'createdAt',
                                 'changedAt',
                             ],

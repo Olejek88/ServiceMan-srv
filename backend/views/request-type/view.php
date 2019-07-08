@@ -33,6 +33,7 @@ $this->title = $model->title;
                                 '_id',
                                 'uuid',
                                 'title',
+                                'taskType.title',
                                 'createdAt',
                                 'changedAt',
                             ],

@@ -1,5 +1,4 @@
 <?php
-
 use common\models\Equipment;
 use common\models\TaskTemplate;
 use common\models\Users;
@@ -7,7 +6,6 @@ use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-
 use app\commands\MainFunctions;
 use common\models\TaskVerdict;
 use common\models\WorkStatus;
@@ -38,7 +36,7 @@ use common\models\WorkStatus;
             'data' => $items,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите оборудование..'
+                'placeholder' => 'Выберите элементы..'
             ],
             'pluginOptions' => [
                 'allowClear' => true

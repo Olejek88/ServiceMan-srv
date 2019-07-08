@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use common\models\Request;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -18,7 +19,7 @@ class RequestSearch extends Request
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'requestStatusUuid', 'requestTypeUuid', 'contragentUuid', 'authorUuid', 'comment', 'userUuid', 'taskUuid',
+            [['uuid', 'type', 'requestStatusUuid', 'requestTypeUuid', 'authorUuid', 'comment', 'userUuid', 'taskUuid',
                 'equipmentUuid', 'objectUuid', 'stageUuid', 'closeDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
@@ -38,6 +39,7 @@ class RequestSearch extends Request
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {
@@ -60,13 +62,13 @@ class RequestSearch extends Request
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'type' => $this->type,
             'requestStatusUuid' => $this->requestStatusUuid,
             'requestTypeUuid' => $this->requestTypeUuid,
             'comment' => $this->comment,
             'userUuid' => $this->userUuid,
             'closeDate' => $this->closeDate,
             'equipmentUuid' => $this->equipmentUuid,
-            'contragentUuid' => $this->contragentUuid,
             'authorUuid' => $this->authorUuid,
             'objectUuid' => $this->objectUuid,
             'taskUuid' => $this->taskUuid,
@@ -75,11 +77,7 @@ class RequestSearch extends Request
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'comment', $this->comment])
-            ->andFilterWhere(['like', 'requestStatusUuid', $this->requestStatusUuid])
-            ->andFilterWhere(['like', 'userUuid', $this->userUuid])
-            ->andFilterWhere(['like', 'equipmentUuid', $this->equipmentUuid])
-            ->andFilterWhere(['like', 'objectUuid', $this->objectUuid]);
+            ->andFilterWhere(['like', 'comment', $this->comment]);
 
         $query->andFilterWhere(['=', 'closeDate', $this->closeDate]);
 

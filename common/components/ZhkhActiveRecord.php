@@ -13,7 +13,7 @@ class ZhkhActiveRecord extends ActiveRecord
 {
 
     /**
-     * @return ActiveQuery
+     * @return object|ActiveQuery
      * @throws InvalidConfigException
      */
     public static function find()

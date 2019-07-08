@@ -6,6 +6,7 @@ use common\models\Receipt;
 use common\models\Request;
 use common\models\Resident;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -53,6 +54,7 @@ class ReceiptController extends Controller
      * Lists all Receipt models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -61,19 +63,25 @@ class ReceiptController extends Controller
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
             if ($_POST['editableAttribute'] == 'result') {
-                $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
+                $model['result'] = $_POST['Receipt'][$_POST['editableIndex']]['result'];
+            }
+            if ($_POST['editableAttribute'] == 'userCheck') {
+                $model['userCheck'] = $_POST['Receipt'][$_POST['editableIndex']]['userCheck'];
             }
             if ($_POST['editableAttribute'] == 'closed') {
-                $model['closed'] = $_POST['Request'][$_POST['editableIndex']]['closed'];
+                $model['closed'] = $_POST['Receipt'][$_POST['editableIndex']]['closed'];
             }
             if ($_POST['editableAttribute'] == 'description') {
-                $model['description'] = $_POST['Request'][$_POST['editableIndex']]['description'];
+                $model['description'] = $_POST['Receipt'][$_POST['editableIndex']]['description'];
             }
             if ($_POST['editableAttribute'] == 'userUuid') {
-                $model['userUuid'] = $_POST['Request'][$_POST['editableIndex']]['userUuid'];
+                $model['userUuid'] = $_POST['Receipt'][$_POST['editableIndex']]['userUuid'];
+            }
+            if ($_POST['editableAttribute'] == 'date') {
+                $model['date'] = $_POST['Receipt'][$_POST['editableIndex']]['date'];
             }
             if ($_POST['editableAttribute'] == 'requestUuid') {
-                $model['requestUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestUuid'];
+                $model['requestUuid'] = $_POST['Receipt'][$_POST['editableIndex']]['requestUuid'];
             }
 
             if ($model->save())
@@ -95,6 +103,7 @@ class ReceiptController extends Controller
      * Action list
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionList()
     {
@@ -239,7 +248,7 @@ class ReceiptController extends Controller
     /**
      * Creates a new Receipt model.
      * @return mixed
-     * @var $model Receipt
+     * @throws InvalidConfigException
      */
     public
     function actionNew()

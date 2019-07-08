@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Organization;
 use yii\db\Migration;
 
 /**
@@ -14,14 +15,14 @@ class m190429_110551_link_users_org extends Migration
     {
         $this->insert('{{%organization}}', [
             '_id' => 1,
-            'uuid' => \common\models\Organization::ORG_SERVICE_UUID,
+            'uuid' => Organization::ORG_SERVICE_UUID,
             'title' => 'Service organization',
             'inn' => '000000000000',
             'secret' => 'secret',
         ]);
         $this->addColumn('{{%users}}', 'oid', $this->string(45)->notNull());
         $this->update('{{%users}}', [
-            'oid' => \common\models\Organization::ORG_SERVICE_UUID,
+            'oid' => Organization::ORG_SERVICE_UUID,
         ], [
             '_id' => 1,
         ]);

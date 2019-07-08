@@ -12,8 +12,8 @@ $this->title = 'Дерево файлов системы';
 <table id="tree" style="background-color: white; width: 100%">
     <colgroup>
         <col width="*">
-        <col width="130px">
-        <col width="120px">
+        <col width="150px">
+        <col width="100px">
         <col width="100px">
         <col width="70px">
     </colgroup>
@@ -24,7 +24,7 @@ $this->title = 'Дерево файлов системы';
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
         <th align="center" style="font-weight: normal">Документ</th>
         <th>Дата</th>
-        <th>Свойство</th>
+        <th>Расширение</th>
         <th>Размер</th>
         <th>Ссылка</th>
     </tr>
@@ -108,7 +108,7 @@ $this->title = 'Дерево файлов системы';
             'indentation' => 20,
             "titleColumnIdx" => "1",
             "dateColumnIdx" => "2",
-            "refreshColumnIdx" => "3",
+            "extColumnIdx" => "3",
             "sizeColumnIdx" => "4",
             "linksColumnIdx" => "5",
         ],
@@ -116,7 +116,7 @@ $this->title = 'Дерево файлов системы';
             var node = data.node;
             $tdList = $(node.tr).find(">td");
             $tdList.eq(1).text(node.data.date);
-            $tdList.eq(2).html(node.data.refresh);           
+            $tdList.eq(2).html(node.data.ext);           
             $tdList.eq(3).html(node.data.size);
             $tdList.eq(4).html(node.data.links);
         }')

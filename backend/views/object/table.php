@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\ObjectsSearch */
 
+use common\models\EquipmentType;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
 use kartik\editable\Editable;
@@ -15,6 +16,7 @@ $gridColumns = [
         'attribute' => '_id',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class',
             'style' => 'width: 50px; text-align: center'
@@ -25,14 +27,29 @@ $gridColumns = [
         }
     ],
     [
+        'class' => 'kartik\grid\ExpandRowColumn',
+        'width' => '50px',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'value' => function ($model, $key, $index, $column) {
+            return GridView::ROW_COLLAPSED;
+        },
+        'detail' => function ($model, $key, $index, $column) {
+            return Yii::$app->controller->renderPartial('object-details', ['model' => $model]);
+        },
+        'expandIcon' => '<span class="glyphicon glyphicon-expand"></span>',
+        'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'expandOneOnly' => true
+    ],
+    [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'house',
         'vAlign' => 'middle',
-        'width' => '220px',
+        'mergeHeader' => true,
         'value' => function ($data) {
             return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
         },
-        'header' => 'Адрес',
+        'header' => 'Дом',
         'format' => 'raw',
     ],
     [
@@ -42,8 +59,11 @@ $gridColumns = [
         'width' => '180px',
         'header' => 'Объект',
         'format' => 'raw',
+        'value' => function ($data) {
+            return $data['objectType']['title'] . ' ' . $data['title'];
+        }
     ],
-    [
+/*    [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'objectStatusUuid',
         'header' => 'Статус',
@@ -74,7 +94,7 @@ $gridColumns = [
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw'
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'objectTypeUuid',
@@ -82,7 +102,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '180px',
         'filterType' => GridView::FILTER_SELECT2,
-        'header' => 'Тип',
+        'header' => 'Тип объекта',
         'filter' => ArrayHelper::map(ObjectType::find()->orderBy('title')->all(),
             'uuid', 'title'),
         'filterWidgetOptions' => [
@@ -105,18 +125,33 @@ $gridColumns = [
         },
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
+            'width' => '180px',
+            'attribute' => 'square',
+            'mergeHeader' => true,
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'headerOptions' => ['class' => 'kv-sticky-column'],
+            'contentOptions' => ['class' => 'kv-sticky-column'],
+            'header' => 'Площадь',
+    ],
+
+    /*    [
         'class' => 'kartik\grid\DataColumn',
+        'width' => '180px',
         'attribute' => 'changedAt',
+        'mergeHeader' => true,
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'header' => 'Дата изменения',
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'template' => '{update} {delete}'
     ]
 ];
 

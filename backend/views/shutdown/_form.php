@@ -15,7 +15,7 @@ use common\models\Equipment;
 use common\models\requestStatus;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Request */
+/* @var $model common\models\Shutdown */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 

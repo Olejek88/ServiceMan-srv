@@ -45,16 +45,6 @@ $this->title = Yii::t('app', 'Типы заявок');
                                     }
                                 ],
                                 [
-                                    'attribute'=>'uuid',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class',
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return $data->uuid;
-                                    }
-                                ],
-                                [
                                     'attribute'=>'title',
                                     'contentOptions' =>[
                                         'class' => 'table_class',
@@ -71,7 +61,7 @@ $this->title = Yii::t('app', 'Типы заявок');
                                     'contentOptions' =>[
                                         'class' => 'text-center',
                                     ],
-                                    'template' => '{view} {update} {delete}{link}',
+                                    'template' => '{view}{link}',
                                 ],
                             ],
                         ]); ?>

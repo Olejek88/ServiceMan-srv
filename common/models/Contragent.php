@@ -65,7 +65,7 @@ class Contragent extends ZhkhActiveRecord
         return [
             ['deleted', 'default', 'value' => Status::STATUS_DEFAULT],
             ['deleted', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
-            [['uuid', 'title', 'inn', 'contragentTypeUuid', 'deleted'], 'required'],
+            [['uuid', 'title', 'contragentTypeUuid', 'deleted'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
             [['address'], 'string', 'max' => 250],
@@ -106,11 +106,11 @@ class Contragent extends ZhkhActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'title' => Yii::t('app', 'Название'),
+            'title' => Yii::t('app', 'Наименование/ФИО'),
             'address' => Yii::t('app', 'Адрес'),
             'phone' => Yii::t('app', 'Телефон'),
             'inn' => Yii::t('app', 'ИНН'),
-            'director' => Yii::t('app', 'Директор'),
+            'director' => Yii::t('app', 'Комментарий'),
             'email' => Yii::t('app', 'Е-мэйл'),
             'contragentTypeUuid' => Yii::t('app', 'Тип'),
             'contragentType' => Yii::t('app', 'Тип'),

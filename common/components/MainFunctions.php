@@ -5,19 +5,14 @@ namespace common\components;
 use common\models\EquipmentStatus;
 use common\models\Journal;
 use common\models\Operation;
-use common\models\OperationStatus;
 use common\models\OperationTemplate;
-use common\models\OperationVerdict;
-use common\models\Stage;
-use common\models\StageOperation;
-use common\models\StageStatus;
-use common\models\StageVerdict;
 use common\models\Task;
 use common\models\TaskUser;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
 use Yii;
+use yii\base\InvalidConfigException;
 
 class MainFunctions
 {
@@ -73,10 +68,11 @@ class MainFunctions
 
     /**
      * Logs message to journal register in db
-     * @param string $description сообщение в журнал
      * @param $type
      * @param $title
+     * @param string $description сообщение в журнал
      * @return integer код ошибкиы
+     * @throws InvalidConfigException
      */
     public static function register($type, $title, $description)
     {
@@ -224,30 +220,46 @@ class MainFunctions
         </button></a></span></div>\n{hint}\n{error}";
     }
 
-    public static function createTask($taskTemplateUuid, $equipmentUuid, $comment, $oid, $userUuid)
+    /**
+     * @param $taskTemplate
+     * @param $equipmentUuid
+     * @param $comment
+     * @param $oid
+     * @param $userUuid
+     * @return Task|null
+     * @throws InvalidConfigException
+     */
+    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model)
     {
         $task = new Task();
         $task->uuid = MainFunctions::GUID();
-        $task->taskTemplateUuid = $taskTemplateUuid;
+        $task->taskTemplateUuid = $taskTemplate['uuid'];
         $task->oid = $oid;
         $task->equipmentUuid = $equipmentUuid;
         $task->workStatusUuid = WorkStatus::NEW;
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
+        //$task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
         $task->comment = $comment;
+        if ($model) {
+            $task->authorUuid = $model->authorUuid;
+            $task->taskDate = $model->taskDate;
+            $task->deadlineDate = $model->deadlineDate;
+        }
         if (!$task->save()) {
             MainFunctions::log("request.log", json_encode($task->errors));
             return null;
         } else {
-            $taskUser = new TaskUser();
-            $taskUser->uuid = MainFunctions::GUID();
-            $taskUser->taskUuid = $task->uuid;
-            $taskUser->userUuid = $userUuid;
-            $taskUser->oid = $oid;
-            if (!$taskUser->save()) {
-                MainFunctions::log("request.log", json_encode($taskUser->errors));
-                return null;
+            if ($userUuid) {
+                $taskUser = new TaskUser();
+                $taskUser->uuid = MainFunctions::GUID();
+                $taskUser->taskUuid = $task->uuid;
+                $taskUser->userUuid = $userUuid;
+                $taskUser->oid = $oid;
+                if (!$taskUser->save()) {
+                    MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    return null;
+                }
             }
-
             $operationTemplates = OperationTemplate::find()
                 ->where(['uuid' => $task['taskTemplateUuid']])
                 ->all();
@@ -256,7 +268,7 @@ class MainFunctions
             }
 
         }
-        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplateUuid . ']');
+        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
         return $task;
     }
 

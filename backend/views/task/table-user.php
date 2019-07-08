@@ -1,8 +1,8 @@
 <?php
 
 use common\components\MainFunctions;
-use common\models\MeasureType;
 use common\models\Operation;
+use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -13,6 +13,9 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::Таблица задач');
+
+$users = Users::find()->all();
+$items = ArrayHelper::map($users, 'uuid', 'name');
 
 $gridColumns = [
     [
@@ -31,6 +34,7 @@ $gridColumns = [
     [
         'attribute' => 'taskTemplateUuid',
         'vAlign' => 'middle',
+        'header' => 'Задача',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -43,7 +47,7 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
@@ -51,6 +55,19 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data['equipment']['title'];
+        }
+    ],
+    [
+        'attribute' => 'taskTemplateUuid',
+        'vAlign' => 'middle',
+        'header' => 'Адрес',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['equipment']['object']->getFullTitle();
         }
     ],
     [
@@ -127,7 +144,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'yyyy-MM-dd hh:mm:ss',
-                'saveFormat' => 'php:Y-m-d h:m:s',
+                'saveFormat' => 'php:Y-m-d H:i:s',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -168,23 +185,16 @@ $gridColumns = [
         }
     ],
     [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Операции',
-        'mergeHeader' => true,
-        'contentOptions' => [
+        'attribute'=>'authorUuid',
+        'contentOptions' =>[
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            $operation_list = "";
-            $count = 1;
-            $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
-            foreach ($operations as $operation) {
-                $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
-                $count++;
-            }
-            return $operation_list;
+            if ($data['author'])
+                return $data['author']->name;
+            else
+                return 'отсуттствует';
         }
     ],
     [
@@ -202,17 +212,8 @@ $gridColumns = [
                 return 'неизвестно';
             }
         }
-    ],
-    [
-        'class' => 'kartik\grid\ActionColumn',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'header' => '',
-        'template' => '{delete}'
     ]
 ];
-
-$measureType = MeasureType::find()->all();
-$items = ArrayHelper::map($measureType, 'uuid', 'title');
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -224,16 +225,17 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/task/table-user"><table style="width: 100%; padding: 3px"><tr><td>' .
+            '<form action="/task/table-user"><table style="width: 100%"><tr>
+            <td style="margin: 3px; padding: 3px">' .
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
                 'data' => $items,
-                'options' => ['placeholder' => 'Исполнитель'],
+                'options' => ['placeholder' => 'Все исполнители'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ]) . '</td><td>'.
+            ]) . '</td><td style="margin: 3px; padding: 3px">'.
             DateTimePicker::widget([
                 'name' => 'start_time',
                 'value' => '2018-12-01 00:00:00',
@@ -242,7 +244,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td>'.
+            ]).'</td><td style="margin: 3px; padding: 3px">'.
             DateTimePicker::widget([
                 'name' => 'end_time',
                 'value' => '2021-12-31 00:00:00',
@@ -251,7 +253,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td>'.Html::submitButton(Yii::t('app', 'Выбрать'), [
+            ]).'</td><td style="margin: 3px; padding: 3px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']).'</td><td>{export}</td></tr></table></form>',
             'options' => ['style' => 'width:100%']
         ],
@@ -295,6 +297,16 @@ echo GridView::widget([
     'responsive' => false,
     'hover' => true,
     'floatHeader' => false,
+    'toolbar' => [
+        ['content' =>
+            '<table style="width: 100%"><tr><td style="align-content: end">{export}</td></tr></table>',
+            'options' => ['style' => 'width:100%']
+        ],
+    ],
+    'export' => [
+        'target' => GridView::TARGET_BLANK,
+        'filename' => 'tasks'
+    ],
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Задачи в работе',

@@ -8,7 +8,7 @@ use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'ТОИРУС::Отчеты о показаниях приборов');
+$this->title = Yii::t('app', 'Отчет о показаниях приборов');
 
 $gridColumns = [
     [
@@ -17,7 +17,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-        'header' => 'Оборудование',
+        'header' => 'Элементы',
         'mergeHeader' => true,
         'content' => function ($data) {
             return $data['equipment']['title'];
@@ -27,7 +27,6 @@ $gridColumns = [
         'attribute' => 'equipment.serial',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Серийный номер',
         'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
     ],
@@ -65,6 +64,21 @@ $gridColumns = [
         }
     ],
     [
+        'attribute' => 'measureType.title',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Тип измерения',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return "<span class='badge' style='background-color: blue; height: 22px; margin-top: -3px'>".
+                $data['measureType']['title']."</span>";
+        }
+    ],
+    [
         'class' => 'kartik\grid\ActionColumn',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'header' => 'Действия',
@@ -74,6 +88,15 @@ $gridColumns = [
 
 $measureType = MeasureType::find()->all();
 $items = ArrayHelper::map($measureType, 'uuid', 'title');
+$start_date = '2018-12-31';
+$end_date = '2021-12-31';
+$type = '';
+if (isset($_GET['type']))
+    $type = $_GET['type'];
+if (isset($_GET['end_time']))
+    $end_date = $_GET['end_time'];
+if (isset($_GET['start_time']))
+    $start_date = $_GET['start_time'];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -93,6 +116,7 @@ echo GridView::widget([
                 'name' => 'type',
                 'language' => 'ru',
                 'data' => $items,
+                'value' => $type,
                 'options' => ['placeholder' => 'Тип измерений'],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -100,8 +124,8 @@ echo GridView::widget([
             ]) . '</div><div class="col-sm-4" style="width:25%">' .
             DatePicker::widget([
                 'name' => 'start_time',
-                'value' => '2018-12-01',
                 'removeButton' => false,
+                'value' => $start_date,
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd'
@@ -109,7 +133,7 @@ echo GridView::widget([
             ]) . '</div><div class="col-sm-4" style="width:25%">' .
             DatePicker::widget([
                 'name' => 'end_time',
-                'value' => '2021-12-31',
+                'value' => $end_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,

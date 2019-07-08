@@ -3,8 +3,12 @@
 namespace backend\controllers;
 
 use backend\models\ContragentSearch;
+use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ObjectContragent;
+use common\models\Users;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -30,10 +34,13 @@ class ContragentController extends Controller
         ];
     }
 
+    /**
+     * @throws UnauthorizedHttpException
+     */
     public function init()
     {
 
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             throw new UnauthorizedHttpException();
         }
 
@@ -67,6 +74,9 @@ class ContragentController extends Controller
             }
             if ($_POST['editableAttribute'] == 'phone') {
                 $model['phone'] = $_POST['Contragent'][$_POST['editableIndex']]['phone'];
+            }
+            if ($_POST['editableAttribute'] == 'director') {
+                $model['director'] = $_POST['Contragent'][$_POST['editableIndex']]['director'];
             }
             if ($_POST['editableAttribute'] == 'address') {
                 $model['address'] = $_POST['Contragent'][$_POST['editableIndex']]['address'];
@@ -113,6 +123,13 @@ class ContragentController extends Controller
         $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $objectContragent = new ObjectContragent();
+            $objectContragent->contragentUuid = $model['uuid'];
+            $objectContragent->uuid = MainFunctions::GUID();
+            $objectContragent->oid = Users::getOid(Yii::$app->user->identity);
+            $objectContragent->objectUuid = $_POST['objectUuid'];
+            $objectContragent->save();
+
             return $this->render('table', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
@@ -130,6 +147,7 @@ class ContragentController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
@@ -149,6 +167,9 @@ class ContragentController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

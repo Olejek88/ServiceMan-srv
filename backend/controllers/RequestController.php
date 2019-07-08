@@ -7,15 +7,14 @@ use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
-use common\models\RequestStatus;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\UnauthorizedHttpException;
-use yii\web\UploadedFile;
 
 /**
  * RequestController implements the CRUD actions for Request model.
@@ -52,6 +51,7 @@ class RequestController extends Controller
     /**
      * Lists all Request models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -72,6 +72,9 @@ class RequestController extends Controller
             if ($_POST['editableAttribute'] == 'verdict') {
                 $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
             }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
+            }
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
             }
@@ -87,6 +90,10 @@ class RequestController extends Controller
         $searchModel = new RequestSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=', 'createdAt', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'createdAt', $_GET['end_time']]);
+        }
         $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -145,6 +152,7 @@ class RequestController extends Controller
      * Creates a new Request model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -164,6 +172,10 @@ class RequestController extends Controller
         }
     }
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
     public function actionForm()
     {
         $receiptUuid = "";
@@ -171,14 +183,17 @@ class RequestController extends Controller
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
         } else {
             $model = new Request();
-            if (isset($_GET["equipmentUuid"]))
-                $model->equipmentUuid = $_GET["equipmentUuid"];
             if (isset($_GET["objectUuid"]))
                 $model->objectUuid = $_GET["objectUuid"];
             if (isset($_GET["user"]))
                 $model->userUuid = $_GET["user"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
+            if (isset($_GET["equipmentUuid"])) {
+                $model->equipmentUuid = $_GET["equipmentUuid"];
+                $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
+                $model->objectUuid = $equipment['object']['uuid'];
+            }
         }
         return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid]);
     }
@@ -186,7 +201,7 @@ class RequestController extends Controller
     /**
      * Creates a new Request model.
      * @return mixed
-     * @var $model Request
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
@@ -206,6 +221,23 @@ class RequestController extends Controller
                     if ($model_receipt) {
                         $model_receipt["requestUuid"] = $model['uuid'];
                         $model_receipt->save();
+                    }
+                }
+                if ($model['requestType']['taskTemplateUuid']) {
+                    $user = $model['equipment']->getUser();
+                    if ($user)
+                        $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
+                            $model->comment, $model->oid, $user['uuid'],null);
+                    else
+                        $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
+                            $model->comment, $model->oid, null,null);
+                    if ($task) {
+                        MainFunctions::register('task', 'Создана задача',
+                            '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .
+                            $model['requestType']['taskTemplate']['title'] . '<br/>' .
+                            '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
+                        $model['taskUuid'] = $task['uuid'];
+                        $model->save();
                     }
                 }
                 return true;

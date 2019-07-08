@@ -18,7 +18,7 @@ class ObjectsSearch extends Objects
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'title', 'houseUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'houseUuid', 'objectTypeUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -61,6 +61,7 @@ class ObjectsSearch extends Objects
             '_id' => $this->_id,
             'houseUuid' => $this->houseUuid,
             'objectStatusUuid' => $this->objectStatusUuid,
+            'objectTypeUuid' => $this->objectTypeUuid,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

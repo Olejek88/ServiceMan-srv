@@ -3,12 +3,8 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
-use common\models\Equipment;
-use common\models\Objects;
-use common\models\RequestStatus;
-use common\models\RequestType;
-use common\models\Task;
 use common\models\Users;
+use kartik\widgets\DateTimePicker;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -52,6 +48,22 @@ use yii\bootstrap\ActiveForm;
         ?>
 
         <?= $form->field($model, 'description')->textInput() ?>
+
+        <div class="pole-mg" style="margin: 0 20px;">
+            <p style="width: 200px; margin-bottom: 0;">Дата приема</p>
+            <?= DateTimePicker::widget([
+                'model' => $model,
+                'attribute' => 'date',
+                'language' => 'ru',
+                'size' => 'ms',
+                'pluginOptions' => [
+                    'format' => 'yyyy-mm-dd H:ii',
+                    'todayHighlight' => true
+                ]
+            ]);
+            ?>
+        </div>
+        <?= $form->field($model, 'userCheck')->textInput() ?>
 
         <?php
         $accountUser = Yii::$app->user->identity;

@@ -6,7 +6,6 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model common\models\Contragent */
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Карточка контрагента'), 'url' => ['index']];
 ?>
 <div class="task-view box-padding">
 
@@ -39,7 +38,6 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Карточка к�
                                 'director',
                                 'email',
                                 'contragentTypeUuid',
-                                'status',
                                 'createdAt',
                                 'changedAt',
                             ],

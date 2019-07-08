@@ -1,9 +1,9 @@
 <?php
 
 use app\commands\MainFunctions;
+use common\models\House;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
-use common\models\House;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -21,8 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?php
     if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')
-            ->textInput(['maxlength' => true, 'readonly' => true]);
+        echo $form->field($model, 'uuid')->hiddenInput()->label(false);
     } else {
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
@@ -48,22 +47,8 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
-
-    <?php
-    $statuses = ObjectStatus::find()->all();
-    $items = ArrayHelper::map($statuses, 'uuid', 'title');
-    echo $form->field($model, 'objectStatusUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите статус..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    ?>
+    <?php echo $form->field($model, 'objectStatusUuid')
+        ->hiddenInput(['value' => ObjectStatus::OBJECT_STATUS_OK])->label(false); ?>
 
     <?php
     $types = ObjectType::find()->all();
@@ -80,6 +65,7 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
+    <?php echo $form->field($model, 'square')->textInput(['maxlength' => true]) ?>
 
     <div class="form-group text-center">
         <?php

@@ -8,12 +8,12 @@ $this->title = Yii::t(
     'app',
     'Обновить {modelClass}: ',
     [
-        'modelClass' => 'Оборудование',
+        'modelClass' => 'Элементы',
     ]
 );
 $this->title .= $model['equipmentType']->title;
 $this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Оборудование'),
+    'label' => Yii::t('app', 'Элементы'),
     'url' => ['index']
 ];
 ?>

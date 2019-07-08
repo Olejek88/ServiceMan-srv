@@ -59,7 +59,7 @@ $this->title = Yii::t('app', 'Создать тип заявки');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {delete}{link}',
+                                'template' => '{view}{link}',
                             ]
                         ],
                     ]); ?>

@@ -4,6 +4,7 @@ namespace backend\models;
 
 use common\models\Objects;
 use common\models\Shutdown;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
@@ -38,6 +39,7 @@ class ShutdownSearch extends Shutdown
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {
@@ -65,7 +67,7 @@ class ShutdownSearch extends Shutdown
             'endDate' => $this->endDate,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
-        ]);
+        ])->orderBy('_id DESC');
 
         return $dataProvider;
     }
