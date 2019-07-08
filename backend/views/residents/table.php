@@ -85,7 +85,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->changedAt) > 0)
-                return date("Y-m-d h:m", strtotime($data->changedAt));
+                return date("d-m-Y h:m", strtotime($data->changedAt));
             else
                 return 'не открыт';
         }

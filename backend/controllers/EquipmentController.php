@@ -9,6 +9,7 @@ use common\models\Contragent;
 use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentRegister;
+use common\models\EquipmentRegisterType;
 use common\models\EquipmentType;
 use common\models\House;
 use common\models\Measure;
@@ -86,26 +87,43 @@ class EquipmentController extends Controller
                 ->one();
             if ($_POST['editableAttribute'] == 'serial') {
                 $model['serial'] = $_POST['Equipment'][$_POST['editableIndex']]['serial'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Сменили серийный номер на ".$model['serial']);
             }
             if ($_POST['editableAttribute'] == 'tag') {
                 $model['tag'] = $_POST['Equipment'][$_POST['editableIndex']]['tag'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Смена тега на ".$model['tag']);
             }
             if ($_POST['editableAttribute'] == 'equipmentTypeUuid') {
                 $model['equipmentTypeUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentTypeUuid'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Смена типа элемента на ".$model['equipmentType']['title']);
             }
             if ($_POST['editableAttribute'] == 'equipmentStatusUuid') {
                 $model['equipmentStatusUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentStatusUuid'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
+                    "Смена статуса на ".$model['equipmentStatus']['title']);
             }
             if ($_POST['editableAttribute'] == 'testDate') {
                 $model['testDate'] = $_POST['Equipment'][$_POST['editableIndex']]['testDate'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Смена даты поверки на ".$model['testDate']);
             }
             if ($_POST['editableAttribute'] == 'inputDate') {
                 $model['inputDate'] = $_POST['Equipment'][$_POST['editableIndex']]['inputDate'];
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Смена даты ввода в эксплуатацию на ".$model['inputDate']);
             }
             $model->save();
             return json_encode($model['inputDate']);
         }
-
         $searchModel = new EquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
@@ -148,6 +166,12 @@ class EquipmentController extends Controller
         $searchModel = new EquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
+        $dataProvider->query->andWhere(['IN', 'equipmentTypeUuid', [
+            EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER,
+            EquipmentType::EQUIPMENT_HVS_COUNTER,
+            EquipmentType::EQUIPMENT_HEAT_COUNTER
+        ]]);
+
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
@@ -940,6 +964,9 @@ class EquipmentController extends Controller
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
+            if (isset($_POST["uuid"]))
+                $uuid = $_POST["uuid"];
+            else $uuid = 0;
             if (isset($_POST["type"]))
                 $type = $_POST["type"];
             else $type = 0;
@@ -970,16 +997,16 @@ class EquipmentController extends Controller
                         'equipment' => $equipment,
                         'objectUuid' => $uuid,
                         'equipmentTypeUuid' => null,
-                        'source' => $source
+                        'source' => '../equipment/tree-street'
                     ]);
                 }
                 if ($type == 'type') {
                     $equipment = new Equipment();
                     return $this->renderAjax('_add_form', [
                         'equipment' => $equipment,
-                        'objectUuid' => 0,
+                        'objectUuid' => null,
                         'equipmentTypeUuid' => $uuid,
-                        'source' => $source
+                        'source' => '../equipment/tree'
                     ]);
                 }
             }
@@ -1117,6 +1144,56 @@ class EquipmentController extends Controller
                 else
                     $model = new Equipment();
                 if ($model->load(Yii::$app->request->post())) {
+                    //public static function addEquipmentRegister($equipmentUuid, $registerTypeUuid, $description)
+                    $changed_attributes = array_diff_assoc($model->getOldAttributes(), $model->getAttributes());
+                    foreach($changed_attributes as $field => $value) {
+                        //адрес, завод.номер,статус, дата ввода в эксп.
+                        if ($field == 'objectUuid') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PLACE,
+                                "Элемент отнесли к ".$model['object']->getFullTitle());
+                        }
+                        if ($field == 'serial') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Сменили серийный номер на ".$value);
+                        }
+                        if ($field == 'equipmentStatusUuid') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
+                                "Смена статуса на ".$model['equipmentStatus']['title']);
+                        }
+                        if ($field == 'inputDate') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена даты ввода в эксплуатацию на ".$model['inputDate']);
+                        }
+                        if ($field == 'tag') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена тега на ".$model['tag']);
+                        }
+                        if ($field == 'period') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена периода поверки на ".$model['period']);
+                        }
+                        if ($field == 'testDate') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена даты поверки на ".$model['testDate']);
+                        }
+                        if ($field == 'replaceDate') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена даты замены на ".$model['replaceDate']);
+                        }
+                        if ($field == 'objectTypeUuid') {
+                            EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                                "Смена типа элемента на ".$model['objectType']['title']);
+                        }
+                    }
                     if ($model->save(false) && isset($_POST['equipmentUuid'])) {
                         if ($source)
                             return $this->redirect([$source]);
@@ -1143,7 +1220,7 @@ class EquipmentController extends Controller
             ->all();
         $count = 0;
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
@@ -1201,7 +1278,7 @@ class EquipmentController extends Controller
         }
 
         $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid']],
+            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
@@ -1431,6 +1508,29 @@ class EquipmentController extends Controller
         return $this->renderAjax('_add_form', [
             'equipment' => $equipment,
             'type' => 'equipment',
+            'source' => $source
+        ]);
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
+     *
+     * @return mixed
+     * @throws InvalidConfigException
+     */
+    public
+    function actionEditTable()
+    {
+        if (isset($_POST["uuid"]))
+            $uuid = $_POST["uuid"];
+        else $uuid = 0;
+
+        $source = '../equipment';
+        $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+        return $this->renderAjax('../equipment/_add_form', [
+            'contragentUuid' => $uuid,
+            'equipment' => $equipment,
+            'reference' => '../equipment',
             'source' => $source
         ]);
     }

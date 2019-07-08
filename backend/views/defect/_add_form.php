@@ -5,6 +5,7 @@
 
 
 use common\components\MainFunctions;
+use common\models\DefectType;
 use common\models\Equipment;
 use common\models\Users;
 use kartik\select2\Select2;
@@ -35,6 +36,18 @@ use yii\helpers\Html;
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
     echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    $defect_types = DefectType::find()->all();
+    $items = ArrayHelper::map($defect_types, 'uuid', 'title');
+    echo $form->field($model, 'defectTypeUuid')->widget(Select2::class,
+        [
+            'name' => 'kv_type',
+            'language' => 'ru',
+            'data' => $items,
+            'options' => ['placeholder' => 'Выберите тип ...'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
     if ($equipmentUuid) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
@@ -50,7 +63,7 @@ use yii\helpers\Html;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ])->label(false);
+            ]);
     }
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);

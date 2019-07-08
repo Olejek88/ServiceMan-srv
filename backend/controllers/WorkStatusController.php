@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\TaskSearchVerdict;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\Controller;
@@ -85,8 +86,12 @@ class WorkStatusController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
+            $searchModel = new WorkSearchStatus();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 25;
+
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

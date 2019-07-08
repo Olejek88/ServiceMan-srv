@@ -8,6 +8,7 @@ use common\models\Contragent;
 use common\models\ObjectContragent;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -56,6 +57,7 @@ class ContragentController extends Controller
 
     /**
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTable()
     {
@@ -81,6 +83,9 @@ class ContragentController extends Controller
             if ($_POST['editableAttribute'] == 'address') {
                 $model['address'] = $_POST['Contragent'][$_POST['editableIndex']]['address'];
             }
+            if ($_POST['editableAttribute'] == 'account') {
+                $model['account'] = $_POST['Contragent'][$_POST['editableIndex']]['account'];
+            }
             if ($_POST['editableAttribute'] == 'email') {
                 $model['email'] = $_POST['Contragent'][$_POST['editableIndex']]['email'];
             }
@@ -102,6 +107,7 @@ class ContragentController extends Controller
      * Displays a single Contragent model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -193,4 +199,17 @@ class ContragentController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     */
+    public function actionPhone()
+    {
+        if (isset($_POST['id']))
+        if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+            return $model['phone'];
+        } else return '';
+    }
+
 }

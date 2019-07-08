@@ -70,6 +70,18 @@ $gridColumns = [
         }
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'attribute' => 'userCheckWho',
+        'header' => 'Должность лица ведущего прием',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+    ],
+    [
         'attribute' => 'user',
         'vAlign' => 'middle',
         'hAlign' => 'center',

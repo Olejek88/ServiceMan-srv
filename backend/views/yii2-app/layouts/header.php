@@ -33,7 +33,7 @@ $userImage = Yii::$app->view->params['userImage'];
                 <!-- Messages: style can be found in dropdown.less-->
                 <li class="dropdown messages-menu">
                     <a href="/message/list" class="dropdown-toggle">
-                            <i class="fa fa-envelope-o"></i>
+                        <i class="fa fa-envelope-o"></i>
                     </a>
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->
@@ -42,6 +42,35 @@ $userImage = Yii::$app->view->params['userImage'];
                         <i class="fa fa-bell-o"></i>
                     </a>
                 </li>
+
+                <li class="dropdown references-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-battery"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Предупреждения статус", ['../alarm-status/create']); ?></li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Предупреждения типы", ['../alarm-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-address-book\"></i> Документация типы", ['../documentation-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Контрагенты типы", ['../contragent-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Журнал типы записей", ['../equipment-register-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы оборудования", ['../equipment-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы оборудования", ['../equipment-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Иженерные системы", ['../equipment-system/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы домов", ['../house-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы домов", ['../house-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы объектов", ['../object-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы объектов", ['../object-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы запрооов", ['../request-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Характеры обращений", ['../request-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы задач", ['../task-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Вердикты задач", ['../task-verdict/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы работ", ['../work-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы измерений", ['../measure-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы дефектов", ['../defect-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Шаблоны задач", ['../task-template/create']); ?> </li>
+                    </ul>
+                </li>
+
                 <!-- User Account: style can be found in dropdown.less -->
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">

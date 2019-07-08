@@ -299,10 +299,14 @@ class TaskController extends Controller
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
         } else {
+            $searchModel = new TaskSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 25;
+
             return $this->render(
                 'create',
                 [
-                    'model' => $model,
+                    'model' => $model, 'dataProvider' => $dataProvider
                 ]
             );
         }

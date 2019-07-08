@@ -1,9 +1,7 @@
 <?php
 /* @var $searchModel backend\models\UsersSearch */
 
-use backend\controllers\AccessController;
 use common\models\User;
-use common\models\Users;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 
@@ -106,6 +104,12 @@ $gridColumns = [
         'mergeHeader' => true,
         'format' => 'html',
         'vAlign' => 'middle',
+        'value' => function ($model, $key, $index, $widget) {
+            if ($model->active)
+                return GridView::ICON_ACTIVE;
+            else
+                return GridView::ICON_INACTIVE;
+        },
         'editableOptions' => $editableOptions
     ],
 /*    [

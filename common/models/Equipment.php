@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -7,7 +8,6 @@ use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
-use yii\helpers\Html;
 
 /**
  * This is the model class for table "equipment".
@@ -34,6 +34,7 @@ use yii\helpers\Html;
  * @property Object $object
  * @property string $nextDate
  * @property string $fullTitle
+ * @property string $address
  * @property Photo $photo
  * @property User $user
  */
@@ -161,6 +162,7 @@ class Equipment extends ZhkhActiveRecord
             'object' => Yii::t('app', 'Объект'),
             'tag' => Yii::t('app', 'Метка'),
             'serial' => Yii::t('app', 'Заводской номер'),
+            'address' => Yii::t('app', 'Адрес'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -214,12 +216,14 @@ class Equipment extends ZhkhActiveRecord
         return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
-    public function getPhoto() {
+    public function getPhoto()
+    {
         return $this->hasMany(Photo::class, ['equipmentUuid' => 'uuid']);
     }
 
-    public function getNextDate() {
-        $seconds = strtotime($this->testDate)+($this->period*3600*24);
+    public function getNextDate()
+    {
+        $seconds = strtotime($this->testDate) + ($this->period * 3600 * 24);
         return date('Y-m-d', $seconds);
     }
 
@@ -230,7 +234,15 @@ class Equipment extends ZhkhActiveRecord
      */
     public function getFullTitle()
     {
-        return $this['object']->getFullTitle().' ['.$this['title'].']';
+        return $this['object']->getFullTitle() . ' [' . $this['title'] . ']';
+    }
+
+    public function getAddress()
+    {
+        if ($this['object'] && $this['object']['house'])
+            return $this['object']['house']['street']->title . ', ' . $this['object']['house']->number . ' - ' . $this['object']->title;
+        else
+            return '';
     }
 
     /**

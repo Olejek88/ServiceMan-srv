@@ -2,6 +2,7 @@
 
 namespace common\components;
 
+use common\models\EquipmentRegister;
 use common\models\EquipmentStatus;
 use common\models\Journal;
 use common\models\Operation;
@@ -94,7 +95,7 @@ class MainFunctions
         }
     }
 
-    /**
+/**
      * return generated UUID
      * @return string generated UUID
      */

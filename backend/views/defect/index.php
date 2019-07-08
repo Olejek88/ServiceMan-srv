@@ -37,6 +37,16 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
+        'attribute' => 'defectType.title',
+        'header' => 'Тип дефекта',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+    ],
+    [
         'header' => 'Адрес',
         'hAlign' => 'center',
         'vAlign' => 'middle',

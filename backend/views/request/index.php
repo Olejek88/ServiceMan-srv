@@ -1,7 +1,7 @@
 <?php
 /* @var $searchModel backend\models\RequestSearch */
 
-use common\models\EquipmentStatus;
+use common\models\Contragent;
 use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -90,7 +90,10 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['user']->title . '<br/> [' . $data['user']->phone . ']';
+            if ($data['userUuid']!= Contragent::DEFAULT_CONTRAGENT)
+                return $data['user']->title . '<br/> [' . $data['user']->phone . ']';
+            else
+                return $data['author']->name;
         }
     ],
     [
