@@ -7,7 +7,6 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
-use yii\web\IdentityInterface;
 
 /**
  * Class Users
@@ -203,13 +202,13 @@ class Users extends ZhkhActiveRecord
     }
 
     /**
-     * @param $user IdentityInterface
      * @return string
      */
-    static function getOid($user)
+    static function getCurrentOid()
     {
-        /** @var User $user */
-        $oid = $user->users->oid;
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $oid = $identity->users->oid;
         return $oid;
     }
 }

@@ -1,6 +1,8 @@
 <?php
 /* @var $model common\models\Users */
 
+/* @var $roleList string[] */
+
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Обновить пользователя');
@@ -21,6 +23,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Пользовате
                     <h6>
                         <?= $this->render('_form', [
                             'model' => $model,
+                            'roleList' => $roleList,
                         ]) ?>
                     </h6>
                 </div>

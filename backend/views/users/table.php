@@ -1,9 +1,7 @@
 <?php
 /* @var $searchModel backend\models\UsersSearch */
 
-use backend\controllers\AccessController;
 use common\models\User;
-use common\models\Users;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 

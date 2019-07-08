@@ -126,7 +126,7 @@ class ContragentController extends Controller
             $objectContragent = new ObjectContragent();
             $objectContragent->contragentUuid = $model['uuid'];
             $objectContragent->uuid = MainFunctions::GUID();
-            $objectContragent->oid = Users::getOid(Yii::$app->user->identity);
+            $objectContragent->oid = Users::getCurrentOid();
             $objectContragent->objectUuid = $_POST['objectUuid'];
             $objectContragent->save();
 

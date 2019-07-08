@@ -734,7 +734,7 @@ class ObjectController extends Controller
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
         $object->title = $flat_num;
-        $object->oid = Users::getOid(Yii::$app->user->identity);
+        $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 33;
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
@@ -750,7 +750,7 @@ class ObjectController extends Controller
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
         $object->title = $name;
-        $object->oid = Users::getOid(Yii::$app->user->identity);
+        $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 0;
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
@@ -766,7 +766,7 @@ class ObjectController extends Controller
         $equipment = new Equipment();
         $equipment->uuid = MainFunctions::GUID();
         $equipment->title = $name;
-        $equipment->oid = Users::getOid(Yii::$app->user->identity);
+        $equipment->oid = Users::getCurrentOid();
         $equipment->objectUuid = $objectUuid;
         $equipment->equipmentStatusUuid = EquipmentStatus::WORK;
         $equipment->equipmentTypeUuid = $equipmentTypeUuid;

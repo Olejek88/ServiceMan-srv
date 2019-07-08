@@ -72,7 +72,7 @@ use yii\bootstrap\ActiveForm;
         echo $form->field($model, 'result')->hiddenInput(['value' => "пока нет"])->label(false);
         echo $form->field($model, 'closed')->hiddenInput(['value' => false])->label(false);
         ?>
-        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
+        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     </div>
     <div class="modal-footer">

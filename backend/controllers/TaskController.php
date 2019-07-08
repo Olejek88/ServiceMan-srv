@@ -294,7 +294,7 @@ class TaskController extends Controller
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
             $modelTU->userUuid = $user['uuid'];
-            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
+            $modelTU->oid = Users::getCurrentOid();
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();

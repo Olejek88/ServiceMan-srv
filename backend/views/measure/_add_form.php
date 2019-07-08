@@ -73,7 +73,7 @@ use yii\helpers\Html;
     <?php
     $accountUser = Yii::$app->user->identity;
     $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
+    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($model, 'userUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
     ?>
     <div class="pole-mg" style="margin: 0 -5px 20px -5px;">
