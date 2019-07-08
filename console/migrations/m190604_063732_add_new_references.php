@@ -1,7 +1,7 @@
 <?php
 
 use common\models\TaskType;
-use common\models\Users;
+use common\models\Organization;
 use yii\db\Migration;
 
 /**
@@ -109,7 +109,7 @@ class m190604_063732_add_new_references extends Migration
             'title' => $title,
             'description' => $description,
             'normative' => $normative,
-            'oid' => Users::ORGANISATION_UUID,
+            'oid' => Organization::ORG_SERVICE_UUID,
             'taskTypeUuid' => $taskTypeUuid,
             'createdAt' => $createdAt,
             'changedAt' => $changedAt

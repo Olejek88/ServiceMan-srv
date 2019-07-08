@@ -399,6 +399,7 @@ class UsersController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
     public function actionUpdate($id)
     {
@@ -632,6 +633,7 @@ class UsersController extends Controller
     /**
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionAddSystem()
     {
