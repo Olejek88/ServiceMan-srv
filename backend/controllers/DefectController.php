@@ -8,13 +8,12 @@ use common\models\Defect;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * DefectController implements the CRUD actions for Defect model.
  */
-class DefectController extends Controller
+class DefectController extends ZhkhController
 {
     protected $modelClass = Defect::class;
 
@@ -73,6 +72,8 @@ class DefectController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Defect();
         $defect = Defect::find()
             ->select('_id')
@@ -107,6 +108,8 @@ class DefectController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -130,6 +133,8 @@ class DefectController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

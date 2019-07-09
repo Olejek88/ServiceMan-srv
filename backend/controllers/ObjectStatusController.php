@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\ObjectSearchStatus;
 use common\models\ObjectStatus;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ObjectStatusController implements the CRUD actions for ObjectStatus model.
  */
-class ObjectStatusController extends Controller
+class ObjectStatusController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all ObjectStatus models.
      * @return mixed
@@ -74,6 +46,8 @@ class ObjectStatusController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new ObjectStatus();
         $searchModel = new ObjectSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -97,6 +71,8 @@ class ObjectStatusController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -116,6 +92,8 @@ class ObjectStatusController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -23,11 +23,9 @@ use yii\db\Expression;
  *
  * @property Equipment $equipment
  * @property string $docDir
- * @property string $docUrl
  * @property DocumentationType $documentationType
  * @property EquipmentType $equipmentType
  */
-
 class Documentation extends ActiveRecord
 {
     private static $_IMAGE_ROOT = 'doc';
@@ -100,20 +98,22 @@ class Documentation extends ActiveRecord
      */
     public function fields()
     {
-        return ['_id','uuid', 'equipmentUuid',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'documentationTypeUuid',
-            'documentationType' => function ($model) {
-                return $model->documentationType;
-            }, 'title','path',
-            'createdAt', 'changedAt',
-            'equipmentTypeUuid',
-            'equipmentType' => function ($model) {
-                return $model->equipmentType;
-            },
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id','uuid', 'equipmentUuid',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'documentationTypeUuid',
+//            'documentationType' => function ($model) {
+//                return $model->documentationType;
+//            }, 'title','path',
+//            'createdAt', 'changedAt',
+//            'equipmentTypeUuid',
+//            'equipmentType' => function ($model) {
+//                return $model->equipmentType;
+//            },
+//        ];
     }
 
     /**
@@ -139,20 +139,6 @@ class Documentation extends ActiveRecord
             'changedAt' => Yii::t('app', 'Изменен'),
             'path' => Yii::t('app', 'Путь'),
         ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

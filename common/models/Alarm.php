@@ -58,7 +58,7 @@ class Alarm extends ZhkhActiveRecord
         return [
             [['uuid', 'alarmTypeUuid', 'alarmStatusUuid', 'userUuid', 'latitude', 'longitude', 'date'], 'required'],
             [['createdAt', 'changedAt', 'date'], 'safe'],
-            [['uuid', 'alarmTypeUuid', 'oid', 'alarmStatusUuid', 'userUuid' , 'objectUuid'], 'string', 'max' => 50],
+            [['uuid', 'alarmTypeUuid', 'oid', 'alarmStatusUuid', 'userUuid', 'objectUuid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'double'],
             [['comment'], 'string', 'max' => 250],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
@@ -68,32 +68,34 @@ class Alarm extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'userUuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'date',
-            'alarmStatusUuid',
-            'alarmStatus' => function ($model) {
-                return $model->alarmStatus;
-            },
-            'alarmTypeUuid',
-            'alarmType' => function ($model) {
-                return $model->alarmType;
-            },
-            'objectUuid',
-            'object' => function ($model) {
-                return $model->object;
-            },
-            'longitude',
-            'latitude',
-            'comment',
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'userUuid',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'date',
+//            'alarmStatusUuid',
+//            'alarmStatus' => function ($model) {
+//                return $model->alarmStatus;
+//            },
+//            'alarmTypeUuid',
+//            'alarmType' => function ($model) {
+//                return $model->alarmType;
+//            },
+//            'objectUuid',
+//            'object' => function ($model) {
+//                return $model->object;
+//            },
+//            'longitude',
+//            'latitude',
+//            'comment',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getAlarmType()
@@ -116,7 +118,8 @@ class Alarm extends ZhkhActiveRecord
         return $this->hasOne(Objects::class, ['uuid' => 'objectUuid']);
     }
 
-    public function getPhoto() {
+    public function getPhoto()
+    {
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 

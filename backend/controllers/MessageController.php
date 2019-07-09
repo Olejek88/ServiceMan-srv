@@ -11,7 +11,6 @@ use Yii;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
@@ -19,7 +18,7 @@ use yii\web\UploadedFile;
 /**
  * MessageController implements the CRUD actions for Message model.
  */
-class MessageController extends Controller
+class MessageController extends ZhkhController
 {
     protected $modelClass = Message::class;
 
@@ -167,6 +166,8 @@ class MessageController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Message();
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -227,6 +228,8 @@ class MessageController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -250,6 +253,8 @@ class MessageController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

@@ -40,7 +40,7 @@ use yii\helpers\Html;
         echo $form->field($object, 'houseUuid')->hiddenInput(['value' => $houseUuid])->label(false);
         echo $form->field($object, 'objectStatusUuid')->hiddenInput(['value' => ObjectStatus::OBJECT_STATUS_OK])->label(false);
     }
-    echo $form->field($object, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    echo $form->field($object, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($object, 'title')->textInput(['maxlength' => true]);
     echo $form->field($object, 'square')->textInput(['maxlength' => true]);
 

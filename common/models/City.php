@@ -54,17 +54,6 @@ class City extends ZhkhActiveRecord
         ];
     }
 
-    public function fields()
-    {
-        return [
-            '_id',
-            'uuid',
-            'title',
-            'createdAt',
-            'changedAt',
-        ];
-    }
-
     /**
      * @inheritdoc
      */

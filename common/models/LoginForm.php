@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Yii;
@@ -6,6 +7,8 @@ use yii\base\Model;
 
 /**
  * Login form
+ *
+ * @property null|User $user
  */
 class LoginForm extends Model
 {

@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -45,18 +46,6 @@ class ExportLink extends ZhkhActiveRecord
     public static function tableName()
     {
         return 'export_link';
-    }
-
-    /**
-     * Свойства объекта со связанными данными.
-     *
-     * @return array
-     */
-    public function fields()
-    {
-        return ['_id', 'uuid', 'externalId', 'dbUuid', 'table',
-            'createdAt', 'changedAt'
-        ];
     }
 
     /**
@@ -108,19 +97,5 @@ class ExportLink extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

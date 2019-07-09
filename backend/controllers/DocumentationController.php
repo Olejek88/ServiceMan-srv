@@ -10,51 +10,14 @@ use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
 
 /**
  * DocumentationController implements the CRUD actions for Documentation model.
  */
-class DocumentationController extends Controller
+class DocumentationController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Documentation models.
      *
@@ -132,6 +95,8 @@ class DocumentationController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Documentation();
         $entityType = new DynamicModel(['entityType']);
         $entityType->addRule(['entityType'], 'string', ['max' => 45]);
@@ -200,6 +165,8 @@ class DocumentationController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         $entityType = new DynamicModel(['entityType']);
         $entityType->addRule(['entityType'], 'string', ['max' => 45]);
@@ -326,6 +293,8 @@ class DocumentationController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $model = $this->findModel($id);
         $this->findModel($id)->delete();
         if ($model) {

@@ -5,40 +5,15 @@ namespace backend\controllers;
 use backend\models\AlarmSearchStatus;
 use common\models\AlarmStatus;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
+use Throwable;
+use yii\db\StaleObjectException;
 
 /**
  * AlarmStatusController implements the CRUD actions for ActionType model.
  */
-class AlarmStatusController extends Controller
+class AlarmStatusController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all AlarmStatus models.
      * @return mixed
@@ -59,6 +34,7 @@ class AlarmStatusController extends Controller
      * Displays a single AlarmStatus model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -74,6 +50,8 @@ class AlarmStatusController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new AlarmStatus();
         $searchModel = new AlarmSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -98,9 +76,12 @@ class AlarmStatusController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -117,9 +98,14 @@ class AlarmStatusController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -34,6 +34,7 @@ class EquipmentStatus extends ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */

@@ -8,50 +8,12 @@ use common\models\RequestType;
 use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * RequestTypeController implements the CRUD actions for RequestType model.
  */
-class RequestTypeController extends Controller
+class RequestTypeController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Group models.
      *
@@ -80,6 +42,8 @@ class RequestTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new RequestType();
         $searchModel = new RequestTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -105,6 +69,8 @@ class RequestTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -129,6 +95,8 @@ class RequestTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

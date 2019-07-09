@@ -95,39 +95,26 @@ class Organization extends ActiveRecord
      *
      * @return array
      */
-    /*    public function fields()
-        {
-            return [
-                '_id',
-                'uuid',
-                'name',
-                'active',
-                'type',
-                'pin',
-                'user_id',
-                'contact',
-                'active',
-                'user' => function ($model) {
-                    return $model->user;
-                },
-                'createdAt',
-                'changedAt',
-                'image',
-            ];
-        }
-    */
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
+    public function fields()
     {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'name',
+//            'active',
+//            'type',
+//            'pin',
+//            'user_id',
+//            'contact',
+//            'active',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'createdAt',
+//            'changedAt',
+//            'image',
+//        ];
     }
 }

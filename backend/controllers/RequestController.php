@@ -11,43 +11,12 @@ use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * RequestController implements the CRUD actions for Request model.
  */
-class RequestController extends Controller
+class RequestController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Request models.
      * @return mixed
@@ -156,6 +125,8 @@ class RequestController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Request();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->equipmentUuid)
@@ -266,9 +237,10 @@ class RequestController extends Controller
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public
-    function actionUpdate($id)
+    public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -289,9 +261,10 @@ class RequestController extends Controller
      * @throws \Throwable
      * @throws StaleObjectException
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $model = $this->findModel($id);
         if ($model) {
             $model->delete();

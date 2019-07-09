@@ -92,27 +92,29 @@ class Defect extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'date',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'defectStatus',
-            'title',
-            'task' => function ($model) {
-                return $model->task;
-            },
-            'defectType' => function ($model) {
-                return $model->defectType;
-            },
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'date',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'defectStatus',
+//            'title',
+//            'task' => function ($model) {
+//                return $model->task;
+//            },
+//            'defectType' => function ($model) {
+//                return $model->defectType;
+//            },
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getEquipment()
@@ -138,7 +140,8 @@ class Defect extends ZhkhActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getPhoto() {
+    public function getPhoto()
+    {
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 

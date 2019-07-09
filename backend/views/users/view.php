@@ -3,8 +3,11 @@
 use common\models\User;
 use common\models\Users;
 use yii\helpers\Html;
+use backend\models\UserArm;
 
 /* @var $model Users */
+/* @var $userArm UserArm */
+/* @var $roleList array */
 /* @var $user_property */
 /* @var $orders */
 /* @var $events */
@@ -88,12 +91,12 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                         <strong><i class="fa fa-pencil margin-r-5"></i> Специализация</strong>
                         <p>
                             <?php
-                            if (\Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+                            if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
                                 echo '<span class="label label-danger">Администратор</span>';
                             }
                             ?>
                             <?php
-                            if (\Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
+                            if (Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
                                 echo '<span class="label label-success">Оператор</span>';
                             }
                             ?>
@@ -174,7 +177,11 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                             <div class="post">
                                 <div class="user-block">
                                     <?= $this->render('_form', [
-                                        'model' => $model, ['class' => 'form-horizontal']
+                                        'model' => $model,
+                                        'userArm' => $userArm,
+                                        'roleList' => $roleList,
+                                        ['class' => 'form-horizontal']
+
                                     ]) ?>
                                 </div>
                             </div>

@@ -5,7 +5,7 @@ namespace common\models;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
+use yii\db\ActiveQuery;
 use yii\db\Expression;
 
 /**
@@ -62,19 +62,24 @@ class Street extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'cityUuid',
-            'city' => function ($model) {
-                return $model->city;
-            },
-            'title',
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'cityUuid',
+//            'city' => function ($model) {
+//                return $model->city;
+//            },
+//            'title',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getCity()
     {
         return $this->hasOne(City::class, ['uuid' => 'cityUuid']);

@@ -17,10 +17,6 @@ $this->title = Yii::t('app', 'Пользователи');
                 <?php echo Html::encode($this->title) ?>
             </h3>
 
-            <ul class="nav nav-tabs" style="width: 200px; margin: 0 auto;">
-                <li class="active"><a href="/users">Операторы</a></li>
-                <li class=""><a href="/user">АРМ</a></li>
-            </ul>
         </div>
         <div class="panel-body">
 

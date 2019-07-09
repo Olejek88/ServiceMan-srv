@@ -75,22 +75,24 @@ class Equipment extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid', 'title',
-            'objectUuid',
-            'object' => function ($model) {
-                return $model->object;
-            },
-            'equipmentTypeUuid',
-            'equipmentType' => function ($model) {
-                return $model->equipmentType;
-            },
-            'equipmentStatusUuid',
-            'equipmentStatus' => function ($model) {
-                return $model->equipmentStatus;
-            },
-            'serial', 'period', 'testDate', 'inputDate', 'replaceDate', 'tag', 'deleted',
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid', 'title',
+//            'objectUuid',
+//            'object' => function ($model) {
+//                return $model->object;
+//            },
+//            'equipmentTypeUuid',
+//            'equipmentType' => function ($model) {
+//                return $model->equipmentType;
+//            },
+//            'equipmentStatusUuid',
+//            'equipmentStatus' => function ($model) {
+//                return $model->equipmentStatus;
+//            },
+//            'serial', 'period', 'testDate', 'inputDate', 'replaceDate', 'tag', 'deleted',
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -166,20 +168,6 @@ class Equipment extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**

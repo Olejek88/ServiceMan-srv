@@ -3,52 +3,18 @@
 namespace backend\controllers;
 
 use backend\models\MeasureSearch;
-use common\models\Equipment;
-use common\models\House;
 use common\models\Measure;
-use common\models\Objects;
-use common\models\Street;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 use yii\base\InvalidConfigException;
 use Throwable;
 
 /**
  * MeasureController implements the CRUD actions for Measure model.
  */
-class MeasureController extends Controller
+class MeasureController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Measure models.
      * @return mixed
@@ -91,6 +57,8 @@ class MeasureController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Measure();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return self::actionIndex();
@@ -133,6 +101,8 @@ class MeasureController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -154,6 +124,8 @@ class MeasureController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

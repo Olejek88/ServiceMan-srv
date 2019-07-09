@@ -35,7 +35,7 @@ use yii\widgets\ActiveForm;
     }
     ?>
 
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
     $users = Users::find()->all();

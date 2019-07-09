@@ -56,10 +56,10 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoType('object_type','3D163AC7-3061-4796-B535-0B39C08E9377',
             'Подвал', $currentTime, $currentTime);
 
-/*        $this->insertIntoEquipmentSystem('equipment_system', EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
+        $this->insertIntoEquipmentSystem('equipment_system', EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
             'Электрика','Электрик', $currentTime, $currentTime);
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_GAS,
-            'Газовое оборудование','Газовщик', $currentTime, $currentTime);*/
+            'Газовое оборудование', 'Газовщик', $currentTime, $currentTime);
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Система водоснабжения','Сантехник', $currentTime, $currentTime);
         $this->insertIntoEquipmentSystem('equipment_system',EquipmentSystem::EQUIPMENT_SYSTEM_HEAT,

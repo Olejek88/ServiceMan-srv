@@ -4,6 +4,7 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "contragent_register".
@@ -16,6 +17,8 @@ use Yii;
  * @property string $description
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @property Contragent $contragent
  */
 class ContragentRegister extends ZhkhActiveRecord
 {
@@ -33,9 +36,9 @@ class ContragentRegister extends ZhkhActiveRecord
     public function rules()
     {
         return [
-            [['uuid','contragentUuid', 'description', 'date'], 'required'],
-            [['data','oid'], 'safe'],
-            [['uuid','contragentUuid', 'date'], 'string', 'max' => 50],
+            [['uuid', 'contragentUuid', 'description', 'date'], 'required'],
+            [['data', 'oid'], 'safe'],
+            [['uuid', 'contragentUuid', 'date'], 'string', 'max' => 50],
             [['description'], 'string', 'max' => 350],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
@@ -62,7 +65,7 @@ class ContragentRegister extends ZhkhActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getContragent()
     {

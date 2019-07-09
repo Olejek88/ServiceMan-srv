@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\UserArm;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
@@ -10,64 +11,32 @@ use common\models\Journal;
 use common\models\Measure;
 use common\models\Message;
 use common\models\Photo;
+use common\models\User;
 use common\models\TaskUser;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\web\Controller;
+use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
 use Throwable;
 use yii\base\InvalidConfigException;
+use Exception;
 
 /**
  * UsersController implements the CRUD actions for Users model.
  */
-class UsersController extends Controller
+class UsersController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Users models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -91,85 +60,68 @@ class UsersController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     * @throws HttpException
      */
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $oldPin = $model->pin;
-        $oldImage = $model->image;
-        // сохраняем старое значение image
-        if ($model->load(Yii::$app->request->post())) {
-            // хешируем пин
-            if ($oldPin != $model->pin) {
-                $model->pin = md5($model->pin);
-            }
 
-            // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'image');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->image = $fileName;
-                } else {
-                    $model->image = $oldImage;
-                    // уведомить пользователя, админа о невозможности сохранить файл
-                }
-            } else {
-                $model->image = $oldImage;
-            }
+        $user_photo = Photo::find()->where(['userUuid' => $model['uuid']])->count();
+        $user_property['photo'] = $user_photo;
+        $user_measure = Measure::find()->where(['userUuid' => $model['uuid']])->count();
+        $user_property['measure'] = $user_measure;
+        $user_alarm = Alarm::find()->where(['userUuid' => $model['uuid']])->count();
+        $user_property['alarms'] = $user_alarm;
+        $user_messages = Message::find()->where(['fromUserUuid' => $model['uuid']])->count();
+        $user_property['messages'] = $user_messages;
+        $user_attributes = Gpstrack::find()->where(['userUuid' => $model['uuid']])->count();
+        $user_property['tracks'] = $user_attributes;
+        $user_property['location'] = MainFunctions::getLocationByUser($model, true);
 
-            // FIXME: !!!! почему обновление записи происходит в методе view вместо update?!
-            if ($model->save()) {
-                MainFunctions::register('user','Обновлен профиль пользователя ' . $model->name,'');
-                return $this->redirect(['view', 'id' => $model->id]);
-            } else
-                return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        $user = $this->findModel($id);
-        if ($user) {
-            $user_photo = Photo::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property['photo'] = $user_photo;
-            $user_measure = Measure::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property['measure'] = $user_measure;
-            $user_alarm = Alarm::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property['alarms'] = $user_alarm;
-            $user_messages = Message::find()->where(['fromUserUuid' => $user['uuid']])->count();
-            $user_property['messages'] = $user_messages;
-            $user_attributes = Gpstrack::find()->where(['userUuid' => $user['uuid']])->count();
-            $user_property['tracks'] = $user_attributes;
-            $user_property['location'] = MainFunctions::getLocationByUser($user, true);
-
-            $events = [];
-            $measures = Measure::find()
-                ->where(['=', 'userUuid', $user['uuid']])
-                ->all();
-            foreach ($measures as $measure) {
-                $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
+        $events = [];
+        $measures = Measure::find()->where(['=', 'userUuid', $model['uuid']])->all();
+        foreach ($measures as $measure) {
+            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
-                $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
-                    $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
-            }
-            $journals = Journal::find()
-                ->where(['=', 'userUuid', $user['uuid']])
-                ->limit(5)
-                ->all();
-            foreach ($journals as $journal) {
-                $text = $journal['description'];
-                $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], 'journal', 0,
-                    $journal['description'], $text)];
-            }
-
-            $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
-            return $this->render(
-                'view',
-                [
-                    'model' => $user,
-                    'user_property' => $user_property,
-                    'events' => $sort_events
-                ]
-            );
+            $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
+                $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
         }
+
+        $journals = Journal::find()->where(['=', 'userUuid', $model['uuid']])->limit(5)->all();
+        foreach ($journals as $journal) {
+            $text = $journal['description'];
+            $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], 'journal', 0,
+                $journal['description'], $text)];
+        }
+
+        $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
+
+        // вкладка со свойствами пользователя
+        $userArm = new UserArm();
+        $userArm->scenario = UserArm::SCENARIO_UPDATE;
+        $userArm->_id = $id;
+        $userArm->load($model->user->attributes, '');
+        $userArm->load($model->attributes, '');
+        $am = Yii::$app->getAuthManager();
+        $roles = $am->getRoles();
+        $roleList = ArrayHelper::map($roles, 'name', 'description');
+        $assignments = $am->getAssignments($model->user_id);
+        foreach ($assignments as $value) {
+            $userArm->role = $value->roleName;
+            break;
+        }
+
+        return $this->render(
+            'view',
+            [
+                'model' => $model,
+                'user_property' => $user_property,
+                'events' => $sort_events,
+                'userArm' => $userArm,
+                'roleList' => $roleList,
+            ]
+        );
     }
 
     /**
@@ -179,38 +131,60 @@ class UsersController extends Controller
      * @return mixed
      * @throws InvalidConfigException
      */
+    /**
+     * @return string
+     * @throws Throwable
+     */
     public function actionCreate()
     {
-        $model = new Users();
+        parent::actionCreate();
 
-        if ($model->load(Yii::$app->request->post())) {
-            // проверяем все поля, если что-то не так показываем форму с ошибками
-
-            if (!$model->validate()) {
-                return $this->render('create', ['model' => $model]);
-            }
-
-            // хешируем пин
-            $model->pin = md5($model->pin);
-
-            // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'image');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->image = $fileName;
+        $model = new UserArm();
+        $am = Yii::$app->getAuthManager();
+        $existUser = User::find()->all();
+        $login = 'user' . (count($existUser) + 1);
+        $model->username = $login;
+        $model->type = 2;
+        $model->email = $login . '@' . time() . '.ru';
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $user = new User();
+            $user->username = $model->username;
+            $user->auth_key = Yii::$app->security->generateRandomString();
+            $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
+            $user->email = $model->email;
+            if ($user->save()) {
+                $users = new Users();
+                $users->uuid = MainFunctions::GUID();
+                $users->name = $model->name;
+                $users->type = $model->type;
+                $users->pin = $model->pin;
+                $users->active = 1;
+                $users->whoIs = $model->whoIs;
+                $users->contact = $model->contact;
+                $users->user_id = $user->id;
+                $users->image = '';
+                if ($users->validate() && $users->save()) {
+                    $newRole = $am->getRole($model->role);
+                    $am->assign($newRole, $users->user_id);
+                    MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact);
+                    return $this->redirect(['/users/view', 'id' => $users->_id]);
                 } else {
-                    // уведомить пользователя, админа о невозможности сохранить файл
+                    $user->delete();
                 }
             }
-            if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                MainFunctions::register('user','Добавлен пользователь ' . $model->name, $model->contact);
-                return $this->redirect(['view', 'id' => $model->_id]);
-            } else {
-                return $this->render('create', ['model' => $model]);
-            }
         }
-        return $this->render('create', ['model' => $model]);
+
+        if (empty($model->pin)) {
+            $model->pin = MainFunctions::GUID();
+        }
+
+        $roles = $am->getRoles();
+        $roleList = ArrayHelper::map($roles, 'name', 'description');
+        return $this->render('create', [
+            'userArm' => $model,
+            'model' => new Users(),
+            'roleList' => $roleList,
+        ]);
     }
 
     /**
@@ -240,7 +214,7 @@ class UsersController extends Controller
             $user_property[$count]['systems'] = "";
             foreach ($user_systems as $user_system) {
                 $user_property[$count]['systems'] .=
-                    '<span class="pull-right badge bg-blue">'.$user_system['equipmentSystem']['titleUser'].'</span>';
+                    '<span class="pull-right badge bg-blue">' . $user_system['equipmentSystem']['titleUser'] . '</span>';
             }
             $user_houses = UserHouse::find()->where(['userUuid' => $user['uuid']])->count();
             $user_property[$count]['alarms'] = $user_houses;
@@ -305,46 +279,47 @@ class UsersController extends Controller
      *
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     * @throws HttpException
+     * @throws Exception
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
-        // сохраняем старое значение image
-        $oldImage = $model->image;
+        parent::actionUpdate($id);
 
+        $users = $this->findModel($id);
+
+        $model = new UserArm();
+        $model->scenario = UserArm::SCENARIO_UPDATE;
         if ($model->load(Yii::$app->request->post())) {
-            // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'image');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->image = $fileName;
-                } else {
-                    $model->image = $oldImage;
-                    // уведомить пользователя, админа о невозможности сохранить файл
-                }
-            } else {
-                $model->image = $oldImage;
+            $user = $users->user;
+            $user->load($model->attributes, '');
+            if (!empty($model->password)) {
+                $user->setPassword($model->password);
             }
 
-            if ($model->save()) {
-                MainFunctions::register('user','Обновлен профиль пользователя ' . $model->name,'');
-                //return $this->redirect(['view', 'id' => $model->_id]);
-            } else {
-                return $this->render(
-                    'update',
-                    [
-                        'model' => $model,
-                    ]
-                );
+            if ($user->save()) {
+                MainFunctions::register('user', 'Обновлен профиль пользователя ' . $user->username, '');
+            }
+
+            $users->load($model->attributes, '');
+            if ($users->save()) {
+                MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name, '');
+                return $this->redirect(['/users/view', 'id' => $users->_id]);
             }
         }
-        return $this->render(
-            'update',
-            [
-                'model' => $model,
-            ]
-        );
+
+        $model->load($users->user->attributes, '');
+        $model->load($users->attributes, '');
+        $model->_id = $id;
+        $am = Yii::$app->getAuthManager();
+        $roles = $am->getRoles();
+        $roleList = ArrayHelper::map($roles, 'name', 'description');
+        return $this->render('update', [
+            'userArm' => $model,
+            'model' => $users,
+            'roleList' => $roleList,
+        ]);
     }
 
     /**
@@ -360,6 +335,8 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -380,30 +357,6 @@ class UsersController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-    /**
-     * Возвращает объект Users по токену.
-     *
-     * @param string $token Токен.
-     *
-     * @return Users Оъект пользователя.
-     */
-    public static function getUserByToken($token)
-    {
-        if (TokenController::isTokenValid($token)) {
-            $tokens = Token::find()->where(['accessToken' => $token])->all();
-            if (count($tokens) == 1) {
-                $users = Users::find()->where(['tagId' => $tokens[0]->tagId])->all();
-                $user = count($users) == 1 ? $users[0] : null;
-                return $user;
-            } else {
-                // TODO: нужно выбросить подходящее исключение!!!!
-                return null;
-            }
-        } else {
-            return null;
         }
     }
 
@@ -437,6 +390,7 @@ class UsersController extends Controller
      * Displays a equipment register
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionTimeline()
     {
@@ -552,7 +506,7 @@ class UsersController extends Controller
 
         $event .= '<div class="timeline-item">';
         $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($date)) . '</span>';
-        $event .= '<h3 class="timeline-header"><a class="btn btn-default btn-xs">'.$user.'</a> '. $title . '</h3>';
+        $event .= '<h3 class="timeline-header"><a class="btn btn-default btn-xs">' . $user . '</a> ' . $title . '</h3>';
         $event .= '<div class="timeline-body">' . $text . '</div>';
         $event .= '</div></li>';
         return $event;
@@ -561,6 +515,7 @@ class UsersController extends Controller
     /**
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionAddSystem()
     {
@@ -581,8 +536,10 @@ class UsersController extends Controller
                 //return $this->render('dashboard');
             }
         } else {
-            if (isset($_GET["userUuid"]))
+            if (isset($_GET["userUuid"])) {
                 $model->userUuid = $_GET["userUuid"];
+            }
+
             return $this->renderAjax('_add_system', ['model' => $model]);
         }
     }

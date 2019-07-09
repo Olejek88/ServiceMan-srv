@@ -77,7 +77,7 @@ use yii\helpers\Html;
             ]);
             ?>
         </div>
-        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false); ?>
+        <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
         <?php echo $form->field($model, 'comment')->textArea(); ?>
     </div>
     <div class="modal-footer">

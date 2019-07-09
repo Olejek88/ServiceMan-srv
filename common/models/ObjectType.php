@@ -68,17 +68,6 @@ class ObjectType extends ActiveRecord
         ];
     }
 
-    public function fields()
-    {
-        return [
-            '_id',
-            'uuid',
-            'title',
-            'createdAt',
-            'changedAt',
-        ];
-    }
-
     /**
      * @inheritdoc
      */

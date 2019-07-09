@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Yii;
@@ -15,7 +16,6 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  */
-
 class DocumentationType extends ActiveRecord
 {
     /**

@@ -5,38 +5,12 @@ namespace backend\controllers;
 use backend\models\EquipmentSearchStatus;
 use common\models\EquipmentStatus;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * EquipmentStatusController implements the CRUD actions for EquipmentStatus model.
  */
-class EquipmentStatusController extends Controller
+class EquipmentStatusController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-    }
-
     /**
      * Lists all EquipmentStatus models.
      * @return mixed
@@ -71,6 +45,8 @@ class EquipmentStatusController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new EquipmentStatus();
         $searchModel = new EquipmentSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -92,6 +68,8 @@ class EquipmentStatusController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -110,6 +88,8 @@ class EquipmentStatusController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

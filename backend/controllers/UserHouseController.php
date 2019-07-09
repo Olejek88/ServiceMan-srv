@@ -8,40 +8,12 @@ use common\models\House;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * UserHouseController implements the CRUD actions for UserHouse model.
  */
-class UserHouseController extends Controller
+class UserHouseController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST', 'GET'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all House models.
      * @return mixed
@@ -77,6 +49,8 @@ class UserHouseController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new UserHouse();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -140,6 +114,8 @@ class UserHouseController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -159,6 +135,8 @@ class UserHouseController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

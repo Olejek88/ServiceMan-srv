@@ -5,43 +5,12 @@ namespace backend\controllers;
 use backend\models\ContragentSearchType;
 use common\models\ContragentType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ContragentTypeController implements the CRUD actions for ContragentType model.
  */
-class ContragentTypeController extends Controller
+class ContragentTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all ContragentType models.
      * @return mixed
@@ -78,6 +47,8 @@ class ContragentTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new ContragentType();
         $searchModel = new ContragentSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -104,6 +75,8 @@ class ContragentTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -126,6 +99,8 @@ class ContragentTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

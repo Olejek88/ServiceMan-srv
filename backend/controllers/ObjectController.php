@@ -14,51 +14,18 @@ use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
-use common\models\Request;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\helpers\Html;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ObjectController implements the CRUD actions for Object model.
  */
-class ObjectController extends Controller
+class ObjectController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Object models.
      * @return mixed
@@ -121,6 +88,8 @@ class ObjectController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Objects();
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -155,6 +124,8 @@ class ObjectController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -177,6 +148,8 @@ class ObjectController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['table']);
@@ -715,7 +688,7 @@ class ObjectController extends Controller
                         $objectContragent = new ObjectContragent();
                         $objectContragent->contragentUuid = $model['uuid'];
                         $objectContragent->uuid = MainFunctions::GUID();
-                        $objectContragent->oid = Users::ORGANISATION_UUID;
+                        $objectContragent->oid = Users::getCurrentOid();
                         $objectContragent->objectUuid = $_POST['objectUuid'];
                         $objectContragent->save();
                         if ($source)
@@ -734,7 +707,7 @@ class ObjectController extends Controller
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
         $object->title = $flat_num;
-        $object->oid = Users::getOid(Yii::$app->user->identity);
+        $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 33;
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
@@ -750,7 +723,7 @@ class ObjectController extends Controller
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
         $object->title = $name;
-        $object->oid = Users::getOid(Yii::$app->user->identity);
+        $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 0;
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
@@ -766,7 +739,7 @@ class ObjectController extends Controller
         $equipment = new Equipment();
         $equipment->uuid = MainFunctions::GUID();
         $equipment->title = $name;
-        $equipment->oid = Users::getOid(Yii::$app->user->identity);
+        $equipment->oid = Users::getCurrentOid();
         $equipment->objectUuid = $objectUuid;
         $equipment->equipmentStatusUuid = EquipmentStatus::WORK;
         $equipment->equipmentTypeUuid = $equipmentTypeUuid;

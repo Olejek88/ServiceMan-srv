@@ -5,11 +5,7 @@ namespace backend\controllers;
 use backend\models\TaskSearchVerdict;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
-
 use common\models\WorkStatus;
 
 use backend\models\WorkSearchStatus;
@@ -17,34 +13,8 @@ use backend\models\WorkSearchStatus;
 /**
  * WorkStatusController implements the CRUD actions for WorkStatus model.
  */
-class WorkStatusController extends Controller
+class WorkStatusController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init() {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-    
     /**
      * Lists all WorkStatus models.
      * @return mixed
@@ -81,6 +51,8 @@ class WorkStatusController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new WorkStatus();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -105,6 +77,8 @@ class WorkStatusController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -127,6 +101,8 @@ class WorkStatusController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

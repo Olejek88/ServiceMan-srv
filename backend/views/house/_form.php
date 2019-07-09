@@ -39,7 +39,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php echo $form->field($model, 'number')->textInput(['maxlength' => true]) ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php echo $form->field($model, 'latitude')->hiddenInput(['maxlength' => true, 'value' => $latDefault])->label(false) ?>
     <?php echo $form->field($model, 'longitude')->hiddenInput(['maxlength' => true, 'value' => $lngDefault])->label(false) ?>

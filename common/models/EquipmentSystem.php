@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Yii;
@@ -77,19 +78,6 @@ class EquipmentSystem extends ActiveRecord
         ];
     }
 
-
-    /**
-     * Fields.
-     *
-     * @return array
-     *
-     * @inheritdoc
-     */
-    public function fields()
-    {
-        return ['_id', 'uuid', 'titleUser', 'title', 'createdAt', 'changedAt'];
-    }
-
     /**
      * Labels.
      *
@@ -107,19 +95,5 @@ class EquipmentSystem extends ActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
-    }
-
-    /**
-     * Upload.
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }

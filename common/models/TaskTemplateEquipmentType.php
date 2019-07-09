@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use Yii;
@@ -20,7 +21,6 @@ use yii\db\Expression;
  * @property EquipmentType $equipmentType
  * @property TaskTemplate $taskTemplate
  */
-
 class TaskTemplateEquipmentType extends ActiveRecord
 {
     /**
