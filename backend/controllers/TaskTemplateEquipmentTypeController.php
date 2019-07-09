@@ -9,14 +9,13 @@ use Exception;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * TaskTemplateEquipmentTypeController implements the CRUD actions for
  * TaskTemplateEquipmentType model.
  */
-class TaskTemplateEquipmentTypeController extends Controller
+class TaskTemplateEquipmentTypeController extends ZhkhController
 {
     protected $modelClass = TaskTemplateEquipmentType::class;
 
@@ -82,6 +81,8 @@ class TaskTemplateEquipmentTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskTemplateEquipmentType();
         $searchModel = new TaskTemplateEquipmentTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -111,6 +112,8 @@ class TaskTemplateEquipmentTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -139,6 +142,8 @@ class TaskTemplateEquipmentTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

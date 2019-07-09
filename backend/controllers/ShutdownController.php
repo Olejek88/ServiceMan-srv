@@ -7,43 +7,12 @@ use common\models\Shutdown;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ShutdownController implements the CRUD actions for Shutdown model.
  */
-class ShutdownController extends Controller
+class ShutdownController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Shutdown models.
      * @return mixed
@@ -97,6 +66,8 @@ class ShutdownController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Shutdown();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -123,6 +94,8 @@ class ShutdownController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -145,6 +118,8 @@ class ShutdownController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

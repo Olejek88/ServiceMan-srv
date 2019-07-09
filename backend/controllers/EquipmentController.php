@@ -25,53 +25,16 @@ use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 use yii\web\UploadedFile;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.
  */
-class EquipmentController extends Controller
+class EquipmentController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Equipment models.
      *
@@ -187,6 +150,8 @@ class EquipmentController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Equipment();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -261,6 +226,8 @@ class EquipmentController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -609,9 +576,10 @@ class EquipmentController extends Controller
      * @throws StaleObjectException
      * @throws \Throwable
      */
-    public
-    function actionDelete($id)
+    public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $equipment = $this->findModel($id);
         $photos = Photo::find()
             ->select('*')

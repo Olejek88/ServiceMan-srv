@@ -5,50 +5,12 @@ namespace backend\controllers;
 use backend\models\EquipmentSystemSearch;
 use common\models\EquipmentSystem;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * EquipmentSystemController implements the CRUD actions for EquipmentSystem model.
  */
-class EquipmentSystemController extends Controller
+class EquipmentSystemController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all StageTemplate models.
      *
@@ -94,6 +56,8 @@ class EquipmentSystemController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new EquipmentSystem();
         $searchModel = new EquipmentSystemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -123,6 +87,8 @@ class EquipmentSystemController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if (Yii::$app->request->isPost) {
             // $model->load(Yii::$app->request->post()) && $model->save()
@@ -149,6 +115,8 @@ class EquipmentSystemController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

@@ -5,50 +5,12 @@ namespace backend\controllers;
 use backend\models\EquipmentSearchType;
 use common\models\EquipmentType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * EquipmentTypeController implements the CRUD actions for EquipmentType model.
  */
-class EquipmentTypeController extends Controller
+class EquipmentTypeController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all StageTemplate models.
      *
@@ -94,6 +56,8 @@ class EquipmentTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new EquipmentType();
         $searchModel = new EquipmentSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -124,6 +88,8 @@ class EquipmentTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if (Yii::$app->request->isPost) {
             // $model->load(Yii::$app->request->post()) && $model->save()
@@ -150,6 +116,8 @@ class EquipmentTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

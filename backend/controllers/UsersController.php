@@ -18,11 +18,8 @@ use common\models\Users;
 use common\models\UserSystem;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\filters\AccessControl;
-use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\web\Controller;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
@@ -33,40 +30,13 @@ use Exception;
 /**
  * UsersController implements the CRUD actions for Users model.
  */
-class UsersController extends Controller
+class UsersController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * Lists all Users models.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -166,6 +136,8 @@ class UsersController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new UserArm();
         $am = Yii::$app->getAuthManager();
         $existUser = User::find()->all();
@@ -312,6 +284,8 @@ class UsersController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $users = $this->findModel($id);
 
         $model = new UserArm();
@@ -360,6 +334,8 @@ class UsersController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

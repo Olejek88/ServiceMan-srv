@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\StreetSearch;
 use common\models\Street;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * StreetController implements the CRUD actions for Street model.
  */
-class StreetController extends Controller
+class StreetController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Street models.
      * @return mixed
@@ -74,6 +46,8 @@ class StreetController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Street();
         $searchModel = new StreetSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -103,6 +77,8 @@ class StreetController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -122,6 +98,8 @@ class StreetController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

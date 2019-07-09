@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\EquipmentRegisterTypeSearch;
 use common\models\EquipmentRegisterType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * EquipmentRegisterTypeController implements the CRUD actions for EquipmentRegisterType model.
  */
-class EquipmentRegisterTypeController extends Controller
+class EquipmentRegisterTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all EquipmentRegisterType models.
      * @return mixed
@@ -74,6 +46,8 @@ class EquipmentRegisterTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new EquipmentRegisterType();
         $searchModel = new EquipmentRegisterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -96,6 +70,8 @@ class EquipmentRegisterTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -115,6 +91,8 @@ class EquipmentRegisterTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

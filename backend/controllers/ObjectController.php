@@ -14,51 +14,18 @@ use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
-use common\models\Request;
 use common\models\Street;
 use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\helpers\Html;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ObjectController implements the CRUD actions for Object model.
  */
-class ObjectController extends Controller
+class ObjectController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Object models.
      * @return mixed
@@ -121,6 +88,8 @@ class ObjectController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Objects();
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -155,6 +124,8 @@ class ObjectController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -177,6 +148,8 @@ class ObjectController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['table']);

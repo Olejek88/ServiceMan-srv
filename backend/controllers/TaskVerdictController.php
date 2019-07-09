@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\TaskVerdict;
 use backend\models\TaskSearchVerdict;
@@ -11,7 +10,7 @@ use backend\models\TaskSearchVerdict;
 /**
  * TaskVerdictController implements the CRUD actions for TaskVerdict model.
  */
-class TaskVerdictController extends Controller
+class TaskVerdictController extends ZhkhController
 {
     protected $modelClass = TaskVerdict::class;
 
@@ -57,6 +56,8 @@ class TaskVerdictController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskVerdict();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -77,6 +78,8 @@ class TaskVerdictController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -99,6 +102,8 @@ class TaskVerdictController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -16,14 +16,13 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * TaskTemplateEquipmentController implements the CRUD actions for
  * TaskTemplateEquipment model.
  */
-class TaskTemplateEquipmentController extends Controller
+class TaskTemplateEquipmentController extends ZhkhController
 {
     protected $modelClass = TaskTemplateEquipment::class;
 
@@ -89,6 +88,8 @@ class TaskTemplateEquipmentController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskTemplateEquipment();
         $searchModel = new TaskTemplateEquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -118,6 +119,8 @@ class TaskTemplateEquipmentController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -146,6 +149,8 @@ class TaskTemplateEquipmentController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

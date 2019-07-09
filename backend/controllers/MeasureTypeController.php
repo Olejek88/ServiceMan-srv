@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\MeasureSearchType;
 use common\models\MeasureType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * MeasureTypeController implements the CRUD actions for MeasureType model.
  */
-class MeasureTypeController extends Controller
+class MeasureTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all MeasureType models.
      * @return mixed
@@ -74,6 +46,8 @@ class MeasureTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new MeasureType();
         $searchModel = new MeasureSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -97,6 +71,8 @@ class MeasureTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -115,6 +91,8 @@ class MeasureTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

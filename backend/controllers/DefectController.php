@@ -5,21 +5,14 @@ namespace backend\controllers;
 use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
-use common\models\DefectType;
-use common\models\Equipment;
-use common\models\Orders;
-use common\models\Stage;
-use common\models\Task;
-use common\models\Users;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * DefectController implements the CRUD actions for Defect model.
  */
-class DefectController extends Controller
+class DefectController extends ZhkhController
 {
     protected $modelClass = Defect::class;
 
@@ -75,6 +68,8 @@ class DefectController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Defect();
         $defect = Defect::find()
             ->select('_id')
@@ -109,6 +104,8 @@ class DefectController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -132,6 +129,8 @@ class DefectController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

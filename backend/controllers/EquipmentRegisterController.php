@@ -7,43 +7,12 @@ use common\components\MainFunctions;
 use common\models\EquipmentRegister;
 use Yii;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * EquipmentRegisterController implements the CRUD actions for EquipmentRegister model.
  */
-class EquipmentRegisterController extends Controller
+class EquipmentRegisterController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all EquipmentRegister models.
      * @return mixed
@@ -80,6 +49,8 @@ class EquipmentRegisterController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new EquipmentRegister();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -99,6 +70,8 @@ class EquipmentRegisterController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -121,6 +94,8 @@ class EquipmentRegisterController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

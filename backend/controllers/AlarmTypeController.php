@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\AlarmSearchType;
 use common\models\AlarmType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * AlarmTypeController implements the CRUD actions for AlarmType model.
  */
-class AlarmTypeController extends Controller
+class AlarmTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all AlarmType models.
      * @return mixed
@@ -74,6 +46,8 @@ class AlarmTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new AlarmType();
         $searchModel = new AlarmSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -99,6 +73,8 @@ class AlarmTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -118,6 +94,8 @@ class AlarmTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

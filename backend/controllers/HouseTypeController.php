@@ -2,44 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\HouseSearch;
 use backend\models\HouseSearchType;
 use common\models\HouseType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * HouseTypeController implements the CRUD actions for HouseType model.
  */
-class HouseTypeController extends Controller
+class HouseTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all HouseType models.
      * @return mixed
@@ -75,6 +46,8 @@ class HouseTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new HouseType();
         $searchModel = new HouseSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -99,6 +72,8 @@ class HouseTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -118,6 +93,8 @@ class HouseTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
