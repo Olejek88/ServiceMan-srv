@@ -74,7 +74,7 @@ class EquipmentRegister extends ZhkhActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -84,7 +84,7 @@ class EquipmentRegister extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRegisterType()
     {
@@ -96,7 +96,7 @@ class EquipmentRegister extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipment()
     {

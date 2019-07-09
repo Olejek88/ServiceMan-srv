@@ -12,11 +12,11 @@ use common\models\EquipmentType;
 use common\models\Operation;
 use common\models\Request;
 use common\models\Task;
-use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use common\models\TaskUser;
+use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
 use Throwable;
@@ -180,7 +180,7 @@ class TaskController extends Controller
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
-        $taskTemplates = TaskTemplate::find()->select('uuid,taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
+        $taskTemplates = TaskTemplate::find()->select('uuid, taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
         $list=[];
         foreach ($taskTemplates as $taskTemplate) {
             $list[] = $taskTemplate['uuid'];
@@ -237,8 +237,8 @@ class TaskController extends Controller
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
-            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'deadlineDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'deadlineDate', $_GET['end_time']]);
         }
         $dataProvider->query->orderBy('_id DESC');
         return $this->render(
@@ -524,6 +524,44 @@ class TaskController extends Controller
     }
 
     /**
+     * @return mixed
+     * @throws InvalidConfigException
+     * @throws StaleObjectException
+     * @throws Throwable
+     */
+    public
+    function actionName()
+    {
+        if (isset($_POST['userAdd']) && isset($_POST['taskUuid'])) {
+            $user = Users::find()->where(['uuid' => $_POST['userAdd']])->one();
+            if ($user) {
+                self::checkAddUser($_POST['taskUuid'], $_POST['userAdd'], true);
+                $taskUserPresent = TaskUser::find()->where(['taskUuid' => $_POST['taskUuid']])
+                    ->andWhere(['userUuid' => $user['uuid']])
+                    ->count();
+                if ($taskUserPresent==0) {
+                    $taskUser = new TaskUser();
+                    $taskUser->uuid = MainFunctions::GUID();
+                    $taskUser->taskUuid = $_POST['taskUuid'];
+                    $taskUser->userUuid = $user['uuid'];
+                    $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+                    $taskUser->save();
+                    //MainFunctions::register('Смена исполнителя', 'К задаче ')
+                }
+            }
+        }
+        //foreach ($_POST as $key => $value) {}
+        $users = Users::find()->where(['!=','name','sUser'])->all();
+        foreach ($users as $user) {
+            $id = 'user-'.$user['_id'];
+            if (isset($_POST[$id]) && ($_POST[$id]==1 || $_POST[$id]=="1")) {
+                self::checkAddUser($_POST['taskUuid'], $user['uuid'], false);
+            }
+        }
+        return true;
+    }
+
+    /**
      * Creates a new Task model.
      * @return mixed
      */
@@ -601,8 +639,8 @@ class TaskController extends Controller
      */
     public function actionUser()
     {
-        if (isset($_GET["equipmentUuid"]))
-            return $this->renderAjax('_add_user', ['equipmentUuid' => $_GET["equipmentUuid"]]);
+        if (isset($_GET["taskUuid"]))
+            return $this->renderAjax('_add_user', ['taskUuid' => $_GET["taskUuid"]]);
         else
             return self::actionIndex();
     }
@@ -620,6 +658,34 @@ class TaskController extends Controller
                 ->one();
             if ($task)
                 return $this->renderAjax('_task_info', ['task' => $task]);
+        }
+    }
+
+    /**
+     * @param $taskUuid
+     * @param $userUuid
+     * @param $add
+     * @throws InvalidConfigException
+     * @throws StaleObjectException
+     * @throws Throwable
+     */
+    public function checkAddUser($taskUuid, $userUuid, $add)
+    {
+        $taskUserPresent = TaskUser::find()->where(['taskUuid' => $taskUuid])
+            ->andWhere(['userUuid' => $userUuid])
+            ->one();
+        if (!$taskUserPresent && $add==true) {
+            $taskUser = new TaskUser();
+            $taskUser->uuid = MainFunctions::GUID();
+            $taskUser->taskUuid = $taskUuid;
+            $taskUser->userUuid = $userUuid;
+            $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+            $taskUser->save();
+            //MainFunctions::register('Смена исполнителя', 'К задаче ')
+        } else {
+            if ($taskUserPresent && $add == false) {
+                $taskUserPresent->delete();
+            }
         }
     }
 }

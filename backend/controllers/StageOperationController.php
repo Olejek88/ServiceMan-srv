@@ -268,7 +268,7 @@ class StageOperationController extends ToirusController
                 'title' => $types[$node_id]->title,
                 'key' => $types[$node_id]->_id."",
                 'folder' => true,
-                'expanded' => true,
+                'expanded' => false,
                 'children' => FancyTreeHelper::closureToTree($node_id, $indexTable),
             ];
         }
@@ -324,7 +324,7 @@ class StageOperationController extends ToirusController
             ->all();
         $select[0]['title'] = 'Шаблоны операций этапа';
         $select[0]['folder'] = true;
-        $select[0]['expanded'] = true;
+        $select[0]['expanded'] = false;
         $select[0]['key'] = 'none';
         foreach ($stageOperations as $stageOperation) {
             $select[0]['children'][$stageOperationCount]['title'] = $stageOperation['operationTemplate']->title;

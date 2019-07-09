@@ -25,7 +25,14 @@ $this->title = 'Дерево задач';
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
-        <th align="center" style="font-weight: normal">Элементы / Шаблоны</th>
+        <th align="center" style="font-weight: normal">Элементы / Шаблоны
+            <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
+            </button>
+            <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+            </button>
+        </th>
         <th>Описание</th>
         <th>Тип</th>
         <th>Норматив</th>
@@ -219,6 +226,22 @@ function () {
 $this->registerJs('$("#modalAddOperation").on("hidden.bs.modal",
 function () {
      window.location.replace("tree");
+})');
+
+$this->registerJs('$("#expandButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 5) {
+            node.setExpanded(true);
+        }
+    });
+})');
+
+$this->registerJs('$("#collapseButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 5) {
+            node.setExpanded(false);
+        }
+    });
 })');
 ?>
 

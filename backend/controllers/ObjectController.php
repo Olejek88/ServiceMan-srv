@@ -218,7 +218,7 @@ class ObjectController extends Controller
                 'address' => $street['city']['title'] . ', ул.' . $street['title'],
                 'type' => 'street',
                 'source' => '../object/tree',
-                'expanded' => true,
+                'expanded' => false,
                 'uuid' => $street['uuid'],
                 'folder' => true
             ];
@@ -235,7 +235,7 @@ class ObjectController extends Controller
                     'address' => $street['title'] . ', ' . $house['number'],
                     'type' => 'house',
                     'source' => '../object/tree',
-                    'expanded' => true,
+                    'expanded' => false,
                     'uuid' => $house['uuid'],
                     'folder' => true
                 ];

@@ -16,7 +16,7 @@ use yii\helpers\Html;
 
 if (!isset($titles))
     $titles = "Журнал задач";
-$this->title = Yii::t('app', 'ТОИРУС ЖКХ::'.$titles);
+$this->title = Yii::t('app', 'ТОИРУС ЖКХ::' . $titles);
 
 $gridColumns = [
     [
@@ -67,7 +67,7 @@ $gridColumns = [
         'header' => 'Дата назначения',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
-            if (strtotime($data->taskDate)>0)
+            if (strtotime($data->taskDate) > 0)
                 return date("d-m-Y H:m", strtotime($data->taskDate));
             else
                 return 'не открыт';
@@ -76,7 +76,7 @@ $gridColumns = [
             'header' => 'Дата назначения',
             'size' => 'md',
             'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy HH:mm',
@@ -98,7 +98,7 @@ $gridColumns = [
         'header' => 'Срок',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
-            if (strtotime($data->deadlineDate)>0)
+            if (strtotime($data->deadlineDate) > 0)
                 return date("d-m-Y H:m", strtotime($data->deadlineDate));
             else
                 return 'не задан';
@@ -107,7 +107,7 @@ $gridColumns = [
             'header' => 'Срок',
             'size' => 'md',
             'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy HH:mm',
@@ -126,23 +126,23 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'editableOptions'=> function () {
-            $status=[];
-            $list=[];
+        'editableOptions' => function () {
+            $status = [];
+            $list = [];
             $statuses = WorkStatus::find()->orderBy('title')->all();
             foreach ($statuses as $stat) {
-                $color='background-color: white';
-                if ($stat['uuid']==WorkStatus::CANCELED ||
-                    $stat['uuid']==WorkStatus::NEW)
-                    $color='background-color: gray';
-                if ($stat['uuid']==WorkStatus::IN_WORK)
-                    $color='background-color: yellow';
-                if ($stat['uuid']==WorkStatus::UN_COMPLETE)
-                    $color='background-color: lightred';
-                if ($stat['uuid']==WorkStatus::COMPLETE)
-                    $color='background-color: green';
+                $color = 'background-color: white';
+                if ($stat['uuid'] == WorkStatus::CANCELED ||
+                    $stat['uuid'] == WorkStatus::NEW)
+                    $color = 'background-color: gray';
+                if ($stat['uuid'] == WorkStatus::IN_WORK)
+                    $color = 'background-color: yellow';
+                if ($stat['uuid'] == WorkStatus::UN_COMPLETE)
+                    $color = 'background-color: lightred';
+                if ($stat['uuid'] == WorkStatus::COMPLETE)
+                    $color = 'background-color: green';
                 $list[$stat['uuid']] = $stat['title'];
-                $status[$stat['uuid']] = "<span class='badge' style='".$color."; height: 12px; margin-top: -3px'> </span>&nbsp;".
+                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;" .
                     $stat['title'];
             }
             return [
@@ -154,7 +154,7 @@ $gridColumns = [
             ];
         },
         'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['workStatus'],'work_status_edit');
+            $status = MainFunctions::getColorLabelByStatus($model['workStatus'], 'work_status_edit');
             return $status;
         },
         'mergeHeader' => true,
@@ -187,34 +187,34 @@ $gridColumns = [
         'width' => '180px',
         'mergeHeader' => true,
         'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['taskVerdict'],'task_verdict');
+            $status = MainFunctions::getColorLabelByStatus($model['taskVerdict'], 'task_verdict');
             return $status;
         },
         'format' => 'raw'
     ],
-/*    [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Операции',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            $operation_list = "";
-            $count = 1;
-            $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
-            foreach ($operations as $operation) {
-                $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
-                $count++;
+    /*    [
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'header' => 'Операции',
+            'mergeHeader' => true,
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+            'headerOptions' => ['class' => 'text-center'],
+            'content' => function ($data) {
+                $operation_list = "";
+                $count = 1;
+                $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
+                foreach ($operations as $operation) {
+                    $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
+                    $count++;
+                }
+                return $operation_list;
             }
-            return $operation_list;
-        }
-    ],*/
+        ],*/
     [
-        'attribute'=>'authorUuid',
-        'contentOptions' =>[
+        'attribute' => 'authorUuid',
+        'contentOptions' => [
             'class' => 'table_class'
         ],
         'mergeHeader' => true,
@@ -237,19 +237,26 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             $users = $data['users'];
-            $users_list="";
-            $cnt=0;
+            $users_list = "";
+            $cnt = 0;
             foreach ($users as $user) {
-                if ($cnt>0) $users_list .= ',';
+                if ($cnt > 0) $users_list .= ',';
                 $users_list .= $user['name'];
                 $cnt++;
             }
-            if ($cnt>0)
-                return $users_list;
-            else {
+            if ($cnt > 0) {
+                $link = Html::a($users_list,
+                    ['../task/user', 'taskUuid' => $data['uuid']],
+                    [
+                        'title' => 'Исполнители',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalUser'
+                    ]);
+                return $link;
+            } else {
                 $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
                 $link = Html::a($name,
-                    ['../task/user', 'equipmentUuid' => $data['uuid']],
+                    ['../task/user', 'taskUuid' => $data['uuid']],
                     [
                         'title' => 'Исполнители',
                         'data-toggle' => 'modal',
@@ -271,7 +278,7 @@ $gridColumns = [
         'content' => function ($data) {
             $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
             if ($request) {
-                $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #".$request['_id']."</span>";
+                $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
                 $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
                 return $link;
             } else
@@ -296,7 +303,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->startDate)>0)
+            if (strtotime($data->startDate) > 0)
                 return date("d-m-Y H:m", strtotime($data->startDate));
             else
                 return 'не начата';
@@ -312,7 +319,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if (strtotime($data->endDate)>0)
+            if (strtotime($data->endDate) > 0)
                 return date("d-m-Y H:m", strtotime($data->endDate));
             else
                 return 'не закончена';
@@ -341,7 +348,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td style="width: 300px">'.
+            ]) . '</td><td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'end_time',
                 'value' => '2021-12-31 00:00:00',
@@ -350,8 +357,8 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd hh:ii:ss'
                 ]
-            ]).'</td><td style="width: 100px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
-                'class' => 'btn btn-success']).'</td><td style="width: 100px">{export}</td></tr></table></form>',
+            ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-success']) . '</td><td style="width: 100px">{export}</td></tr></table></form>',
             'options' => ['style' => 'width:100%']
         ],
     ],
@@ -362,29 +369,29 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => true,
     'responsive' => false,
     'hover' => true,
     'floatHeader' => false,
-/*    'panelTemplate' =>
-        '<div class="panel {type}">
-        {panelHeading}
-        {panelBefore}
-        <img src="/images/1.png">
-        {items}
-        {panelAfter}
-        {panelFooter}
-    </div>',*/
+    /*    'panelTemplate' =>
+            '<div class="panel {type}">
+            {panelHeading}
+            {panelBefore}
+            <img src="/images/1.png">
+            {items}
+            {panelAfter}
+            {panelFooter}
+        </div>',*/
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; '.$titles,
+        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; ' . $titles,
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
-    'rowOptions' => function($model) {
-        if (isset($_GET['uuid'])){
+    'rowOptions' => function ($model) {
+        if (isset($_GET['uuid'])) {
             if ($_GET['uuid'] == $model['uuid'])
                 return ['class' => 'danger'];
         }

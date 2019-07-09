@@ -47,12 +47,19 @@ $this->title = 'Дерево моделей оборудования';
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
         </th>
-        <th colspan="9" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы
+        <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы
             системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke">
-        <th align="center">Элементы</th>
+        <th align="center">Элементы
+            <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
+            </button>
+            <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+            </button>
+        </th>
         <th>Адрес</th>
         <th>Задачи</th>
         <th>Заводской номер</th>
@@ -424,4 +431,18 @@ $this->registerJs('$("#removeButton").on("click",function() {
         });
     })');
 
-?>
+$this->registerJs('$("#expandButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 2) {
+            node.setExpanded(true);
+        }
+    });
+})');
+
+$this->registerJs('$("#collapseButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 2) {
+            node.setExpanded(false);
+        }
+    });
+})');
