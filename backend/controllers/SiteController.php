@@ -11,6 +11,7 @@ use common\models\Contragent;
 use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
+use common\models\EquipmentRegister;
 use common\models\EquipmentType;
 use common\models\Gpstrack;
 use common\models\Journal;
@@ -636,6 +637,18 @@ class SiteController extends Controller
                 $photo['_id'], 'Добавлено фото', $text, $photo['user']['name'])];
         }
 
+        $equipment_registers = EquipmentRegister::find()
+            ->orderBy('createdAt DESC')
+            ->limit(20)
+            ->all();
+        foreach ($equipment_registers as $register) {
+            $text = '<a class="btn btn-default btn-xs">' . $register['equipment']->title . '</a><br/>
+                '.$register['description'].'<br/>
+                <i class="fa fa-cogs"></i>&nbsp;Тип: ' . $register['registerType']['title'] . '<br/>';
+            $events[] = ['date' => $register['date'], 'event' => self::formEvent($register['date'], 'register',
+                $register['_id'], $register['equipment']['equipmentType']->title, $text, $register['user']['name'])];
+        }
+
         $sort_events = MainFunctions::array_msort($events, ['date' => SORT_DESC]);
         $today = date("j-m-Y h:m");
 
@@ -662,7 +675,7 @@ class SiteController extends Controller
     public static function formEvent($date, $type, $id, $title, $text, $user)
     {
         $event = '<li>';
-        if ($type == 'alarm')
+        if ($type == 'register')
             $event .= '<i class="fa fa-calendar bg-aqua"></i>';
         if ($type == "alarm")
             $event .= '<i class="fa fa-warning bg-red"></i>';
@@ -718,7 +731,7 @@ class SiteController extends Controller
     {
         $tree = array();
         $tree['children'][] = ['title' => 'Документация', 'key' => 1010,
-            'expanded' => true, 'folder' => true];
+            'expanded' => false, 'folder' => true];
         $documentationTypes = DocumentationType::find()->all();
         $documentationCount = 0;
         foreach ($documentationTypes as $documentationType) {
@@ -728,7 +741,7 @@ class SiteController extends Controller
                 'key' => $documentationType['_id'],
                 'what' => 'documentation',
                 'types' => 1,
-                'expanded' => true, 'folder' => true];
+                'expanded' => false, 'folder' => true];
 
             $sum_size = 0;
             foreach ($documentations as $documentation) {

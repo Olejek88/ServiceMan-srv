@@ -24,7 +24,14 @@ $this->title = 'Дерево задач';
         <th align="center" colspan="7" style="background-color: #3c8dbc; color: whitesmoke">Задачи системы</th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
-        <th align="center" style="font-weight: normal">Задачи/Операции</th>
+        <th align="center" style="font-weight: normal">Задачи/Операции
+            <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
+            </button>
+            <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
+                <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+            </button>
+        </th>
         <th>Тип</th>
         <th>Информация</th>
         <th>Исполнитель</th>
@@ -117,4 +124,21 @@ $this->title = 'Дерево задач';
         }')
     ]
 ]);
+
+$this->registerJs('$("#expandButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 5) {
+            node.setExpanded(true);
+        }
+    });
+})');
+
+$this->registerJs('$("#collapseButton").on("click",function() {
+    $("#tree").fancytree("getRootNode").visit(function(node){
+        if(node.getLevel() < 5) {
+            node.setExpanded(false);
+        }
+    });
+})');
+
 ?>

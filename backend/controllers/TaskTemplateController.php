@@ -192,7 +192,7 @@ class TaskTemplateController extends ZhkhController
     {
         $types = EquipmentType::find()->all();
         foreach ($types as $type) {
-            $expanded = true;
+            $expanded = false;
             $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
                 'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['_id'] . "",
                 'operation' => false];
@@ -248,7 +248,7 @@ class TaskTemplateController extends ZhkhController
                             'created' => $taskTemplateEquipment["taskTemplate"]["changedAt"],
                             'description' => $taskTemplateEquipment["taskTemplate"]["description"],
                             'types' => $type,
-                            'expanded' => true,
+                            'expanded' => false,
                             'period' => $period,
                             'task_template_equipment' => $taskTemplateEquipment['_id'],
                             'normative' => $taskTemplateEquipment["taskTemplate"]["normative"],
@@ -266,7 +266,7 @@ class TaskTemplateController extends ZhkhController
                         $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
                             ['key' => $taskOperation["operationTemplate"]["_id"] . "",
                                 'folder' => false,
-                                'expanded' => true,
+                                'expanded' => false,
                                 'created' => $taskOperation["operationTemplate"]["changedAt"],
                                 'types' => $type,
                                 'uuid' => $taskOperation["operationTemplate"]["uuid"],

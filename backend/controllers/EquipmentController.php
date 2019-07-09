@@ -295,7 +295,7 @@ class EquipmentController extends ZhkhController
                 'type' => 'type',
                 'key' => $type['_id'],
                 'folder' => true,
-                'expanded' => true
+                'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
             $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
@@ -525,7 +525,7 @@ class EquipmentController extends ZhkhController
                 'type' => 'street',
                 'key' => $street['_id'],
                 'folder' => true,
-                'expanded' => true
+                'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
             $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
@@ -544,7 +544,7 @@ class EquipmentController extends ZhkhController
                         'title' => $house['number'],
                         'address' => $street['title'] . ', ' . $house['number'],
                         'type' => 'house',
-                        'expanded' => true,
+                        'expanded' => false,
                         'user' => $user_name,
                         'uuid' => $house['uuid'],
                         'key' => $house['_id'],
@@ -565,7 +565,7 @@ class EquipmentController extends ZhkhController
                             'uuid' => $object['uuid'],
                             'user' => $user_name,
                             'key' => $object['_id'] . "",
-                            'expanded' => true,
+                            'expanded' => false,
                             'folder' => true
                         ];
                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
