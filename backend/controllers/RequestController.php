@@ -150,6 +150,7 @@ class RequestController extends ZhkhController
     public function actionForm()
     {
         $receiptUuid = "";
+        $source = 'table';
         if (isset($_GET["uuid"])) {
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
         } else {
@@ -160,13 +161,16 @@ class RequestController extends ZhkhController
                 $model->userUuid = $_GET["user"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
+            if (isset($_GET["source"]))
+                $source = $_GET["source"];
             if (isset($_GET["equipmentUuid"])) {
                 $model->equipmentUuid = $_GET["equipmentUuid"];
                 $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
                 $model->objectUuid = $equipment['object']['uuid'];
             }
         }
-        return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid]);
+        return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid,
+            'source' => $source]);
     }
 
     /**
@@ -194,6 +198,14 @@ class RequestController extends ZhkhController
                         $model_receipt->save();
                     }
                 }
+                if (isset($_POST['phoneNumber'])) {
+                    $model_contragent =  $model['user'];
+                    if ($model_contragent && ($model_contragent['phone']!=$_POST['phoneNumber'])) {
+                        $model_contragent["phone"] = $_POST['phoneNumber'];
+                        $model_contragent->save();
+                    }
+                }
+
                 if ($model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
                     if ($user)

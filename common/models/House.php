@@ -5,8 +5,8 @@ namespace common\models;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "house".
@@ -18,6 +18,8 @@ use yii\db\ActiveQuery;
  * @property string $number
  * @property string $houseStatusUuid
  * @property string $streetUuid
+ * @property double $latitude
+ * @property double $longitude
  * @property string $createdAt
  * @property string $changedAt
  * @property string $houseTypeUuid
@@ -60,6 +62,7 @@ class House extends ZhkhActiveRecord
             [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
+            [['latitude', 'longitude'], 'number'],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -73,6 +76,8 @@ class House extends ZhkhActiveRecord
 //            '_id',
 //            'uuid',
 //            'number',
+//            'longitude',
+//            'latitude',
 //            'houseStatusUuid',
 //            'houseStatus' => function ($model) {
 //                return $model->houseStatus;
@@ -109,6 +114,8 @@ class House extends ZhkhActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'number' => Yii::t('app', 'Номер дома'),
+            'latitude' => Yii::t('app', 'Широта'),
+            'longitude' => Yii::t('app', 'Долгота'),
             'houseStatus' => Yii::t('app', 'Статус здания'),
             'street' => Yii::t('app', 'Улица'),
             'houseStatusUuid' => Yii::t('app', 'Статус здания'),

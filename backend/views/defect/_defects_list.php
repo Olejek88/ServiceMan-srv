@@ -9,22 +9,26 @@
     <table class="table table-striped table-hover text-left">
         <thead>
         <tr>
-            <th>#</th>
             <th>Пользователь</th>
-            <th>Элементов</th>
             <th>Дефект</th>
-            <th>Тип</th>
+            <th>Тип дефекта</th>
+            <th>Статус</th>
             <th>Время</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($defects as $defect): ?>
             <tr>
-                <td><?= $defect['_id'] ?></td>
                 <td><?= $defect['user']['name'] ?></td>
-                <td><?= $defect['equipment']['title'] ?></td>
                 <td><?= $defect['title'] ?></td>
-                <td><?= $defect['defectStatus'] ?></td>
+                <td><?= $defect['defectType']['title'] ?></td>
+                <td><?php
+                    if ($model['defectStatus'])
+                        echo '<div class="progress"><div class="critical5">Обработан</div></div>';
+                    else
+                        echo '<div class="progress"><div class="critical1">Не обработан</div></div>';
+                    ?>
+                </td>
                 <td><?= $defect['date'] ?></td>
             </tr>
         <?php endforeach; ?>

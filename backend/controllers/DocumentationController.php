@@ -5,8 +5,10 @@ namespace backend\controllers;
 use backend\models\DocumentationSearch;
 use common\components\MainFunctions;
 use common\models\Documentation;
+use common\models\EquipmentRegisterType;
 use Yii;
 use yii\base\DynamicModel;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
@@ -89,6 +91,7 @@ class DocumentationController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -133,6 +136,9 @@ class DocumentationController extends ZhkhController
                 MainFunctions::register('documentation','Добавлена документация',
                     '<a class="btn btn-default btn-xs">'.$model['documentationType']['title'].'</a>'.$model['title'].'<br/>'.
                     '<a class="btn btn-default btn-xs">'.$text.'</a>');
+                EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
+                        EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                        "Добавлена документация ".$model['documentationType']['title'].' '.$model['title']);
                 return $this->redirect(['view', 'id' => $model->_id]);
             } else {
                 return $this->render(
@@ -289,7 +295,13 @@ class DocumentationController extends ZhkhController
     {
         parent::actionDelete($id);
 
+        $model = $this->findModel($id);
         $this->findModel($id)->delete();
+        if ($model) {
+            EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
+                EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                "Удалена документация " . $model['documentationType']['title'] . ' ' . $model['title']);
+        }
         return $this->redirect(['index']);
     }
 
@@ -356,6 +368,10 @@ class DocumentationController extends ZhkhController
         return 0;
     }
 
+    /**
+     * @return bool|string|\yii\web\Response
+     * @throws InvalidConfigException
+     */
     public function actionSave()
     {
         $model = new Documentation();
@@ -381,6 +397,10 @@ class DocumentationController extends ZhkhController
             }
 
             if ($model->save(false)) {
+                EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                    "Добавлена документация ".$model['documentationType']['title'].' '.$model['title']);
+
                 if (isset($_POST['source']))
                     return $this->redirect(['../site/files']);
                 else

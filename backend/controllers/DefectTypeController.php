@@ -2,26 +2,28 @@
 
 namespace backend\controllers;
 
-use backend\models\TaskSearchVerdict;
 use Yii;
-use yii\db\StaleObjectException;
+use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
-use common\models\WorkStatus;
-
-use backend\models\WorkSearchStatus;
+use common\models\DefectType;
+use yii\web\Controller;
+use backend\models\DefectSearchType;
 
 /**
- * WorkStatusController implements the CRUD actions for WorkStatus model.
+ * DefectTypeController implements the CRUD actions for DefectType model.
  */
-class WorkStatusController extends ZhkhController
+class DefectTypeController extends Controller
 {
+    protected $modelClass = DefectType::class;
+
     /**
-     * Lists all WorkStatus models.
+     * Lists all DefectType models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
-        $searchModel = new WorkSearchStatus();
+        $searchModel = new DefectSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -32,7 +34,7 @@ class WorkStatusController extends ZhkhController
     }
 
     /**
-     * Displays a single WorkStatus model.
+     * Displays a single DefectType model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
@@ -40,36 +42,36 @@ class WorkStatusController extends ZhkhController
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model'    => $this->findModel($id)
         ]);
     }
 
     /**
-     * Creates a new WorkStatus model.
+     * Creates a new DefectType model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
-        $model = new WorkStatus();
+        $model = new DefectType();
+        $searchModel = new DefectSearchType();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->pagination->pageSize = 10;
+        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
-            $searchModel = new WorkSearchStatus();
-            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-            $dataProvider->pagination->pageSize = 25;
-
             return $this->render('create', [
-                'model' => $model, 'dataProvider' => $dataProvider
+                'model' => $model,
+                'dataProvider' => $dataProvider
             ]);
         }
     }
 
     /**
-     * Updates an existing WorkStatus model.
+     * Updates an existing DefectType model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -77,8 +79,6 @@ class WorkStatusController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -91,33 +91,32 @@ class WorkStatusController extends ZhkhController
     }
 
     /**
-     * Deletes an existing WorkStatus model.
+     * Deletes an existing DefectType model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws \Exception
      * @throws \Throwable
-     * @throws StaleObjectException
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the WorkStatus model based on its primary key value.
+     * Finds the DefectType model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return WorkStatus the loaded model
+     * @return DefectType the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = WorkStatus::findOne($id)) !== null) {
+        if (($model = DefectType::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

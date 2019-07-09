@@ -104,6 +104,12 @@ $gridColumns = [
         'mergeHeader' => true,
         'format' => 'html',
         'vAlign' => 'middle',
+        'value' => function ($model, $key, $index, $widget) {
+            if ($model->active)
+                return GridView::ICON_ACTIVE;
+            else
+                return GridView::ICON_INACTIVE;
+        },
         'editableOptions' => $editableOptions
     ],
 /*    [

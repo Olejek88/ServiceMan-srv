@@ -16,10 +16,12 @@
     echo Html::a("Статусы объектов", ['../object-status/create'], ['class' => 'btn btn-info btn100']);
     echo Html::a("Типы объектов", ['../object-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Статусы запрооов", ['../request-status/create'], ['class' => 'btn btn-info btn100']);
-    echo Html::a("Хаарактеры обращений", ['../request-type/create'], ['class' => 'btn btn-primary btn100']);
+    echo Html::a("Характеры обращений", ['../request-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Типы задач", ['../task-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Вердикты задач", ['../task-verdict/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Статусы работ", ['../work-status/create'], ['class' => 'btn btn-info btn100']);
+    echo Html::a("Типы измерений", ['../measure-type/create'], ['class' => 'btn btn-primary btn100']);
+    echo Html::a("Типы дефектов", ['../defect-type/create'], ['class' => 'btn btn-primary btn100']);
 
     echo Html::a("Шаблоны задач", ['../task-template/create'], ['class' => 'btn btn-info btn100']);
     ?>

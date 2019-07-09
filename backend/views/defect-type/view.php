@@ -4,16 +4,18 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\House */
+/* @var $model common\models\DefectType */
 
-$this->title = $model['street']->title . ', ' . $model['number'];
+$this->title = $model->title;
 ?>
-<div class="task-view box-padding">
-
-    <div class="panel panel-default">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 1024px">
+    <?php
+    echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
+    ?>
+    <div class="panel panel-default" style="float: right; width: 75%">
         <div class="panel-heading" style="background: #fff;">
             <h3 class="text-center" style="color: #333;">
-                <?php echo Html::encode($this->title) ?>
+                <?= Html::encode($this->title) ?>
             </h3>
         </div>
         <div class="panel-body">
@@ -27,17 +29,12 @@ $this->title = $model['street']->title . ', ' . $model['number'];
                         ?>
                     </p>
                     <h6>
-                        <?php echo DetailView::widget([
+                        <?= DetailView::widget([
                             'model' => $model,
                             'attributes' => [
                                 '_id',
                                 'uuid',
-                                'number',
-                                'longitude',
-                                'latitude',
-                                'streetUuid',
-                                'houseStatusUuid',
-                                'houseTypeUuid',
+                                'title',
                                 'createdAt',
                                 'changedAt',
                             ],
@@ -45,7 +42,6 @@ $this->title = $model['street']->title . ', ' . $model['number'];
                     </h6>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

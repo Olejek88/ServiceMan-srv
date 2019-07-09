@@ -4,11 +4,13 @@
 /* @var $requestUuid */
 
 use common\components\MainFunctions;
+use common\models\Equipment;
 use common\models\TaskTemplate;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
 use dosamigos\datetimepicker\DateTimePicker;
+use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -47,6 +49,21 @@ use yii\helpers\Html;
     <?php if (isset($requestUuid)) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
 
     <?php
+    $users = Users::find()->where(['<>','name','sUser'])->all();
+    $items = ArrayHelper::map($users, 'uuid', 'name');
+    echo '<label class="control-label">Исполнитель</label>';
+    echo Select2::widget(
+        [
+            'id' => 'userUuid',
+            'name' => 'userUuid',
+            'language' => 'ru',
+            'data' => $items,
+            'options' => ['placeholder' => 'Выберите исполнителя ...'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+
     $taskTemplate = TaskTemplate::find()->all();
     $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
     echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);

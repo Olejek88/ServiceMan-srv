@@ -34,6 +34,7 @@ use yii\db\Expression;
  * @property Object $object
  * @property string $nextDate
  * @property string $fullTitle
+ * @property string $address
  * @property Photo $photo
  * @property User $user
  */
@@ -163,6 +164,7 @@ class Equipment extends ZhkhActiveRecord
             'object' => Yii::t('app', 'Объект'),
             'tag' => Yii::t('app', 'Метка'),
             'serial' => Yii::t('app', 'Заводской номер'),
+            'address' => Yii::t('app', 'Адрес'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -221,6 +223,14 @@ class Equipment extends ZhkhActiveRecord
     public function getFullTitle()
     {
         return $this['object']->getFullTitle() . ' [' . $this['title'] . ']';
+    }
+
+    public function getAddress()
+    {
+        if ($this['object'] && $this['object']['house'])
+            return $this['object']['house']['street']->title . ', ' . $this['object']['house']->number . ' - ' . $this['object']->title;
+        else
+            return '';
     }
 
     /**

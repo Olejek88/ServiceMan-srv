@@ -49,7 +49,7 @@ use yii\bootstrap\ActiveForm;
 
         <?= $form->field($model, 'description')->textInput() ?>
 
-        <div class="pole-mg" style="margin: 0 20px;">
+        <div class="pole-mg" style="margin: 0 10px;">
             <p style="width: 200px; margin-bottom: 0;">Дата приема</p>
             <?= DateTimePicker::widget([
                 'model' => $model,
@@ -64,6 +64,7 @@ use yii\bootstrap\ActiveForm;
             ?>
         </div>
         <?= $form->field($model, 'userCheck')->textInput() ?>
+        <?= $form->field($model, 'userCheckWho')->textInput() ?>
 
         <?php
         $accountUser = Yii::$app->user->identity;

@@ -41,7 +41,8 @@ $this->title = $model['title'];
                                     'label' => 'Элементы',
                                     'value' => $model['equipment']['title']
                                 ],
-                                'defectStatus',
+                                'defectStatus.title',
+                                'defectType.title',
                                 'title',
                                 'taskUuid',
                                 'createdAt',

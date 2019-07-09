@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use backend\models\TaskSearch;
 use Yii;
 use yii\web\NotFoundHttpException;
 use common\models\TaskVerdict;
@@ -63,8 +64,12 @@ class TaskVerdictController extends ZhkhController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
+            $searchModel = new TaskSearchVerdict();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 25;
+
             return $this->render('create', [
-                'model' => $model,
+                'model' => $model, 'dataProvider' => $dataProvider
             ]);
         }
     }

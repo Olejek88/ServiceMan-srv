@@ -5,7 +5,9 @@ namespace backend\controllers;
 use backend\models\EquipmentRegisterSearch;
 use common\components\MainFunctions;
 use common\models\EquipmentRegister;
+use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
@@ -121,6 +123,7 @@ class EquipmentRegisterController extends ZhkhController
      * Lists all EquipmentRegister models for Equipment .
      * @param $equipmentUuid
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionList($equipmentUuid)
     {
@@ -173,5 +176,30 @@ class EquipmentRegisterController extends ZhkhController
             'model' => $model,
             'equipmentUuid' => $_GET["equipmentUuid"]
         ]);
+    }
+
+    /**
+     * @param $equipmentUuid
+     * @param $registerTypeUuid
+     * @param $description
+     * @throws InvalidConfigException
+     */
+    public static function addEquipmentRegister($equipmentUuid, $registerTypeUuid, $description)
+    {
+        $accountUser = Yii::$app->user->identity;
+        $currentUser = Users::find()
+            ->where(['user_id' => $accountUser['id']])
+            ->asArray()
+            ->one();
+
+        $model = new EquipmentRegister();
+        $model->equipmentUuid = $equipmentUuid;
+        $model->userUuid = $currentUser['uuid'];
+        $model->description = $description;
+        $model->registerTypeUuid = $registerTypeUuid;
+        $model->uuid = MainFunctions::GUID();
+        $model->date = date('Y-m-d\TH:i:s');
+        $model->oid = Users::getOid(Yii::$app->user->identity);
+        $model->save();
     }
 }

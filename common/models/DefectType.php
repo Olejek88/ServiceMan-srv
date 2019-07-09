@@ -4,23 +4,23 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\Expression;
 use yii\db\ActiveRecord;
+use yii\db\Expression;
 
 /**
- * This is the model class for table "equipment_register_type".
+ * This is the model class for table "defect_type".
  *
  * @property integer $_id
  * @property string $uuid
  * @property string $title
  * @property string $createdAt
  * @property string $changedAt
+ *
+ * @method static find()
  */
-class EquipmentRegisterType extends ActiveRecord
+class DefectType extends ActiveRecord
 {
-    const REGISTER_TYPE_CHANGE_STATUS = "2D3AD301-FD41-4A45-A18B-6CD13526CFDD";
-    const REGISTER_TYPE_CHANGE_PLACE = "BE1D4149-2563-4771-88DC-2EB8B3DA684F";
-    const REGISTER_TYPE_CHANGE_PROPERTIES = "4C74019F-45A9-43Ab-9B97-4D077F8BF3FA";
+    const DEFECT_DEFAULT = "A0DB029F-BD49-4CE8-B25B-DA8066114931";
 
     public function behaviors()
     {
@@ -39,7 +39,7 @@ class EquipmentRegisterType extends ActiveRecord
      */
     public static function tableName()
     {
-        return 'equipment_register_type';
+        return 'defect_type';
     }
 
     /**
@@ -50,7 +50,7 @@ class EquipmentRegisterType extends ActiveRecord
         return [
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid'], 'string', 'max' => 50],
+            [['uuid'], 'string', 'max' => 45],
             [['title'], 'string', 'max' => 100],
         ];
     }
@@ -66,6 +66,14 @@ class EquipmentRegisterType extends ActiveRecord
             'title' => Yii::t('app', 'Название'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
+        ];
+    }
+
+    public function fields()
+    {
+        return ['_id','uuid',
+            'title',
+            'createdAt','changedAt'
         ];
     }
 }

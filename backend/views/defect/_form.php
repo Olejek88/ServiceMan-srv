@@ -1,5 +1,6 @@
 <?php
 
+use common\models\DefectType;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -28,6 +29,19 @@ use common\models\Equipment;
 
     <?php
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);
+    $defect_types = DefectType::find()->all();
+    $items = ArrayHelper::map($defect_types, 'uuid', 'title');
+    echo $form->field($model, 'defectTypeUuid')->widget(Select2::class,
+        [
+            'name' => 'kv_type',
+            'language' => 'ru',
+            'data' => $items,
+            'options' => ['placeholder' => 'Выберите тип ...'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
     $equipment = Equipment::find()->all();
     $items = ArrayHelper::map($equipment, 'uuid', 'title');
@@ -36,11 +50,11 @@ use common\models\Equipment;
             'name' => 'kv_type',
             'language' => 'ru',
             'data' => $items,
-            'options' => ['placeholder' => 'Выберите элементы ...'],
+            'options' => ['placeholder' => 'Выберите элемент ...'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ])->label(false);
+        ]);
 
     $user = Users::find()->all();
     $items = ArrayHelper::map($user, 'uuid', 'name');

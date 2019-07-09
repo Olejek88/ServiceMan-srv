@@ -6,6 +6,7 @@ use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -19,6 +20,7 @@ class DefectController extends ZhkhController
     /**
      * Lists all Defect models.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -36,6 +38,7 @@ class DefectController extends ZhkhController
      * Lists all Defect models.
      * @param $equipmentUuid
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionList($equipmentUuid)
     {
@@ -65,6 +68,7 @@ class DefectController extends ZhkhController
      * Creates a new Defect model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -84,7 +88,7 @@ class DefectController extends ZhkhController
         $searchModel = new DefectSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 10;
-        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
+        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id, 'uuid' => $model->uuid]);
         } else {
@@ -155,6 +159,7 @@ class DefectController extends ZhkhController
     /**
      * Displays a schedule for all users
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionPie()
     {
@@ -203,6 +208,7 @@ class DefectController extends ZhkhController
     /**
      * Display defects as bar
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionBargraph()
     {
@@ -219,8 +225,9 @@ class DefectController extends ZhkhController
     }
 
     /** Check add defect
-     * @var $model Defect
+     *
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionSave()
     {
@@ -269,6 +276,18 @@ class DefectController extends ZhkhController
             }
         }
         return "Выберите в дереве оборудование";
+    }
+
+    public function actionAddTable()
+    {
+        if (isset($_GET["uuid"]))
+            $uuid = $_GET["uuid"];
+        else $uuid = 0;
+        $defect = new Defect();
+        return $this->renderAjax('../defect/_add_form', [
+            'model' => $defect,
+            'equipmentUuid' => $uuid
+        ]);
     }
 
 }

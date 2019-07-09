@@ -1,9 +1,10 @@
 <?php
 
+use common\models\Documentation;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var \common\models\Documentation $model */
+/* @var Documentation $model */
 /* @var array $entity */
 
 $this->title = $model->title;
@@ -15,7 +16,7 @@ $this->title = $model->title;
                 <?php echo Html::encode($this->title) ?>
             </h3>
             <div class="">
-                <a href="<?php echo Html::encode($model->getDocUrl()) ?>">Документ</a>
+                <a href="<?php echo Html::encode($model['title']) ?>">Документ</a>
             </div>
 
         </div>

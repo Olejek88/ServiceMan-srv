@@ -4,18 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model \common\models\Equipment */
 
-$this->title = Yii::t(
-    'app',
-    'Обновить {modelClass}: ',
-    [
-        'modelClass' => 'Элементы',
-    ]
-);
-$this->title .= $model['equipmentType']->title;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Элементы'),
-    'url' => ['index']
-];
+$this->title = Yii::t('app', 'Обновить');
 ?>
 <div class="equipment-update box-padding">
 
