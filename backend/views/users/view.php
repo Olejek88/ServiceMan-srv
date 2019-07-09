@@ -177,7 +177,8 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                             <div class="post">
                                 <div class="user-block">
                                     <?= $this->render('_form', [
-                                        'model' => $userArm,
+                                        'model' => $model,
+                                        'userArm' => $userArm,
                                         'roleList' => $roleList,
                                         ['class' => 'form-horizontal']
 

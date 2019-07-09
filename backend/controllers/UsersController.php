@@ -208,7 +208,8 @@ class UsersController extends Controller
         $roles = $am->getRoles();
         $roleList = ArrayHelper::map($roles, 'name', 'description');
         return $this->render('create', [
-            'model' => $model,
+            'userArm' => $model,
+            'model' => new Users(),
             'roleList' => $roleList,
         ]);
     }
@@ -340,7 +341,8 @@ class UsersController extends Controller
         $roles = $am->getRoles();
         $roleList = ArrayHelper::map($roles, 'name', 'description');
         return $this->render('update', [
-            'model' => $model,
+            'userArm' => $model,
+            'model' => $users,
             'roleList' => $roleList,
         ]);
     }
