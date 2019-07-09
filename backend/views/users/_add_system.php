@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
             ->label(false);
         echo Html::hiddenInput("uuid", "123");
 
-        echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+        echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
 
         $equipmentSystem = EquipmentSystem::find()->all();
         $items = ArrayHelper::map($equipmentSystem, 'uuid', 'titleUser');

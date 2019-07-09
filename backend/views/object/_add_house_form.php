@@ -38,7 +38,7 @@ use yii\helpers\Html;
         echo $form->field($house, 'streetUuid')->hiddenInput(['value' => $streetUuid])->label(false);
         echo $form->field($house, 'houseStatusUuid')->hiddenInput(['value' => HouseStatus::HOUSE_STATUS_OK])->label(false);
     }
-    echo $form->field($house, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    echo $form->field($house, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($house, 'number')->textInput(['maxlength' => true]);
 
     echo Html::hiddenInput("type", "house");

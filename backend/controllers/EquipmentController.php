@@ -752,7 +752,7 @@ class EquipmentController extends Controller
                     $userHouse = new UserHouse();
                     $userHouse->uuid = (new MainFunctions)->GUID();
                     $userHouse->houseUuid = $house['uuid'];
-                    $userHouse->oid = Users::ORGANISATION_UUID;
+                    $userHouse->oid = Users::getCurrentOid();
                     $userHouse->userUuid = $user;
                     $userHouse->save();
                     $this->redirect('tree-street');

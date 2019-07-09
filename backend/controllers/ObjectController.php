@@ -715,7 +715,7 @@ class ObjectController extends Controller
                         $objectContragent = new ObjectContragent();
                         $objectContragent->contragentUuid = $model['uuid'];
                         $objectContragent->uuid = MainFunctions::GUID();
-                        $objectContragent->oid = Users::ORGANISATION_UUID;
+                        $objectContragent->oid = Users::getCurrentOid();
                         $objectContragent->objectUuid = $_POST['objectUuid'];
                         $objectContragent->save();
                         if ($source)

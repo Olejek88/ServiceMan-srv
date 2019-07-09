@@ -3,14 +3,7 @@
  *  @var $source
  */
 use common\components\MainFunctions;
-use common\models\DocumentationType;
-use common\models\Equipment;
-use common\models\EquipmentStatus;
-use common\models\Users;
-use kartik\select2\Select2;
-use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 ?>
@@ -39,7 +32,7 @@ use yii\helpers\Html;
             ->hiddenInput(['value' => MainFunctions::GUID()])
             ->label(false);
     }
-    //echo $form->field($street, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    //    echo $form->field($street, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo Html::hiddenInput("type", "street");
     echo Html::hiddenInput("source", $source);
     echo $form->field($street, 'title')->textInput(['maxlength' => true]);

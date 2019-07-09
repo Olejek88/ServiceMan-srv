@@ -38,7 +38,7 @@ use yii\helpers\Html;
             ->label(false);
         echo Html::hiddenInput("objectUuid", $objectUuid);
     }
-    echo $form->field($contragent, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    echo $form->field($contragent, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($contragent, 'title')->textInput(['maxlength' => true]);
 
     echo $form->field($contragent, 'address')->textInput(['maxlength' => true]);

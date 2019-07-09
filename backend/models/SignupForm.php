@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use common\components\MainFunctions;
+use common\components\ReferenceFunctions;
 use common\models\Organization;
 use common\models\User;
 use common\models\Users;
@@ -93,6 +94,9 @@ class SignupForm extends Model
                     $am = Yii::$app->getAuthManager();
                     $roleAdmin = $am->getRole(User::ROLE_ADMIN);
                     $am->assign($roleAdmin, $user->_id);
+                    // создаём набор данных для новой организации
+                    ReferenceFunctions::loadReferences($organization->uuid);
+                    ReferenceFunctions::loadReferencesNext($organization->uuid);
                     return $user;
                 } else {
                     $user->delete();
