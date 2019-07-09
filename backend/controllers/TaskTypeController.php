@@ -1,23 +1,18 @@
 <?php
 namespace backend\controllers;
 
-use common\components\TypeTreeHelper;
-use common\models\TaskTemplate;
-use common\models\TaskTypeTree;
-use common\models\TaskVerdict;
 use Exception;
 use Yii;
-use yii\base\DynamicModel;
 use yii\db\StaleObjectException;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\TaskType;
 use backend\models\TaskSearchType;
+use Throwable;
 
 /**
  * TaskTypeController implements the CRUD actions for TaskType model.
  */
-class TaskTypeController extends Controller
+class TaskTypeController extends ZhkhController
 {
     protected $modelClass = TaskType::class;
 
@@ -67,6 +62,8 @@ class TaskTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskType();
         $searchModel = new TaskSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -93,6 +90,8 @@ class TaskTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -114,10 +113,12 @@ class TaskTypeController extends Controller
      * @throws NotFoundHttpException
      * @throws Exception
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

@@ -40,10 +40,10 @@ class EquipmentRegister extends ZhkhActiveRecord
     public function rules()
     {
         return [
-            [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid', 'date'], 'required'],
+            [['uuid', 'userUuid', 'registerTypeUuid', 'equipmentUuid', 'date'], 'required'],
             [['data'], 'safe'],
-            [['uuid','userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
-            [['description','oid'], 'string', 'max' => 250],
+            [['uuid', 'userUuid', 'registerTypeUuid', 'equipmentUuid'], 'string', 'max' => 50],
+            [['description', 'oid'], 'string', 'max' => 250],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -107,17 +107,19 @@ class EquipmentRegister extends ZhkhActiveRecord
 
     public function fields()
     {
-        return ['uuid',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'registerTypeUuid',
-            'registerType' => function ($model) {
-                return $model->registerType;
-            }, 'date', 'description', 'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['uuid',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'registerTypeUuid',
+//            'registerType' => function ($model) {
+//                return $model->registerType;
+//            }, 'date', 'description', 'createdAt', 'changedAt'
+//        ];
     }
 }

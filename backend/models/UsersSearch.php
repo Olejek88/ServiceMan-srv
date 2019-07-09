@@ -5,6 +5,7 @@ namespace backend\models;
 use common\models\Users;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\base\InvalidConfigException;
 
 /**
  * UsersSearch represents the model behind the search form about `common\models\Users`.
@@ -37,6 +38,7 @@ class UsersSearch extends Users
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
      */
     public function search($params)
     {

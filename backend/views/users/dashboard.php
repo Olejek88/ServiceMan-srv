@@ -9,6 +9,9 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Пользователи');
 ?>
 <div class="orders-index box-padding-index">
+    <a href="/users/create" class="btn btn-success">Добавить</a>
+</div>
+<div class="orders-index box-padding-index">
 
     <h2 class="page-header">Пользователи</h2>
     <?php
@@ -37,10 +40,10 @@ $this->title = Yii::t('app', 'Пользователи');
                         <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
                                 <li style="height:100px">'.Html::a('Специализация ' . $user_property[$count]['systems'],
-                                ['/users/add-system', 'userUuid' => $user['uuid']],
-                                [ 'title' => 'Добавить специализацию', 'data-toggle' => 'modal',
-                                    'data-target' => '#modalAddSystem']
-                                ).'</li>
+                ['/users/add-system', 'userUuid' => $user['uuid']],
+                [ 'title' => 'Добавить специализацию', 'data-toggle' => 'modal',
+                    'data-target' => '#modalAddSystem']
+            ).'</li>
                             <li><a href="#">Домов привязано 
                             <span class="pull-right badge bg-green">' . $user_property[$count]['alarms'] . '</span></a></li>
                             <li><a href="#">Задач

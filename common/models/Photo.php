@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\IPhoto;
@@ -21,6 +22,7 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property Users $user
+ * @property Objects $object
  * @property string $photoUrl
  */
 class Photo extends ActiveRecord implements IPhoto
@@ -73,7 +75,7 @@ class Photo extends ActiveRecord implements IPhoto
                 ],
                 'required'
             ],
-/*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
+            /*            [['photo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg'],*/
             [['latitude', 'longitude'], 'number'],
             [['uuid', 'objectUuid', 'userUuid'], 'string', 'max' => 50],
             [['createdAt', 'changedAt'], 'safe'],
@@ -108,34 +110,22 @@ class Photo extends ActiveRecord implements IPhoto
      */
     public function fields()
     {
-        return ['_id','uuid',
-            'objectUuid',
-            'object' => function ($model) {
-                return $model->object;
-            },
-            'userUuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'latitude',
-            'longitude',
-            'createdAt',
-            'changedAt',
-        ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id','uuid',
+//            'objectUuid',
+//            'object' => function ($model) {
+//                return $model->object;
+//            },
+//            'userUuid',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'latitude',
+//            'longitude',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     /**

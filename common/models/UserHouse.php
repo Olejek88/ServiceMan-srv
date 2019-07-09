@@ -1,9 +1,11 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "user_house".
@@ -74,7 +76,7 @@ class UserHouse extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -83,17 +85,22 @@ class UserHouse extends ZhkhActiveRecord
 
     /**
      * Объект связанного поля.
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getHouse()
     {
         return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
+    /**
+     * @param $houseUuid
+     * @return UserHouse|null
+     * @throws InvalidConfigException
+     */
     public static function getUserName($houseUuid)
     {
         $model = UserHouse::find()->where(["houseUuid" => $houseUuid])->one();
-        if(!empty($model)){
+        if (!empty($model)) {
             return $model['user']->name;
         }
         return null;

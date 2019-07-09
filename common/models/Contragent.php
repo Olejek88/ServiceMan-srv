@@ -79,25 +79,27 @@ class Contragent extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'oid',
-            'uuid',
-            'title',
-            'address',
-            'phone',
-            'inn',
-            'account',
-            'director',
-            'email',
-            'contragentTypeUuid',
-            'contragentType' => function ($model) {
-                return $model->contragentType;
-            },
-            'deleted',
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'oid',
+//            'uuid',
+//            'title',
+//            'address',
+//            'phone',
+//            'inn',
+//            'account',
+//            'director',
+//            'email',
+//            'contragentTypeUuid',
+//            'contragentType' => function ($model) {
+//                return $model->contragentType;
+//            },
+//            'deleted',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     /**

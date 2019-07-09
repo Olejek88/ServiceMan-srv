@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -120,38 +121,40 @@ class Request extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid', 'comment',
-            'userCheck',
-            'userUuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'requestStatusUuid',
-            'requestStatus' => function ($model) {
-                return $model->requestStatus;
-            },
-            'requestTypeUuid',
-            'requestType' => function ($model) {
-                return $model->requestType;
-            },
-            'authorUuid',
-            'author' => function ($model) {
-                return $model->author;
-            },
-            'equipmentUuid',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'objectUuid',
-            'object' => function ($model) {
-                return $model->object;
-            }, 'closeDate',
-            'taskUuid',
-            'task' => function ($model) {
-                return $model->task;
-            },
-            'createdAt', 'changedAt'
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid', 'comment',
+//            'userCheck',
+//            'userUuid',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'requestStatusUuid',
+//            'requestStatus' => function ($model) {
+//                return $model->requestStatus;
+//            },
+//            'requestTypeUuid',
+//            'requestType' => function ($model) {
+//                return $model->requestType;
+//            },
+//            'authorUuid',
+//            'author' => function ($model) {
+//                return $model->author;
+//            },
+//            'equipmentUuid',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'objectUuid',
+//            'object' => function ($model) {
+//                return $model->object;
+//            }, 'closeDate',
+//            'taskUuid',
+//            'task' => function ($model) {
+//                return $model->task;
+//            },
+//            'createdAt', 'changedAt'
+//        ];
     }
 
     /**
@@ -185,7 +188,7 @@ class Request extends ZhkhActiveRecord
             'closeDate' => Yii::t('app', 'Дата закрытия заявки'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
-            'comment' =>  Yii::t('app', 'Причина обращения'),
+            'comment' => Yii::t('app', 'Причина обращения'),
         ];
     }
 

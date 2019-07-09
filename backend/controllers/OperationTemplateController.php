@@ -2,51 +2,13 @@
 namespace backend\controllers;
 
 use Yii;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use yii\web\UnauthorizedHttpException;
-
 use common\models\OperationTemplate;
 
 use backend\models\OperationSearchTemplate;
 
-class OperationTemplateController extends Controller
+class OperationTemplateController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all OperationTemplate models.
      *
@@ -94,6 +56,8 @@ class OperationTemplateController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new OperationTemplate();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -114,6 +78,8 @@ class OperationTemplateController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             // сохраняем модель
@@ -147,6 +113,8 @@ class OperationTemplateController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

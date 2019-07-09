@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "request_status".
@@ -37,6 +38,7 @@ class RequestStatus extends ActiveRecord
             ],
         ];
     }
+
     /**
      * @inheritdoc
      */
@@ -73,7 +75,7 @@ class RequestStatus extends ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getRequestStatus()
     {

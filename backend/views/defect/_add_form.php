@@ -35,7 +35,7 @@ use yii\helpers\Html;
 
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
-    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::ORGANISATION_UUID])->label(false);
+    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     $defect_types = DefectType::find()->all();
     $items = ArrayHelper::map($defect_types, 'uuid', 'title');
     echo $form->field($model, 'defectTypeUuid')->widget(Select2::class,

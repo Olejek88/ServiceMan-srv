@@ -235,12 +235,8 @@ class SiteController extends Controller
                     ->asArray()
                     ->all();*/
 
-        $userUuid = Users::find()
-            ->select('uuid, name')
-            ->asArray()
-            ->all();
-
-        // $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
+//        $userUuid = Users::find()->select('uuid, name')->asArray()->all();
+//        $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
 
         /*        foreach ($userUuid as $i => $user) {
                     foreach ($journal as $j => $jrnl) {
@@ -537,7 +533,7 @@ class SiteController extends Controller
      */
     public function actionError()
     {
-        if (\Yii::$app->getUser()->isGuest) {
+        if (Yii::$app->getUser()->isGuest) {
             Yii::$app->getResponse()->redirect("/")->send();
         } else {
             $exception = Yii::$app->errorHandler->exception;
@@ -548,7 +544,6 @@ class SiteController extends Controller
                 return $this->render(
                     'error',
                     [
-                        'exception' => $exception,
                         'name' => $name . " " . $statusCode,
                         'message' => $message
                     ]
@@ -590,7 +585,6 @@ class SiteController extends Controller
                 ->orderBy('createdAt DESC')
                 ->one();
 
-            $status = '<a class="btn btn-success btn-xs">Значение</a>';
             $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
             if ($path == null)
                 $path = 'images/no-image-icon-4.png';
@@ -829,7 +823,7 @@ class SiteController extends Controller
     /**
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemove()
     {

@@ -60,23 +60,25 @@ class Subject extends ActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'owner',
-            'houseUuid',
-            'house' => function ($model) {
-                return $model->house;
-            },
-            'flatUuid',
-            'flat' => function ($model) {
-                return $model->flat;
-            },
-            'contractNumber',
-            'contractDate',
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'owner',
+//            'houseUuid',
+//            'house' => function ($model) {
+//                return $model->house;
+//            },
+//            'flatUuid',
+//            'flat' => function ($model) {
+//                return $model->flat;
+//            },
+//            'contractNumber',
+//            'contractDate',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getHouse()
@@ -110,7 +112,7 @@ class Subject extends ActiveRecord
     public static function getSubjectName($flatUuid)
     {
         $model = Subject::find()->where(["flatUuid" => $flatUuid])->one();
-        if(!empty($model)){
+        if (!empty($model)) {
             return $model['owner'];
         }
         return null;

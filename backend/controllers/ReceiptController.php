@@ -3,53 +3,15 @@ namespace backend\controllers;
 
 use backend\models\ReceiptSearch;
 use common\models\Receipt;
-use common\models\Request;
-use common\models\Resident;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ReceiptController implements the CRUD actions for Receipt model.
  */
-class ReceiptController extends Controller
+class ReceiptController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-    }
-
     /**
      * Lists all Receipt models.
      *
@@ -147,6 +109,8 @@ class ReceiptController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Receipt();
         $searchModel = new ReceiptSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -180,6 +144,8 @@ class ReceiptController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             // сохраняем модель
@@ -216,6 +182,8 @@ class ReceiptController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

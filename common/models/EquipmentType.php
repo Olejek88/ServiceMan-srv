@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 
@@ -118,17 +119,19 @@ class EquipmentType extends ActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'title',
-            'equipmentSystemUuid',
-            'equipmentSystem' => function ($model) {
-                return $model->equipmentSystem;
-            },
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'title',
+//            'equipmentSystemUuid',
+//            'equipmentSystem' => function ($model) {
+//                return $model->equipmentSystem;
+//            },
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     /**
@@ -150,7 +153,7 @@ class EquipmentType extends ActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipmentSystem()
     {

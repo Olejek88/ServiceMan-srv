@@ -8,37 +8,9 @@ use common\models\WorkStatus;
 use common\models\OperationTemplate;
 use common\models\Task;
 use common\models\Users;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
-use yii\web\UnauthorizedHttpException;
 
-
-class AnalyticsController extends Controller
+class AnalyticsController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     public function getBar($time, $normative)
     {
         $difference = 100;

@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\Alarm */
+/* @var $model common\models\Alarm */
 
 $this->title = "Предупреждение / авария / событие";
 ?>

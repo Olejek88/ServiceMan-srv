@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "measure".
@@ -118,44 +119,32 @@ class Measure extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return ['_id', 'uuid',
-            'equipmentUuid',
-            'equipment' => function ($model) {
-                return $model->equipment;
-            },
-            'userUuid',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'measureTypeUuid',
-            'measureType' => function ($model) {
-                return $model->measureType;
-            },
-            'value',
-            'date',
-            'createdAt',
-            'changedAt',
-        ];
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
+        $fields = parent::fields();
+        return $fields;
+//        return ['_id', 'uuid',
+//            'equipmentUuid',
+//            'equipment' => function ($model) {
+//                return $model->equipment;
+//            },
+//            'userUuid',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'measureTypeUuid',
+//            'measureType' => function ($model) {
+//                return $model->measureType;
+//            },
+//            'value',
+//            'date',
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getEquipment()
     {
@@ -165,7 +154,7 @@ class Measure extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getUser()
     {
@@ -175,18 +164,25 @@ class Measure extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getMeasureType()
     {
         return $this->hasOne(MeasureType::class, ['uuid' => 'measureTypeUuid']);
     }
 
+    /**
+     * @param $equipmentUuid
+     * @param $startDate
+     * @param $endDate
+     * @return Measure|null
+     * @throws InvalidConfigException
+     */
     public static function getLastMeasureBetweenDates($equipmentUuid, $startDate, $endDate)
     {
         $model = Measure::find()->where(["equipmentUuid" => $equipmentUuid])
-            ->andWhere('date >= "'.$startDate.'"')
-            ->andWhere('date < "'.$endDate.'"')
+            ->andWhere('date >= "' . $startDate . '"')
+            ->andWhere('date < "' . $endDate . '"')
             ->orderBy('date DESC')
             ->one();
         return $model;

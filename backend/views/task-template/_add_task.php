@@ -30,8 +30,8 @@ use yii\helpers\Html;
 /*    echo $form->field($taskTemplate, 'stageTemplateUuid')
         ->hiddenInput(['value' => StageType::STAGE_TYPE_VIEW])
         ->label(false);*/
-    echo $form->field($taskTemplate, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
-    echo $form->field($taskTemplateEquipment, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false);
+    echo $form->field($taskTemplate, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
+    echo $form->field($taskTemplateEquipment, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
 
     if ($taskTemplate['uuid']) {
         echo Html::hiddenInput("taskTemplateUuid", $taskTemplate['uuid']);

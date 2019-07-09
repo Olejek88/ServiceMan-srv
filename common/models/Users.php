@@ -7,7 +7,6 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
-use yii\web\IdentityInterface;
 
 /**
  * Class Users
@@ -36,7 +35,6 @@ class Users extends ZhkhActiveRecord
 {
     private static $_IMAGE_ROOT = 'users';
     public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
-    public const ORGANISATION_UUID = '00000001-DA70-4FFE-8B40-DC6F2AC8BAB0';
 
     /**
      * Behaviors.
@@ -85,12 +83,14 @@ class Users extends ZhkhActiveRecord
                 'required'
             ],
             [['image'], 'file'],
-            [['user_id','type', 'active'], 'integer'],
+            [['user_id', 'type', 'active'], 'integer'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
             [['name', 'contact'], 'string', 'max' => 100],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
+            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id']],
+            [['user_id'], 'unique'],
         ];
     }
 
@@ -123,23 +123,25 @@ class Users extends ZhkhActiveRecord
      */
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'name',
-            'active',
-            'type',
-            'pin',
-            'user_id',
-            'contact',
-            'active',
-            'user' => function ($model) {
-                return $model->user;
-            },
-            'createdAt',
-            'changedAt',
-            'image',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'name',
+//            'active',
+//            'type',
+//            'pin',
+//            'user_id',
+//            'contact',
+//            'active',
+//            'user' => function ($model) {
+//                return $model->user;
+//            },
+//            'createdAt',
+//            'changedAt',
+//            'image',
+//        ];
     }
 
     /**
@@ -150,20 +152,6 @@ class Users extends ZhkhActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['_id' => 'user_id']);
-    }
-
-    /**
-     * Проверка целостности модели?
-     *
-     * @return bool
-     */
-    public function upload()
-    {
-        if ($this->validate()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -213,13 +201,13 @@ class Users extends ZhkhActiveRecord
     }
 
     /**
-     * @param $user IdentityInterface
      * @return string
      */
-    static function getOid($user)
+    static function getCurrentOid()
     {
-        /** @var User $user */
-        $oid = $user->users->oid;
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $oid = $identity->users->oid;
         return $oid;
     }
 }

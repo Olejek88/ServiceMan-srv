@@ -5,40 +5,12 @@ namespace backend\controllers;
 use backend\models\ObjectSearchType;
 use common\models\ObjectType;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * ObjectTypeController implements the CRUD actions for ObjectType model.
  */
-class ObjectTypeController extends Controller
+class ObjectTypeController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all ObjectType models.
      * @return mixed
@@ -74,6 +46,8 @@ class ObjectTypeController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new ObjectType();
         $searchModel = new ObjectSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -97,6 +71,8 @@ class ObjectTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -116,6 +92,8 @@ class ObjectTypeController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

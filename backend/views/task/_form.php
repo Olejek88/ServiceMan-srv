@@ -43,7 +43,7 @@ use common\models\WorkStatus;
             ],
         ]);
     ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getOid(Yii::$app->user->identity)])->label(false); ?>
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
     $taskTemplate = TaskTemplate::find()->all();

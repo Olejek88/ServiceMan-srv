@@ -36,7 +36,7 @@ class Journal extends ActiveRecord
             [['userUuid', 'description'], 'required'],
             [['description'], 'string'],
             [['date'], 'safe'],
-            [['userUuid','type'], 'string', 'max' => 50],
+            [['userUuid', 'type'], 'string', 'max' => 50],
         ];
     }
 

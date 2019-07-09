@@ -3,7 +3,6 @@
 namespace backend\controllers;
 
 use backend\models\TaskSearchTemplate;
-use backend\models\TaskSearchType;
 use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\EquipmentType;
@@ -16,13 +15,12 @@ use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 /**
  * TaskTemplateController implements the CRUD actions for TaskTemplate model.
  */
-class TaskTemplateController extends Controller
+class TaskTemplateController extends ZhkhController
 {
     protected $modelClass = TaskTemplate::class;
 
@@ -75,6 +73,8 @@ class TaskTemplateController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskTemplate();
         $searchModel = new TaskSearchTemplate();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -104,6 +104,8 @@ class TaskTemplateController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -131,6 +133,8 @@ class TaskTemplateController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

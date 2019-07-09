@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\components\ZhkhActiveRecord;
@@ -72,7 +73,7 @@ class ObjectContragent extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getContragent()
     {
@@ -81,7 +82,7 @@ class ObjectContragent extends ZhkhActiveRecord
 
     /**
      * Объект связанного поля.
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
     public function getObject()
     {

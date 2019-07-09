@@ -2,46 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\CitySearch;
 use backend\models\ContragentRegisterSearch;
-use common\models\City;
-use common\models\Contragent;
 use common\models\ContragentRegister;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 
 /**
  * ContragentRegisterController implements the CRUD actions for ContragentRegister model.
  */
-class ContragentRegisterController extends Controller
+class ContragentRegisterController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all ContragentRegister models.
      * @return mixed
@@ -77,6 +47,8 @@ class ContragentRegisterController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new ContragentRegister();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -102,6 +74,8 @@ class ContragentRegisterController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -121,6 +95,8 @@ class ContragentRegisterController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

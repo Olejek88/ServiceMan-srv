@@ -23,47 +23,10 @@ use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 
-class TaskController extends Controller
+class TaskController extends ZhkhController
 {
-    /**
-     * Behaviors
-     *
-     * @inheritdoc
-     *
-     * @return array
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Task models.
      *
@@ -282,6 +245,8 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -294,7 +259,7 @@ class TaskController extends Controller
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
             $modelTU->userUuid = $user['uuid'];
-            $modelTU->oid = Users::getOid(Yii::$app->user->identity);
+            $modelTU->oid = Users::getCurrentOid();
             $modelTU->save();
             //echo json_encode($modelTU->errors);
             return self::actionIndex();
@@ -323,6 +288,8 @@ class TaskController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -350,6 +317,8 @@ class TaskController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

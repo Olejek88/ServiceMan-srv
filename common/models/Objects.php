@@ -69,26 +69,28 @@ class Objects extends ZhkhActiveRecord
 
     public function fields()
     {
-        return [
-            '_id',
-            'uuid',
-            'title',
-            'square',
-            'objectStatusUuid',
-            'objectStatus' => function ($model) {
-                return $model->objectStatus;
-            },
-            'objectTypeUuid',
-            'objectType' => function($model) {
-                return $model->objectType;
-            },
-            'houseUuid',
-            'house' => function ($model) {
-                return $model->house;
-            },
-            'createdAt',
-            'changedAt',
-        ];
+        $fields = parent::fields();
+        return $fields;
+//        return [
+//            '_id',
+//            'uuid',
+//            'title',
+//            'square',
+//            'objectStatusUuid',
+//            'objectStatus' => function ($model) {
+//                return $model->objectStatus;
+//            },
+//            'objectTypeUuid',
+//            'objectType' => function($model) {
+//                return $model->objectType;
+//            },
+//            'houseUuid',
+//            'house' => function ($model) {
+//                return $model->house;
+//            },
+//            'createdAt',
+//            'changedAt',
+//        ];
     }
 
     public function getObjectStatus()
@@ -125,19 +127,22 @@ class Objects extends ZhkhActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getPhoto() {
+    public function getPhoto()
+    {
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
     /**
      * @return ActiveQuery
      */
-    public function getObjectType() {
+    public function getObjectType()
+    {
         return $this->hasOne(ObjectType::class, ['uuid' => 'objectTypeUuid']);
     }
 
-    public function getFullTitle() {
-        return 'ул.'.$this->house['street']['title'].', д.'.$this->house['number'].' - '.$this->title;
+    public function getFullTitle()
+    {
+        return 'ул.' . $this->house['street']['title'] . ', д.' . $this->house['number'] . ' - ' . $this->title;
     }
 
 }

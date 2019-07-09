@@ -4,41 +4,12 @@ namespace backend\controllers;
 
 use backend\models\TaskOperationSearch;
 use common\models\TaskOperation;
-use common\models\User;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * TaskOperationController implements the CRUD actions for TaskOperation model.
  */
-class TaskOperationController extends Controller
+class TaskOperationController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all TaskOperation models.
      * @return mixed
@@ -77,6 +48,8 @@ class TaskOperationController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskOperation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -94,20 +67,11 @@ class TaskOperationController extends Controller
      * @param integer $id
      * @return mixed
      */
-    // public function actionUpdate($id)
-    // {
-    //     $model = new User;
-    //     $model = $model::find()->where(['id' => $id])->one();
-    //
-    //     return $this->render('update', [
-    //         'model' => $model,
-    //     ]);
-    // }
-
     public function actionUpdate($id)
     {
-        $model = new TaskOperation;
-        $model = $model::find()->where(['_id' => $id])->one();
+        parent::actionUpdate($id);
+
+        $model = TaskOPeration::find()->where(['_id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model['id']]);
@@ -126,8 +90,9 @@ class TaskOperationController extends Controller
      */
     public function actionDelete($id)
     {
-        $model = new TaskOperation;
-        $model = $model::find()->where(['_id' => $id])->one();
+        parent::actionDelete($id);
+
+        $model = TaskOperation::find()->where(['_id' => $id])->one();
 
         $model->delete();
 

@@ -5,45 +5,17 @@ namespace backend\controllers;
 use backend\models\AlarmSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
-use common\models\Users;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
+use yii\base\InvalidConfigException;
+use Throwable;
+use yii\db\StaleObjectException;
 
 /**
  * AlarmController implements the CRUD actions for Alarm model.
  */
-class AlarmController extends Controller
+class AlarmController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @throws UnauthorizedHttpException
-     */
-    public function init()
-    {
-
-        if (Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all Alarm models.
      * @return mixed
@@ -68,19 +40,7 @@ class AlarmController extends Controller
      */
     public function actionView($id)
     {
-        $defect = Alarm::find()
-            ->select('*')
-            ->where(['_id' => $id])
-            ->asArray()
-            ->one();
-        $user = Users::find()
-            ->select('name')
-            ->where(['uuid' => $defect['userUuid']])
-            ->asArray()
-            ->one();
-
         return $this->render('view', [
-            'user' => $user,
             'model' => $this->findModel($id),
         ]);
     }
@@ -89,9 +49,12 @@ class AlarmController extends Controller
      * Creates a new Alarm model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new Alarm();
         $searchModel = new AlarmSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -118,6 +81,8 @@ class AlarmController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -134,9 +99,14 @@ class AlarmController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

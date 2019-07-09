@@ -2,45 +2,16 @@
 
 namespace backend\controllers;
 
-use backend\models\HouseSearch;
 use backend\models\HouseSearchStatus;
-use common\models\House;
 use common\models\HouseStatus;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
 
 /**
  * HouseStatusController implements the CRUD actions for HouseStatus model.
  */
-class HouseStatusController extends Controller
+class HouseStatusController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Lists all HouseStatus models.
      * @return mixed
@@ -76,11 +47,13 @@ class HouseStatusController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new HouseStatus();
         $searchModel = new HouseSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 10;
-        $dataProvider->setSort(['defaultOrder' => ['_id'=>SORT_DESC]]);
+        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -100,6 +73,8 @@ class HouseStatusController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -119,6 +94,8 @@ class HouseStatusController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

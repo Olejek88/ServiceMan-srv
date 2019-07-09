@@ -43,7 +43,7 @@ class ZhkhActiveRecord extends ActiveRecord
     public function checkOrganizationOwn($attr, $param)
     {
         if (Yii::$app instanceof Application) {
-            if ($this->attributes[$attr] != Users::getOid(Yii::$app->user->identity)) {
+            if ($this->attributes[$attr] != Users::getCurrentOid()) {
                 $this->addError($attr, 'Не верный идентификатор организации.');
             }
         } else {

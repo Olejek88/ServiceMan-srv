@@ -4,40 +4,12 @@ namespace backend\controllers;
 
 use common\models\TaskUser;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\web\UnauthorizedHttpException;
-
 /**
  * TaskUserController implements the CRUD actions for TaskUser model.
  */
-class TaskUserController extends Controller
+class TaskUserController extends ZhkhController
 {
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST', 'GET'],
-                ],
-            ],
-        ];
-    }
-
-    public function init()
-    {
-
-        if (\Yii::$app->getUser()->isGuest) {
-            throw new UnauthorizedHttpException();
-        }
-
-    }
-
     /**
      * Displays a single TaskUser model.
      * @param integer $id
@@ -57,6 +29,8 @@ class TaskUserController extends Controller
      */
     public function actionCreate()
     {
+        parent::actionCreate();
+
         $model = new TaskUser();
         // TODO после сохранения уходить в источник
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -77,6 +51,8 @@ class TaskUserController extends Controller
      */
     public function actionUpdate($id)
     {
+        parent::actionUpdate($id);
+
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -96,6 +72,8 @@ class TaskUserController extends Controller
      */
     public function actionDelete($id)
     {
+        parent::actionDelete($id);
+
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
