@@ -80,17 +80,17 @@ class Users extends ZhkhActiveRecord
                     'pin',
                     'contact'
                 ],
-                'required'
+                'required', 'on' => ['default', 'signup'],
             ],
-            [['image'], 'file'],
-            [['user_id', 'type', 'active'], 'integer'],
-            [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
-            [['name', 'contact'], 'string', 'max' => 100],
-            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
-            [['oid'], 'checkOrganizationOwn'],
-            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id']],
-            [['user_id'], 'unique'],
+            [['image'], 'file', 'on' => ['default', 'signup'],],
+            [['user_id', 'type', 'active'], 'integer', 'on' => ['default', 'signup'],],
+            [['createdAt', 'changedAt'], 'safe', 'on' => ['default', 'signup'],],
+            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45, 'on' => ['default', 'signup'],],
+            [['name', 'contact'], 'string', 'max' => 100, 'on' => ['default', 'signup'],],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid'], 'on' => ['default', 'signup'],],
+            [['oid'], 'checkOrganizationOwn', 'on' => 'default'],
+            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id'], 'on' => ['default', 'signup'],],
+            [['user_id'], 'unique', 'on' => ['default', 'signup'],],
         ];
     }
 

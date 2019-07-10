@@ -82,6 +82,7 @@ class SignupForm extends Model
             $organization->secret = $this->randomString(8);
             if ($organization->save()) {
                 $users = new Users();
+                $users->scenario = 'signup';
                 $users->uuid = MainFunctions::GUID();
                 $users->user_id = $user->_id;
                 $users->type = 0;
@@ -94,6 +95,7 @@ class SignupForm extends Model
                     $am = Yii::$app->getAuthManager();
                     $roleAdmin = $am->getRole(User::ROLE_ADMIN);
                     $am->assign($roleAdmin, $user->_id);
+                    Yii::$app->user->login(User::findByUsername($user->username), true ? 3600 * 24 * 30 : 0);
                     // создаём набор данных для новой организации
                     ReferenceFunctions::loadReferences($organization->uuid);
                     ReferenceFunctions::loadReferencesNext($organization->uuid);
