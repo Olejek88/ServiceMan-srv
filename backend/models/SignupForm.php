@@ -85,10 +85,10 @@ class SignupForm extends Model
                 $users->scenario = 'signup';
                 $users->uuid = MainFunctions::GUID();
                 $users->user_id = $user->_id;
-                $users->type = 0;
+                $users->type = Users::USERS_ARM;
                 $users->active = 1;
                 $users->name = $user->username;
-                $users->pin = 'PIN:' . $this->password;
+                $users->pin = '-';
                 $users->contact = 'нет';
                 $users->oid = $organization->uuid;
                 if ($users->save()) {
