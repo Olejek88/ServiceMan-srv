@@ -2,12 +2,14 @@
 
 namespace common\components;
 
+use common\models\User;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\web\Application;
+use yii\db\Exception;
 
 class ZhkhActiveRecord extends ActiveRecord
 {
@@ -15,20 +17,24 @@ class ZhkhActiveRecord extends ActiveRecord
     /**
      * @return object|ActiveQuery
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public static function find()
     {
+        $aq = Yii::createObject(ZhkhActiveQuery::class, [get_called_class()]);
         if (Yii::$app instanceof Application) {
-            $aq = Yii::createObject(ActiveQuery::class, [Users::class]);
-            $users = $aq->where(['user_id' => Yii::$app->user->id])->one();
-            $aq = Yii::createObject(ZhkhActiveQuery::class, [get_called_class()]);
-            if ($users) {
-                $aq->andWhere(['oid' => $users->oid]);
-            } else {
-                $aq->andWhere(['oid' => -1]);
+            if (!Yii::$app->user->isGuest) {
+                /** @var User $identity */
+                $identity = Yii::$app->user->identity;
+                if ($identity->username != 'sUser') {
+                    // обычный пользователь
+                    $oid = Yii::$app->db
+                        ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
+                        ->query()
+                        ->read();
+                    $aq->andWhere(['oid' => $oid['oid']]);
+                }
             }
-        } else {
-            $aq = Yii::createObject(ActiveQuery::class, [get_called_class()]);
         }
 
         return $aq;
@@ -46,8 +52,6 @@ class ZhkhActiveRecord extends ActiveRecord
             if ($this->attributes[$attr] != Users::getCurrentOid()) {
                 $this->addError($attr, 'Не верный идентификатор организации.');
             }
-        } else {
-            // TODO: как проверить что создаваемая запись принадлежит той организации которой она должна принадлежать?
         }
     }
 }

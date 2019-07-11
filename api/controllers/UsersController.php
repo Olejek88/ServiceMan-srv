@@ -2,6 +2,7 @@
 
 namespace api\controllers;
 
+use Yii;
 use api\components\BaseController;
 use common\models\Organization;
 use common\models\User;
@@ -15,7 +16,7 @@ class UsersController extends BaseController
 
     public function actionIndex()
     {
-        $req = \Yii::$app->request;
+        $req = Yii::$app->request;
 
         /** @var ActiveRecord $class */
         $class = $this->modelClass;
@@ -38,11 +39,10 @@ class UsersController extends BaseController
         }
 
         /** @var User $user */
-        $user = \Yii::$app->user->identity;
+        $user = Yii::$app->user->identity;
 
         if ($user->users->uuid == Users::USER_SERVICE_UUID) {
-            $request = \Yii::$app->request;
-            $headers = $request->getHeaders();
+            $headers = $req->getHeaders();
             $orgId = $headers->get('x-org');
             $data = $headers->get('x-data');
             $testHash = $headers->get('x-hash');
@@ -59,6 +59,8 @@ class UsersController extends BaseController
         } else {
             $query->andWhere(['oid' => $user->users->oid]);
         }
+
+        $query->andWhere(['type' => Users::USERS_WORKER]);
 
         // выбираем данные из базы
         $result = $query->all();
