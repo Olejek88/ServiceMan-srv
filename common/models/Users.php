@@ -132,6 +132,7 @@ class Users extends ZhkhActiveRecord
     public function fields()
     {
         $fields = parent::fields();
+        $fields[] = 'organization';
         return $fields;
 //        return [
 //            '_id',

@@ -56,13 +56,12 @@ class UsersController extends BaseController
             } else {
                 return [];
             }
-        } else {
-            $query->andWhere(['oid' => $user->users->oid]);
         }
 
         $query->andWhere(['type' => Users::USERS_WORKER]);
 
         // выбираем данные из базы
+        //$result = $query->with('organization')->asArray()->all();
         $result = $query->all();
 
         return $result;
