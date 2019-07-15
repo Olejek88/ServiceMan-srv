@@ -98,6 +98,7 @@ class Organization extends ActiveRecord
     public function fields()
     {
         $fields = parent::fields();
+        unset($fields['secret']);
         return $fields;
 //        return [
 //            '_id',

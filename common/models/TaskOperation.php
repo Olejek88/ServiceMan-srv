@@ -17,6 +17,7 @@ use yii\db\Expression;
  * @property string $operationTemplateUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
  * @property OperationTemplate $operationTemplate
  * @property TaskTemplate $taskTemplate
  */

@@ -100,9 +100,14 @@ class UsersController extends ZhkhController
         // вкладка со свойствами пользователя
         $userArm = new UserArm();
         $userArm->scenario = UserArm::SCENARIO_UPDATE;
-        $userArm->_id = $id;
         $userArm->load($model->user->attributes, '');
         $userArm->load($model->attributes, '');
+        if ($model->type == Users::USERS_WORKER) {
+            list($tagType, $pin) = explode(':', $userArm->pin);
+            $userArm->tagType = $tagType;
+            $userArm->pin = $pin;
+        }
+
         $am = Yii::$app->getAuthManager();
         $roles = $am->getRoles();
         $roleList = ArrayHelper::map($roles, 'name', 'description');
@@ -144,7 +149,6 @@ class UsersController extends ZhkhController
         $existUser = User::find()->all();
         $login = 'user' . (count($existUser) + 1);
         $model->username = $login;
-        $model->type = 2;
         $model->email = $login . '@' . time() . '.ru';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $user = new User();
@@ -157,12 +161,13 @@ class UsersController extends ZhkhController
                 $users->uuid = MainFunctions::GUID();
                 $users->name = $model->name;
                 $users->type = $model->type;
-                $users->pin = $model->pin;
+                $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
                 $users->active = 1;
                 $users->whoIs = $model->whoIs;
                 $users->contact = $model->contact;
                 $users->user_id = $user->id;
                 $users->image = '';
+                $users->oid = Users::getCurrentOid();
                 if ($users->validate() && $users->save()) {
                     $newRole = $am->getRole($model->role);
                     $am->assign($newRole, $users->user_id);
@@ -172,10 +177,6 @@ class UsersController extends ZhkhController
                     $user->delete();
                 }
             }
-        }
-
-        if (empty($model->pin)) {
-            $model->pin = MainFunctions::GUID();
         }
 
         $roles = $am->getRoles();
@@ -286,10 +287,13 @@ class UsersController extends ZhkhController
     public function actionUpdate($id)
     {
         parent::actionUpdate($id);
+        $am = Yii::$app->getAuthManager();
 
         $users = $this->findModel($id);
 
         $model = new UserArm();
+        $model->load($users->user->attributes, '');
+        $model->load($users->attributes, '');
         $model->scenario = UserArm::SCENARIO_UPDATE;
         if ($model->load(Yii::$app->request->post())) {
             $user = $users->user;
@@ -303,18 +307,36 @@ class UsersController extends ZhkhController
             }
 
             $users->load($model->attributes, '');
+            $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
             if ($users->save()) {
+                $am->revokeAll($users->user_id);
+                $newRole = $am->getRole($model->role);
+                $am->assign($newRole, $users->user_id);
                 MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name, '');
                 return $this->redirect(['/users/view', 'id' => $users->_id]);
             }
+
+            $assignments = $am->getAssignments($users->user_id);
+            foreach ($assignments as $value) {
+                $model->role = $value->roleName;
+                break;
+            }
         }
 
-        $model->load($users->user->attributes, '');
-        $model->load($users->attributes, '');
-        $model->_id = $id;
-        $am = Yii::$app->getAuthManager();
+        if ($model->type == Users::USERS_WORKER) {
+            list($tagType, $pin) = explode(':', $model->pin);
+            $model->tagType = $tagType;
+            $model->pin = $pin;
+        }
+
         $roles = $am->getRoles();
         $roleList = ArrayHelper::map($roles, 'name', 'description');
+        $assignments = $am->getAssignments($users->user_id);
+        foreach ($assignments as $value) {
+            $model->role = $value->roleName;
+            break;
+        }
+
         return $this->render('update', [
             'userArm' => $model,
             'model' => $users,

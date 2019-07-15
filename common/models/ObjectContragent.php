@@ -15,9 +15,10 @@ use yii\db\ActiveQuery;
  * @property string $objectUuid
  * @property string $contragentUuid
  * @property string $createdAt
- * @property ActiveQuery $object
- * @property ActiveQuery $contragent
  * @property string $changedAt
+ *
+ * @property Objects $object
+ * @property Contragent $contragent
  */
 class ObjectContragent extends ZhkhActiveRecord
 {
