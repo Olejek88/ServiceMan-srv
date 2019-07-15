@@ -25,8 +25,10 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
+
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
+    <label>Объект, связанный с контрагентом</label></br>
     <?php
     $object = Objects::find()->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {
@@ -45,7 +47,7 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
-
+    </br>
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?php echo $form->field($model, 'address')->textInput(['maxlength' => true]) ?>

@@ -20,6 +20,7 @@ use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 /**
  * ObjectController implements the CRUD actions for Object model.
@@ -758,4 +759,17 @@ class ObjectController extends ZhkhController
             return null;
         }
     }
+
+    /**
+     * @return array
+     * @throws InvalidConfigException
+     */
+    public function actionHouse() {
+        $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
+        $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+            return $model['houseType']->title . ', ' . $model->number;
+        });
+        return json_encode($items);
+    }
+
 }

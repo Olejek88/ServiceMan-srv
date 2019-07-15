@@ -1289,7 +1289,7 @@ class EquipmentController extends ZhkhController
         $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
             ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
             [
-                'title' => 'Перечень операций',
+                'title' => 'История работ',
                 'data-toggle' => 'modal',
                 'data-target' => '#modalTasks',
             ]

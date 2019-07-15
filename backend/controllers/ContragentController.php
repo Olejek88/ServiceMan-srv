@@ -3,13 +3,17 @@
 namespace backend\controllers;
 
 use backend\models\ContragentSearch;
+use backend\models\UserArm;
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\ObjectContragent;
+use common\models\User;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 /**
  * ContragentController implements the CRUD actions for Contragent model.
@@ -18,6 +22,7 @@ class ContragentController extends ZhkhController
 {
     /**
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionIndex()
     {
@@ -100,13 +105,18 @@ class ContragentController extends ZhkhController
         $dataProvider->pagination->pageSize = 15;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            $objectContragent = new ObjectContragent();
-            $objectContragent->contragentUuid = $model['uuid'];
-            $objectContragent->uuid = MainFunctions::GUID();
-            $objectContragent->oid = Users::getCurrentOid();
-            $objectContragent->objectUuid = $_POST['objectUuid'];
-            $objectContragent->save();
-
+            if (isset ($_POST['objectUuid'])) {
+                $objectContragent = new ObjectContragent();
+                $objectContragent->contragentUuid = $model['uuid'];
+                $objectContragent->uuid = MainFunctions::GUID();
+                $objectContragent->oid = Users::getCurrentOid();
+                $objectContragent->objectUuid = $_POST['objectUuid'];
+                $objectContragent->save();
+            }
+            if ($model->contragentTypeUuid == ContragentType::WORKER ||
+                $model->contragentTypeUuid == ContragentType::CONTRACTOR ||
+                $model->contragentTypeUuid == ContragentType::EMPLOYEE) {
+            }
             return $this->render('table', [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,

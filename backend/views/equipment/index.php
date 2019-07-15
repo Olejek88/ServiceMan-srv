@@ -295,7 +295,7 @@ $gridColumns = [
                 return Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
                     ['/equipment/operations', 'equipmentUuid' => $model['uuid']],
                     [
-                        'title' => 'Перечень операций',
+                        'title' => 'История работ',
                         'data-toggle' => 'modal',
                         'data-target' => '#modalTasks',
                     ]
