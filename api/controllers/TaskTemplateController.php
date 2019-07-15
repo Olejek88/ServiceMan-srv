@@ -3,11 +3,12 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\House;
+use common\models\TaskTemplate;
 use yii\db\ActiveRecord;
 
-class HouseController extends BaseController
+class TaskTemplateController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = House::class;
+    public $modelClass = TaskTemplate::class;
+
 }

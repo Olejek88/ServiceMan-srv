@@ -3,11 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\ObjectStatus;
+use common\models\WorkStatus;
 use yii\db\ActiveRecord;
 
-class FlatStatusController extends BaseController
+class WorkStatusController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = ObjectStatus::class;
+    public $modelClass = WorkStatus::class;
 }

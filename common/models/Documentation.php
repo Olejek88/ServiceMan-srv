@@ -13,6 +13,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid
  * @property string $equipmentUuid
  * @property string $documentationTypeUuid
  * @property string $title
@@ -208,5 +209,10 @@ class Documentation extends ActiveRecord
         // валим все в одну папку - сомневаюсь, что будет много
         $dir = 'storage/doc/';
         return $dir;
+    }
+
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
     }
 }

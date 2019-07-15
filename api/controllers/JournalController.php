@@ -2,6 +2,7 @@
 
 namespace api\controllers;
 
+use Yii;
 use api\components\BaseController;
 use common\models\Journal;
 use yii\db\ActiveRecord;
@@ -19,7 +20,7 @@ class JournalController extends BaseController
 
     public function actionCreate()
     {
-        $request = \Yii::$app->request;
+        $request = Yii::$app->request;
 
         // запись для загружаемого файла
         $rawData = $request->getRawBody();

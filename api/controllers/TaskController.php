@@ -3,23 +3,15 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\Message;
+use common\models\Task;
 use common\models\Users;
 use Yii;
 use yii\db\ActiveRecord;
 
-class MessageController extends BaseController
+class TaskController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = Message::class;
-
-    /**
-     * @return array
-     */
-    public function actionCreate()
-    {
-        return parent::createBase();
-    }
+    public $modelClass = Task::class;
 
     public function actionIndex()
     {
@@ -29,18 +21,19 @@ class MessageController extends BaseController
         $class = $this->modelClass;
         $query = $class::find();
 
-        // выбираем сообщения только для текущего пользователя
-        $query->andWhere(['toUserUuid' => Users::getCurrentOid()]);
+        // задачи выбираем только для текущего пользователя
+        $query->leftJoin('{{%task_user}}', '{{%task_user}}.taskUuid = {{%task}}.uuid')
+            ->andWhere(['{{%task_user}}.userUuid' => Users::getCurrentOid()]);
 
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
-            $query->andWhere(['uuid' => $uuid]);
+            $query->andWhere(['{{%task}}.uuid' => $uuid]);
         }
 
         $changedAfter = $req->getQueryParam('changedAfter');
         if ($changedAfter != null) {
-            $query->andWhere(['>=', 'changedAt', $changedAfter]);
+            $query->andWhere(['>=', '{{%task}}.changedAt', $changedAfter]);
         }
 
         // проверяем что хоть какие-то условия были заданы
@@ -48,7 +41,11 @@ class MessageController extends BaseController
             return [];
         }
 
+
         $result = $query->all();
         return $result;
+
     }
+
+
 }

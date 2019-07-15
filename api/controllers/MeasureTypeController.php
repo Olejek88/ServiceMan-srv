@@ -3,11 +3,11 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\House;
+use common\models\MeasureType;
 use yii\db\ActiveRecord;
 
-class HouseController extends BaseController
+class MeasureTypeController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = House::class;
+    public $modelClass = MeasureType::class;
 }

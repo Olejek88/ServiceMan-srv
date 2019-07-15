@@ -2,6 +2,25 @@
 
 namespace api\components;
 
+use common\models\Alarm;
+use common\models\Defect;
+use common\models\DefectType;
+use common\models\Documentation;
+use common\models\DocumentationType;
+use common\models\Equipment;
+use common\models\EquipmentSystem;
+use common\models\House;
+use common\models\MeasureType;
+use common\models\Objects;
+use common\models\Operation;
+use common\models\OperationTemplate;
+use common\models\Street;
+use common\models\TaskTemplate;
+use common\models\TaskType;
+use common\models\TaskVerdict;
+use common\models\UserHouse;
+use common\models\UserSystem;
+use common\models\WorkStatus;
 use Yii;
 use common\components\IPhoto;
 use common\models\AlarmStatus;
@@ -13,7 +32,6 @@ use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\HouseStatus;
 use common\models\HouseType;
-use common\models\Users;
 use yii\db\ActiveRecord;
 use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
@@ -85,16 +103,34 @@ class BaseController extends Controller
 
         // отдаём "простые" справочники, т.е. которые не ссылаются на другие таблицы
         switch ($this->modelClass) {
-            case City::class :
-            case AlarmType::class :
+            case Alarm::class :
             case AlarmStatus::class :
-            case HouseType::class :
-            case HouseStatus::class :
-            case ObjectType::class :
-            case ObjectStatus::class :
-            case EquipmentType::class :
+            case AlarmType::class :
+            case City::class :
+            case Defect::class :
+            case DefectType::class :
+            case Documentation::class :
+            case DocumentationType::class :
+            case Equipment::class :
             case EquipmentStatus::class :
-            case Users::class :
+            case EquipmentSystem::class :
+            case EquipmentType::class :
+            case House::class :
+            case HouseStatus::class :
+            case HouseType::class :
+            case MeasureType::class :
+            case ObjectStatus::class :
+            case ObjectType::class :
+            case Objects::class :
+            case Operation::class :
+            case OperationTemplate::class :
+            case Street::class :
+            case TaskTemplate::class :
+            case TaskType::class :
+            case TaskVerdict::class :
+            case UserHouse::class :
+            case UserSystem::class :
+            case WorkStatus::class :
                 // выбираем данные из базы
                 $result = $query->all();
                 break;

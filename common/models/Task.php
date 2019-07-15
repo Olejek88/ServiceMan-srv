@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\helpers\Html;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "task".
@@ -170,6 +171,7 @@ class Task extends ZhkhActiveRecord
     /**
      * @return array|ActiveRecord[]
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getUsers()
     {
@@ -185,6 +187,7 @@ class Task extends ZhkhActiveRecord
     /**
      * @return string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getRequest()
     {
