@@ -25,6 +25,7 @@ use common\models\UserSystem;
 use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -41,6 +42,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -108,6 +110,7 @@ class EquipmentController extends ZhkhController
      * Lists all Equipment models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndexCheck()
@@ -189,6 +192,10 @@ class EquipmentController extends ZhkhController
                 MainFunctions::register('documentation', 'Добавлено оборудование',
                     '<a class="btn btn-default btn-xs">' . $model['equipmentType']['title'] . '</a> ' . $model['title'] . '<br/>' .
                     'Серийный номер <a class="btn btn-default btn-xs">' . $model['serial'] . '</a>');
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
+                    "Добавлено оборудование");
+
                 return $this->redirect(['view', 'id' => $model->_id]);
             }
             echo json_encode($model->errors);
@@ -278,6 +285,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTree()
@@ -298,7 +306,9 @@ class EquipmentController extends ZhkhController
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])
+                ->andWhere(['deleted' => false])
+                ->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
                     self::addEquipment($equipment,"");
@@ -323,6 +333,7 @@ class EquipmentController extends ZhkhController
      * @param $date_start
      * @param $date_end
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTable($id, $date_start, $date_end)
@@ -345,6 +356,7 @@ class EquipmentController extends ZhkhController
                     $equipment = Equipment::find()
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
+                        ->andWhere(['deleted' => false])
                         ->orderBy('changedAt desc')
                         ->one();
                     if ($equipment) {
@@ -445,6 +457,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTreeUser()
@@ -507,6 +520,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTreeStreet()
@@ -515,6 +529,7 @@ class EquipmentController extends ZhkhController
         $fullTree = array();
         $streets = Street::find()
             ->select('*')
+            ->andWhere(['deleted' => false])
             ->orderBy('title')
             ->all();
         foreach ($streets as $street) {
@@ -528,8 +543,9 @@ class EquipmentController extends ZhkhController
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
-            orderBy('number')->all();
+            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])
+                ->andWhere(['deleted' => false])
+                ->orderBy('number')->all();
             foreach ($houses as $house) {
                 //$user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
                 $user = Users::find()->where(['uuid' =>
@@ -551,7 +567,9 @@ class EquipmentController extends ZhkhController
                         'folder' => true
                     ];
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
+                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])
+                    ->andWhere(['deleted' => false])
+                    ->all();
                 foreach ($objects as $object) {
                     if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
                         $title = $object['objectType']['title'] . ' ' . $object['title'];
@@ -569,7 +587,9 @@ class EquipmentController extends ZhkhController
                             'folder' => true
                         ];
                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
-                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
+                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])
+                        ->andWhere(['deleted' => false])
+                        ->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
                             self::addEquipment($equipment, $user_name);
@@ -577,6 +597,7 @@ class EquipmentController extends ZhkhController
                 }
             }
         }
+
         $users = Users::find()->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -672,6 +693,46 @@ class EquipmentController extends ZhkhController
         return 0;
     }
 
+    public function actionDeleted()
+    {
+        if (isset($_POST["type"]))
+            $type = $_POST["type"];
+        else $type = 0;
+
+        if (isset($_POST["selected_node"]) && $type) {
+            if ($type == 'street') {
+                $street = Street::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($street) {
+                    $street['deleted']=true;
+                    $street->save();
+                }
+            }
+            if ($type == 'house') {
+                $house = House::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($house) {
+                    $house['deleted']=true;
+                    $house->save();
+                }
+            }
+            if ($type == 'object') {
+                $object = Objects::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($object) {
+                    $object['deleted']=true;
+                    $object->save();
+                }
+            }
+            if ($type == 'equipment') {
+                $equipment = Equipment::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($equipment) {
+                    $equipment['deleted']=true;
+                    $equipment->save();
+                }
+            }
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
     /**
      * функция отрабатывает сигналы от дерева и выполняет отвязывание выбранного оборудования от пользователя
      * @return mixed
@@ -693,6 +754,7 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет переименование оборудования
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionRename()
     {
@@ -815,6 +877,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -849,6 +912,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -986,6 +1050,7 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionEdit()
@@ -1055,6 +1120,7 @@ class EquipmentController extends ZhkhController
     /**
      * Creates a new Equipment model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -1179,6 +1245,7 @@ class EquipmentController extends ZhkhController
      * @param $equipment
      * @param $user
      * @return array
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function addEquipment($equipment, $user)
@@ -1335,6 +1402,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTimelineAll()
@@ -1366,6 +1434,7 @@ class EquipmentController extends ZhkhController
      *
      * @param $r
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTimeline($uuid, $r)
@@ -1484,13 +1553,14 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
     function actionEditTable()
     {
-        if (isset($_POST["uuid"]))
-            $uuid = $_POST["uuid"];
+        if (isset($_GET["uuid"]))
+            $uuid = $_GET["uuid"];
         else $uuid = 0;
 
         $source = '../equipment';

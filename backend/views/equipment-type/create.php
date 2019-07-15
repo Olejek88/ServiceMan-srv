@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model common\models\EquipmentType */
 /* @var $parentModel yii\base\DynamicModel */
 
-$this->title = Yii::t('app', 'Создать тип оборудования');
+$this->title = Yii::t('app', 'Создать тип элементов');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

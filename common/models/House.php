@@ -59,7 +59,7 @@ class House extends ZhkhActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'houseStatusUuid', 'streetUuid'], 'required'],
+            [['uuid', 'houseTypeUuid',  'houseStatusUuid', 'streetUuid'], 'required'],
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'number'],

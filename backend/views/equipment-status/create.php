@@ -4,7 +4,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Создать статус оборудования');
+$this->title = Yii::t('app', 'Создать статус элемента');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

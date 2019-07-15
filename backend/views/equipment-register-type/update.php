@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model common\models\EquipmentRegisterType */
 
-$this->title = Yii::t('app', 'Обновить типы записей в журнал оборудования');
+$this->title = Yii::t('app', 'Обновить типы записей в журнал элементов');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

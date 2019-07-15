@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model common\models\EquipmentRegister */
 
-$this->title = Yii::t('app', 'Создать запись в журнале оборудования');
+$this->title = Yii::t('app', 'Создать запись в журнале элемента');
 ?>
 <div class="equipment-create box-padding">
 

@@ -45,6 +45,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'address',
+        'mergeHeader' => true,
         'vAlign' => 'middle',
         'width' => '280px',
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
@@ -76,7 +77,7 @@ $gridColumns = [
         'editableOptions' => function ($model, $key, $index, $widget) {
             $models = ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
-                'header' => 'Тип оборудования',
+                'header' => 'Тип элемента',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $models,

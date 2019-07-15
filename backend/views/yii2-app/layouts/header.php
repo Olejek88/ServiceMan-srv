@@ -53,8 +53,8 @@ $userImage = Yii::$app->view->params['userImage'];
                         <li><?= Html::a("<i class=\"fa fa-address-book\"></i> Документация типы", ['../documentation-type/create']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Контрагенты типы", ['../contragent-type/create']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Журнал типы записей", ['../equipment-register-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы оборудования", ['../equipment-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы оборудования", ['../equipment-type/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы элементов", ['../equipment-status/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы элементов", ['../equipment-type/create']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Иженерные системы", ['../equipment-system/create']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы домов", ['../house-status/create']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы домов", ['../house-type/create']); ?> </li>

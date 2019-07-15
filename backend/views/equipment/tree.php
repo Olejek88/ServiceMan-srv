@@ -4,7 +4,7 @@ use kartik\select2\Select2;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево моделей оборудования';
+$this->title = 'Дерево моделей элементов';
 
 ?>
 <table id="tree" style="width: 100%">
@@ -47,8 +47,7 @@ $this->title = 'Дерево моделей оборудования';
                 <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
             </button>
         </th>
-        <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы
-            системы
+        <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke">
@@ -149,6 +148,30 @@ try {
                                 }
                            }); 
                         }                        
+                    }')
+                    ],
+                    'delete' => [
+                        'name' => 'Удалить',
+                        'icon' => 'delete',
+                        'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                 $.ajax({
+                                      url: "remove",
+                                      type: "post",
+                                      data: {
+                                            type: data.node.type,
+                                            selected_node: data.key,
+                                      },
+                                    error: function (result) {
+                                        console.log(result);                                 
+                                    },
+                                    success: function (result) {
+                                        data.remove();            
+                                    }                                    
+                                 });
+                            });
+                         }\')
                     }')
                     ],
                     'edit' => [

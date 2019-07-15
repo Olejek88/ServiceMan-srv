@@ -4,7 +4,7 @@ use kartik\select2\Select2;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево моделей оборудования';
+$this->title = 'Дерево элементов по расположению';
 
 ?>
 <table id="tree" style="width: 100%">
@@ -147,6 +147,30 @@ try {
                                 }
                            }); 
                         }                        
+                    }')
+                    ],
+                    'delete' => [
+                        'name' => 'Удалить',
+                        'icon' => 'delete',
+                        'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                 console.log(data);
+                                 $.ajax({
+                                      url: "deleted",
+                                      type: "post",
+                                      data: {
+                                            type: data.type,
+                                            selected_node: data.data.uuid
+                                      },
+                                    error: function (result) {
+                                        console.log(result);                                 
+                                    },
+                                    success: function (result) {
+                                        data.remove();            
+                                    }                                    
+                                 });
+                            });
                     }')
                     ],
                     'edit' => [

@@ -27,7 +27,7 @@ Highcharts.chart('container', {
         type: 'pie'
     },
     title: {
-        text: 'Распределение дефектов по типам оборудования'
+        text: 'Распределение дефектов по типам элементов'
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

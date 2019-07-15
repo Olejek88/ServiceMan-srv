@@ -19,6 +19,7 @@ use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -428,6 +429,7 @@ class ObjectController extends ZhkhController
      * Creates a new Object model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     function actionSave()
@@ -659,7 +661,6 @@ class ObjectController extends ZhkhController
                                 }
                             }
                         }
-
                         if ($source)
                             return $this->redirect([$source]);
                         return $this->redirect(['/object/tree']);
@@ -707,7 +708,7 @@ class ObjectController extends ZhkhController
     function createFlat($houseUuid, $flat_num) {
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
-        $object->title = $flat_num;
+        $object->title = $flat_num."";
         $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 33;
@@ -716,8 +717,10 @@ class ObjectController extends ZhkhController
         $object->save();
         if ($object->errors==[])
             return $object->uuid;
-        else
+        else {
+            echo json_encode($object->errors);
             return null;
+        }
     }
 
     function createObject($houseUuid, $name, $objectTypeUuid) {
@@ -763,6 +766,7 @@ class ObjectController extends ZhkhController
     /**
      * @return array
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionHouse() {
         $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
