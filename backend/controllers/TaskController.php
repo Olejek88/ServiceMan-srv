@@ -22,6 +22,7 @@ use common\models\WorkStatus;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -618,6 +619,7 @@ class TaskController extends ZhkhController
      * Displays a single Task model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionInfo()
     {
@@ -648,7 +650,7 @@ class TaskController extends ZhkhController
             $taskUser->uuid = MainFunctions::GUID();
             $taskUser->taskUuid = $taskUuid;
             $taskUser->userUuid = $userUuid;
-            $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+            $taskUser->oid = Users::getCurrentOid();
             $taskUser->save();
             //MainFunctions::register('Смена исполнителя', 'К задаче ')
         } else {

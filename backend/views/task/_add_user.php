@@ -33,6 +33,7 @@ use yii\widgets\ActiveForm;
     echo '</br>';
     foreach ($userTasks as $userTask) {
         echo Html::checkbox('user-' . $userTask['user']['_id'], false, ['label' => $userTask['user']['name']]);
+        echo '</br>';
     }
     $users = Users::find()->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
