@@ -2,6 +2,7 @@
 
 namespace api\components;
 
+use Yii;
 use common\components\IPhoto;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
@@ -18,6 +19,7 @@ use yii\filters\auth\HttpBearerAuth;
 use yii\rest\Controller;
 use yii\web\BadRequestHttpException;
 use yii\web\NotAcceptableHttpException;
+use Exception;
 
 class BaseController extends Controller
 {
@@ -46,7 +48,7 @@ class BaseController extends Controller
 
     public function actionIndex()
     {
-        $req = \Yii::$app->request;
+        $req = Yii::$app->request;
 
         /** @var ActiveRecord $class */
         $class = $this->modelClass;
@@ -169,7 +171,7 @@ class BaseController extends Controller
      */
     protected static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
     {
-        $dir = \Yii::getAlias('@storage/') . $imageRoot;
+        $dir = Yii::getAlias('@storage/') . $imageRoot;
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 return false;
@@ -181,7 +183,7 @@ class BaseController extends Controller
 
     protected function createBase()
     {
-        $request = \Yii::$app->request;
+        $request = Yii::$app->request;
 
         $rawData = $request->getRawBody();
         if ($rawData == null) {
@@ -212,7 +214,7 @@ class BaseController extends Controller
      */
     protected function createBasePhoto()
     {
-        $request = \Yii::$app->request;
+        $request = Yii::$app->request;
 
         // запись для загружаемого файла
         $photos[] = $request->getBodyParam('photo');
@@ -236,7 +238,7 @@ class BaseController extends Controller
                             'data' => []
                         ];
                     }
-                } catch (\Exception $exception) {
+                } catch (Exception $exception) {
                     $savedPhotos = [
                         'success' => false,
                         'data' => []

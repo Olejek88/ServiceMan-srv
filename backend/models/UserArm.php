@@ -14,21 +14,20 @@ class UserArm extends Model
 {
     const SCENARIO_UPDATE = 'update';
 
-    public $_id;
     public $oid;
     public $username;
     public $email;
     public $password;
     public $name;
-    public $pass;
-    public $type = 2;
+    public $type = Users::USERS_ARM;
     public $pin;
-    public $active = 1;
+    public $active = User::STATUS_ACTIVE;
     public $whoIs;
     public $contact;
     public $image;
     public $role = User::ROLE_OPERATOR;
     public $status = User::STATUS_ACTIVE;
+    public $tagType;
 
     public function __construct($config = [])
     {
@@ -60,18 +59,30 @@ class UserArm extends Model
                 }],
             [['username'], 'string', 'min' => 2, 'max' => 255, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
-            [['password'], 'required', 'on' => self::SCENARIO_DEFAULT],
+            [['password'], 'required', 'on' => self::SCENARIO_DEFAULT, 'when' => function ($model) {
+                return $model->type == Users::USERS_ARM;
+            }, 'whenClient' => 'function(attribute, value){
+              console.log("arm");
+              return $("#userarm-type").val() == ' . Users::USERS_ARM . ';
+            }'],
             [['password'], 'string', 'min' => 6, 'on' => self::SCENARIO_DEFAULT],
             [['password'], 'string', 'min' => 6, 'on' => self::SCENARIO_UPDATE, 'skipOnEmpty' => true],
 
             [['pin'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
-            [['pin'], 'required', 'on' => self::SCENARIO_DEFAULT],
+            [['pin'], 'required', 'on' => self::SCENARIO_DEFAULT, 'when' => function ($model) {
+                return $model->type == Users::USERS_WORKER;
+            }, 'whenClient' => 'function(attribute, value){
+              console.log("worker");
+              return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
+            }'],
             [['pin'], 'required', 'on' => self::SCENARIO_UPDATE, 'skipOnEmpty' => true],
 
             [['name'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['name'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['type'], 'integer', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+            [['type'], 'in', 'range' => [Users::USERS_ARM, Users::USERS_WORKER],
+                'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['type'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['whoIs'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
@@ -91,6 +102,17 @@ class UserArm extends Model
                 User::ROLE_ANALYST,
                 User::ROLE_USER,
             ], 'strict' => true, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+
+            [['tagType'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+            [['tagType'], 'in', 'range' => [
+                Users::USERS_TAG_TYPE_PIN, Users::USERS_TAG_TYPE_GCODE, Users::USERS_TAG_TYPE_NFC, Users::USERS_TAG_TYPE_UHF
+            ], 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+            [['tagType'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE], 'when' => function ($model) {
+                return $model->type == Users::USERS_WORKER;
+            }, 'whenClient' => 'function(attribute, value){
+              console.log("tagType");
+              return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
+            }'],
         ];
     }
 
@@ -106,6 +128,7 @@ class UserArm extends Model
             'password' => Yii::t('app', 'Пароль'),
             'name' => Yii::t('app', 'Имя'),
             'pass' => Yii::t('app', 'Пароль'),
+            'tagType' => Yii::t('app', 'Тип идентификатора'),
             'type' => Yii::t('app', 'Тип'),
             'pin' => Yii::t('app', 'Пин'),
             'status' => Yii::t('app', 'Статус'),

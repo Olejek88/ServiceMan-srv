@@ -15,6 +15,7 @@ use yii\db\ActiveRecord;
  * @property string $taskTemplateUuid
  * @property string $createdAt
  * @property string $changedAt
+ *
  * @property TaskTemplate $taskTemplate
  */
 class RequestType extends ActiveRecord

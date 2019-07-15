@@ -226,9 +226,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function validatePassword($password)
     {
-        return Yii::$app
-            ->security
-            ->validatePassword($password, $this->password_hash);
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
     /**
@@ -241,7 +239,6 @@ class User extends ActiveRecord implements IdentityInterface
     public function validatePin($pin)
     {
         $users = Users::findOne(['user_id' => $this->_id]);
-//        return Yii::$app->security->validatePassword($pin, $users->pin);
         return $pin == $users->pin;
     }
 

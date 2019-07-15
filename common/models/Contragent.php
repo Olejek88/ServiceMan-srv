@@ -18,15 +18,15 @@ use yii\db\Expression;
  * @property string $address
  * @property string $phone
  * @property string $inn
- * @property string account
+ * @property string $account
  * @property string $director
  * @property string $email
  * @property string $contragentTypeUuid
  * @property integer $deleted
  * @property string $createdAt
- * @property mixed $contragentType
  * @property string $changedAt
  *
+ * @property ContragentType $contragentType
  */
 class Contragent extends ZhkhActiveRecord
 {

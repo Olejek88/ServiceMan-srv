@@ -36,6 +36,14 @@ class Users extends ZhkhActiveRecord
     private static $_IMAGE_ROOT = 'users';
     public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
 
+    public const USERS_ARM = 1;
+    public const USERS_WORKER = 2;
+
+    public const USERS_TAG_TYPE_PIN = 'PIN';
+    public const USERS_TAG_TYPE_GCODE = 'GCODE';
+    public const USERS_TAG_TYPE_NFC = 'NFC';
+    public const USERS_TAG_TYPE_UHF = 'UHF';
+
     /**
      * Behaviors.
      *
@@ -80,17 +88,17 @@ class Users extends ZhkhActiveRecord
                     'pin',
                     'contact'
                 ],
-                'required'
+                'required', 'on' => ['default', 'signup'],
             ],
-            [['image'], 'file'],
-            [['user_id', 'type', 'active'], 'integer'],
-            [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45],
-            [['name', 'contact'], 'string', 'max' => 100],
-            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
-            [['oid'], 'checkOrganizationOwn'],
-            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id']],
-            [['user_id'], 'unique'],
+            [['image'], 'file', 'on' => ['default', 'signup'],],
+            [['user_id', 'type', 'active'], 'integer', 'on' => ['default', 'signup'],],
+            [['createdAt', 'changedAt'], 'safe', 'on' => ['default', 'signup'],],
+            [['uuid', 'pin', 'whoIs', 'oid'], 'string', 'max' => 45, 'on' => ['default', 'signup'],],
+            [['name', 'contact'], 'string', 'max' => 100, 'on' => ['default', 'signup'],],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid'], 'on' => ['default', 'signup'],],
+            [['oid'], 'checkOrganizationOwn', 'on' => 'default'],
+            [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id'], 'on' => ['default', 'signup'],],
+            [['user_id'], 'unique', 'on' => ['default', 'signup'],],
         ];
     }
 
@@ -124,6 +132,7 @@ class Users extends ZhkhActiveRecord
     public function fields()
     {
         $fields = parent::fields();
+        $fields[] = 'organization';
         return $fields;
 //        return [
 //            '_id',
