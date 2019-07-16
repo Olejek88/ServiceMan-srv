@@ -132,7 +132,7 @@ class BaseController extends Controller
             case UserSystem::class :
             case WorkStatus::class :
                 // выбираем данные из базы
-                $result = $query->all();
+                $result = $query->asArray()->all();
                 break;
             default :
                 $result = [];

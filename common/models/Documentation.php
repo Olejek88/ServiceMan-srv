@@ -25,6 +25,7 @@ use yii\db\Expression;
  * @property Equipment $equipment
  * @property string $docDir
  * @property DocumentationType $documentationType
+ * @property Organization $organization
  * @property EquipmentType $equipmentType
  */
 class Documentation extends ActiveRecord

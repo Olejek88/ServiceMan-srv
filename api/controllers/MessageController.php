@@ -4,7 +4,7 @@ namespace api\controllers;
 
 use api\components\BaseController;
 use common\models\Message;
-use common\models\Users;
+use common\models\User;
 use Yii;
 use yii\db\ActiveRecord;
 
@@ -29,8 +29,11 @@ class MessageController extends BaseController
         $class = $this->modelClass;
         $query = $class::find();
 
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+
         // выбираем сообщения только для текущего пользователя
-        $query->andWhere(['toUserUuid' => Users::getCurrentOid()]);
+        $query->andWhere(['toUserUuid' => $identity->users->uuid]);
 
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
@@ -48,7 +51,10 @@ class MessageController extends BaseController
             return [];
         }
 
-        $result = $query->all();
+        $query->with(['fromUser']);
+        $query->with(['toUser']);
+
+        $result = $query->asArray()->all();
         return $result;
     }
 }

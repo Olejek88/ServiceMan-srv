@@ -4,8 +4,9 @@ namespace api\controllers;
 
 use api\components\BaseController;
 use common\models\Task;
-use common\models\Users;
+use common\models\User;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 class TaskController extends BaseController
@@ -22,8 +23,10 @@ class TaskController extends BaseController
         $query = $class::find();
 
         // задачи выбираем только для текущего пользователя
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
         $query->leftJoin('{{%task_user}}', '{{%task_user}}.taskUuid = {{%task}}.uuid')
-            ->andWhere(['{{%task_user}}.userUuid' => Users::getCurrentOid()]);
+            ->andWhere(['{{%task_user}}.userUuid' => $identity->users->uuid]);
 
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
@@ -41,8 +44,14 @@ class TaskController extends BaseController
             return [];
         }
 
+        $query->with(['equipment' => function ($query) {
+            /** @var ActiveQuery $query */
+            $query->with('object');
+        }]);
+        $query->with(['author']);
+        $query->with(['operations']);
 
-        $result = $query->all();
+        $result = $query->asArray()->all();
         return $result;
 
     }

@@ -61,9 +61,7 @@ class UsersController extends BaseController
         $query->andWhere(['type' => Users::USERS_WORKER]);
 
         // выбираем данные из базы
-        //$result = $query->with('organization')->asArray()->all();
-        $result = $query->all();
-
+        $result = $query->with('organization')->asArray()->all();
         return $result;
     }
 }
