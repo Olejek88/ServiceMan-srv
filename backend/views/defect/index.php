@@ -64,13 +64,14 @@ $gridColumns = [
         }
     ],
     [
-        'header' => 'Адрес',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'value' => function ($model) {
             return $model['equipment']['object']->getFullTitle();
         },

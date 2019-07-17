@@ -96,6 +96,12 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render(
             'index',
@@ -141,6 +147,12 @@ class EquipmentController extends ZhkhController
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
+        }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
         }
 
         return $this->render(
@@ -938,6 +950,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public

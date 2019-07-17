@@ -45,6 +45,9 @@ class DefectSearch extends Defect
     public function search($params)
     {
         $query = Defect::find();
+        $query->joinWith('equipment.object');
+        $query->joinWith('equipment.object.house');
+        $query->joinWith('equipment.object.house.street');
 
         // add conditions that should always apply here
 
@@ -72,6 +75,7 @@ class DefectSearch extends Defect
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'equipmentUuid', $this->equipmentUuid])
             ->andFilterWhere(['like', 'defectStatus', $this->defectStatus]);
+
         $query->orderBy('changedAt DESC');
         return $dataProvider;
     }

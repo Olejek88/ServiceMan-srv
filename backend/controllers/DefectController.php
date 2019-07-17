@@ -7,6 +7,7 @@ use common\components\MainFunctions;
 use common\models\Defect;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -21,12 +22,20 @@ class DefectController extends ZhkhController
      * Lists all Defect models.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
         $searchModel = new DefectSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
+
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render('index', [
             'searchModel' => $searchModel,
@@ -38,6 +47,7 @@ class DefectController extends ZhkhController
      * Lists all Defect models.
      * @param $equipmentUuid
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionList($equipmentUuid)
@@ -68,6 +78,7 @@ class DefectController extends ZhkhController
      * Creates a new Defect model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -159,6 +170,7 @@ class DefectController extends ZhkhController
     /**
      * Displays a schedule for all users
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionPie()
@@ -208,6 +220,7 @@ class DefectController extends ZhkhController
     /**
      * Display defects as bar
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionBargraph()
@@ -227,6 +240,7 @@ class DefectController extends ZhkhController
     /** Check add defect
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionSave()

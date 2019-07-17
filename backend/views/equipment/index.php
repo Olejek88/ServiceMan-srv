@@ -48,9 +48,7 @@ $gridColumns = [
         'mergeHeader' => true,
         'vAlign' => 'middle',
         'width' => '280px',
-        'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
-                '/object/create?from=equipment/index',
-                ['title' => Yii::t('app', 'Добавить')]),
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'format' => 'raw',
     ],
     [

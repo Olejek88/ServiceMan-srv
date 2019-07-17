@@ -28,7 +28,7 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Адрес',
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             return $data['object']->getFullTitle();

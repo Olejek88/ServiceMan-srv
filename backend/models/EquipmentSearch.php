@@ -45,6 +45,8 @@ class EquipmentSearch extends Equipment
     public function search($params)
     {
         $query = Equipment::find();
+        $query->joinWith('object.house');
+        $query->joinWith('object.house.street');
 
         // add conditions that should always apply here
 
@@ -63,6 +65,7 @@ class EquipmentSearch extends Equipment
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'equipment.deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
@@ -72,7 +75,6 @@ class EquipmentSearch extends Equipment
             ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
             ->andFilterWhere(['like', 'equipmentStatusUuid', $this->equipmentStatusUuid])
             ->andFilterWhere(['like', 'serial', $this->serial])
-            ->andWhere(['deleted' => false])
             ->orderBy(['changedAt' => SORT_DESC]);
 
         if(isset ($this->testDate)&&$this->testDate!=''){
