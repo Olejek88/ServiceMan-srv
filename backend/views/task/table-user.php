@@ -194,7 +194,7 @@ $gridColumns = [
             if ($data['author'])
                 return $data['author']->name;
             else
-                return 'отсуттствует';
+                return 'отсутствует';
         }
     ],
     [

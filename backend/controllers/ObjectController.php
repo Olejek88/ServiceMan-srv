@@ -19,7 +19,9 @@ use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 /**
  * ObjectController implements the CRUD actions for Object model.
@@ -29,6 +31,7 @@ class ObjectController extends ZhkhController
     /**
      * Lists all Object models.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndex()
@@ -39,6 +42,7 @@ class ObjectController extends ZhkhController
     /**
      * Lists all Object models.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTable()
@@ -84,6 +88,7 @@ class ObjectController extends ZhkhController
      * Creates a new Flat model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -150,8 +155,11 @@ class ObjectController extends ZhkhController
     {
         parent::actionDelete($id);
 
-        $this->findModel($id)->delete();
-
+        $model = $this->findModel($id);
+        if ($model) {
+            $model->deleted = true;
+            $model->save();
+        }
         return $this->redirect(['table']);
     }
 
@@ -175,6 +183,7 @@ class ObjectController extends ZhkhController
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTree()
@@ -198,54 +207,55 @@ class ObjectController extends ZhkhController
             $houses = House::find()->select('uuid, number')->where(['streetUuid' => $street['uuid']])->
             orderBy('number')->all();
             foreach ($houses as $house) {
-                $user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
-                $user = Users::find()->where(['uuid' =>
-                    UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
-                ])->one();
-                $childIdx = count($fullTree['children']) - 1;
-                $fullTree['children'][$childIdx]['children'][] = [
-                    'title' => $house['number'],
-                    'address' => $street['title'] . ', ' . $house['number'],
-                    'type' => 'house',
-                    'source' => '../object/tree',
-                    'expanded' => false,
-                    'uuid' => $house['uuid'],
-                    'folder' => true
-                ];
-                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
-                foreach ($objects as $object) {
-                    if (!$object['deleted']) {
-                        if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
-                            $title = $object['objectType']['title'] . ' ' . $object['title'];
-                        else
-                            $title = $object['title'];
-                        $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
-                            'title' => $title,
-                            'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
-                            'square' => $object['square'],
-                            'source' => '../object/tree',
-                            'type' => 'object',
-                            'uuid' => $object['uuid'],
-                            'folder' => true
-                        ];
-                        $objectContragents = ObjectContragent::find()->where(['objectUuid' => $object['uuid']])->all();
-                        foreach ($objectContragents as $objectContragent) {
-                            if (!$objectContragent['contragent']['deleted']) {
-                                $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
-                                $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
-                                    'title' => $objectContragent['contragent']['title'],
-                                    'address' => $objectContragent['contragent']['address'],
-                                    'inn' => $objectContragent['contragent']['inn'],
-                                    'phone' => $objectContragent['contragent']['phone'],
-                                    'email' => $objectContragent['contragent']['email'],
-                                    'contragentType' => $objectContragent['contragent']['contragentType']['title'],
-                                    'date' => $objectContragent['contragent']['createdAt'],
-                                    'type' => 'contragent',
-                                    'source' => '../object/tree',
-                                    'uuid' => $objectContragent['contragent']['uuid'],
-                                    'folder' => false
-                                ];
+                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])
+                    ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
+                    ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+                    ->all();
+                if (count($objects)) {
+                    $childIdx = count($fullTree['children']) - 1;
+                    $fullTree['children'][$childIdx]['children'][] = [
+                        'title' => $house['number'],
+                        'address' => $street['title'] . ', ' . $house['number'],
+                        'type' => 'house',
+                        'source' => '../object/tree',
+                        'expanded' => false,
+                        'uuid' => $house['uuid'],
+                        'folder' => true
+                    ];
+                    foreach ($objects as $object) {
+                        if (!$object['deleted']) {
+                            if ($object['objectTypeUuid'] == ObjectType::OBJECT_TYPE_FLAT)
+                                $title = $object['objectType']['title'] . ' ' . $object['title'];
+                            else
+                                $title = $object['title'];
+                            $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+                            $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
+                                'title' => $title,
+                                'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
+                                'square' => $object['square'],
+                                'source' => '../object/tree',
+                                'type' => 'object',
+                                'uuid' => $object['uuid'],
+                                'folder' => true
+                            ];
+                            $objectContragents = ObjectContragent::find()->where(['objectUuid' => $object['uuid']])->all();
+                            foreach ($objectContragents as $objectContragent) {
+                                if (!$objectContragent['contragent']['deleted']) {
+                                    $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
+                                        'title' => $objectContragent['contragent']['title'],
+                                        'address' => $objectContragent['contragent']['address'],
+                                        'inn' => $objectContragent['contragent']['inn'],
+                                        'phone' => $objectContragent['contragent']['phone'],
+                                        'email' => $objectContragent['contragent']['email'],
+                                        'contragentType' => $objectContragent['contragent']['contragentType']['title'],
+                                        'date' => $objectContragent['contragent']['createdAt'],
+                                        'type' => 'contragent',
+                                        'source' => '../object/tree',
+                                        'uuid' => $objectContragent['contragent']['uuid'],
+                                        'folder' => false
+                                    ];
+                                }
                             }
                         }
                     }
@@ -312,6 +322,7 @@ class ObjectController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionEdit()
@@ -427,6 +438,7 @@ class ObjectController extends ZhkhController
      * Creates a new Object model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     function actionSave()
@@ -481,16 +493,20 @@ class ObjectController extends ZhkhController
                                         EquipmentType::EQUIPMENT_HVS_PUMP);
                                     self::createEquipment($objectHUuid, "Водосчетчик ХВС",
                                         EquipmentType::EQUIPMENT_HVS_COUNTER);
+                                    self::createEquipment($objectHUuid, "Стояки ХВС",
+                                        EquipmentType::EQUIPMENT_HVS_TOWER);
                                 }
                             }
                             $objectGUuid=null;
                             if (isset($_POST['water_system']) && $_POST['water_system']) {
                                 $objectGUuid = self::createObject($model['uuid'], 'Система ГВС', ObjectType::OBJECT_TYPE_SYSTEM_GVS);
                                 if ($objectGUuid) {
-                                    self::createEquipment($objectGUuid, "Водомерный узел и розлив",
+                                    self::createEquipment($objectGUuid, "Главный узел ГВС",
                                         EquipmentType::EQUIPMENT_GVS_MAIN);
-                                    self::createEquipment($objectGUuid, "Насосная станция",
+                                    self::createEquipment($objectGUuid, "Насос",
                                         EquipmentType::EQUIPMENT_GVS_PUMP);
+                                    self::createEquipment($objectGUuid, "Стояки ГВС",
+                                        EquipmentType::EQUIPMENT_GVS_TOWER);
                                 }
                             }
 
@@ -509,14 +525,14 @@ class ObjectController extends ZhkhController
                                     EquipmentType::EQUIPMENT_HEAT_TOWER);
                             }
 
-                            $objectRoofUuid = self::createObject($model['uuid'], 'Кровля',
+                            $objectRoofUuid = self::createObject($model['uuid'], 'Чердачное помещение',
                                 ObjectType::OBJECT_TYPE_SYSTEM_ROOF);
                             if ($objectRoofUuid) {
                                 self::createEquipment($objectRoofUuid, "Кровля",
                                     EquipmentType::EQUIPMENT_ROOF);
-                                self::createEquipment($objectRoofUuid, "Вход на крышу",
+                                self::createEquipment($objectRoofUuid, "Входы на крышу",
                                     EquipmentType::EQUIPMENT_ROOF_ENTRANCE);
-                                self::createEquipment($objectRoofUuid, "Помещение крыши",
+                                self::createEquipment($objectRoofUuid, "Помещение",
                                     EquipmentType::EQUIPMENT_ROOF_ROOM);
                                 self::createEquipment($objectRoofUuid, "Система водоотвода",
                                     EquipmentType::EQUIPMENT_ROOF_WATER_PIPE);
@@ -606,7 +622,7 @@ class ObjectController extends ZhkhController
                                     EquipmentType::EQUIPMENT_BASEMENT_WINDOWS);
                                 self::createEquipment($objectBasementUuid, "Помещение",
                                     EquipmentType::EQUIPMENT_BASEMENT_ROOM);
-                                self::createEquipment($objectBasementUuid, "Фундамент",
+                                self::createEquipment($objectBasementUuid, "Входные двери",
                                     EquipmentType::EQUIPMENT_BASEMENT);
                             }
 
@@ -616,9 +632,9 @@ class ObjectController extends ZhkhController
                                     $objectEntranceUuid = self::createObject($model['uuid'], 'Подъезд №'.($entrances_num+1),
                                         ObjectType::OBJECT_TYPE_SYSTEM_ENTRANCE);
                                     if ($objectPowerUuid) {
-                                        self::createEquipment($objectPowerUuid, "Осветительные приборы входной группы",
+                                        self::createEquipment($objectPowerUuid, "Осветительные приборы входной группы п.".($entrances_num+1),
                                             EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT);
-                                        self::createEquipment($objectPowerUuid, "Стояки с проводкой",
+                                        self::createEquipment($objectPowerUuid, "Стояки с проводкой п.".($entrances_num+1),
                                             EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_PIPE);
                                     }
 
@@ -640,14 +656,6 @@ class ObjectController extends ZhkhController
                                                 EquipmentType::EQUIPMENT_LIFT);
                                         }
                                     }
-                                    if ($objectHUuid) {
-                                        self::createEquipment($objectHUuid, "Стояки ХВС",
-                                            EquipmentType::EQUIPMENT_HVS_TOWER);
-                                    }
-                                    if ($objectGUuid) {
-                                        self::createEquipment($objectGUuid, "Стояки ГВС",
-                                            EquipmentType::EQUIPMENT_GVS_TOWER);
-                                    }
                                     for ($stages_num=0; $stages_num<$_POST['stages']; $stages_num++) {
                                         if ($objectPowerUuid) {
                                             self::createEquipment($objectPowerUuid,
@@ -658,7 +666,6 @@ class ObjectController extends ZhkhController
                                 }
                             }
                         }
-
                         if ($source)
                             return $this->redirect([$source]);
                         return $this->redirect(['/object/tree']);
@@ -706,7 +713,7 @@ class ObjectController extends ZhkhController
     function createFlat($houseUuid, $flat_num) {
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
-        $object->title = $flat_num;
+        $object->title = $flat_num."";
         $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 33;
@@ -715,8 +722,10 @@ class ObjectController extends ZhkhController
         $object->save();
         if ($object->errors==[])
             return $object->uuid;
-        else
+        else {
+            echo json_encode($object->errors);
             return null;
+        }
     }
 
     function createObject($houseUuid, $name, $objectTypeUuid) {
@@ -758,4 +767,18 @@ class ObjectController extends ZhkhController
             return null;
         }
     }
+
+    /**
+     * @return array
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionHouse() {
+        $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
+        $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+            return $model['houseType']->title . ', ' . $model->number;
+        });
+        return json_encode($items);
+    }
+
 }

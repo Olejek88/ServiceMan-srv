@@ -193,7 +193,7 @@ echo GridView::widget([
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ]) . '</td><td style="width: 300px">' .
+            ]) . '</td>&nbsp;<td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'start_time',
                 'value' => '2018-12-01 00:00:00',

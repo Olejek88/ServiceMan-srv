@@ -21,7 +21,7 @@ $this->title = 'Дерево задач';
     <thead style="background-color: #337ab7; color: white">
     <tr>
         <th align="center" colspan="6" style="background-color: #3c8dbc; color: whitesmoke">
-            Технологические карты (шаблоны) для оборудования системы
+            Технологические карты (шаблоны) для элементов системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">

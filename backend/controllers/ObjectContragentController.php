@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\ObjectContragentSearch;
 use common\models\ObjectContragent;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
  * ObjectContragentController implements the CRUD actions for ObjectContragent model.
@@ -31,6 +32,7 @@ class ObjectContragentController extends ZhkhController
      * Displays a single ObjectContragent model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -91,6 +93,9 @@ class ObjectContragentController extends ZhkhController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

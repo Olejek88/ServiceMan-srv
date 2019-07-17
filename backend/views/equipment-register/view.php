@@ -1,13 +1,11 @@
 <?php
 
+use common\models\EquipmentRegister;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\EquipmentRegister */
+/* @var $model EquipmentRegister */
 
 $this->title = 'Запись в журнале событий';
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Журнал оборудования'), 'url' => ['index']
-];
 ?>
 <div class="order-status-view box-padding">
 

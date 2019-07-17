@@ -1,7 +1,9 @@
 <?php
 
 use common\models\TaskUser;
+use common\models\UserHouse;
 use common\models\Users;
+use common\models\UserSystem;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -9,7 +11,9 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $form yii\widgets\ActiveForm */
-/* @var $taskUuid */
+/* @var $houseUuid */
+/* @var $equipmentSystemUuid */
+
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -21,29 +25,33 @@ use yii\widgets\ActiveForm;
 ?>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4 class="modal-title">Назначить пользователей</h4>
+    <h4 class="modal-title">Назначить исполнителей</h4>
 </div>
 <div class="modal-body">
 
     <?php
-    $userTasks = TaskUser::find()
-        ->where(['taskUuid' => $taskUuid])
-        ->all();
     echo '<label class="control-label">Убрать исполнителя</label>';
     echo '</br>';
-    foreach ($userTasks as $userTask) {
-        echo Html::checkbox('user-' . $userTask['user']['_id'], false, ['label' => $userTask['user']['name']]);
-        echo '</br>';
+    $userSystems = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystemUuid])->all();
+    $userHouses = UserHouse::find()->where(['houseUuid' => $houseUuid])->all();
+    $user_list='';
+    foreach ($userSystems as $userSystem) {
+        foreach ($userHouses as $userHouse) {
+            if ($userSystem['userUuid']==$userHouse['userUuid']) {
+                echo Html::checkbox('user-' . $userHouse['user']['_id'], false, ['label' => $userHouse['user']['name']]);
+                echo '</br>';
+            }
+        }
     }
     $users = Users::find()->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
 
-    echo Html::hiddenInput('taskUuid',$taskUuid);
+    echo Html::hiddenInput('houseUuid',$houseUuid);
 
     echo '</br>';
     echo '<label class="control-label">Добавить исполнителя</label>';
-    $users = Users::find()->where(['!=','name','sUser'])->all();
-    $items = ArrayHelper::map($users, 'uuid', 'name');
+    $users = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystemUuid])->all();
+    $items = ArrayHelper::map($users, 'user.uuid', 'user.name');
     try {
         echo Select2::widget(
             [

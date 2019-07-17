@@ -25,7 +25,7 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'mergeHeader' => true,
-        'content' => function ($data) {
+/*        'content' => function ($data) {
             return Html::a($data->_id,
                 ['../receipt/form', 'uuid' => $data['uuid']],
                 [
@@ -34,7 +34,7 @@ $gridColumns = [
                     'data-target' => '#modalAdd',
                 ]
             );
-        }
+        }*/
     ],
     [
         'attribute' => 'date',
@@ -262,19 +262,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
-        'buttons' => [
-            'edit' => function ($url, $model) {
-                return Html::a('<span class="fa fa-edit"></span>',
-                    ['../receipt/form', 'uuid' => $model['uuid']],
-                    [
-                        'title' => 'Редактировать заявку',
-                        'data-toggle' => 'modal',
-                        'data-target' => '#modalAdd',
-                    ]
-                );
-            }
-        ],
-        'template' => '{edit} {delete}',
+        'template' => '{delete}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];

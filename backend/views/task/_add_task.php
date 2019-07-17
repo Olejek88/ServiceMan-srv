@@ -2,10 +2,9 @@
 /* @var $task common\models\Task  */
 /* @var $equipmentUuid */
 /* @var $requestUuid */
+/* @var $type_uuid */
 
-use common\components\MainFunctions;
-use common\models\Equipment;
-use common\models\TaskTemplate;
+use common\models\TaskTemplateEquipmentType;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -64,9 +63,21 @@ use yii\helpers\Html;
             ],
         ]);
 
-    $taskTemplate = TaskTemplate::find()->all();
-    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
-    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
+    $taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
+    $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
+        return $data['taskTemplate']['taskType']['title'].' : '.$data['taskTemplate']['title'];
+    });
+    echo $form->field($model, 'taskTemplateUuid')->widget(\kartik\widgets\Select2::class,
+        [
+            'data' => $items,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Шаблон задачи'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
     ?>
 
     <?php

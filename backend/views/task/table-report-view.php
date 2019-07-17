@@ -21,6 +21,8 @@ $this->title = Yii::t('app', 'ТОИРУС ЖКХ::' . $titles);
 $gridColumns = [
     [
         'attribute' => '_id',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class',
             'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
@@ -227,7 +229,7 @@ $gridColumns = [
         }
     ],
     [
-        'header' => 'Исполнитель',
+        'header' => 'Исполнители',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'contentOptions' => [
@@ -240,7 +242,7 @@ $gridColumns = [
             $users_list = "";
             $cnt = 0;
             foreach ($users as $user) {
-                if ($cnt > 0) $users_list .= ',';
+                if ($cnt > 0) $users_list .= ', ';
                 $users_list .= $user['name'];
                 $cnt++;
             }
@@ -404,6 +406,11 @@ function () {
 })');
 
 ?>
+<style>
+    .grid-view td {
+        white-space: pre-line;
+    }
+</style>
 <div class="modal remote fade" id="modalUser">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>

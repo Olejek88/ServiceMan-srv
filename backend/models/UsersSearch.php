@@ -65,6 +65,7 @@ class UsersSearch extends Users
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['!=','name','sUser'])
             ->andFilterWhere(['like', 'contact', $this->contact]);
 
         return $dataProvider;

@@ -5,7 +5,7 @@ use yii\helpers\Html;
 
 /* @var $searchModel */
 
-$this->title = Yii::t('app', 'Журнал оборудования');
+$this->title = Yii::t('app', 'Журнал элементов');
 ?>
 <div class="equipment-index box-padding-index">
 

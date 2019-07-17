@@ -45,6 +45,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\DataColumn',
         'attribute' => 'address',
+        'mergeHeader' => true,
         'vAlign' => 'middle',
         'width' => '280px',
         'header' => 'Объект ' . Html::a('<span class="glyphicon glyphicon-plus"></span>',
@@ -76,7 +77,7 @@ $gridColumns = [
         'editableOptions' => function ($model, $key, $index, $widget) {
             $models = ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(), 'uuid', 'title');
             return [
-                'header' => 'Тип оборудования',
+                'header' => 'Тип элемента',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $models,
@@ -262,7 +263,7 @@ $gridColumns = [
         'header' => 'Действия',
         'buttons' => [
             'add' => function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
+                return Html::a('<span class="fa fa-tasks"></span>&nbsp',
                     ['../task/form', 'equipmentUuid' => $model['uuid']],
                     [
                         'title' => 'Добавить задачу',
@@ -272,7 +273,7 @@ $gridColumns = [
                 );
             },
             'defects' => function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+                return Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
                     ['/defect/list', 'equipmentUuid' => $model['uuid']],
                     [
                         'title' => 'Дефекты',
@@ -282,20 +283,20 @@ $gridColumns = [
                 );
             },
             'new' => function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+                return Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
                     ['/defect/add-table', 'uuid' => $model['uuid']],
                     [
-                        'title' => 'Дефект',
+                        'title' => 'Добавить дефект',
                         'data-toggle' => 'modal',
                         'data-target' => '#modalAdd',
                     ]
                 );
             },
             'tasks' => function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+                return Html::a('<span class="fa fa-list"></span>&nbsp',
                     ['/equipment/operations', 'equipmentUuid' => $model['uuid']],
                     [
-                        'title' => 'Перечень операций',
+                        'title' => 'История работ',
                         'data-toggle' => 'modal',
                         'data-target' => '#modalTasks',
                     ]
@@ -303,7 +304,7 @@ $gridColumns = [
                 );
             },
             'edit' => function ($url, $model) {
-                return Html::a('<span class="glyphicon glyphicon-edit"></span>&nbsp',
+                return Html::a('<span class="fa fa-edit"></span>&nbsp',
                     ['/equipment/edit-table', 'uuid' => $model['uuid']],
                     [
                         'title' => 'Редактировать',

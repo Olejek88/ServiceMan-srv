@@ -3,8 +3,10 @@
 namespace backend\models;
 
 use common\models\Objects;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * ObjectSearch represents the model behind the search form about `common\models\Object`.
@@ -37,6 +39,8 @@ class ObjectsSearch extends Objects
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
@@ -68,6 +72,7 @@ class ObjectsSearch extends Objects
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
+            ->andWhere(['deleted' => false])
             ->andFilterWhere(['like', 'number', $this->title]);
 
         return $dataProvider;

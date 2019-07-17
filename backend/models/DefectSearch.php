@@ -6,6 +6,7 @@ use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Defect;
+use yii\db\Exception;
 
 /**
  * DefectSearch represents the model behind the search form about `common\models\Defect`.
@@ -19,7 +20,7 @@ class DefectSearch extends Defect
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'userUuid', 'date', 'equipmentUuid', 'defectStatus', 'title', 'taskUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'userUuid', 'date', 'equipmentUuid', 'defectTypeUuid', 'defectStatus', 'title', 'taskUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -39,6 +40,7 @@ class DefectSearch extends Defect
      *
      * @return ActiveDataProvider
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
@@ -61,6 +63,8 @@ class DefectSearch extends Defect
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'defectTypeUuid' => $this->defectTypeUuid,
+            'userUuid' => $this->userUuid,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
