@@ -4,7 +4,6 @@
 /* @var $requestUuid */
 /* @var $type_uuid */
 
-use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskVerdict;
 use common\models\Users;

@@ -2,17 +2,12 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
-use common\models\Objects;
-use common\models\RequestType;
-use common\models\Task;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\widgets\Select2;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
-use common\models\Equipment;
-use common\models\requestStatus;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Shutdown */
