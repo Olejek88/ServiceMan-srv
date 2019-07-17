@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\ContragentType;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -30,9 +31,14 @@ use yii\widgets\ActiveForm;
 
     <label>Объект, связанный с контрагентом</label></br>
     <?php
-    $object = Objects::find()->all();
+    $object = Objects::find()
+        ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
+        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL])
+        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+        ->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {
-        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
+        return $model['house']['street']->title . ', ' . $model['house']->number .
+            ', ' . $model['objectType']['title'] . ' ' . $model['title'];
     });
     echo Select2::widget(
         [

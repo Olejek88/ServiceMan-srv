@@ -16,7 +16,6 @@ use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use common\models\TaskUser;
-use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
 use Throwable;
@@ -242,6 +241,7 @@ class TaskController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -347,6 +347,7 @@ class TaskController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTree()
@@ -408,6 +409,7 @@ class TaskController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionAddTask()
@@ -447,9 +449,10 @@ class TaskController extends ZhkhController
             $model = new Task();
             if (isset($_GET["requestUuid"]))
                 return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'requestUuid' => $_GET["requestUuid"]]);
+                    'requestUuid' => $_GET["requestUuid"], 'type_uuid' => $_GET["type_uuid"]]);
             else
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"]]);
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                    'type_uuid' => $_GET["type_uuid"]]);
         }
         return "";
     }
@@ -471,6 +474,7 @@ class TaskController extends ZhkhController
     /**
      * Creates a new Task model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public

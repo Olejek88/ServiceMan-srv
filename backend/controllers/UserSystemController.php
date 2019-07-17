@@ -6,6 +6,7 @@ use backend\models\UserSystemSearch;
 use common\components\MainFunctions;
 use common\models\UserSystem;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
@@ -46,6 +47,7 @@ class UserSystemController extends ZhkhController
      * Creates a new UserSystem model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -77,6 +79,7 @@ class UserSystemController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
      */
     public function actionUpdate($id)
     {

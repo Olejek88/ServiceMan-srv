@@ -3,6 +3,7 @@
 use common\components\MainFunctions;
 use common\models\EquipmentSystem;
 use common\models\Users;
+use common\models\UserSystem;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -24,7 +25,7 @@ use yii\widgets\ActiveForm;
     ?>
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Добавить специализацию</h4>
+        <h4 class="modal-title">Редактировать специализации</h4>
     </div>
     <div class="modal-body">
 
@@ -37,20 +38,40 @@ use yii\widgets\ActiveForm;
             ->label(false);
         echo Html::hiddenInput("uuid", "123");
 
+        echo Html::hiddenInput('userUuid',$model['userUuid']);
         echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
 
+        $userSystems = UserSystem::find()
+            ->where(['userUuid' => $model['userUuid']])
+            ->all();
+        echo '<label class="control-label">Убрать специализацию</label>';
+        echo '</br>';
+        foreach ($userSystems as $userSystem) {
+            echo Html::checkbox('system-' . $userSystem['_id'], false,
+                ['label' => $userSystem['equipmentSystem']['titleUser']]);
+            echo '</br>';
+        }
+        echo '</br>';
+
+        echo '<label class="control-label">Добавить специализацию</label>';
+        echo '</br>';
         $equipmentSystem = EquipmentSystem::find()->all();
         $items = ArrayHelper::map($equipmentSystem, 'uuid', 'titleUser');
-        echo $form->field($model, 'equipmentSystemUuid')->widget(Select2::class,
-            [
-                'name' => 'equipmentSystemUuid',
-                'language' => 'ru',
-                'data' => $items,
-                'options' => ['placeholder' => 'Выберите специализацию ...'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label(false);
+        try {
+            echo Select2::widget(
+                [
+                    'name' => 'equipmentSystemUuid',
+                    'language' => 'ru',
+                    'data' => $items,
+                    'options' => ['placeholder' => 'Выберите специализацию ...'],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
+        } catch (Exception $e) {
+        }
+        echo '</br>';
+
         ?>
 
         <div class="form-group text-center">

@@ -2,6 +2,7 @@
 
 use common\models\User;
 use common\models\Users;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use backend\models\UserArm;
 
@@ -91,23 +92,19 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                         <strong><i class="fa fa-pencil margin-r-5"></i> Специализация</strong>
                         <p>
                             <?php
-                            if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
-                                echo '<span class="label label-danger">Администратор</span>';
+                            $assignments = Yii::$app->getAuthManager()->getAssignments($model['user_id']);
+                            foreach ($assignments as $value) {
+                                if ($value->roleName==User::ROLE_ADMIN)
+                                    echo '<span class="label label-danger">Администратор</span>';
+                                if ($value->roleName==User::ROLE_OPERATOR)
+                                    echo '<span class="label label-success">Оператор</span>';
+                                if ($value->roleName==User::ROLE_USER)
+                                    echo '<span class="label label-info">Пользователь</span>';
+                                if ($value->roleName==User::ROLE_ANALYST)
+                                    echo '<span class="label label-info">Аналитик</span>';
+                                break;
                             }
                             ?>
-                            <?php
-                            if (Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
-                                echo '<span class="label label-success">Оператор</span>';
-                            }
-                            ?>
-                            <?php
-                            echo '<span class="label label-info">Персонал</span>';
-                            ?>
-<!--                            --><?php
-/*                            if (\Yii::$app->user->can(User::PERMISSION_CONTRACTOR)) {
-                                echo '<span class="label label-warning">Заказчик</span>';
-                            }
-                            */?>
                         </p>
 
                     </div>

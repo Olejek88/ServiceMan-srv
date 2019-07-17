@@ -9,7 +9,7 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Типы элементов');
 ?>
-<div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
+<div class="order-status-view box-padding" style="width: 95%; min-height: 2482px">
     <?php
     echo $this->render('@backend/views/yii2-app/layouts/references-menu.php');
     ?>

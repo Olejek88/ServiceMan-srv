@@ -11,7 +11,6 @@
     echo Html::a("Статусы элементов", ['../equipment-status/create'], ['class' => 'btn btn-info btn100']);
     echo Html::a("Типы элементов", ['../equipment-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Иженерные системы", ['../equipment-system/create'], ['class' => 'btn btn-primary btn100']);
-    echo Html::a("Статусы домов", ['../house-status/create'], ['class' => 'btn btn-info btn100']);
     echo Html::a("Типы домов", ['../house-type/create'], ['class' => 'btn btn-primary btn100']);
     echo Html::a("Статусы объектов", ['../object-status/create'], ['class' => 'btn btn-info btn100']);
     echo Html::a("Типы объектов", ['../object-type/create'], ['class' => 'btn btn-primary btn100']);

@@ -15,13 +15,10 @@ $userImage = Yii::$app->view->params['userImage'];
 
     <?= Html::a('<span class="logo-mini">С</span><span class="logo-lg">' . Yii::$app->name = 'СЕРВИС' . '</span>',
         Yii::$app->homeUrl, ['class' => 'logo']) ?>
-    <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
-        <!-- Sidebar toggle button-->
         <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="padding: 10px 15px">
             <span class="sr-only">Toggle navigation</span>
         </a>
-        <!-- Navbar Right Menu -->
         <div class="navbar-custom-menu" style="padding-top: 0; padding-bottom: 0">
             <ul class="nav navbar-nav">
                 <li class="tasks-menu">
@@ -45,29 +42,38 @@ $userImage = Yii::$app->view->params['userImage'];
 
                 <li class="dropdown references-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-battery"></i>
+                        <i class="fa fa-cogs"></i>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Предупреждения статус", ['../alarm-status/create']); ?></li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Предупреждения типы", ['../alarm-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-address-book\"></i> Документация типы", ['../documentation-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Контрагенты типы", ['../contragent-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Журнал типы записей", ['../equipment-register-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы элементов", ['../equipment-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы элементов", ['../equipment-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Иженерные системы", ['../equipment-system/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы домов", ['../house-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы домов", ['../house-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы объектов", ['../object-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы объектов", ['../object-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы запрооов", ['../request-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Характеры обращений", ['../request-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы задач", ['../task-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Вердикты задач", ['../task-verdict/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы работ", ['../work-status/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы измерений", ['../measure-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы дефектов", ['../defect-type/create']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Шаблоны задач", ['../task-template/create']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-warning\"></i> Предупреждения статус", ['../alarm-status']); ?></li>
+                        <li><?= Html::a("<i class=\"fa fa-warning\"></i> Предупреждения типы", ['../alarm-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-address-book\"></i> Документация типы", ['../documentation-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-user\"></i> Контрагенты типы", ['../contragent-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-book\"></i> Журнал типы записей", ['../equipment-register-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-tree\"></i> Статусы элементов", ['../equipment-status']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cog\"></i> Типы элементов", ['../equipment-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-steam\"></i> Иженерные системы", ['../equipment-system']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы домов", ['../house-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-object-group\"></i> Статусы объектов", ['../object-status']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы объектов", ['../object-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы запрооов", ['../request-status']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Характеры обращений", ['../request-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы задач", ['../task-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Вердикты задач", ['../task-verdict']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы работ", ['../work-status']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-bar-chart\"></i> Типы измерений", ['../measure-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-list\"></i> Типы дефектов", ['../defect-type']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-tasks\"></i> Шаблоны задач", ['../task-template']); ?> </li>
+                    </ul>
+                </li>
+
+                <li class="dropdown references-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-home"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><?= Html::a("<i class=\"fa fa-home\"></i> Города", ['../city']); ?></li>
+                        <li><?= Html::a("<i class=\"fa fa-street-view\"></i> Улицы", ['../street']); ?> </li>
                     </ul>
                 </li>
 

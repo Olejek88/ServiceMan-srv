@@ -171,7 +171,6 @@ try {
                                     }                                    
                                  });
                             });
-                         }\')
                     }')
                     ],
                     'edit' => [
@@ -436,7 +435,7 @@ $this->registerJs('$("#removeButton").on("click",function() {
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==true && node.type=="house") {
+            if (data.folder==true && data.type=="house") {
                 $.ajax({
                     url: "remove",
                     type: "post",

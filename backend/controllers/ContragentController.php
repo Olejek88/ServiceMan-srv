@@ -215,6 +215,16 @@ class ContragentController extends ZhkhController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if (isset ($_POST['objectUuid'])) {
+                // TODO проверка на то что уже привязан
+                $objectContragent = new ObjectContragent();
+                $objectContragent->contragentUuid = $model['uuid'];
+                $objectContragent->uuid = MainFunctions::GUID();
+                $objectContragent->oid = Users::getCurrentOid();
+                $objectContragent->objectUuid = $_POST['objectUuid'];
+                $objectContragent->save();
+            }
+
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('update', [
@@ -259,6 +269,7 @@ class ContragentController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionPhone()

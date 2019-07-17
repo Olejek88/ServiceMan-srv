@@ -1312,15 +1312,16 @@ class EquipmentController extends ZhkhController
             );
         }
 
-        $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
+        $links = Html::a('<span class="fa fa-tasks"></span>&nbsp',
+            ['/task/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree', 'requestUuid' => null,
+                'type_uuid' => $equipment['equipmentTypeUuid']],
             [
-                'title' => 'Добавить заявку',
+                'title' => 'Добавить задачу',
                 'data-toggle' => 'modal',
                 'data-target' => '#modalRequest',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Дефекты',
@@ -1337,7 +1338,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalChange',
             ]
         );*/
-        $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
             ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Измерения',
@@ -1345,7 +1346,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalMeasures',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-book"></span>&nbsp',
             ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Журнал событий',
@@ -1353,7 +1354,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalRegister',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-list"></span>&nbsp',
             ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'История работ',
@@ -1361,7 +1362,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalTasks',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
             ['/measure/add', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Добавить измерение',

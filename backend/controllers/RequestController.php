@@ -10,6 +10,7 @@ use common\models\Request;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
@@ -145,6 +146,7 @@ class RequestController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionForm()
@@ -177,6 +179,7 @@ class RequestController extends ZhkhController
      * Creates a new Request model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     function actionNew()
