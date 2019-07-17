@@ -199,7 +199,7 @@ class EquipmentRegisterController extends ZhkhController
         $model->registerTypeUuid = $registerTypeUuid;
         $model->uuid = MainFunctions::GUID();
         $model->date = date('Y-m-d\TH:i:s');
-        $model->oid = Users::getOid(Yii::$app->user->identity);
+        $model->oid = Users::getCurrentOid();
         $model->save();
     }
 }

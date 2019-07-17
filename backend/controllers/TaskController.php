@@ -518,7 +518,7 @@ class TaskController extends ZhkhController
                     $taskUser->uuid = MainFunctions::GUID();
                     $taskUser->taskUuid = $_POST['taskUuid'];
                     $taskUser->userUuid = $user['uuid'];
-                    $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+                    $taskUser->oid = Users::getCurrentOid();
                     $taskUser->save();
                     //MainFunctions::register('Смена исполнителя', 'К задаче ')
                 }
