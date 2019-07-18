@@ -29,14 +29,14 @@ class DocumentationController extends BaseController
             $query->andWhere(['uuid' => $uuid]);
         }
 
-        $eqUuids = $req->getQueryParam('eqUuids');
-        if ($eqUuids != null) {
+        $eqUuid = $req->getQueryParam('eqUuid');
+        if ($eqUuid != null) {
             $query->leftJoin($eqTbl,
                 $docTbl . '.equipmentUuid = ' . $eqTbl . '.uuid' .
                 ' or ' .
                 $docTbl . '.equipmentTypeUuid = ' . $eqTbl . '.equipmentTypeUuid'
             );
-            $query->andWhere([$eqTbl . '.uuid' => $eqUuids]);
+            $query->andWhere([$eqTbl . '.uuid' => $eqUuid]);
 
         }
 
