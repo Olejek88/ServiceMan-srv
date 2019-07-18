@@ -5,6 +5,7 @@
 /* @var $type_uuid */
 
 use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -63,7 +64,9 @@ use yii\helpers\Html;
             ],
         ]);
 
-    $taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
+    $taskTemplate = TaskTemplateEquipmentType::find()
+        ->where(['equipmentTypeUuid' => $type_uuid])
+        ->all();
     $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
         return $data['taskTemplate']['taskType']['title'].' : '.$data['taskTemplate']['title'];
     });
