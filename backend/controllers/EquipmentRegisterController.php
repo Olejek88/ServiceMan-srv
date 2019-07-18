@@ -10,6 +10,9 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use yii\db\Exception;
+use Throwable;
+
 /**
  * EquipmentRegisterController implements the CRUD actions for EquipmentRegister model.
  */
@@ -91,7 +94,7 @@ class EquipmentRegisterController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
@@ -124,6 +127,7 @@ class EquipmentRegisterController extends ZhkhController
      * @param $equipmentUuid
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionList($equipmentUuid)
     {
@@ -183,6 +187,7 @@ class EquipmentRegisterController extends ZhkhController
      * @param $registerTypeUuid
      * @param $description
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public static function addEquipmentRegister($equipmentUuid, $registerTypeUuid, $description)
     {
@@ -199,7 +204,7 @@ class EquipmentRegisterController extends ZhkhController
         $model->registerTypeUuid = $registerTypeUuid;
         $model->uuid = MainFunctions::GUID();
         $model->date = date('Y-m-d\TH:i:s');
-        $model->oid = Users::getOid(Yii::$app->user->identity);
+        $model->oid = Users::getCurrentOid();
         $model->save();
     }
 }

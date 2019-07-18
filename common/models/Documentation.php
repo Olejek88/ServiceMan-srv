@@ -2,10 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -28,7 +28,7 @@ use yii\db\Expression;
  * @property Organization $organization
  * @property EquipmentType $equipmentType
  */
-class Documentation extends ActiveRecord
+class Documentation extends ZhkhActiveRecord
 {
     private static $_IMAGE_ROOT = 'doc';
 

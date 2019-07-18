@@ -30,6 +30,8 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
+use yii\db\Exception;
+use Throwable;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.
@@ -41,6 +43,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -109,6 +112,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndexCheck()
     {
@@ -181,9 +185,13 @@ class EquipmentController extends ZhkhController
         if ($model->load(Yii::$app->request->post())) {
             // проверяем все поля, если что-то не так показываем форму с ошибками
             if (!$model->validate()) {
-                echo json_encode($model->errors);
+                if (Yii::$app->request->isAjax) {
+                    echo json_encode($model->errors);
+                }
+
                 return $this->render('create', ['model' => $model]);
             }
+
             // сохраняем запись
             if ($model->save(false)) {
                 MainFunctions::register('documentation', 'Добавлено оборудование',
@@ -193,6 +201,7 @@ class EquipmentController extends ZhkhController
             }
             echo json_encode($model->errors);
         }
+
         return $this->render('create', ['model' => $model]);
     }
 
@@ -279,6 +288,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTree()
     {
@@ -324,6 +334,7 @@ class EquipmentController extends ZhkhController
      * @param $date_end
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTable($id, $date_start, $date_end)
     {
@@ -446,6 +457,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTreeUser()
     {
@@ -508,6 +520,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTreeStreet()
     {
@@ -598,7 +611,7 @@ class EquipmentController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDelete($id)
     {
@@ -637,8 +650,7 @@ class EquipmentController extends ZhkhController
      * @return Equipment the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Equipment::findOne($id)) !== null) {
             return $model;
@@ -658,7 +670,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionMove()
     {
@@ -676,7 +688,7 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет отвязывание выбранного оборудования от пользователя
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemove()
     {
@@ -693,6 +705,7 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет переименование оборудования
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionRename()
     {
@@ -720,8 +733,10 @@ class EquipmentController extends ZhkhController
      *
      * @param $user
      * @param $node
+     * @throws Exception
+     * @throws InvalidConfigException
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     function updateUserHouse($user, $node)
     {
@@ -759,7 +774,7 @@ class EquipmentController extends ZhkhController
      * @param $user
      * @param $node
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     function addUserHouse($user, $node)
     {
@@ -794,8 +809,7 @@ class EquipmentController extends ZhkhController
      *
      * @return string | null
      */
-    private
-    static function _saveFile($model, $file)
+    private static function _saveFile($model, $file)
     {
         $dir = '/storage/main/';
         if (!is_dir($dir)) {
@@ -816,6 +830,7 @@ class EquipmentController extends ZhkhController
     /**
      * @return bool|string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     function actionOperations()
@@ -832,8 +847,12 @@ class EquipmentController extends ZhkhController
         return true;
     }
 
-    public
-    function actionMeasures()
+    /**
+     * @return bool|string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionMeasures()
     {
         if (isset($_GET["equipmentUuid"])) {
             $measures = Measure::find()->where(['equipmentUuid' => $_GET["equipmentUuid"]])
@@ -850,9 +869,9 @@ class EquipmentController extends ZhkhController
     /**
      * @return bool|string
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public
-    function actionStatus()
+    public function actionStatus()
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
@@ -875,9 +894,9 @@ class EquipmentController extends ZhkhController
     /**
      * @return bool|string
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public
-    function actionSerial()
+    public function actionSerial()
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])
@@ -898,8 +917,7 @@ class EquipmentController extends ZhkhController
         return false;
     }
 
-    public
-    function actionSelectTask()
+    public function actionSelectTask()
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
@@ -924,8 +942,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
@@ -987,6 +1004,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionEdit()
     {
@@ -1056,9 +1074,9 @@ class EquipmentController extends ZhkhController
      * Creates a new Equipment model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         if (isset($_POST["type"]))
             $type = $_POST["type"];
@@ -1180,6 +1198,7 @@ class EquipmentController extends ZhkhController
      * @param $user
      * @return array
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function addEquipment($equipment, $user)
     {
@@ -1326,7 +1345,7 @@ class EquipmentController extends ZhkhController
             'type_uuid' => $equipment['equipmentType']['uuid'],
             'docs' => $docs,
             'start' => "" . date_format(date_create($equipment['inputDate']), "d-m-Y"),
-            'location' => $equipment['object']->getFullTitle(),
+            'location' => $equipment->object->getFullTitle(),
             'tasks' => $task,
             'user' => $userEquipmentName,
             'links' => $links,
@@ -1336,6 +1355,7 @@ class EquipmentController extends ZhkhController
     /**
      * @return string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTimelineAll()
     {
@@ -1367,6 +1387,7 @@ class EquipmentController extends ZhkhController
      * @param $r
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTimeline($uuid, $r)
     {
@@ -1468,8 +1489,7 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      */
-    public
-    function actionAdd()
+    public function actionAdd()
     {
         $source = '../equipment';
         $equipment = new Equipment();
@@ -1485,9 +1505,9 @@ class EquipmentController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public
-    function actionEditTable()
+    public function actionEditTable()
     {
         if (isset($_POST["uuid"]))
             $uuid = $_POST["uuid"];

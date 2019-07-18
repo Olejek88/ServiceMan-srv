@@ -7,6 +7,7 @@ use api\components\BaseController;
 use common\models\Organization;
 use common\models\User;
 use common\models\Users;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 class UsersController extends BaseController
@@ -58,10 +59,10 @@ class UsersController extends BaseController
             }
         }
 
-//        $query->andWhere(['type' => Users::USERS_WORKER]);
-
         // выбираем данные из базы
-        $result = $query->with('organization')->asArray()->all();
+        $result = $query->with(['organization' => function (ActiveQuery $query) {
+            $query->select(['_id', 'uuid', 'title']);
+        }])->asArray()->all();
         return $result;
     }
 }
