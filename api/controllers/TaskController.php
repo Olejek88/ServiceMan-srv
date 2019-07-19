@@ -6,7 +6,6 @@ use api\components\BaseController;
 use common\models\Task;
 use common\models\User;
 use Yii;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 class TaskController extends BaseController
@@ -44,10 +43,10 @@ class TaskController extends BaseController
             return [];
         }
 
-        $query->with(['equipment' => function ($query) {
-            /** @var ActiveQuery $query */
-            $query->with('object');
-        }]);
+//        $query->with(['equipment' => function ($query) {
+//            /** @var ActiveQuery $query */
+//            $query->with('object');
+//        }]);
         $query->with(['author']);
         $query->with(['operations']);
 

@@ -64,17 +64,17 @@ use common\models\Equipment;
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
     <p style="width: 0; margin-bottom: 0;">Дата</p>
-        <?= DateTimePicker::widget([
-            'model' => $model,
-            'attribute' => 'date',
-            'language' => 'ru',
-            'size' => 'ms',
-            'clientOptions' => [
-                'autoclose' => true,
-                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
-                'todayBtn' => true
+        <?php echo $form->field($model, 'date')->widget(DateTimePicker::class,
+            [
+                'language' => 'ru',
+                'size' => 'ms',
+                'clientOptions' => [
+                    'autoclose' => true,
+                    'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                    'todayBtn' => true,
+                ]
             ]
-            ]);
+        );
         ?>
     </div>
 

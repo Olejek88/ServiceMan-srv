@@ -40,6 +40,8 @@ class DefectController extends BaseController
             return [];
         }
 
+        $query->with(['user']);
+
         // выбираем данные из базы
         $result = $query->asArray()->all();
 
