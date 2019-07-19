@@ -93,7 +93,7 @@ use yii\widgets\ActiveForm;
             ->orderBy('task_template.taskTypeUuid')
             ->all();
         $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
-            return $model['taskTemplate']['taskType']['title'].'::'.$model['taskTemplate']['title'];
+            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
         });
         echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
             [

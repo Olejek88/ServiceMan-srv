@@ -5,12 +5,12 @@ namespace backend\controllers;
 use app\commands\MainFunctions;
 use backend\models\TaskTemplateEquipmentSearch;
 use common\components\Errors;
+use common\models\Equipment;
 use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use Cron\CronExpression;
-use DateTime;
 use Exception;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -180,6 +180,7 @@ class TaskTemplateEquipmentController extends ZhkhController
      * POST string $param - новое название
      * @return mixed
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionEditTask()
     {
@@ -271,84 +272,92 @@ class TaskTemplateEquipmentController extends ZhkhController
     {
         $events = [];
         $categories = [];
+        $all_task_equipment_count = 0;
 
-        $taskTemplateEquipments = TaskTemplateEquipment::find()
-            ->select('*')
-            ->groupBy('equipmentUuid')
+        $equipments = Equipment::find()
             ->all();
+        foreach ($equipments as $equipment) {
+            $taskTemplateEquipments = TaskTemplateEquipment::find()
+                ->where(['equipmentUuid' => $equipment['uuid']])
+                ->all();
 
-        $task_equipment_count=0;
-        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
-            $period = $taskTemplateEquipment["period"];
-            $selected_user = $taskTemplateEquipment->getUser();
-            if ($selected_user)
-                $user = $selected_user['name'];
-            else
-                $user = 'Не назначен';
-            try {
-                $last = new DateTime($taskTemplateEquipment["last_date"]);
-            } catch (Exception $e) {
-            }
-            $tasks=[];
-            $taskTemplateEquipment->formDates();
-            $dates = $taskTemplateEquipment->getDates();
-            if ($dates) {
-                $count = 0;
-                while ($count < count($dates)) {
-                    $taskTemplates = TaskTemplateEquipment::find()
+            $task_equipment_count = 0;
+            $tasks = [];
+            $user = 'Не назначен';
+
+            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+                //echo $taskTemplateEquipment['equipment']['title'] . ' - ' . $taskTemplateEquipment['taskTemplate']['title'] . '<br/>';
+                $selected_user = $taskTemplateEquipment->getUser();
+                if ($selected_user)
+                    $user = $selected_user['name'];
+                else
+                    $user = 'Не назначен';
+                /*                try {
+                                    $last = new DateTime($taskTemplateEquipment["last_date"]);
+                                } catch (Exception $e) {
+                                }*/
+                $taskTemplateEquipment->formDates();
+                $dates = $taskTemplateEquipment->getDates();
+                if ($dates) {
+                    $count = 0;
+                    while ($count < count($dates)) {
+                        /*                        $taskTemplates = TaskTemplateEquipment::find()
+                                                    ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                                                    ->all();
+                                                foreach ($taskTemplates as $taskTemplate) {*/
+                        $start = strtotime($dates[$count]);
+                        //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
+                        $finish = $start + 3600 * 24;
+                        //$end_date = date("Y-m-d H:i:s", $finish);
+                        $tasks[] = [
+                            'title' => $taskTemplateEquipment['taskTemplate']['title'],
+                            'start' => $start * 1000,
+                            'end' => $finish * 1000,
+                            'id' => $taskTemplateEquipment['_id'],
+                            'y' => $task_equipment_count,
+                            'user' => $user
+                        ];
+                        /*                        }*/
+                        $count++;
+                        if ($count > 5) break;
+                    }
+                    $all_tasks = Task::find()
                         ->select('*')
                         ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
                         ->all();
-                    foreach ($taskTemplates as $taskTemplate) {
-                        $start = strtotime($dates[$count]);
-                        //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
-                        $finish = $start + 3600*24;
-                        $end_date =date("Y-m-d H:i:s",$finish);
+                    foreach ($all_tasks as $task) {
+                        $start = strtotime($task["startDate"]) * 1000;
+                        $finish = strtotime($task["endDate"]) * 1000;
                         $tasks[] = [
-                            'title' => 'TO',
-                            'start' => $start*1000,
-                            'end' => $finish*1000,
-                            'id' => $taskTemplate['_id'],
+                            'title' => $taskTemplateEquipment['taskTemplate']['title'],
+                            'start' => $start,
+                            'end' => $finish,
+                            'id' => 0,
+                            'completed' => 0,
                             'y' => $task_equipment_count,
                             'user' => $user
                         ];
                     }
-                    $count++;
-                    if ($count>5) break;
                 }
-                $all_tasks = Task::find()
-                    ->select('*')
-                    ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
-                    ->all();
-                foreach ($all_tasks as $task) {
-                    $start = strtotime($task["startDate"])*1000;
-                    $finish = strtotime($task["endDate"])*1000;
-                    $tasks[] = [
-                        'title' => 'TO',
-                        'start' => $start,
-                        'end' => $finish,
-                        'id' => $task['_id'],
-                        'completed' => 0,
-                        'y' => $task_equipment_count,
-                        'user' => $user
-                    ];
-                }
+                $task_equipment_count++;
+            }
+            if (count($tasks)) {
+                $all_task_equipment_count++;
                 $events[] = [
-                    'title' => $taskTemplateEquipment['equipment']['title'],
-                    'period' => $period,
+                    'title' => $equipment['title'],
+                    'address' => $equipment->getAddress(),
                     'data' => $tasks
                 ];
             }
-            $task_equipment_count++;
         }
-        $max=0;
-        if ($task_equipment_count>0) $max=$task_equipment_count-1;
+        $max = 0;
+        if ($all_task_equipment_count > 0) $max = $all_task_equipment_count - 1;
         //echo json_encode($events);
-        return $this->render('calendar-gantt', [
-            'events' => $events,
-            'categories' => $categories,
-            'max' => $max
-        ]);
+                return $this->render('calendar-gantt', [
+                    'events' => $events,
+                    'categories' => $categories,
+                    'max' => $max
+                ]);
     }
 
     public function actionPeriod()
@@ -377,4 +386,19 @@ class TaskTemplateEquipmentController extends ZhkhController
         return false;
     }
 
+    public function actionMove()
+    {
+        if (isset($_POST["id"])) {
+            $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["id"]])->one();
+            if ($model) {
+                $search = date("Y-m-d H:i:s", $_POST['start']/1000);
+                $replace = date("Y-m-d H:i:s", $_POST['end']/1000);
+                $result = str_replace($search,$replace,$model['next_dates']);
+                $model["next_dates"] = $result;
+                $model->save();
+                return '['.$search.'] '.$model["next_dates"];
+            }
+        }
+        return false;
+    }
 }

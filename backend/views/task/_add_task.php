@@ -68,7 +68,7 @@ use yii\helpers\Html;
         ->where(['equipmentTypeUuid' => $type_uuid])
         ->all();
     $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
-        return $data['taskTemplate']['taskType']['title'].' : '.$data['taskTemplate']['title'];
+        return $data['taskTemplate']['taskType']['title'].' :: '.$data['taskTemplate']['title'];
     });
     echo $form->field($model, 'taskTemplateUuid')->widget(\kartik\widgets\Select2::class,
         [

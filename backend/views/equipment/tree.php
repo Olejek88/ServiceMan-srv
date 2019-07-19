@@ -17,7 +17,7 @@ $this->title = 'Дерево моделей элементов';
         <col style="width:150px">
         <col style="width:110px">
         <col style="width:80px">
-        <col style="width:100px">
+        <col style="width:80px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>

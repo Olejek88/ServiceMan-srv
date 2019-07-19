@@ -1324,17 +1324,7 @@ class EquipmentController extends ZhkhController
                 [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
             );
         }
-
-        $links = Html::a('<span class="fa fa-tasks"></span>&nbsp',
-            ['/task/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree', 'requestUuid' => null,
-                'type_uuid' => $equipment['equipmentTypeUuid']],
-            [
-                'title' => 'Добавить задачу',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRequest',
-            ]
-        );
-        $links .= Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
+        $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Дефекты',

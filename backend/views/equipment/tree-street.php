@@ -16,7 +16,7 @@ $this->title = 'Дерево элементов по расположению';
         <col style="width:160px">
         <col style="width:130px">
         <col style="width: 100px">
-        <col style="width: 120px">
+        <col style="width: 90px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>

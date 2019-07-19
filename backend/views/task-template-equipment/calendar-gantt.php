@@ -159,12 +159,14 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         return {
             name: event.title,
             title: event.title,
-            period: event.period,
+            address: event.address,
             data: data,
             id: i,
             y: i
         };
     });
+
+    var start = '';
 
     // Create the chart
     var chart = Highcharts.ganttChart('container', {
@@ -205,15 +207,9 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 count: 6,
                 text: '6мес'
             }, {
-                type: 'ytd',
-                text: 'Сег'
-            }, {
                 type: 'year',
                 count: 1,
                 text: '1г'
-            }, {
-                type: 'all',
-                text: 'Все'
             }],
             buttonTheme: { // styles for the buttons
                 fill: 'none',
@@ -261,7 +257,29 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                     events: {
                         select: updateRemoveButtonStatus,
                         unselect: updateRemoveButtonStatus,
-                        remove: updateRemoveButtonStatus
+                        remove: updateRemoveButtonStatus,
+                        click: function(data) {
+                            console.log(data.point.start);
+                            start = data.point.start;
+                        },
+                        drop: function(data) {
+                            console.warn("start:", start);
+                            var end = data.target.end;
+                            console.warn("end:", end);
+                            $.ajax({
+                                url: "move",
+                                type: "post",
+                                data: {
+                                    id: data.target.id,
+                                    start: start,
+                                    end: data.target.start
+                                },
+                                success: function (data) {
+                                    console.log("ok");
+                                }
+                            });
+
+                        }
                     }
                 }
             }
@@ -282,10 +300,10 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                     })
                 }, {
                     title: {
-                        text: 'Период (ч)'
+                        text: 'Адрес'
                     },
                     categories: map(series,function (s) {
-                        return s.period;
+                        return s.address;
                     })
                 }]
             },
@@ -296,6 +314,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         xAxis: {
             currentDateIndicator: true,
             min: new Date().getTime(),
+            max: new Date().getTime()+1000,
             labels: {
                 format: '{value:%W}'
             },
