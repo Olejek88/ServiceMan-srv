@@ -20,6 +20,7 @@ class ContragentType extends ActiveRecord
 {
     // исполнитель - рабочий ЖЭК
     const WORKER = "D9B906FB-0559-4DD3-A632-BAEE215FA3A7";
+
     // оператор - сотрудник
     const EMPLOYEE = "57BF4D1C-2345-49CC-8BAC-7CA9D9EA2283";
     // подрядчик

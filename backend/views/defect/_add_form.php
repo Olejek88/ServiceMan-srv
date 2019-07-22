@@ -52,8 +52,10 @@ use yii\helpers\Html;
     if ($equipmentUuid) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
     } else {
-        $equipment = Equipment::find()->all();
-        $items = ArrayHelper::map($equipment, 'uuid', 'title');
+        $equipments = Equipment::find()->all();
+        $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
+            return $model->getFullTitle();
+        });
         echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
             [
                 'name' => 'kv_type',

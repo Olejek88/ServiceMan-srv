@@ -3,8 +3,10 @@
 namespace backend\models;
 
 use common\models\Receipt;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * ReceiptSearch represents the model behind the search form about `common\models\Receipt`.
@@ -37,6 +39,8 @@ class ReceiptSearch extends Receipt
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {

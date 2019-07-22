@@ -172,6 +172,12 @@ $gridColumns = [
 
 $users = Users::find()->where(['!=','name','sUser'])->all();
 $items = ArrayHelper::map($users, 'uuid', 'name');
+$start_date = '2018-12-31';
+$end_date = '2021-12-31';
+if (isset($_GET['end_time']))
+    $end_date = $_GET['end_time'];
+if (isset($_GET['start_time']))
+    $start_date = $_GET['start_time'];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -188,15 +194,16 @@ echo GridView::widget([
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
+                'value' => $_GET['user'],
                 'data' => $items,
                 'options' => ['placeholder' => 'Исполнитель'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ]) . '</td><td style="width: 300px">' .
+            ]) . '</td><td>&nbsp;</td><td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'start_time',
-                'value' => '2018-12-01 00:00:00',
+                'value' => $start_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -205,7 +212,7 @@ echo GridView::widget([
             ]).'</td><td style="width: 300px">'.
             DateTimePicker::widget([
                 'name' => 'end_time',
-                'value' => '2021-12-31 00:00:00',
+                'value' => $end_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,

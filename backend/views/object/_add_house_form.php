@@ -70,8 +70,10 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
-    echo $form->field($house, 'latitude')->hiddenInput(['maxlength' => true, 'value' => $latDefault]);
-    echo $form->field($house, 'longitude')->hiddenInput(['maxlength' => true, 'value' => $lngDefault]);
+    echo $form->field($house, 'latitude')->hiddenInput(['maxlength' => true, 'value' => $latDefault])->label(false);
+    echo $form->field($house, 'longitude')->hiddenInput(['maxlength' => true, 'value' => $lngDefault])->label(false);
+    //echo $form->field($house, 'latitude')->textInput(['maxlength' => true, 'value' => $latDefault]);
+    //echo $form->field($house, 'longitude')->textInput(['maxlength' => true, 'value' => $lngDefault]);
 
     // lets use nominating service
     $nominatim = new ServiceNominatim();

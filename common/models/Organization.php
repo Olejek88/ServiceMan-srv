@@ -118,4 +118,5 @@ class Organization extends ActiveRecord
 //            'image',
 //        ];
     }
+
 }

@@ -1,7 +1,7 @@
 <?php
 
-use common\models\TaskType;
 use common\models\Organization;
+use common\models\TaskType;
 use yii\db\Migration;
 
 /**
@@ -19,24 +19,42 @@ class m190604_063732_add_new_references extends Migration
         $this->dropColumn('task_template', 'normative');
         $this->addColumn('task_template', 'normative', $this->double()->defaultValue(1));
 
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_VIEW,
-            'Осмотр', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_CONTROL,
-            'Контроль и проверка', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_REPAIR,
-            'Устранение аварий', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_REPLACE,
-            'Замена', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_INSTALL,
-            'Монтаж', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_UNINSTALL,
-            'Демонтаж', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_TO,
-            'Техобслуживание', $currentTime, $currentTime);
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_OVERHAUL,
-            'Технический ремонт', $currentTime, $currentTime);
+        //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
+        //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
+        //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
+        //4 внеочередной осмотр const TASK_TYPE_NOT_PLANNED_CHECK
+        //5 сезонный осмотры const TASK_TYPE_SEASON_CHECK
+        //6 плановое обслуживание const TASK_TYPE_PLAN_TO
+        //7 внеплановое обслуживание const TASK_TYPE_NOT_PLAN_TO
+        //8 устранение аварий const TASK_TYPE_REPAIR
+        //9 контроль и поверка const TASK_TYPE_CONTROL
+        //10 снятие показаний const TASK_TYPE_MEASURE
+        //11 поверка const TASK_TYPE_POVERKA
+        //12 монтаж const TASK_TYPE_INSTALL
 
-        $this->insertIntoTaskTemplate('D1C0ED69-A5E7-4CAA-A48B-E03D854AF983','Локализация аварийных повреждений ХВС/ГВС',
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_CURRENT_REPAIR, 'Текущий ремонт');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_PLAN_REPAIR, 'Плановый ремонт');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_CURRENT_CHECK, 'Текущий осмотр');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLANNED_CHECK, 'Внеочередной осмотр');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_SEASON_CHECK, 'Сезонный осмотр');
+
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_VIEW, 'Осмотр');
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_TO, 'Техобслуживание');
+        //$this->insertIntoType('task_type',TaskType::TASK_TYPE_PLAN_TO, 'Плановое осблуживание');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLAN_TO, 'Внеплановое осблуживание');
+
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_REPAIR, 'Устранение аварий');
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_CONTROL, 'Контроль и проверка');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_MEASURE, 'Снятие показаний');
+
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_POVERKA, 'Поверка');
+
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_REPLACE, 'Замена');
+        $this->insertIntoType('task_type', TaskType::TASK_TYPE_UNINSTALL, 'Демонтаж');
+        //$this->insertIntoType('task_type', TaskType::TASK_TYPE_OVERHAUL, 'Технический ремонт');
+
+
+        $this->insertIntoTaskTemplate('D1C0ED69-A5E7-4CAA-A48B-E03D854AF983', 'Локализация аварийных повреждений ХВС/ГВС',
             'Локализация аварийных повреждений внутридомовых инженерных систем холодного и горячего водоснабжения и водоотведения',
             0.5, TaskType::TASK_TYPE_VIEW, $currentTime, $currentTime);
         $this->insertIntoTaskTemplate('15B035EC-AF0C-424D-9A8C-543F22E0A63E',
@@ -94,16 +112,19 @@ class m190604_063732_add_new_references extends Migration
     }
     */
 
-    private function insertIntoType($table, $uuid, $title, $createdAt, $changedAt) {
+    private function insertIntoType($table, $uuid, $title)
+    {
+        $currentTime = date('Y-m-d\TH:i:s');
         $this->insert($table, [
             'uuid' => $uuid,
             'title' => $title,
-            'createdAt' => $createdAt,
-            'changedAt' => $changedAt
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
         ]);
     }
 
-    private function insertIntoTaskTemplate($uuid, $title, $description, $normative, $taskTypeUuid, $createdAt, $changedAt) {
+    private function insertIntoTaskTemplate($uuid, $title, $description, $normative, $taskTypeUuid, $createdAt, $changedAt)
+    {
         $this->insert('task_template', [
             'uuid' => $uuid,
             'title' => $title,

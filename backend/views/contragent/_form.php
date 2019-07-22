@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\ContragentType;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -25,12 +26,19 @@ use yii\widgets\ActiveForm;
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
     ?>
+
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
+    <label>Объект, связанный с контрагентом</label></br>
     <?php
-    $object = Objects::find()->all();
+    $object = Objects::find()
+        ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
+        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL])
+        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+        ->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {
-        return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
+        return $model['house']['street']->title . ', ' . $model['house']->number .
+            ', ' . $model['objectType']['title'] . ' ' . $model['title'];
     });
     echo Select2::widget(
         [
@@ -45,7 +53,7 @@ use yii\widgets\ActiveForm;
             ],
         ]);
     ?>
-
+    </br>
     <?php echo $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?php echo $form->field($model, 'address')->textInput(['maxlength' => true]) ?>

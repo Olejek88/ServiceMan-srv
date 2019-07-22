@@ -59,7 +59,7 @@ class Objects extends ZhkhActiveRecord
     {
         return [
             [['uuid', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid'], 'required'],
-            [['square', 'createdAt', 'changedAt'], 'safe'],
+            [['square', 'house','createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['uuid', 'title', 'objectStatusUuid', 'objectTypeUuid', 'houseUuid', 'oid'], 'string', 'max' => 50],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
@@ -144,5 +144,4 @@ class Objects extends ZhkhActiveRecord
     {
         return 'ул.' . $this->house['street']['title'] . ', д.' . $this->house['number'] . ' - ' . $this->title;
     }
-
 }

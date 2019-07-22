@@ -49,26 +49,36 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'type',
         'vAlign' => 'middle',
+        'hAlign' => 'center',
         'width' => '180px',
         'header' => 'Тип пользователя',
         'mergeHeader' => true,
         'format' => 'raw',
         'value' => function ($model, $key, $index, $widget) {
-            if ($model->type==User::ROLE_ADMIN)
-                return 'Администратор';
-            if ($model->type==User::ROLE_OPERATOR)
-                return 'Оператор';
-            return 'Пользователь';
+            $assignments = Yii::$app->getAuthManager()->getAssignments($model['user_id']);
+            foreach ($assignments as $value) {
+                if ($value->roleName==User::ROLE_ADMIN)
+                    return '<span class="label label-danger">Администратор</span>';
+                if ($value->roleName==User::ROLE_OPERATOR)
+                    return '<span class="label label-success">Оператор</span>';
+                if ($value->roleName==User::ROLE_USER)
+                    return '<span class="label label-info">Пользователь</span>';
+                if ($value->roleName==User::ROLE_ANALYST)
+                    return '<span class="label label-info">Аналитик</span>';
+            }
+            return '';
         },
         'editableOptions'=> function ($model, $key, $index, $widget) {
             return [
                 'header' => 'Тип',
+                'id' => 'type',
+                'name' => 'type',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'data' => [
                     User::ROLE_ADMIN =>'Администратор',
+                    User::ROLE_USER =>'Пользователь',
                     User::ROLE_OPERATOR =>'Оператор'
                 ]
             ];
@@ -105,7 +115,7 @@ $gridColumns = [
         'format' => 'html',
         'vAlign' => 'middle',
         'value' => function ($model, $key, $index, $widget) {
-            if ($model->active)
+            if ($model->active==1)
                 return GridView::ICON_ACTIVE;
             else
                 return GridView::ICON_INACTIVE;
@@ -128,6 +138,7 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
+        'template' => '{view} {update}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];

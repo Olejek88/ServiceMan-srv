@@ -13,6 +13,7 @@ use common\models\Users;
 use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 
 class MainFunctions
 {
@@ -73,6 +74,7 @@ class MainFunctions
      * @param string $description сообщение в журнал
      * @return integer код ошибкиы
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public static function register($type, $title, $description)
     {
@@ -226,7 +228,9 @@ class MainFunctions
      * @param $comment
      * @param $oid
      * @param $userUuid
+     * @param $model
      * @return Task|null
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model)

@@ -37,10 +37,12 @@ class UsersController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
-        $searchModel = new UsersSearch();
+        return self::actionTable();
+/*        $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -50,7 +52,7 @@ class UsersController extends ZhkhController
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
             ]
-        );
+        );*/
     }
 
     /**
@@ -59,9 +61,9 @@ class UsersController extends ZhkhController
      * @param integer $id Id.
      *
      * @return mixed
-     * @throws NotFoundHttpException
      * @throws InvalidConfigException
-     * @throws HttpException
+     * @throws NotFoundHttpException
+     * @throws \yii\db\Exception
      */
     public function actionView($id)
     {
@@ -191,6 +193,7 @@ class UsersController extends ZhkhController
     /**
      * @return mixed
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionDashboard()
     {
@@ -238,6 +241,8 @@ class UsersController extends ZhkhController
      * Build tree of equipment by user
      * @return mixed
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function actionTable()
     {
@@ -246,11 +251,11 @@ class UsersController extends ZhkhController
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
             if ($_POST['editableAttribute'] == 'type') {
-                $model['type'] = intval($_POST['Users'][$_POST['editableIndex']]['type']);
-                if ($model['active'] == true) $model['active'] = 1;
-                else $model['active'] = 0;
-                $model->save();
-                return json_encode($model->errors);
+                $am = Yii::$app->getAuthManager();
+                $am->revokeAll($model['user_id']);
+                $newRole = $am->getRole($model->role);
+                $am->assign($newRole, $model['user_id']);
+                return "huy";
             }
             if ($_POST['editableAttribute'] == 'active') {
                 if ($_POST['Users'][$_POST['editableIndex']]['active'] == true)
@@ -413,6 +418,7 @@ class UsersController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionTimeline()
     {
@@ -538,31 +544,60 @@ class UsersController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws StaleObjectException
+     * @throws Throwable
+     * @throws \yii\db\Exception
      */
     public function actionAddSystem()
     {
         $model = new UserSystem();
-        if (isset($_POST["uuid"])) {
-            if ($model->load(Yii::$app->request->post())) {
-                if (!$model->validate()) {
-                    echo json_encode($model->errors);
-                }
-                $userSystem = UserSystem::find()->where(['userUuid' => $model['userUuid']])
-                    ->andWhere(['equipmentSystemUuid' => $model['equipmentSystemUuid']])
-                    ->one();
-                echo json_encode($userSystem);
-                if (!$userSystem) {
-                    $model->save();
-                }
-                exit(0);
-                //return $this->render('dashboard');
+        if (isset($_POST["equipmentSystemUuid"]) && isset($_POST["userUuid"])) {
+            $model->uuid = MainFunctions::GUID();
+            $model->equipmentSystemUuid = $_POST["equipmentSystemUuid"];
+            $model->userUuid = $_POST["userUuid"];
+            $model->oid = Users::getCurrentOid();
+
+            $userSystem = UserSystem::find()->where(['userUuid' => $_POST["userUuid"]])
+                ->andWhere(['equipmentSystemUuid' => $_POST["equipmentSystemUuid"]])
+                ->one();
+            if (!$userSystem) {
+                $model->save();
             }
         } else {
             if (isset($_GET["userUuid"])) {
                 $model->userUuid = $_GET["userUuid"];
             }
-
             return $this->renderAjax('_add_system', ['model' => $model]);
+        }
+
+        if (isset($_POST["userUuid"])) {
+            $userSystems = UserSystem::find()->where(['userUuid' => $_POST['userUuid']])->all();
+            foreach ($userSystems as $userSystem) {
+                $id = 'system-' . $userSystem['_id'];
+                if (isset($_POST[$id]) && ($_POST[$id] == 1 || $_POST[$id] == "1")) {
+                    self::checkAddUserSystem($userSystem['equipmentSystemUuid'], $_POST['userUuid'], false);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param $systemUuid
+     * @param $userUuid
+     * @param $add
+     * @throws InvalidConfigException
+     * @throws StaleObjectException
+     * @throws Throwable
+     * @throws \yii\db\Exception
+     */
+    public function checkAddUserSystem($systemUuid, $userUuid, $add)
+    {
+        $equipmentUserPresent = UserSystem::find()->where(['equipmentSystemUuid' => $systemUuid])
+            ->andWhere(['userUuid' => $userUuid])
+            ->one();
+        if ($equipmentUserPresent && $add==false) {
+            $equipmentUserPresent->delete();
         }
     }
 }

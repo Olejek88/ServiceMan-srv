@@ -10,7 +10,7 @@ use kartik\file\FileInput;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="measure-type-form">
+<div class="measure-type-form"  style="width: 95%; min-height: 382px">
 
     <?php $form = ActiveForm::begin([
         'id' => 'form-input-documentation',

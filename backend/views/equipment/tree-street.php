@@ -4,7 +4,7 @@ use kartik\select2\Select2;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево моделей оборудования';
+$this->title = 'Дерево элементов по расположению';
 
 ?>
 <table id="tree" style="width: 100%">
@@ -16,7 +16,7 @@ $this->title = 'Дерево моделей оборудования';
         <col style="width:160px">
         <col style="width:130px">
         <col style="width: 100px">
-        <col style="width: 120px">
+        <col style="width: 90px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
@@ -147,6 +147,30 @@ try {
                                 }
                            }); 
                         }                        
+                    }')
+                    ],
+                    'delete' => [
+                        'name' => 'Удалить',
+                        'icon' => 'delete',
+                        'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                 console.log(data);
+                                 $.ajax({
+                                      url: "deleted",
+                                      type: "post",
+                                      data: {
+                                            type: data.type,
+                                            selected_node: data.data.uuid
+                                      },
+                                    error: function (result) {
+                                        console.log(result);                                 
+                                    },
+                                    success: function (result) {
+                                        data.remove();            
+                                    }                                    
+                                 });
+                            });
                     }')
                     ],
                     'edit' => [
@@ -404,7 +428,7 @@ $this->registerJs('$("#removeButton").on("click",function() {
         var count = $(sel).length;
         var i = 0;        
         $.each(sel, function (event, data) {
-            if (data.folder==true && node.type=="house") {
+            if (data.folder==true && data.type=="house") {
                 $.ajax({
                     url: "remove",
                     type: "post",

@@ -21,6 +21,8 @@ $this->title = Yii::t('app', 'ТОИРУС ЖКХ::' . $titles);
 $gridColumns = [
     [
         'attribute' => '_id',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class',
             'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
@@ -227,7 +229,7 @@ $gridColumns = [
         }
     ],
     [
-        'header' => 'Исполнитель',
+        'header' => 'Исполнители',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'contentOptions' => [
@@ -240,7 +242,7 @@ $gridColumns = [
             $users_list = "";
             $cnt = 0;
             foreach ($users as $user) {
-                if ($cnt > 0) $users_list .= ',';
+                if ($cnt > 0) $users_list .= ', ';
                 $users_list .= $user['name'];
                 $cnt++;
             }
@@ -327,6 +329,13 @@ $gridColumns = [
     ]
 ];
 
+$start_date = '2018-12-31';
+$end_date = '2021-12-31';
+if (isset($_GET['end_time']))
+    $end_date = $_GET['end_time'];
+if (isset($_GET['start_time']))
+    $start_date = $_GET['start_time'];
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -342,7 +351,7 @@ echo GridView::widget([
             '<form action=""><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'start_time',
-                'value' => '2018-12-01 00:00:00',
+                'value' => $start_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -351,7 +360,7 @@ echo GridView::widget([
             ]) . '</td><td style="width: 300px">' .
             DateTimePicker::widget([
                 'name' => 'end_time',
-                'value' => '2021-12-31 00:00:00',
+                'value' => $end_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
@@ -404,6 +413,11 @@ function () {
 })');
 
 ?>
+<style>
+    .grid-view td {
+        white-space: pre-line;
+    }
+</style>
 <div class="modal remote fade" id="modalUser">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>

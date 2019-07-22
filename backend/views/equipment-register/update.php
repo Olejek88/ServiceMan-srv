@@ -1,12 +1,10 @@
 <?php
-/* @var $model \common\models\EquipmentRegister */
+/* @var $model EquipmentRegister */
 
+use common\models\EquipmentRegister;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'Журнал оборудования',
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Журнал оборудования'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Обновить журнал');
 ?>
 <div class="equipment-update box-padding">
 

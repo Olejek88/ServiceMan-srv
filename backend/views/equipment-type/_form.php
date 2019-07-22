@@ -13,7 +13,7 @@ use yii\widgets\ActiveForm;
 /* @var $parentModel yii\base\DynamicModel */
 ?>
 
-<div class="equipment-type-form">
+<div class="equipment-type-form" style="width: 95%; min-height: 882px">
 
     <?php $form = ActiveForm::begin(
         [

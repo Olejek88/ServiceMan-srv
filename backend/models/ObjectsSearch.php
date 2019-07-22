@@ -3,8 +3,10 @@
 namespace backend\models;
 
 use common\models\Objects;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * ObjectSearch represents the model behind the search form about `common\models\Object`.
@@ -18,7 +20,7 @@ class ObjectsSearch extends Objects
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'title', 'houseUuid', 'objectTypeUuid', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'title', 'fullTitle', 'house', 'houseUuid', 'objectTypeUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -37,11 +39,14 @@ class ObjectsSearch extends Objects
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
         $query = Objects::find();
-
+        $query->joinWith('house');
+        $query->joinWith('house.street');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -62,14 +67,13 @@ class ObjectsSearch extends Objects
             'houseUuid' => $this->houseUuid,
             'objectStatusUuid' => $this->objectStatusUuid,
             'objectTypeUuid' => $this->objectTypeUuid,
+            'object.deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            /*            ->andFilterWhere(['like', 'house.title', $this->fullTitle])*/
             ->andFilterWhere(['like', 'number', $this->title]);
-
         return $dataProvider;
     }
 }

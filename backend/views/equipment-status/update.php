@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model common\models\EquipmentStatus */
 
-$this->title = Yii::t('app', 'Обновить статус оборудования');
+$this->title = Yii::t('app', 'Обновить статус элементов');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

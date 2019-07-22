@@ -5,6 +5,7 @@ use backend\models\ReceiptSearch;
 use common\models\Receipt;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
@@ -17,6 +18,7 @@ class ReceiptController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -67,6 +69,7 @@ class ReceiptController extends ZhkhController
      * Action list
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionList()

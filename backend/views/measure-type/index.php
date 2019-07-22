@@ -1,8 +1,8 @@
 <?php
 /* @var $searchModel backend\models\MeasureSearchType */
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Типы измерений');
 ?>
@@ -25,47 +25,45 @@ $this->title = Yii::t('app', 'Типы измерений');
                         <?= Html::a(Yii::t('app', 'Создать'), ['create'], ['class' => 'btn btn-success']) ?>
                     </p>
 
-                    <h6 class="text-center">
-                        <?= GridView::widget([
-                            'dataProvider' => $dataProvider,
-                            'filterModel' => $searchModel,
-                            'tableOptions' => [
-                                'class' => 'table-striped table table-bordered table-hover table-condensed'
+                    <?= GridView::widget([
+                        'dataProvider' => $dataProvider,
+                        'filterModel' => $searchModel,
+                        'tableOptions' => [
+                            'class' => 'table-striped table table-bordered table-hover table-condensed'
+                        ],
+                        'columns' => [
+                            [
+                                'attribute' => '_id',
+                                'contentOptions' => [
+                                    'class' => 'table_class',
+                                    'style' => 'width: 50px; text-align: center'
+                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->_id;
+                                }
                             ],
-                            'columns' => [
-                                [
-                                    'attribute'=>'_id',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class',
-                                        'style'=>'width: 50px; text-align: center'
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return $data->_id;
-                                    }
+                            [
+                                'attribute' => 'title',
+                                'contentOptions' => [
+                                    'class' => 'table_class',
                                 ],
-                                [
-                                    'attribute'=>'title',
-                                    'contentOptions' =>[
-                                        'class' => 'table_class',
-                                    ],
-                                    'headerOptions' => ['class' => 'text-center'],
-                                    'content'=>function($data){
-                                        return $data->title;
-                                    }
-                                ],
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
-                                        'class' => 'text-center',
-                                    ],
-                                    'template' => '{view} {update} {delete}{link}',
-                                ],
+                                'headerOptions' => ['class' => 'text-center'],
+                                'content' => function ($data) {
+                                    return $data->title;
+                                }
                             ],
-                        ]); ?>
-                    </h6>
+                            [
+                                'class' => 'yii\grid\ActionColumn',
+                                'header' => 'Действия',
+                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
+                                'contentOptions' => [
+                                    'class' => 'text-center',
+                                ],
+                                'template' => '{view} {update} {delete}{link}',
+                            ],
+                        ],
+                    ]); ?>
                 </div>
             </div>
 
