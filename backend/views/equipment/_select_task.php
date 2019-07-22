@@ -3,6 +3,8 @@
 use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\TaskTemplate;
+use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -61,10 +63,65 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
-    $taskTemplate = TaskTemplate::find()->all();
-    $items = ArrayHelper::map($taskTemplate, 'uuid', 'title');
-    echo $form->field($model, 'taskTemplateUuid')->dropDownList($items);
+    //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
+    //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
+    //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
+    //4 внеочередной осмотр const TASK_TYPE_NOT_PLANNED_CHECK
+    //5 сезонный осмотры const TASK_TYPE_SEASON_CHECK
+    //6 плановое обслуживание const TASK_TYPE_PLAN_TO
+    //7 внеплановое обслуживание const TASK_TYPE_NOT_PLAN_TO
+    //8 устранение аварий const TASK_TYPE_REPAIR
+    //9 контроль и поверка const TASK_TYPE_CONTROL
+    //10 снятие показаний const TASK_TYPE_MEASURE
+    //11 поверка const TASK_TYPE_POVERKA
+    //12 монтаж const TASK_TYPE_INSTALL
 
+    if (isset($_GET["equipmentUuid"])) {
+        $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
+        $taskTemplate = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
+            ->andWhere(['or',
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+            ->orderBy('task_template.taskTypeUuid')
+            ->all();
+        $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
+            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
+        });
+        echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите..'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+    } else {
+        $taskTemplate = TaskTemplateEquipmentType::find()
+            ->all();
+        $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', 'taskTemplate.title');
+        echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите..'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+    }
     ?>
     <?php
     $accountUser = Yii::$app->user->identity;

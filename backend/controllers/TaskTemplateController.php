@@ -10,9 +10,12 @@ use common\models\OperationTemplate;
 use common\models\TaskOperation;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
+use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
@@ -158,11 +161,12 @@ class TaskTemplateController extends ZhkhController
         }
     }
 
-
     /**
      * Build tree of equipment
      *
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTree()
     {
@@ -178,6 +182,78 @@ class TaskTemplateController extends ZhkhController
     }
 
     /**
+     * Build tree of equipment
+     *
+     * @return mixed
+     */
+    public function actionTreeType()
+    {
+        $tree = array();
+        $fullTree2 = self::addEquipmentTypeStageToTree($tree);
+        return $this->render('tree-type', [
+            'equipment' => $fullTree2
+        ]);
+    }
+
+    /**
+     *
+     * @param array $tree Массив в котором нужно изменить индексы
+     *
+     * @return mixed
+     */
+    public
+    static function addEquipmentTypeStageToTree($tree)
+    {
+        $types = EquipmentType::find()->orderBy('title')->all();
+        foreach ($types as $type) {
+            $expanded = false;
+            $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
+                'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['_id'] . "",
+                'operation' => false];
+            $childIdx = count($tree['children']) - 1;
+            $taskTemplateTypes = TaskType::find()
+                ->all();
+            foreach ($taskTemplateTypes as $taskTemplateType) {
+                $taskTemplateEquipmentTypes = TaskTemplateEquipmentType::find()
+                    ->innerJoinWith('taskTemplate')
+                    ->where(['task_template.taskTypeUuid' => $taskTemplateType['uuid']])
+                    ->andWhere(['equipmentTypeUuid' => $type['uuid']])
+                    ->all();
+                if (count ($taskTemplateEquipmentTypes)) {
+                    $tree['children'][$childIdx]['children'][] =
+                        ['key' => $taskTemplateType["_id"] . "",
+                            'folder' => true,
+                            'uuid' => $taskTemplateType["uuid"],
+                            'created' => $taskTemplateType["changedAt"],
+                            'expanded' => true,
+                            'types' => $taskTemplateType['title'],
+                            'title' => mb_convert_encoding($taskTemplateType["title"], 'UTF-8', 'UTF-8'),
+                        ];
+                    $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
+
+                    foreach ($taskTemplateEquipmentTypes as $taskTemplateEquipmentType) {
+                        $typew = '<div class="progress"><div class="critical3">' .
+                            $taskTemplateEquipmentType["taskTemplate"]["taskType"]["title"] . '</div></div>';
+                        $tree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                            ['key' => $taskTemplateEquipmentType["taskTemplate"]["_id"] . "",
+                                'folder' => false,
+                                'uuid' => $taskTemplateEquipmentType["uuid"],
+                                'created' => $taskTemplateEquipmentType["taskTemplate"]["changedAt"],
+                                'description' => $taskTemplateEquipmentType["taskTemplate"]["description"],
+                                'expanded' => false,
+                                'types' => $typew,
+                                'normative' => $taskTemplateEquipmentType["taskTemplate"]["normative"],
+                                'title' => mb_convert_encoding($taskTemplateEquipmentType["taskTemplate"]["title"], 'UTF-8', 'UTF-8'),
+                            ];
+                    }
+                }
+            }
+        }
+        return ($tree);
+    }
+
+
+    /**
      *
      * @param array $tree Массив в котором нужно изменить индексы
      * @param ActiveRecord|string $modelClass Класс модели
@@ -186,6 +262,7 @@ class TaskTemplateController extends ZhkhController
      *
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     static function addEquipmentStageToTree($tree, $modelClass, $entityClass, $linkField)
@@ -290,6 +367,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionAdd()
@@ -406,6 +484,7 @@ class TaskTemplateController extends ZhkhController
     /**
      * Creates a new TaskTemplate and correlation model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -458,6 +537,7 @@ class TaskTemplateController extends ZhkhController
     /**
      * Creates a new OperationTemplate and correlation model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -500,6 +580,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление существующего шаблона этапа
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionChoose()
@@ -623,6 +704,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования, шаблона задачи или операции
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionEdit()

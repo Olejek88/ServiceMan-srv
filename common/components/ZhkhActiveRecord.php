@@ -21,7 +21,9 @@ class ZhkhActiveRecord extends ActiveRecord
      */
     public static function find()
     {
-        $aq = Yii::createObject(ZhkhActiveQuery::class, [get_called_class()]);
+        /** @var ActiveRecord $calledClass */
+        $calledClass = get_called_class();
+        $aq = Yii::createObject(ZhkhActiveQuery::class, [$calledClass]);
         if (Yii::$app instanceof Application) {
             if (!Yii::$app->user->isGuest) {
                 /** @var User $identity */
@@ -32,11 +34,10 @@ class ZhkhActiveRecord extends ActiveRecord
                         ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
                         ->query()
                         ->read();
-                    $aq->andWhere(['oid' => $oid['oid']]);
+                    $aq->andWhere([$calledClass::tablename() . '.oid' => $oid['oid']]);
                 }
             }
         }
-
         return $aq;
     }
 

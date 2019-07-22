@@ -96,6 +96,12 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render(
             'index',
@@ -141,6 +147,12 @@ class EquipmentController extends ZhkhController
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
+        }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
         }
 
         return $this->render(
@@ -938,6 +950,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -1311,17 +1324,7 @@ class EquipmentController extends ZhkhController
                 [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
             );
         }
-
-        $links = Html::a('<span class="fa fa-tasks"></span>&nbsp',
-            ['/task/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree', 'requestUuid' => null,
-                'type_uuid' => $equipment['equipmentTypeUuid']],
-            [
-                'title' => 'Добавить задачу',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRequest',
-            ]
-        );
-        $links .= Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
+        $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Дефекты',

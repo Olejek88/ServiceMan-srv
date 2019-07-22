@@ -65,6 +65,12 @@ class ObjectController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 1200;
 
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
+
         return $this->render('table', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

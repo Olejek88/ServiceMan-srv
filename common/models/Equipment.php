@@ -7,6 +7,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 use yii\db\Expression;
 
 /**
@@ -236,6 +237,7 @@ class Equipment extends ZhkhActiveRecord
     /**
      * @return string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getUser()
     {
