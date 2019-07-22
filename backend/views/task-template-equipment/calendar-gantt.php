@@ -239,7 +239,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 animation: false, // Do not animate dependency connectors
                 dragDrop: {
                     draggableX: true,
-                    draggableY: true,
+                    draggableY: false,
                     dragMinY: 0,
                     dragMaxY: 2,
                     dragPrecisionX: day / 3 // Snap to eight hours
@@ -311,15 +311,18 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
             max: <?php echo $max ?>
         },
 
-        xAxis: {
+        xAxis: [{ // first x-axis
             currentDateIndicator: true,
-            min: new Date().getTime(),
-            max: new Date().getTime()+1000,
+            gridLineColor: '#3c8dbc',
+            min: today - 3 * day,
+            max: today + 28 * day,
             labels: {
-                format: '{value:%W}'
+                format: '{value:%d}'
             },
-            gridLineColor: '#3c8dbc'
-        },
+            tickInterval: 1000 * 60 * 60 * 24
+        }, { // second x-axis
+            tickInterval: 1000 * 60 * 60 * 24 * 30
+        }],
 
         exporting: {
             sourceWidth: 1000
