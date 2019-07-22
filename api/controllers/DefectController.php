@@ -23,11 +23,13 @@ class DefectController extends BaseController
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
-            if (is_array($uuid)) {
-                $query->andWhere(['equipment.uuid' => $uuid]);
-            } else {
-                $query->andWhere(['uuid' => $uuid]);
-            }
+            $query->andWhere(['uuid' => $uuid]);
+        }
+
+        $eqUuid = $req->getQueryParam('eqUuid');
+        if ($eqUuid != null) {
+            $query->andWhere(['equipmentUuid' => $eqUuid]);
+
         }
 
         $changedAfter = $req->getQueryParam('changedAfter');
