@@ -10,7 +10,8 @@ class PingController extends BaseController
     /** @var Alarm $modelClass */
     public $modelClass = null;
 
-    public function actionIndex() {
+    public function actionIndex()
+    {
         return 'PONG';
     }
 }

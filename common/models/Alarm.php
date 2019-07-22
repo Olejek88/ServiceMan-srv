@@ -69,33 +69,19 @@ class Alarm extends ZhkhActiveRecord
     public function fields()
     {
         $fields = parent::fields();
+//        $fields['user'] = function ($model) {
+//            return $model->user;
+//        };
+//        $fields['alarmStatus'] = function ($model) {
+//            return $model->alarmStatus;
+//        };
+//        $fields['alarmType'] = function ($model) {
+//            return $model->alarmType;
+//        };
+//        $fields['object'] = function ($model) {
+//            return $model->object;
+//        };
         return $fields;
-//        return [
-//            '_id',
-//            'uuid',
-//            'userUuid',
-//            'user' => function ($model) {
-//                return $model->user;
-//            },
-//            'date',
-//            'alarmStatusUuid',
-//            'alarmStatus' => function ($model) {
-//                return $model->alarmStatus;
-//            },
-//            'alarmTypeUuid',
-//            'alarmType' => function ($model) {
-//                return $model->alarmType;
-//            },
-//            'objectUuid',
-//            'object' => function ($model) {
-//                return $model->object;
-//            },
-//            'longitude',
-//            'latitude',
-//            'comment',
-//            'createdAt',
-//            'changedAt',
-//        ];
     }
 
     public function getAlarmType()

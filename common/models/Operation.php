@@ -9,6 +9,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "operation".
@@ -22,9 +23,9 @@ use yii\db\ActiveQuery;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property ActiveRecord $task
- * @property ActiveQuery $operationTemplate
- * @property ActiveQuery $workStatus
+ * @property Task $task
+ * @property OperationTemplate $operationTemplate
+ * @property WorkStatus $workStatus
  */
 class Operation extends ZhkhActiveRecord
 {
@@ -141,6 +142,7 @@ class Operation extends ZhkhActiveRecord
      *
      * @return ActiveRecord
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getTask()
     {

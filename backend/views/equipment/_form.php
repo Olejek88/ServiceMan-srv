@@ -82,6 +82,7 @@ use yii\widgets\ActiveForm;
         <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
         <?php echo DatePicker::widget(
             [
+                'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
                 'model' => $model,
                 'attribute' => 'testDate',
                 'language' => 'ru',
@@ -97,10 +98,9 @@ use yii\widgets\ActiveForm;
 
     <div class="pole-mg" style="margin: 0 -15px 20px -15px">
         <p style="width: 300px; margin-bottom: 0;">Дата замены</p>
-        <?php echo DatePicker::widget(
+        <?php echo $form->field($model, 'replaceDate')->widget(DatePicker::class,
             [
-                'model' => $model,
-                'attribute' => 'replaceDate',
+                'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
                 'language' => 'ru',
                 'size' => 'ms',
                 'pluginOptions' => [
