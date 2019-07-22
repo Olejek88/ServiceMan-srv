@@ -89,6 +89,7 @@ class m190412_142135_insert_references_ extends Migration
             'Выполнен', $currentTime, $currentTime);
 
         $this->insert('{{%user}}', [
+            '_id' => '2',
             'username' => 'sUser',
             'auth_key' => self::AUTH_KEY,
             'password_hash' => Yii::$app->getSecurity()->generatePasswordHash(self::AUTH_KEY),
@@ -97,25 +98,25 @@ class m190412_142135_insert_references_ extends Migration
             'created_at' => $currentTime,
             'updated_at' => $currentTime
         ]);
-/*
+
         $this->insert('{{%users}}', [
             '_id' => '1',
             'uuid' => 'E788CF00-CDCF-4BB5-A53A-DCBC946B2325',
             'user_id' => 1,
             'type' => 2,
-            'name' => 'Олег Иванов',
+            'name' => 'Иванов И.И.',
             'whoIs' => 'Ведущий инженер',
             'pin' => 'E20040008609006920603ED7',
-            'contact' => '+79227000293 Олег',
+            'contact' => '+79227000000 Ивано',
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);*/
+        ]);
 
         $user = User::find()->where(['username' => 'sUser'])->one();
         if ($user) {
             $this->insert('{{%users}}', [
                 'uuid' => Users::USER_SERVICE_UUID,
-                'user_id' => 1,
+                'user_id' => 2,
                 'name' => 'sUser',
                 'pin' => self::USERS_PIN_MD5,
                 'contact' => 'none',

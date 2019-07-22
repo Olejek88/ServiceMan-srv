@@ -2,6 +2,7 @@
 
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\ObjectType;
 use yii\db\Migration;
 
 /**
@@ -20,8 +21,8 @@ class m190621_043620_add_object_references extends Migration
         $this->dropForeignKey('fk-object_type-organization-oid','object_type');
         $this->dropColumn('object_type','oid');
         $this->dropColumn('object_type','gis_id');
-/*
-        $this->insertIntoType('object_type','80237148-9DBB-4315-A99D-D83CA5258C69',
+
+        $this->insertIntoType('object_type',ObjectType::OBJECT_TYPE_FLAT,
             'Квартира', $currentTime, $currentTime);
         $this->insertIntoType('object_type','42686CFC-34D0-45FF-95A4-04B0D865EC35',
             'Общий', $currentTime, $currentTime);
@@ -29,7 +30,7 @@ class m190621_043620_add_object_references extends Migration
             'Коммерческий', $currentTime, $currentTime);
         $this->insertIntoType('object_type','F68A562B-8F61-476F-A3E7-5666F9CEAFA1',
             'Входной', $currentTime, $currentTime);
-*/
+
         $this->insertIntoType('object_type','CB9E9A67-FFE5-4168-8407-F2CAFBF76069',
             'Система ХВС', $currentTime, $currentTime);
         $this->insertIntoType('object_type','4923FFF8-B010-4043-90E6-C9665BDFBAD7',

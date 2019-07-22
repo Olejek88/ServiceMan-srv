@@ -26,6 +26,11 @@ class m190429_110551_link_users_org extends Migration
         ], [
             '_id' => 1,
         ]);
+        $this->update('{{%users}}', [
+            'oid' => Organization::ORG_SERVICE_UUID,
+        ], [
+            '_id' => 2,
+        ]);
 
         $this->addForeignKey(
             'fk-users-organization-oid',
