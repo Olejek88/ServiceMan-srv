@@ -4,80 +4,79 @@ namespace common\components;
 
 use common\models\EquipmentType;
 use common\models\HouseType;
-use common\models\TaskTemplate;
-use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
+use Yii;
 
 class ReferenceFunctions
 {
-    public static function loadReferences($oid)
+    public static function loadReferences($oid, $db)
     {
-        self::insertIntoHouseType(HouseType::HOUSE_TYPE_MKD,
-            'Многокваритирный дом', $oid);
-        self::insertIntoHouseType(HouseType::HOUSE_TYPE_COMMERCE,
+        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_MKD,
+            'Многоквартирный дом', $oid);
+        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_COMMERCE,
             'Коммерческий объект', $oid);
-        self::insertIntoHouseType(HouseType::HOUSE_TYPE_BUDGET,
+        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_BUDGET,
             'Бюджетное учереждение', $oid);
 
-        self::insertIntoTaskTemplate('Проверка межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db, 'Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
             TaskType::TASK_TYPE_CONTROL, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Ремонт межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db, 'Ремонт межэтажных перекрытий',
             'Ремонт межэтажных перекрытий', 96,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Окраска',
+        self::insertIntoTaskTemplate($db, 'Окраска',
             'Окраска', 48,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Герметизация и утепление',
+        self::insertIntoTaskTemplate($db, 'Герметизация и утепление',
             'Герметизация и утепление', 120,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
 
-        self::insertIntoTaskTemplate('Техническое обслуживание',
+        self::insertIntoTaskTemplate($db, 'Техническое обслуживание',
             'Техническое обслуживание', 2,
             TaskType::TASK_TYPE_TO,
             EquipmentType::EQUIPMENT_ELECTRICITY_HERD,
              $oid);
 
-        self::insertIntoTaskTemplate('Общий осмотр тех.состояния',
+        self::insertIntoTaskTemplate($db, 'Общий осмотр тех.состояния',
             'Общий осмотр технического состояния', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Контроль параметров',
+        self::insertIntoTaskTemplate($db, 'Контроль параметров',
             'Общий осмотр технического состояния', 2,
             TaskType::TASK_TYPE_CONTROL, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Проверка состояния КИП',
+        self::insertIntoTaskTemplate($db, 'Проверка состояния КИП',
             'Проверка состояния КИП', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Замена КИП',
+        self::insertIntoTaskTemplate($db, 'Замена КИП',
             'Замена КИП', 2,
             TaskType::TASK_TYPE_REPLACE, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Промывка системы',
+        self::insertIntoTaskTemplate($db, 'Промывка системы',
             'Промывка системы', 2,
             TaskType::TASK_TYPE_TO, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Удаление коррозионных отложений',
+        self::insertIntoTaskTemplate($db, 'Удаление коррозионных отложений',
             'Удаление коррозионных отложений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Проверка исправности запорно-регулирующей арматуры',
+        self::insertIntoTaskTemplate($db, 'Проверка исправности запорно-регулирующей арматуры',
             'Проверка исправности запорно-регулирующей арматуры', 2,
             TaskType::TASK_TYPE_CONTROL, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplate($db, 'Устранение аварийных повреждений',
             'Устранение аварийных повреждений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Текущий ремонт',
+        self::insertIntoTaskTemplate($db, 'Текущий ремонт',
             'Текущий ремонт', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Планово-предупредительный ремонт',
+        self::insertIntoTaskTemplate($db, 'Планово-предупредительный ремонт',
             'Планово-предупредительный ремонт', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
 
-        self::insertIntoTaskTemplate('Общий осмотр',
+        self::insertIntoTaskTemplate($db, 'Общий осмотр',
             'Общий осмотр', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
-        self::insertIntoTaskTemplate('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplate($db, 'Устранение аварийных повреждений',
             'Устранение аварийных повреждений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
     }
 
-    public static function loadReferencesNext($oid)
+    public static function loadReferencesNext($oid, $db)
     {
         //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
         //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
@@ -92,73 +91,73 @@ class ReferenceFunctions
         //11 поверка const TASK_TYPE_POVERKA
         //12 монтаж const TASK_TYPE_INSTALL
 
-        self::insertIntoTaskTemplate('Проверка межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db,'Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
             TaskType::TASK_TYPE_CURRENT_CHECK, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Проверка межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db,'Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
             TaskType::TASK_TYPE_NOT_PLANNED_CHECK, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Проверка межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db,'Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
             TaskType::TASK_TYPE_SEASON_CHECK, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
 
 
-        self::insertIntoTaskTemplate('Ремонт межэтажных перекрытий',
+        self::insertIntoTaskTemplate($db,'Ремонт межэтажных перекрытий',
             'Ремонт межэтажных перекрытий', 96,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Окраска',
+        self::insertIntoTaskTemplate($db,'Окраска',
             'Окраска', 48,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplate('Герметизация и утепление',
+        self::insertIntoTaskTemplate($db,'Герметизация и утепление',
             'Герметизация и утепление', 120,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
 
-        self::insertIntoTaskTemplate('Техническое обслуживание',
+        self::insertIntoTaskTemplate($db,'Техническое обслуживание',
             'Техническое обслуживание', 2,
             TaskType::TASK_TYPE_TO,
             EquipmentType::EQUIPMENT_ELECTRICITY_HERD,
             $oid);
 
-        self::insertIntoTaskTemplate('Общий осмотр тех.состояния',
+        self::insertIntoTaskTemplate($db,'Общий осмотр тех.состояния',
             'Общий осмотр технического состояния', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Контроль параметров',
+        self::insertIntoTaskTemplate($db,'Контроль параметров',
             'Общий осмотр технического состояния', 2,
             TaskType::TASK_TYPE_CONTROL, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Проверка состояния КИП',
+        self::insertIntoTaskTemplate($db,'Проверка состояния КИП',
             'Проверка состояния КИП', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Замена КИП',
+        self::insertIntoTaskTemplate($db,'Замена КИП',
             'Замена КИП', 2,
             TaskType::TASK_TYPE_REPLACE, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Промывка системы',
+        self::insertIntoTaskTemplate($db,'Промывка системы',
             'Промывка системы', 2,
             TaskType::TASK_TYPE_TO, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Удаление коррозионных отложений',
+        self::insertIntoTaskTemplate($db,'Удаление коррозионных отложений',
             'Удаление коррозионных отложений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Проверка исправности запорно-регулирующей арматуры',
+        self::insertIntoTaskTemplate($db,'Проверка исправности запорно-регулирующей арматуры',
             'Проверка исправности запорно-регулирующей арматуры', 2,
             TaskType::TASK_TYPE_CONTROL, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplate($db,'Устранение аварийных повреждений',
             'Устранение аварийных повреждений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Текущий ремонт',
+        self::insertIntoTaskTemplate($db,'Текущий ремонт',
             'Текущий ремонт', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplate('Планово-предупредительный ремонт',
+        self::insertIntoTaskTemplate($db,'Планово-предупредительный ремонт',
             'Планово-предупредительный ремонт', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
 
-        self::insertIntoTaskTemplate('Общий осмотр',
+        self::insertIntoTaskTemplate($db,'Общий осмотр',
             'Общий осмотр', 2,
             TaskType::TASK_TYPE_VIEW, EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
-        self::insertIntoTaskTemplate('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplate($db,'Устранение аварийных повреждений',
             'Устранение аварийных повреждений', 2,
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
     }
 
-    public static function loadReferencesAll($oid)
+    public static function loadReferencesAll($oid, $db)
     {
         //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
         //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
@@ -172,505 +171,507 @@ class ReferenceFunctions
         //10 снятие показаний const TASK_TYPE_MEASURE
         //11 поверка const TASK_TYPE_POVERKA
         //12 монтаж const TASK_TYPE_INSTALL
-        self::insertIntoTaskTemplateNew('Проверка межэтажных перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Проверка межэтажных перекрытий',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт межэтажных перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Ремонт межэтажных перекрытий',
             8, [1,2,8], EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplateNew('Окраска',
+        self::insertIntoTaskTemplateNew($db,'Окраска',
             8, [6,7], EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
-        self::insertIntoTaskTemplateNew('Герметизация и утепление',
+        self::insertIntoTaskTemplateNew($db,'Герметизация и утепление',
             8, [6,7], EquipmentType::EQUIPMENT_TYPE_BALCONY, $oid);
 
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [1,2,6,7,9], EquipmentType::EQUIPMENT_ELECTRICITY_HERD, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр технического состояния',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр технического состояния',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Контроль параметров',
+        self::insertIntoTaskTemplateNew($db,'Контроль параметров',
             8, [9], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка состояния КиП',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния КиП',
             8, [9], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Замена элементов',
+        self::insertIntoTaskTemplateNew($db,'Замена элементов',
             8, [12], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка исправности и запорно-регулирующей аппаратуры',
+        self::insertIntoTaskTemplateNew($db,'Проверка исправности и запорно-регулирующей аппаратуры',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Планово-предупредительный ремонт',
+        self::insertIntoTaskTemplateNew($db,'Планово-предупредительный ремонт',
             8, [2], EquipmentType::EQUIPMENT_HVS_MAIN, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
 
-        self::insertIntoTaskTemplateNew('Проверка состояния насоса',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния насоса',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HVS_PUMP, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [1,2,6,7,12], EquipmentType::EQUIPMENT_HVS_PUMP, $oid);
 
-        self::insertIntoTaskTemplateNew('Снятие показаний',
+        self::insertIntoTaskTemplateNew($db,'Снятие показаний',
             8, [10], EquipmentType::EQUIPMENT_HVS_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Поверка',
+        self::insertIntoTaskTemplateNew($db,'Поверка',
             8, [11], EquipmentType::EQUIPMENT_HVS_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Замена',
+        self::insertIntoTaskTemplateNew($db,'Замена',
             8, [11], EquipmentType::EQUIPMENT_HVS_COUNTER, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Осмотр изоляционного покрытия',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Восстановление изоляционного покрытия',
             8, [6,7], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Общий осмотр технического состояния',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр технического состояния',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Контроль параметров',
+        self::insertIntoTaskTemplateNew($db,'Контроль параметров',
             8, [9], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка состояния КиП',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния КиП',
             8, [9], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Замена элементов',
+        self::insertIntoTaskTemplateNew($db,'Замена элементов',
             8, [12], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Опрессовка системы',
+        self::insertIntoTaskTemplateNew($db,'Опрессовка системы',
             8, [6,7], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка исправности и запорно-регулирующей аппаратуры',
+        self::insertIntoTaskTemplateNew($db,'Проверка исправности и запорно-регулирующей аппаратуры',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Планово-предупредительный ремонт',
+        self::insertIntoTaskTemplateNew($db,'Планово-предупредительный ремонт',
             8, [2], EquipmentType::EQUIPMENT_GVS_MAIN, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Осмотр изоляционного покрытия',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Восстановление изоляционного покрытия',
             8, [1,2], EquipmentType::EQUIPMENT_GVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_GVS_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_GVS_TOWER, $oid);
 
-        self::insertIntoTaskTemplateNew('Проверка состояния насоса',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния насоса',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_GVS_PUMP, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [1,2,6,7,12], EquipmentType::EQUIPMENT_GVS_PUMP, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Осмотр изоляционного покрытия',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Восстановление изоляционного покрытия',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Общий осмотр технического состояния',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр технического состояния',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Контроль параметров',
+        self::insertIntoTaskTemplateNew($db,'Контроль параметров',
             8, [9], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка состояния КиП',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния КиП',
             8, [9], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Замена элементов',
+        self::insertIntoTaskTemplateNew($db,'Замена элементов',
             8, [12], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Опрессовка системы',
+        self::insertIntoTaskTemplateNew($db,'Опрессовка системы',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Пуско-наладочные работы',
+        self::insertIntoTaskTemplateNew($db,'Пуско-наладочные работы',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Проверка исправности и запорно-регулирующей аппаратуры',
+        self::insertIntoTaskTemplateNew($db,'Проверка исправности и запорно-регулирующей аппаратуры',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Планово-предупредительный ремонт',
+        self::insertIntoTaskTemplateNew($db,'Планово-предупредительный ремонт',
             8, [2], EquipmentType::EQUIPMENT_HEAT_MAIN, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Осмотр изоляционного покрытия',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление изоляционного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Восстановление изоляционного покрытия',
             8, [1,2], EquipmentType::EQUIPMENT_HEAT_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_HEAT_TOWER, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_TOWER, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр систем отопления подъезда',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр систем отопления подъезда',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_HEAT_RADIATOR, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_HEAT_RADIATOR, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_HEAT_RADIATOR, $oid);
 
-        self::insertIntoTaskTemplateNew('Снятие показаний',
+        self::insertIntoTaskTemplateNew($db,'Снятие показаний',
             8, [10], EquipmentType::EQUIPMENT_HEAT_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Поверка',
+        self::insertIntoTaskTemplateNew($db,'Поверка',
             8, [11], EquipmentType::EQUIPMENT_HEAT_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Замена',
+        self::insertIntoTaskTemplateNew($db,'Замена',
             8, [11], EquipmentType::EQUIPMENT_HEAT_COUNTER, $oid);
 
-        self::insertIntoTaskTemplateNew('Окраска',
+        self::insertIntoTaskTemplateNew($db,'Окраска',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр и проверка кровли',
+        self::insertIntoTaskTemplateNew($db,'Осмотр и проверка кровли',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт и восстановление',
+        self::insertIntoTaskTemplateNew($db,'Ремонт и восстановление',
             8, [1,2,8], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр парапета',
+        self::insertIntoTaskTemplateNew($db,'Осмотр парапета',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Очистка',
+        self::insertIntoTaskTemplateNew($db,'Очистка',
             8, [6], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Замена кровельного покрытия',
+        self::insertIntoTaskTemplateNew($db,'Замена кровельного покрытия',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF, $oid);
-        self::insertIntoTaskTemplateNew('Очистка от снежного покрова',
+        self::insertIntoTaskTemplateNew($db,'Очистка от снежного покрова',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF, $oid);
 
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр люка и запорных устройств',
+        self::insertIntoTaskTemplateNew($db,'Осмотр люка и запорных устройств',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт люка и запорных устройств',
+        self::insertIntoTaskTemplateNew($db,'Ремонт люка и запорных устройств',
             8, [1], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
 
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр конструкций, перегородок и перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Осмотр конструкций, перегородок и перекрытий',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2,8], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка заземления, оборудования крыши',
+        self::insertIntoTaskTemplateNew($db,'Проверка заземления, оборудования крыши',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка температурного-влажностного режима',
+        self::insertIntoTaskTemplateNew($db,'Проверка температурного-влажностного режима',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Дератизация и дезинфекция',
+        self::insertIntoTaskTemplateNew($db,'Дератизация и дезинфекция',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка на соответствие пожарной безопасности',
+        self::insertIntoTaskTemplateNew($db,'Проверка на соответствие пожарной безопасности',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка слуховых окон',
+        self::insertIntoTaskTemplateNew($db,'Проверка слуховых окон',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ROOF_ROOM, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2,8], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ROOF_ENTRANCE, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр тех. состояния отмостки',
+        self::insertIntoTaskTemplateNew($db,'Осмотр тех. состояния отмостки',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт отмостки',
+        self::insertIntoTaskTemplateNew($db,'Ремонт отмостки',
             8, [1,2], EquipmentType::EQUIPMENT_BASEMENT, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр тех. состояния видимых частей конструкций',
+        self::insertIntoTaskTemplateNew($db,'Осмотр тех. состояния видимых частей конструкций',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление эксплуатационных свойств конструкций',
+        self::insertIntoTaskTemplateNew($db,'Восстановление эксплуатационных свойств конструкций',
             8, [1,2,8], EquipmentType::EQUIPMENT_BASEMENT, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр конструкций',
+        self::insertIntoTaskTemplateNew($db,'Осмотр конструкций',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт конструкций',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт конструкций',
             8, [1,2,8], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Отделочные работы',
+        self::insertIntoTaskTemplateNew($db,'Отделочные работы',
             8, [6,7], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Работы с указателями, нумерацией и инф.досками',
+        self::insertIntoTaskTemplateNew($db,'Работы с указателями, нумерацией и инф.досками',
             8, [7], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр наличия указателей, нумерации и инф.досками',
+        self::insertIntoTaskTemplateNew($db,'Осмотр наличия указателей, нумерации и инф.досками',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Теплоизоляционные работы',
+        self::insertIntoTaskTemplateNew($db,'Теплоизоляционные работы',
             8, [6,7], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Гидроизоляционные работы',
+        self::insertIntoTaskTemplateNew($db,'Гидроизоляционные работы',
             8, [6,7], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр отделки фасада',
+        self::insertIntoTaskTemplateNew($db,'Осмотр отделки фасада',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_WALL, $oid);
-        self::insertIntoTaskTemplateNew('Устранение критичных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение критичных повреждений',
             8, [8], EquipmentType::EQUIPMENT_WALL, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_WALL_WATER, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2,8], EquipmentType::EQUIPMENT_WALL_WATER, $oid);
-        self::insertIntoTaskTemplateNew('Очистка',
+        self::insertIntoTaskTemplateNew($db,'Очистка',
             8, [6,7], EquipmentType::EQUIPMENT_WALL_WATER, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_WALL_WATER, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр асфальтового покрытия',
+        self::insertIntoTaskTemplateNew($db,'Осмотр асфальтового покрытия',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт асфальтового покрытия',
+        self::insertIntoTaskTemplateNew($db,'Ремонт асфальтового покрытия',
             8, [1,2], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр состояния детской площадки и газонов',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния детской площадки и газонов',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Озеленение',
+        self::insertIntoTaskTemplateNew($db,'Озеленение',
             8, [6,7], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Текущие работы по облагораживанию детской площадки',
+        self::insertIntoTaskTemplateNew($db,'Текущие работы по облагораживанию детской площадки',
             8, [6,7], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Уборка снега, наледи и обработка пескосоляной смесью',
+        self::insertIntoTaskTemplateNew($db,'Уборка снега, наледи и обработка пескосоляной смесью',
             8, [6,7], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6,7], EquipmentType::EQUIPMENT_YARD, $oid);
-        self::insertIntoTaskTemplateNew('Прочие работы',
+        self::insertIntoTaskTemplateNew($db,'Прочие работы',
             8, [6,7], EquipmentType::EQUIPMENT_YARD, $oid);
 
-        self::insertIntoTaskTemplateNew('Проверка состояния гидроизоляции систем водоотвода',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния гидроизоляции систем водоотвода',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_YARD_DRENAGE, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление состояния гидроизоляции систем водоотвода',
+        self::insertIntoTaskTemplateNew($db,'Восстановление состояния гидроизоляции систем водоотвода',
             8, [1,2,8], EquipmentType::EQUIPMENT_YARD_DRENAGE, $oid);
-        self::insertIntoTaskTemplateNew('Прочистка ливневой канализации',
+        self::insertIntoTaskTemplateNew($db,'Прочистка ливневой канализации',
             8, [6,7], EquipmentType::EQUIPMENT_YARD_DRENAGE, $oid);
-        self::insertIntoTaskTemplateNew('Очистка системы',
+        self::insertIntoTaskTemplateNew($db,'Очистка системы',
             8, [6,7], EquipmentType::EQUIPMENT_YARD_DRENAGE, $oid);
 
-        self::insertIntoTaskTemplateNew('Очистка',
+        self::insertIntoTaskTemplateNew($db,'Очистка',
             8, [6,7], EquipmentType::EQUIPMENT_YARD_TBO, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр оконных блоков',
+        self::insertIntoTaskTemplateNew($db,'Осмотр оконных блоков',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Замена стекол и ремонт',
+        self::insertIntoTaskTemplateNew($db,'Замена стекол и ремонт',
             8, [1,2,8], EquipmentType::EQUIPMENT_ENTRANCE_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_WINDOWS, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр двери и запорных устройств',
+        self::insertIntoTaskTemplateNew($db,'Осмотр двери и запорных устройств',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_DOOR, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт двери и запорных устройств',
+        self::insertIntoTaskTemplateNew($db,'Ремонт двери и запорных устройств',
             8, [1,2,8], EquipmentType::EQUIPMENT_ENTRANCE_DOOR, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_DOOR, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр состояния загрузочных клапанов',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния загрузочных клапанов',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт',
+        self::insertIntoTaskTemplateNew($db,'Ремонт',
             8, [1,2], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Проверка состояния стволов',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния стволов',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Проверка состояния мусоросборника',
+        self::insertIntoTaskTemplateNew($db,'Проверка состояния мусоросборника',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Срочная ликвидация засора',
+        self::insertIntoTaskTemplateNew($db,'Срочная ликвидация засора',
             8, [8], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Общий осмотр системы',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр системы',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр ограждений',
+        self::insertIntoTaskTemplateNew($db,'Осмотр ограждений',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр несущих конструкций и перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Осмотр несущих конструкций и перекрытий',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт ограждений',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт ограждений',
             8, [1,8], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт несущих конструкций и перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт несущих конструкций и перекрытий',
             8, [1,8], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Отделочные работы',
+        self::insertIntoTaskTemplateNew($db,'Отделочные работы',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Работы по нумерации',
+        self::insertIntoTaskTemplateNew($db,'Работы по нумерации',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр состояния отделки стен',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния отделки стен',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр состояния отделки потолка',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния отделки потолка',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр состояния отделки пола',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния отделки пола',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Окраска косоуров и металлических элементов',
+        self::insertIntoTaskTemplateNew($db,'Окраска косоуров и металлических элементов',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Дератизация и дезинфекция',
+        self::insertIntoTaskTemplateNew($db,'Дератизация и дезинфекция',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Проверка на соответствие пожарной безопасности',
+        self::insertIntoTaskTemplateNew($db,'Проверка на соответствие пожарной безопасности',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Периодический ремонт',
+        self::insertIntoTaskTemplateNew($db,'Периодический ремонт',
             8, [2], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_STAIRS, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр кабины и проверка связи',
+        self::insertIntoTaskTemplateNew($db,'Осмотр кабины и проверка связи',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Проверка сроков эксплуатации',
+        self::insertIntoTaskTemplateNew($db,'Проверка сроков эксплуатации',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр состояния дверей лифта',
+        self::insertIntoTaskTemplateNew($db,'Осмотр состояния дверей лифта',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр предмашинного отделения',
+        self::insertIntoTaskTemplateNew($db,'Осмотр предмашинного отделения',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2], EquipmentType::EQUIPMENT_LIFT, $oid);
-        self::insertIntoTaskTemplateNew('Аварийный ремонт',
+        self::insertIntoTaskTemplateNew($db,'Аварийный ремонт',
             8, [8], EquipmentType::EQUIPMENT_LIFT, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт',
+        self::insertIntoTaskTemplateNew($db,'Ремонт',
             8, [1], EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр козырька',
+        self::insertIntoTaskTemplateNew($db,'Осмотр козырька',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт козырька',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт козырька',
             8, [1,2], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр перил, крыльца и пандуса',
+        self::insertIntoTaskTemplateNew($db,'Осмотр перил, крыльца и пандуса',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Уборка снега и наледи',
+        self::insertIntoTaskTemplateNew($db,'Уборка снега и наледи',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ENTRANCE_MAIN, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_SEWER_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Срочная ликвидация засора',
+        self::insertIntoTaskTemplateNew($db,'Срочная ликвидация засора',
             8, [8], EquipmentType::EQUIPMENT_SEWER_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_SEWER_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2], EquipmentType::EQUIPMENT_SEWER_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_SEWER_PIPE, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_SEWER_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Срочная ликвидация засора',
+        self::insertIntoTaskTemplateNew($db,'Срочная ликвидация засора',
             8, [8], EquipmentType::EQUIPMENT_SEWER_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_SEWER_MAIN, $oid);
-        self::insertIntoTaskTemplateNew('Техническое обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Техническое обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_SEWER_MAIN, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_SEWER_WELL, $oid);
 
-        self::insertIntoTaskTemplateNew('Снятие показаний',
+        self::insertIntoTaskTemplateNew($db,'Снятие показаний',
             8, [10], EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Поверка',
+        self::insertIntoTaskTemplateNew($db,'Поверка',
             8, [11], EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER, $oid);
-        self::insertIntoTaskTemplateNew('Замена',
+        self::insertIntoTaskTemplateNew($db,'Замена',
             8, [11], EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER, $oid);
 
-        self::insertIntoTaskTemplateNew('Проверка запирающих устройств',
+        self::insertIntoTaskTemplateNew($db,'Проверка запирающих устройств',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт запирающих устройств',
+        self::insertIntoTaskTemplateNew($db,'Ремонт запирающих устройств',
             8, [1], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Проверка заземления',
+        self::insertIntoTaskTemplateNew($db,'Проверка заземления',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Проверка устройств защитного отключения',
+        self::insertIntoTaskTemplateNew($db,'Проверка устройств защитного отключения',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
-        self::insertIntoTaskTemplateNew('Отключение',
+        self::insertIntoTaskTemplateNew($db,'Отключение',
             8, [6,7,8], EquipmentType::EQUIPMENT_ELECTRICITY_VRU, $oid);
 
-        self::insertIntoTaskTemplateNew('Проверка запирающих устройств',
+        self::insertIntoTaskTemplateNew($db,'Проверка запирающих устройств',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD, $oid);
-        self::insertIntoTaskTemplateNew('Ремонт запирающих устройств',
+        self::insertIntoTaskTemplateNew($db,'Ремонт запирающих устройств',
             8, [1], EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD, $oid);
-        self::insertIntoTaskTemplateNew('Отключение',
+        self::insertIntoTaskTemplateNew($db,'Отключение',
             8, [6,7,8], EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_LIGHT, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,12], EquipmentType::EQUIPMENT_ELECTRICITY_LIGHT, $oid);
-        self::insertIntoTaskTemplateNew('Очистка',
+        self::insertIntoTaskTemplateNew($db,'Очистка',
             8, [6,7], EquipmentType::EQUIPMENT_ELECTRICITY_LIGHT, $oid);
 
-        self::insertIntoTaskTemplateNew('Осмотр',
+        self::insertIntoTaskTemplateNew($db,'Осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,12], EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT, $oid);
-        self::insertIntoTaskTemplateNew('Очистка',
+        self::insertIntoTaskTemplateNew($db,'Очистка',
             8, [6,7], EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT, $oid);
 
-        self::insertIntoTaskTemplateNew('Устранение аварийных повреждений',
+        self::insertIntoTaskTemplateNew($db,'Устранение аварийных повреждений',
             8, [8], EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_PIPE, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_PIPE, $oid);
 
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка температурно-влажностного режима',
+        self::insertIntoTaskTemplateNew($db,'Проверка температурно-влажностного режима',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Осмотр конструкций, перегородок и перекрытий',
+        self::insertIntoTaskTemplateNew($db,'Осмотр конструкций, перегородок и перекрытий',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2,8], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Дератизация и дезинфекция',
+        self::insertIntoTaskTemplateNew($db,'Дератизация и дезинфекция',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка на соответствие пожарной безопасности',
+        self::insertIntoTaskTemplateNew($db,'Проверка на соответствие пожарной безопасности',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Проверка загазованности',
+        self::insertIntoTaskTemplateNew($db,'Проверка загазованности',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_ROOM, $oid);
 
-        self::insertIntoTaskTemplateNew('Общий осмотр',
+        self::insertIntoTaskTemplateNew($db,'Общий осмотр',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Текущий ремонт',
+        self::insertIntoTaskTemplateNew($db,'Текущий ремонт',
             8, [1,2], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Проверка ограждений',
+        self::insertIntoTaskTemplateNew($db,'Проверка ограждений',
             8, [3,4,5,9], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Восстановление ограждений',
+        self::insertIntoTaskTemplateNew($db,'Восстановление ограждений',
             8, [1,2], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Текущее обслуживание',
+        self::insertIntoTaskTemplateNew($db,'Текущее обслуживание',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('Уборка',
+        self::insertIntoTaskTemplateNew($db,'Уборка',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
-        self::insertIntoTaskTemplateNew('очистка от снежного покрова',
+        self::insertIntoTaskTemplateNew($db,'очистка от снежного покрова',
             8, [6,7], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
     }
 
-    private static function insertIntoHouseType($uuid, $title, $organizationUuid) {
-        $houseType = new HouseType();
-        $houseType->uuid = $uuid;
-        $houseType->title = $title;
-        $houseType->oid = $organizationUuid;
-        $houseType->save();
+    private static function insertIntoHouseType($db, $uuid, $title, $organizationUuid) {
+        $currentTime = date('Y-m-d\TH:i:s');
+        $db->insert('house_type', [
+            'uuid' => $uuid,
+            'title' => $title,
+            'oid' => $organizationUuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ]);
     }
 
-    private static function insertIntoTaskTemplate($title, $description, $normative, $taskTypeUuid, $equipmentTypeUuid,
+    private static function insertIntoTaskTemplate($db, $title, $description, $normative, $taskTypeUuid, $equipmentTypeUuid,
                                                    $organizationUuid) {
-        $taskTemplate = new TaskTemplate();
-        $taskTemplate->uuid = MainFunctions::GUID();
-        $taskTemplate->title = $title;
-        $taskTemplate->description = $description;
-        $taskTemplate->normative = $normative;
-        $taskTemplate->oid = $organizationUuid;
-        $taskTemplate->taskTypeUuid = $taskTypeUuid;
-        $present = TaskTemplate::find()->where(['taskTypeUuid' => $taskTemplate->taskTypeUuid])
-            ->andWhere(['oid' => $organizationUuid])
-            ->andWhere(['title' => $title])->one();
-        if (!$present) {
-            $taskTemplate->save();
+        $currentTime = date('Y-m-d\TH:i:s');
+        $uuid = MainFunctions::GUID();
+        $db->insert('task_template', [
+            'uuid' => $uuid,
+            'title' => $title,
+            'description' => $description,
+            'normative' => $normative,
+            'taskTypeUuid' => $taskTypeUuid,
+            'oid' => $organizationUuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ]);
 
-            $taskTemplateEquipmentType = new TaskTemplateEquipmentType();
-            $taskTemplateEquipmentType->equipmentTypeUuid = $equipmentTypeUuid;
-            $taskTemplateEquipmentType->taskTemplateUuid = $taskTemplate->uuid;
-            $taskTemplateEquipmentType->uuid = MainFunctions::GUID();
-            $taskTemplateEquipmentType->save();
-        }
+        $db->insert('task_template_equipment_type', [
+            'uuid' => MainFunctions::GUID(),
+            'equipmentTypeUuid' => $equipmentTypeUuid,
+            'taskTemplateUuid' => $uuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ]);
     }
 
-    private static function insertIntoTaskTemplateNew($title, $normative, $taskTypes, $equipmentTypeUuid, $organizationUuid) {
+    private static function insertIntoTaskTemplateNew($db, $title, $normative, $taskTypes, $equipmentTypeUuid, $organizationUuid) {
+        $currentTime = date('Y-m-d\TH:i:s');
+
         foreach ($taskTypes as $taskType) {
-            $taskTemplate = new TaskTemplate();
-            $taskTemplate->uuid = MainFunctions::GUID();
-            $taskTemplate->title = $title;
-            $taskTemplate->description = $title;
-            $taskTemplate->normative = $normative;
-            $taskTemplate->oid = $organizationUuid;
+            $uuid = MainFunctions::GUID();
+
             //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
             //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
             //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
@@ -684,45 +685,41 @@ class ReferenceFunctions
             //11 поверка const TASK_TYPE_POVERKA
             //12 монтаж const TASK_TYPE_INSTALL
             switch ($taskType) {
-                case 1: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR; break;
-                case 2: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_PLAN_REPAIR; break;
-                case 3: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_CURRENT_CHECK; break;
-                case 4: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_NOT_PLANNED_CHECK; break;
-                case 5: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_SEASON_CHECK; break;
-                case 6: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_PLAN_TO; break;
-                case 7: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_NOT_PLAN_TO; break;
-                case 8: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_REPAIR; break;
-                case 9: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_CONTROL; break;
-                case 10: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_MEASURE; break;
-                case 11: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_POVERKA; break;
-                case 12: $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_INSTALL; break;
+                case 1: $taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR; break;
+                case 2: $taskTypeUuid = TaskType::TASK_TYPE_PLAN_REPAIR; break;
+                case 3: $taskTypeUuid = TaskType::TASK_TYPE_CURRENT_CHECK; break;
+                case 4: $taskTypeUuid = TaskType::TASK_TYPE_NOT_PLANNED_CHECK; break;
+                case 5: $taskTypeUuid = TaskType::TASK_TYPE_SEASON_CHECK; break;
+                case 6: $taskTypeUuid = TaskType::TASK_TYPE_PLAN_TO; break;
+                case 7: $taskTypeUuid = TaskType::TASK_TYPE_NOT_PLAN_TO; break;
+                case 8: $taskTypeUuid = TaskType::TASK_TYPE_REPAIR; break;
+                case 9: $taskTypeUuid = TaskType::TASK_TYPE_CONTROL; break;
+                case 10: $taskTypeUuid = TaskType::TASK_TYPE_MEASURE; break;
+                case 11: $taskTypeUuid = TaskType::TASK_TYPE_POVERKA; break;
+                case 12: $taskTypeUuid = TaskType::TASK_TYPE_INSTALL; break;
                 default:
-                    $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR;
-            }
-            $taskTemplateUuid = $taskTemplate->uuid;
-            $present = TaskTemplate::find()
-                ->where(['taskTypeUuid' => $taskTemplate->taskTypeUuid])
-                ->andWhere(['title' => $title])
-                ->andWhere(['oid' => $organizationUuid])
-                ->one();
-            if (!$present) {
-                $taskTemplate->save();
-            } else {
-                $taskTemplateUuid = $present['uuid'];
+                    $taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR;
             }
 
-            $present = TaskTemplateEquipmentType::find()
-                ->where(['taskTemplateUuid' => $taskTemplateUuid])
-                ->andWhere(['equipmentTypeUuid' => $equipmentTypeUuid])
-                ->one();
-            if (!$present) {
-                $taskTemplateEquipmentType = new TaskTemplateEquipmentType();
-                $taskTemplateEquipmentType->equipmentTypeUuid = $equipmentTypeUuid;
-                $taskTemplateEquipmentType->taskTemplateUuid = $taskTemplateUuid;
-                $taskTemplateEquipmentType->uuid = MainFunctions::GUID();
-                $taskTemplateEquipmentType->save();
-            }
-        }
+            $db->insert('task_template', [
+                'uuid' => $uuid,
+                'title' => $title,
+                'description' => $title,
+                'normative' => $normative,
+                'taskTypeUuid' => $taskTypeUuid,
+                'oid' => $organizationUuid,
+                'createdAt' => $currentTime,
+                'changedAt' => $currentTime
+            ]);
+            
+            $db->insert('task_template_equipment_type', [
+                'uuid' => $uuid,
+                'equipmentTypeUuid' => $equipmentTypeUuid,
+                'taskTemplateUuid' => $uuid,
+                'createdAt' => $currentTime,
+                'changedAt' => $currentTime
+            ]);
+        }            
     }
 }
 

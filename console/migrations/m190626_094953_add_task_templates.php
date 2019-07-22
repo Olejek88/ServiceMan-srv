@@ -3,7 +3,9 @@
 use common\components\ReferenceFunctions;
 use common\models\Organization;
 use common\models\TaskType;
+use yii\data\ActiveDataProvider;
 use yii\db\Migration;
+use yii\db\Query;
 
 /**
  * Class m190626_094953_add_task_templates
@@ -15,9 +17,12 @@ class m190626_094953_add_task_templates extends Migration
      */
     public function safeUp()
     {
+        //$organisations = $this->db->createCommand('SELECT * FROM organization')->execute();
+        Yii::$app->set('db', $this->db);
+
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
-            ReferenceFunctions::loadReferences($organisation['uuid']);
+            ReferenceFunctions::loadReferences($organisation['uuid'], $this);
         }
     }
 

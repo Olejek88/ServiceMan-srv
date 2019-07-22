@@ -14,9 +14,11 @@ class m190718_095444_insert_new_templates extends Migration
      */
     public function safeUp()
     {
+        Yii::$app->set('db', $this->db);
+
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
-            ReferenceFunctions::loadReferencesAll($organisation['uuid']);
+            ReferenceFunctions::loadReferencesAll($organisation['uuid'],$this);
         }
     }
 
