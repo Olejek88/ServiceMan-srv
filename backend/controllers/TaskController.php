@@ -10,6 +10,8 @@ use common\models\Equipment;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\Operation;
+use common\models\Orders;
+use common\models\OrderStatus;
 use common\models\Request;
 use common\models\Task;
 use common\models\TaskTemplate;
@@ -24,6 +26,7 @@ use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use yii2fullcalendar\models\Event;
 
 class TaskController extends ZhkhController
 {
@@ -53,6 +56,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableUser()
@@ -101,6 +105,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableUserNormative()
@@ -136,6 +141,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableReportView()
@@ -169,6 +175,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTable()
@@ -663,4 +670,87 @@ class TaskController extends ZhkhController
             }
         }
     }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionCalendar()
+    {
+        $events = [];
+        $today = time();
+        $equipments = Equipment::find()
+            ->all();
+        foreach ($equipments as $equipment) {
+            $taskTemplateEquipments = TaskTemplateEquipment::find()
+                ->where(['equipmentUuid' => $equipment['uuid']])
+                ->all();
+
+            $task_equipment_count = 0;
+
+            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+                $selected_user = $taskTemplateEquipment->getUser();
+                if ($selected_user)
+                    $user = $selected_user['name'];
+                else
+                    $user = 'Не назначен';
+                $taskTemplateEquipment->formDates();
+                $dates = $taskTemplateEquipment->getDates();
+                if ($dates) {
+                    $count = 0;
+                    while ($count < count($dates)) {
+                        $start = strtotime($dates[$count]);
+                        $finish = $start + 3600 * 24;
+                        if ($start-$today<=3600*24*31*13) {
+                            $event = new Event();
+                            $event->id = $taskTemplateEquipment['_id'];
+                            $event->title = '[' . $user . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
+                            $event->backgroundColor = '#aaaaaa';
+                            $event->start = $dates[$count];
+                            //$event->end = $order['closeDate'];
+                            $event->color = '#333333';
+                            $events[] = $event;
+                        }
+                        $count++;
+                        if ($count > 5) break;
+                    }
+                    $all_tasks = Task::find()
+                        ->select('*')
+                        ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                        ->all();
+                    foreach ($all_tasks as $task) {
+                        $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+                        $user_names = '';
+                        foreach ($taskUsers as $taskUser) {
+                            $user_names .= $taskUser['user']['name'];
+                        }
+
+                        $event = new Event();
+                        $event->id = $task['_id'];
+                        $event->title = '[' . $user_names . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
+                        if ($task['workStatusUuid']==WorkStatus::CANCELED ||
+                            $task['workStatusUuid']==WorkStatus::NEW)
+                            $event->backgroundColor='gray';
+                        if ($task['workStatusUuid']==WorkStatus::IN_WORK)
+                            $event->backgroundColor='yellow';
+                        if ($task['workStatusUuid']==WorkStatus::UN_COMPLETE)
+                            $event->backgroundColor='lightred';
+                        if ($task['workStatusUuid']==WorkStatus::COMPLETE)
+                            $event->backgroundColor='green';
+
+                        $event->start = $task["startDate"];
+                        $event->end = $task["endDate"];
+                        $event->color = '#000000';
+                        $events[] = $event;
+                    }
+                }
+                $task_equipment_count++;
+            }
+        }
+        return $this->render('calendar', [
+            'events' => $events
+        ]);
+    }
+
 }
