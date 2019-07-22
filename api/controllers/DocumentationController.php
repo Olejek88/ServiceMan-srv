@@ -3,47 +3,46 @@
 namespace api\controllers;
 
 use api\components\BaseController;
-use common\models\Message;
-use common\models\User;
+use common\models\Documentation;
+use common\models\Equipment;
 use Yii;
 use yii\db\ActiveRecord;
 
-class MessageController extends BaseController
+class DocumentationController extends BaseController
 {
     /** @var ActiveRecord $modelClass */
-    public $modelClass = Message::class;
-
-    /**
-     * @return array
-     */
-    public function actionCreate()
-    {
-        return parent::createBase();
-    }
+    public $modelClass = Documentation::class;
 
     public function actionIndex()
     {
         $req = Yii::$app->request;
+        $eqTbl = Equipment::tableName();
+        $docTbl = Documentation::tableName();
 
         /** @var ActiveRecord $class */
         $class = $this->modelClass;
         $query = $class::find();
 
-        /** @var User $identity */
-        $identity = Yii::$app->user->identity;
-
-        // выбираем сообщения только для текущего пользователя
-        $query->andWhere(['toUserUuid' => $identity->users->uuid]);
-
         // проверяем параметры запроса
-        $uuid = $req->getQueryParam('uuid');
+        $uuid = $req->getQueryParam($docTbl . '.uuid');
         if ($uuid != null) {
             $query->andWhere(['uuid' => $uuid]);
         }
 
+        $eqUuid = $req->getQueryParam('eqUuid');
+        if ($eqUuid != null) {
+            $query->leftJoin($eqTbl,
+                $docTbl . '.equipmentUuid = ' . $eqTbl . '.uuid' .
+                ' or ' .
+                $docTbl . '.equipmentTypeUuid = ' . $eqTbl . '.equipmentTypeUuid'
+            );
+            $query->andWhere([$eqTbl . '.uuid' => $eqUuid]);
+
+        }
+
         $changedAfter = $req->getQueryParam('changedAfter');
         if ($changedAfter != null) {
-            $query->andWhere(['>=', 'changedAt', $changedAfter]);
+            $query->andWhere(['>=', $docTbl . '.changedAt', $changedAfter]);
         }
 
         // проверяем что хоть какие-то условия были заданы
@@ -51,10 +50,9 @@ class MessageController extends BaseController
             return [];
         }
 
-        $query->with(['fromUser']);
-        $query->with(['toUser']);
-
+        // выбираем данные из базы
         $result = $query->asArray()->all();
+
         return $result;
     }
 }

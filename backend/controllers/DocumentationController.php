@@ -6,6 +6,7 @@ use backend\models\DocumentationSearch;
 use common\components\MainFunctions;
 use common\models\Documentation;
 use common\models\EquipmentRegisterType;
+use common\models\Users;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
@@ -126,6 +127,8 @@ class DocumentationController extends ZhkhController
             } else {
                 $model->equipmentUuid = null;
             }
+
+            $model->oid = Users::getCurrentOid();
 
             // сохраняем запись
             if ($model->save(false)) {

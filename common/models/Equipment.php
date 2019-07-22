@@ -32,7 +32,7 @@ use yii\db\Expression;
  *
  * @property EquipmentStatus $equipmentStatus
  * @property EquipmentType $equipmentType
- * @property Object $object
+ * @property Objects $object
  * @property string $nextDate
  * @property string $fullTitle
  * @property string $address

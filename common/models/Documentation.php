@@ -2,10 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -13,6 +13,7 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
+ * @property string $oid
  * @property string $equipmentUuid
  * @property string $documentationTypeUuid
  * @property string $title
@@ -24,9 +25,10 @@ use yii\db\Expression;
  * @property Equipment $equipment
  * @property string $docDir
  * @property DocumentationType $documentationType
+ * @property Organization $organization
  * @property EquipmentType $equipmentType
  */
-class Documentation extends ActiveRecord
+class Documentation extends ZhkhActiveRecord
 {
     private static $_IMAGE_ROOT = 'doc';
 
@@ -208,5 +210,10 @@ class Documentation extends ActiveRecord
         // валим все в одну папку - сомневаюсь, что будет много
         $dir = 'storage/doc/';
         return $dir;
+    }
+
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
     }
 }

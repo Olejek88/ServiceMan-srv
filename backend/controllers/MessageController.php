@@ -14,6 +14,7 @@ use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use yii\base\InvalidConfigException;
 
 /**
  * MessageController implements the CRUD actions for Message model.
@@ -43,6 +44,8 @@ class MessageController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionView($id)
     {
@@ -102,6 +105,8 @@ class MessageController extends ZhkhController
     /**
      * Displays a message_box
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionList()
     {
@@ -292,6 +297,8 @@ class MessageController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
      *
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public
     function actionNew()
@@ -361,8 +368,7 @@ class MessageController extends ZhkhController
      * @param $save_filename
      * @return string | null
      */
-    private
-    static function _saveFile($file, $save_filename)
+    private static function _saveFile($file, $save_filename)
     {
         $dir = 'storage/files/';
         if (!is_dir($dir)) {
