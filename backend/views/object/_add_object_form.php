@@ -16,6 +16,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => '/object/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'
@@ -67,6 +68,7 @@ use yii\helpers\Html;
 </div>
 <script>
     $(document).on("beforeSubmit", "#form", function (e) {
+        e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
         $.ajax({

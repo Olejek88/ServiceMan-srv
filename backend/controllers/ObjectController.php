@@ -337,6 +337,9 @@ class ObjectController extends ZhkhController
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
+            if (isset($_POST["source"]))
+                $source = $_POST["source"];
+            else $source = 0;
             if (isset($_POST["type"]))
                 $type = $_POST["type"];
             else $type = 0;
@@ -347,7 +350,8 @@ class ObjectController extends ZhkhController
                     if ($street) {
                         return $this->renderAjax('_add_street_form', [
                             'street' => $street,
-                            'streetUuid' => $uuid
+                            'streetUuid' => $uuid,
+                            'source' => $source
                         ]);
                     }
                 }
@@ -356,7 +360,8 @@ class ObjectController extends ZhkhController
                     if ($house) {
                         return $this->renderAjax('_add_house_form', [
                             'houseUuid' => $uuid,
-                            'house' => $house
+                            'house' => $house,
+                            'source' => $source
                         ]);
                     }
                 }
@@ -366,7 +371,8 @@ class ObjectController extends ZhkhController
                     if ($object) {
                         return $this->renderAjax('_add_object_form', [
                             'objectUuid' => $uuid,
-                            'object' => $object
+                            'object' => $object,
+                            'source' => $source
                         ]);
                     }
                 }
@@ -374,7 +380,8 @@ class ObjectController extends ZhkhController
                     $contragent = Contragent::find()->where(['uuid' => $uuid])->one();
                     return $this->renderAjax('_add_contragent_form', [
                         'contragentUuid' => $uuid,
-                        'contragent' => $contragent
+                        'contragent' => $contragent,
+                        'source' => $source
                     ]);
                 }
             }
