@@ -31,7 +31,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
-use yii\db\Exception;
 use Throwable;
 
 /**
