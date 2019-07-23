@@ -4,7 +4,7 @@ use yii\helpers\Html;
 
 /* @var $model common\models\ContragentType */
 
-$this->title = Yii::t('app', 'Обновить тип предупреждения');
+$this->title = Yii::t('app', 'Обновить тип');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

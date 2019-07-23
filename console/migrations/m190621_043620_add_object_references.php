@@ -93,7 +93,6 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_HVS_TOWER,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Стояки ХВС');
 
-
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GVS_TOWER,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Стояки ГВС');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GVS_MAIN,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
@@ -171,11 +170,11 @@ class m190621_043620_add_object_references extends Migration
             'Стояки с проводкой');
 
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_INTERNET,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-            'Стояки с проводкой');
+            'Коммуникационные стояки');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_TV,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
             'Телевидение');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_CONDITIONER,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-            'Вениляционные каналы');
+            'Вентиляционные каналы');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_DOMOPHONE,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
             'Домофоны');
 
