@@ -297,6 +297,8 @@ class BaseController extends Controller
      */
     public function actionUpdateAttribute()
     {
+        /** @var ActiveRecord $model */
+        $model = null;
         /** @var ActiveRecord $class */
         $class = $this->modelClass;
         $request = Yii::$app->request;
@@ -304,13 +306,20 @@ class BaseController extends Controller
         $saved = array();
         if ($request->isPost) {
             $params = $request->bodyParams;
-            $model = $class::find()->where(['uuid' => $params['modelUuid']])->one();
-            if ($model != null) {
-                $model[$params['attribute']] = $params['value'];
-                if ($model->save()) {
-                    $saved = $params['_id'];
-                    $success = true;
+            if ($params['attribute'] != null) {
+                $model = $class::find()->where(['uuid' => $params['modelUuid']])->one();
+                if ($model != null) {
+                    $model[$params['attribute']] = $params['value'];
                 }
+            } else {
+                $model = new $class;
+                $dataArray = json_decode($params['value'], true);
+                $model->load($dataArray, '');
+            }
+
+            if ($model->save()) {
+                $saved = $params['_id'];
+                $success = true;
             }
 
             return ['success' => $success, 'data' => $saved];
