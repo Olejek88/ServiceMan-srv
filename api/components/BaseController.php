@@ -287,4 +287,36 @@ class BaseController extends Controller
 
         return $savedPhotos;
     }
+
+    /**
+     * Обновление атрибутов
+     *
+     * @return array
+     * @throws NotAcceptableHttpException
+     * @throws Exception
+     */
+    public function actionUpdateAttribute()
+    {
+        /** @var ActiveRecord $class */
+        $class = $this->modelClass;
+        $request = Yii::$app->request;
+        $success = false;
+        $saved = array();
+        if ($request->isPost) {
+            $params = $request->bodyParams;
+            $model = $class::find()->where(['uuid' => $params['modelUuid']])->one();
+            if ($model != null) {
+                $model[$params['attribute']] = $params['value'];
+                if ($model->save()) {
+                    $saved = $params['_id'];
+                    $success = true;
+                }
+            }
+
+            return ['success' => $success, 'data' => $saved];
+        } else {
+            throw new NotAcceptableHttpException();
+        }
+    }
+
 }
