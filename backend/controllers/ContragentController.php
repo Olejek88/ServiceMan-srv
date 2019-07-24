@@ -240,13 +240,14 @@ class ContragentController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Throwable
-     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
         parent::actionDelete($id);
 
-        $this->findModel($id)->delete();
+        $contragent = $this->findModel($id);
+        $contragent['deleted'] = true;
+        $contragent->save();
 
         return $this->redirect(['table']);
     }
