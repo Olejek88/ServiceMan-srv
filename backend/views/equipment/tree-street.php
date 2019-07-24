@@ -138,6 +138,7 @@ try {
                                     folder: node.folder,
                                     uuid: node.data.uuid,
                                     type: node.type,
+                                    source: "../equipment/tree-street",                                    
                                     model_uuid: node.data.model_uuid,
                                     type_uuid: node.data.type_uuid                                                                        
                                 },
@@ -188,7 +189,8 @@ try {
                                     type: node.type,
                                     model_uuid: node.data.model_uuid,
                                     type_uuid: node.data.type_uuid,
-                                    reference: "equipment"                                                                        
+                                    reference: "equipment",
+                                    source: "../equipment/tree-street"                                                           
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddEquipment\').modal(\'show\');
@@ -251,7 +253,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    type_uuid: node.data.type_uuid
+                                    type_uuid: node.data.type_uuid,
+                                    source: "../equipment/tree-street"
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddPeriodicTask\').modal(\'show\');

@@ -174,10 +174,13 @@ $users = Users::find()->where(['!=','name','sUser'])->all();
 $items = ArrayHelper::map($users, 'uuid', 'name');
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';
+$user='';
 if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
+if (isset($_GET['user']))
+    $user = $_GET['user'];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -194,7 +197,7 @@ echo GridView::widget([
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
-                'value' => $_GET['user'],
+                'value' => $user,
                 'data' => $items,
                 'options' => ['placeholder' => 'Исполнитель'],
                 'pluginOptions' => [

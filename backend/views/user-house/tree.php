@@ -12,7 +12,7 @@ $this->title = 'Распределение пользователей по до�
         <col style="width: *">
         <?php
         foreach ($systems as $system) {
-            echo '<col style="width: 100px">';
+            echo '<col style="width: *">';
         }
         ?>
     </colgroup>

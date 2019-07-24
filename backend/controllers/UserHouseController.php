@@ -213,15 +213,18 @@ class UserHouseController extends ZhkhController
                     $user_list='';
                     foreach ($userSystems as $userSystem) {
                         foreach ($userHouses as $userHouse) {
+                            $count=0;
                             if ($userSystem['userUuid']==$userHouse['userUuid']) {
+                                if ($count>0) $user_list.=', ';
                                 $user_list.=$userSystem['user']['name'];
+                                $count++;
                             }
                         }
                     }
                     if ($user_list!='') {
-                        $title = '<div class="progress"><div class="critical3">' . $user_list . '</div></div>';
+                        $title = '<span style="background-color: #11aa11; color: white; border-radius: 4px !important; margin: 3px; padding: 3px">'.$user_list.'</span>';
                     } else {
-                        $title = '<div class="progress"><div class="critical5">не назначены</div></div>';
+                        $title = '<div class="progress"><div class="critical5">не_назначены</div></div>';
                     }
                     $name = 'system'.$equipmentSystem['_id'];
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['title']=$house['number'];

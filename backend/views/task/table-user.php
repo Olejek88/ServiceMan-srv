@@ -221,6 +221,9 @@ if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
+$user='';
+if (isset($_GET['user']))
+    $user = $_GET['user'];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -237,7 +240,7 @@ echo GridView::widget([
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
-                'value' => $_GET['user'],
+                'value' => $user,
                 'data' => $items,
                 'options' => ['placeholder' => 'Все исполнители'],
                 'pluginOptions' => [

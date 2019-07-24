@@ -1,7 +1,9 @@
 <?php
 /* @var $searchModel backend\models\SubjectSearch */
 
+use common\models\ContragentType;
 use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Таблица контрагентов');
@@ -130,6 +132,14 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'filterType' => GridView::FILTER_SELECT2,
+        'header' => 'Тип',
+        'filter' => ArrayHelper::map(ContragentType::find()->orderBy('title')->all(), 'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'format' => 'raw',
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data->contragentType->title;

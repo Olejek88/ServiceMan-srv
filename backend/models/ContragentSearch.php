@@ -22,7 +22,7 @@ class ContragentSearch extends Contragent
         return [
             [['_id'], 'integer'],
             [['uuid', 'title', 'address', 'phone', 'inn', 'director', 'email',
-                'status', 'contragentType', 'createdAt', 'changedAt'], 'safe'],
+                'status', 'contragentTypeUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 

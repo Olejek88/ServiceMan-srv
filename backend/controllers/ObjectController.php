@@ -15,7 +15,6 @@ use common\models\Objects;
 use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\Street;
-use common\models\UserHouse;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -23,6 +22,7 @@ use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+
 /**
  * ObjectController implements the CRUD actions for Object model.
  */
@@ -66,8 +66,8 @@ class ObjectController extends ZhkhController
         $dataProvider->pagination->pageSize = 1200;
 
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
 
@@ -259,6 +259,7 @@ class ObjectController extends ZhkhController
                                         'type' => 'contragent',
                                         'source' => '../object/tree',
                                         'uuid' => $objectContragent['contragent']['uuid'],
+                                        'object' => $object['uuid'],
                                         'folder' => false
                                     ];
                                 }
@@ -424,6 +425,7 @@ class ObjectController extends ZhkhController
                         $house = House::find()->where(['streetUuid' => $street['uuid']])->one();
                         if (!$house) {
                             $street->delete();
+                            return 'ok';
                         }
                     }
                 }
@@ -433,6 +435,7 @@ class ObjectController extends ZhkhController
                         $object = Objects::find()->where(['houseUuid' => $house['uuid']])->one();
                         if (!$object) {
                             $house->delete();
+                            return 'ok';
                         }
                     }
                 }
@@ -441,6 +444,7 @@ class ObjectController extends ZhkhController
                     if ($object) {
                         $object['deleted'] = true;
                         $object->save();
+                        return 'ok';
                     }
 
                 }
@@ -450,8 +454,39 @@ class ObjectController extends ZhkhController
                     if ($contragent) {
                         $contragent['deleted'] = true;
                         $contragent->save();
+                        return 'ok';
                     }
+                }
+            }
+        }
+        return 'Нельзя удалить этот объект';
+    }
 
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет удаление
+     *
+     * @return mixed
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public function actionRemoveLink()
+    {
+        if (isset($_POST["selected_node"])) {
+            if (isset($_POST["object"]))
+                $objectUuid = $_POST["object"];
+            else $objectUuid = 0;
+            if (isset($_POST["contragent"]))
+                $contragentUuid = $_POST["contragent"];
+            else $contragentUuid = 0;
+
+            if ($contragentUuid && $objectUuid) {
+                $contragent = ObjectContragent::find()
+                    ->where(['objectUuid' => $objectUuid])
+                    ->andWhere(['contragentUuid' => $contragentUuid])
+                    ->one();
+                if ($contragent) {
+                    $contragent->delete();
+                    return 'ok';
                 }
             }
         }
@@ -497,17 +532,17 @@ class ObjectController extends ZhkhController
                 }
                 if ($model->load(Yii::$app->request->post())) {
                     if ($model->save(false)) {
-                        if ($new && $model['houseTypeUuid']==HouseType::HOUSE_TYPE_MKD) {
+                        if ($new && $model['houseTypeUuid'] == HouseType::HOUSE_TYPE_MKD) {
                             if (isset($_POST['flats']) && $_POST['flats'] > 0) {
-                                for ($flat_num=0; $flat_num<$_POST['flats']; $flat_num++) {
-                                    $objectUuid = self::createFlat($model['uuid'],$flat_num+1);
+                                for ($flat_num = 0; $flat_num < $_POST['flats']; $flat_num++) {
+                                    $objectUuid = self::createFlat($model['uuid'], $flat_num + 1);
                                     if (isset($_POST['balcony']) && $_POST['balcony'] && $objectUuid) {
                                         self::createEquipment($objectUuid, "Балкон",
                                             EquipmentType::EQUIPMENT_TYPE_BALCONY);
                                     }
                                 }
                             }
-                            $objectHUuid=null;
+                            $objectHUuid = null;
                             if (isset($_POST['water_system']) && $_POST['water_system']) {
                                 $objectHUuid = self::createObject($model['uuid'], 'Система ХВС', ObjectType::OBJECT_TYPE_SYSTEM_HVS);
                                 if ($objectHUuid) {
@@ -521,7 +556,7 @@ class ObjectController extends ZhkhController
                                         EquipmentType::EQUIPMENT_HVS_TOWER);
                                 }
                             }
-                            $objectGUuid=null;
+                            $objectGUuid = null;
                             if (isset($_POST['water_system']) && $_POST['water_system']) {
                                 $objectGUuid = self::createObject($model['uuid'], 'Система ГВС', ObjectType::OBJECT_TYPE_SYSTEM_GVS);
                                 if ($objectGUuid) {
@@ -652,13 +687,13 @@ class ObjectController extends ZhkhController
 
                             if ((isset($_POST['stages']) && $_POST['stages'] > 0) &&
                                 (isset($_POST['entrances']) && $_POST['entrances'] > 0)) {
-                                for ($entrances_num=0; $entrances_num<$_POST['entrances']; $entrances_num++) {
-                                    $objectEntranceUuid = self::createObject($model['uuid'], 'Подъезд №'.($entrances_num+1),
+                                for ($entrances_num = 0; $entrances_num < $_POST['entrances']; $entrances_num++) {
+                                    $objectEntranceUuid = self::createObject($model['uuid'], 'Подъезд №' . ($entrances_num + 1),
                                         ObjectType::OBJECT_TYPE_SYSTEM_ENTRANCE);
                                     if ($objectPowerUuid) {
-                                        self::createEquipment($objectPowerUuid, "Осветительные приборы входной группы п.".($entrances_num+1),
+                                        self::createEquipment($objectPowerUuid, "Осветительные приборы входной группы п." . ($entrances_num + 1),
                                             EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_LIGHT);
-                                        self::createEquipment($objectPowerUuid, "Стояки с проводкой п.".($entrances_num+1),
+                                        self::createEquipment($objectPowerUuid, "Стояки с проводкой п." . ($entrances_num + 1),
                                             EquipmentType::EQUIPMENT_ELECTRICITY_ENTRANCE_PIPE);
                                     }
 
@@ -680,10 +715,10 @@ class ObjectController extends ZhkhController
                                                 EquipmentType::EQUIPMENT_LIFT);
                                         }
                                     }
-                                    for ($stages_num=0; $stages_num<$_POST['stages']; $stages_num++) {
+                                    for ($stages_num = 0; $stages_num < $_POST['stages']; $stages_num++) {
                                         if ($objectPowerUuid) {
                                             self::createEquipment($objectPowerUuid,
-                                                "Щиток электрический (п.".($entrances_num+1)." - э.".($stages_num+1).")",
+                                                "Щиток электрический (п." . ($entrances_num + 1) . " - э." . ($stages_num + 1) . ")",
                                                 EquipmentType::EQUIPMENT_ELECTRICITY_LEVEL_SHIELD);
                                         }
                                     }
@@ -729,22 +764,23 @@ class ObjectController extends ZhkhController
                 }
             }
         }
-/*        if ($source)
-            return $this->redirect([$source]);
-        return $this->redirect(['/object/tree']);*/
+        /*        if ($source)
+                    return $this->redirect([$source]);
+                return $this->redirect(['/object/tree']);*/
     }
 
-    function createFlat($houseUuid, $flat_num) {
+    function createFlat($houseUuid, $flat_num)
+    {
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
-        $object->title = $flat_num."";
+        $object->title = $flat_num . "";
         $object->oid = Users::getCurrentOid();
         $object->houseUuid = $houseUuid;
         $object->square = 33;
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
         $object->objectTypeUuid = ObjectType::OBJECT_TYPE_FLAT;
         $object->save();
-        if ($object->errors==[])
+        if ($object->errors == [])
             return $object->uuid;
         else {
             echo json_encode($object->errors);
@@ -752,7 +788,8 @@ class ObjectController extends ZhkhController
         }
     }
 
-    function createObject($houseUuid, $name, $objectTypeUuid) {
+    function createObject($houseUuid, $name, $objectTypeUuid)
+    {
         $object = new Objects();
         $object->uuid = MainFunctions::GUID();
         $object->title = $name;
@@ -762,13 +799,14 @@ class ObjectController extends ZhkhController
         $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
         $object->objectTypeUuid = $objectTypeUuid;
         $object->save();
-        if ($object->errors==[])
+        if ($object->errors == [])
             return $object->uuid;
         else
             return null;
     }
 
-    function createEquipment($objectUuid, $name, $equipmentTypeUuid) {
+    function createEquipment($objectUuid, $name, $equipmentTypeUuid)
+    {
         $equipment = new Equipment();
         $equipment->uuid = MainFunctions::GUID();
         $equipment->title = $name;
@@ -784,7 +822,7 @@ class ObjectController extends ZhkhController
         $equipment->deleted = 0;
         $equipment->serial = "-";
         $equipment->save();
-        if ($equipment->errors==[])
+        if ($equipment->errors == [])
             return $equipment->uuid;
         else {
             echo json_encode($equipment->errors);
@@ -797,7 +835,8 @@ class ObjectController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public function actionHouse() {
+    public function actionHouse()
+    {
         $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
         $items = ArrayHelper::map($houses, 'uuid', function ($model) {
             return $model['houseType']->title . ', ' . $model->number;
