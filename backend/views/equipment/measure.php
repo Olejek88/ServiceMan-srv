@@ -1,8 +1,8 @@
 <?php
 /* @var $searchModel backend\models\MeasureSearch */
 
+use common\models\Measure;
 use common\models\MeasureType;
-use kartik\date\DatePicker;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -20,11 +20,11 @@ $gridColumns = [
         'header' => 'Элементы',
         'mergeHeader' => true,
         'content' => function ($data) {
-            return $data['equipment']['title'];
+            return $data['title'];
         }
     ],
     [
-        'attribute' => 'equipment.serial',
+        'attribute' => 'serial',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
@@ -34,10 +34,10 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Адрес',
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
-            return $data['equipment']['object']->getFullTitle();
+            return $data['object']->getFullTitle();
         }
     ],
     [
@@ -49,12 +49,16 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'content' => function ($data) {
-            return date('d-m-Y h:i:s', strtotime($data['date']));
+            $measure = Measure::find()->where(['equipmentUuid' => $data['uuid']])->orderBy('date DESC')->one();
+            if ($measure)
+                return date('d-m-Y h:i:s', strtotime($measure['date']));
+            else
+                return 'не снимались';
         },
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
-        'attribute' => 'value',
+        'header' => 'Значение',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
@@ -63,11 +67,14 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return "<span class='badge' style='background-color: green; height: 22px; margin-top: -3px'>".$data['value']."</span>";
+            $measure = Measure::find()->where(['equipmentUuid' => $data['uuid']])->orderBy('date DESC')->one();
+            if ($measure)
+                return "<span class='badge' style='background-color: green; height: 22px; margin-top: -3px'>".$measure ['value']."</span>";
+            else
+                return "<span class='badge' style='background-color: gray; height: 22px; margin-top: -3px'>-</span>";
         }
     ],
     [
-        'attribute' => 'measureType.title',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
@@ -77,15 +84,12 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return "<span class='badge' style='background-color: blue; height: 22px; margin-top: -3px'>".
-                $data['measureType']['title']."</span>";
+            $measure = Measure::find()->where(['equipmentUuid' => $data['uuid']])->orderBy('date DESC')->one();
+            if ($measure)
+                return "<span class='badge' style='background-color: blue; height: 22px; margin-top: -3px'>".
+                    $measure['measureType']['title']."</span>";
+            return "-";
         }
-    ],
-    [
-        'class' => 'kartik\grid\ActionColumn',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'header' => 'Действия',
-        'template' => '{delete}'
     ]
 ];
 
@@ -113,7 +117,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/measure/index"><div class="row" style="margin-bottom: 8px; width:100%">
+            '<form action="/equipment/measure"><div class="row" style="margin-bottom: 8px; width:100%">
              <div class="col-sm-4" style="width:30%">' .
             Select2::widget([
                 'name' => 'type',
@@ -123,24 +127,6 @@ echo GridView::widget([
                 'options' => ['placeholder' => 'Тип измерений'],
                 'pluginOptions' => [
                     'allowClear' => true
-                ]
-            ]) . '</div><div class="col-sm-4" style="width:25%">' .
-            DatePicker::widget([
-                'name' => 'start_time',
-                'removeButton' => false,
-                'value' => $start_date,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd'
-                ]
-            ]) . '</div><div class="col-sm-4" style="width:25%">' .
-            DatePicker::widget([
-                'name' => 'end_time',
-                'value' => $end_date,
-                'removeButton' => false,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd',
                 ]
             ]) . '</div><div class="col-sm-2" style="width:12%">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']) . '</div>' .

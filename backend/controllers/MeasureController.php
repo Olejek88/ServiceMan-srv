@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\MeasureSearch;
 use common\models\Measure;
 use Yii;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 use yii\base\InvalidConfigException;
@@ -28,7 +29,7 @@ class MeasureController extends ZhkhController
             $dataProvider->query->andWhere(['>=','date',$_GET['start_time']]);
             $dataProvider->query->andWhere(['<','date',$_GET['end_time']]);
         }
-        if (isset($_GET['type'])) {
+        if (isset($_GET['type']) && $_GET['type']!='') {
             $dataProvider->query->andWhere(['=','measureTypeUuid',$_GET['type']]);
         }
         return $this->render('index', [
@@ -73,6 +74,7 @@ class MeasureController extends ZhkhController
      * Displays a trend of value
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionTrend()
     {
@@ -155,9 +157,13 @@ class MeasureController extends ZhkhController
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Measure();
+            $source = "../equipment";
+            if ($_GET['source'])
+                $source = $_GET['source'];
             return $this->renderAjax('_add_form', [
                 'model' => $model,
-                'equipmentUuid' => $_GET["equipmentUuid"]
+                'equipmentUuid' => $_GET["equipmentUuid"],
+                'source' => $source
             ]);
         }
         return false;
@@ -170,11 +176,15 @@ class MeasureController extends ZhkhController
     public
     function actionSave()
     {
+        if (isset($_POST["source"]))
+            $source = $_POST["source"];
+        else $source = "../equipment";
+
         $model = new Measure();
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save(false))
-                return $this->redirect(['../equipment/tree-street']);
+                return $this->redirect($source);
             }
-        return $this->redirect(['../equipment/tree-street']);
+        return $this->redirect($source);
     }
 }
