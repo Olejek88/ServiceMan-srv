@@ -83,7 +83,16 @@ $sort_events = \common\components\MainFunctions::array_msort($events, ['date' =>
                                     ?></td>
                             </tr>
                             <tr>
-                                <td>Дата следущей поверки</td>
+                                <td>Период поверки</td>
+                                <td class="text-right"><?php
+                                    if (isset($equipment['period']))
+                                        echo $equipment['period'];
+                                    else
+                                        echo 'не задан';
+                                    ?></td>
+                            </tr>
+                            <tr>
+                                <td>Дата следующей поверки</td>
                                 <td class="text-right"><?php echo date('d-m-Y', strtotime($equipment['nextDate'])) ?></td>
                             </tr>
                         </table>

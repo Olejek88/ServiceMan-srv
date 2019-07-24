@@ -114,7 +114,7 @@ class Equipment extends ZhkhActiveRecord
                 ],
                 'required'
             ],
-            [['testDate', 'inputDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
+            [['testDate', 'inputDate', 'nextDate', 'replaceDate', 'createdAt', 'changedAt'], 'safe'],
             [['deleted'], 'boolean'],
             [['period'], 'integer'],
             [
@@ -157,7 +157,7 @@ class Equipment extends ZhkhActiveRecord
             'testDate' => Yii::t('app', 'Дата последней поверки'),
             'period' => Yii::t('app', 'Период поверки (дн.)'),
             'inputDate' => Yii::t('app', 'Дата ввода в эксплуатацию'),
-            'nextDate' => Yii::t('app', 'Дата следущей поверки'),
+            'nextDate' => Yii::t('app', 'Дата следующей поверки'),
             'replaceDate' => Yii::t('app', 'Дата замены'),
             'equipmentStatusUuid' => Yii::t('app', 'Статус'),
             'equipmentStatus' => Yii::t('app', 'Статус'),

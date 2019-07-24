@@ -393,6 +393,10 @@ $this->registerJs('$("#modalDefects").on("hidden.bs.modal",
 function () {
     $(this).removeData();
 })');
+$this->registerJs('$("#modalMeasures").on("hidden.bs.modal",
+function () {
+    $(this).removeData();
+})');
 $this->registerJs('$("#modalSN").on("hidden.bs.modal",
 function () {
      window.location.replace("tree-street");

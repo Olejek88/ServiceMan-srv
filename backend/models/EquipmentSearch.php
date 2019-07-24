@@ -11,8 +11,11 @@ use yii\db\Exception;
 /**
  * EquipmentSearch represents the model behind the search form about `common\models\Equipment`.
  */
+
 class EquipmentSearch extends Equipment
 {
+    public $nextDate;
+
     /**
      * @inheritdoc
      */
@@ -20,7 +23,8 @@ class EquipmentSearch extends Equipment
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'equipmentTypeUuid', 'objectUuid', 'testDate', 'inputDate', 'equipmentStatusUuid', 'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'equipmentTypeUuid', 'objectUuid', 'testDate', 'nextDate', 'inputDate', 'equipmentStatusUuid',
+                'serial', 'tag', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -53,9 +57,14 @@ class EquipmentSearch extends Equipment
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
-
         $this->load($params);
-
+        $dataProvider->setSort([
+            'attributes' => [
+                'id',
+                'testDate',
+                'inputDate'
+            ]
+        ]);
         if (!$this->validate()) {
             // uncomment the following line if you do not want to return any records when validation fails
             // $query->where('0=1');
@@ -77,11 +86,11 @@ class EquipmentSearch extends Equipment
             ->andFilterWhere(['like', 'serial', $this->serial])
             ->orderBy(['changedAt' => SORT_DESC]);
 
-        if(isset ($this->testDate)&&$this->testDate!=''){
-            $date_explode=explode(" - ",$this->testDate);
+        if(isset ($this->nextDate)&&$this->nextDate!=''){
+            $date_explode=explode(" - ",$this->nextDate);
             $date1=trim($date_explode[0]);
             $date2=trim($date_explode[1]);
-            $query->andFilterWhere(['between','testDate',$date1,$date2]);
+            $query->andFilterWhere(['between','nextDate',$date1,$date2]);
         }
         if(isset ($this->inputDate)&&$this->inputDate!=''){
             $date_explode=explode(" - ",$this->inputDate);

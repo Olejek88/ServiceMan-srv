@@ -140,7 +140,7 @@ class ContragentController extends ZhkhController
                 $model->pin = '1234';
                 $model->name = $contragent->title;
                 if ($contragent->contragentTypeUuid == ContragentType::WORKER)
-                    $model->whoIs = 'Исполнитель';
+                    $model->whoIs = 'Сотрудник';
                 if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR)
                     $model->whoIs = 'Подрядная огранизация';
                 if ($contragent->contragentTypeUuid == ContragentType::EMPLOYEE)
@@ -279,6 +279,19 @@ class ContragentController extends ZhkhController
         if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
             return $model['phone'];
         } else return '';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionName()
+    {
+        if (isset($_POST['id']))
+            if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+                return $model['title'];
+            } else return '';
     }
 
 }

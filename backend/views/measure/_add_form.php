@@ -1,7 +1,8 @@
 <?php
 
 /* @var $measure Measure */
-
+/* @var $measure */
+/* @var $source */
 /* @var string $equipmentUuid */
 
 use common\components\MainFunctions;
@@ -35,6 +36,7 @@ use yii\helpers\Html;
     } else {
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }
+    echo Html::hiddenInput("source", $source);
     ?>
 
     <?php echo $form->field($model, 'equipmentUuid')

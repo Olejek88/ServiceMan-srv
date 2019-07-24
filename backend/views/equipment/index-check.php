@@ -146,4 +146,10 @@ echo GridView::widget([
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Отчет о поверках приборов',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
+    'rowOptions' => function($model) {
+        if ($model['nextDate']<=date("Y-m-d 00:00:00", time()+24*3600*30))
+            return ['class' => 'danger'];
+        if ($model['replaceDate']<=date("Y-m-d 00:00:00", time()+24*3600*30))
+            return ['class' => 'danger'];
+    }
 ]);

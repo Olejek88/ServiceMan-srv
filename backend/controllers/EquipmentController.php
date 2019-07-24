@@ -113,6 +113,36 @@ class EquipmentController extends ZhkhController
         );
     }
 
+    public function actionMeasure()
+    {
+        $searchModel = new EquipmentSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider->query->andWhere(['IN', 'equipmentTypeUuid', [
+            EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER,
+            EquipmentType::EQUIPMENT_HVS_COUNTER,
+            EquipmentType::EQUIPMENT_HEAT_COUNTER
+        ]]);
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
+        }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
+        $dataProvider->pagination->pageSize = 150;
+
+        return $this->render(
+            'measure',
+            [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
     /**
      * Lists all Equipment models.
      *
@@ -156,7 +186,6 @@ class EquipmentController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
-
         return $this->render(
             'index-check',
             [
@@ -205,7 +234,6 @@ class EquipmentController extends ZhkhController
 
                 return $this->render('create', ['model' => $model]);
             }
-
             // сохраняем запись
             if ($model->save(false)) {
                 MainFunctions::register('documentation', 'Добавлено оборудование',
@@ -214,7 +242,7 @@ class EquipmentController extends ZhkhController
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
                     "Добавлено оборудование");
-
+                $model->setNextDate();
                 return $this->redirect(['view', 'id' => $model->_id]);
             }
             echo json_encode($model->errors);
@@ -332,7 +360,7 @@ class EquipmentController extends ZhkhController
                 ->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
-                    self::addEquipment($equipment,"");
+                    self::addEquipment($equipment,"../equipment/tree");
             }
         }
         $users = Users::find()->all();
@@ -521,7 +549,7 @@ class EquipmentController extends ZhkhController
                         $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                         foreach ($equipments as $equipment) {
                             $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                                self::addEquipment($equipment, $user['name']);
+                                self::addEquipment($equipment, "../equipment/tree-street");
                         }
                     }
                 }
@@ -616,7 +644,7 @@ class EquipmentController extends ZhkhController
                         ->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            self::addEquipment($equipment, $user_name);
+                            self::addEquipment($equipment, "../equipment/tree-street");
                     }
                 }
             }
@@ -1272,13 +1300,13 @@ class EquipmentController extends ZhkhController
 
     /**
      * @param $equipment
-     * @param $user
+     * @param $source
      * @return array
      * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public function addEquipment($equipment, $user)
+    public function addEquipment($equipment, $source)
     {
         $userSystems = UserSystem::find()
             ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
@@ -1317,7 +1345,7 @@ class EquipmentController extends ZhkhController
                 $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
         }
         $task = Html::a($task_text,
-            ['select-task', 'equipmentUuid' => $equipment['uuid']],
+            ['select-task', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
             [
                 'title' => 'Создать задачу обслуживания',
                 'data-toggle' => 'modal',
@@ -1383,7 +1411,7 @@ class EquipmentController extends ZhkhController
             ]
         );
         $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-            ['/measure/add', 'equipmentUuid' => $equipment['uuid']],
+            ['/measure/add', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
             [
                 'title' => 'Добавить измерение',
                 'data-toggle' => 'modal',

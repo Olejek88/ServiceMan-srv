@@ -2,8 +2,6 @@
 /* @var $searchModel backend\models\RequestSearch */
 
 use common\models\Contragent;
-use common\models\EquipmentStatus;
-use common\models\EquipmentType;
 use common\models\Request;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
@@ -37,16 +35,16 @@ $gridColumns = [
         }*/
     ],
     [
-        'attribute' => 'date',
+        'attribute' => 'createdAt',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Дата приема',
+        'header' => 'Дата регистрации',
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'value' => function ($model) {
             return "<span class='badge' style='background-color: gray; height: 22px'>".
-                date('d-m-Y H:m', strtotime($model->date))."</span>";
+                date('d-m-Y H:m', strtotime($model->createdAt))."</span>";
 //            return $model->date;
         },
         'contentOptions' => [
