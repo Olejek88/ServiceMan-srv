@@ -278,6 +278,8 @@ class ObjectController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования или объекта
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public
     function actionNew()
@@ -313,8 +315,17 @@ class ObjectController extends ZhkhController
                 }
                 if ($type == 'object') {
                     $contragent = new Contragent();
+                    $address = "";
+                    if ($uuid) {
+                        $object = Objects::find()->where(['uuid' => $uuid])->one();
+                        if ($object) {
+                            $address = $object->getFullTitle();
+                        }
+                    }
+
                     return $this->renderAjax('_add_contragent_form', [
                         'objectUuid' => $uuid,
+                        'address' => $address,
                         'contragent' => $contragent,
                         'source' => $source
                     ]);
