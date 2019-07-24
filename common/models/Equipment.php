@@ -155,7 +155,7 @@ class Equipment extends ZhkhActiveRecord
             'equipmentTypeUuid' => Yii::t('app', 'Тип элемента'),
             'equipmentType' => Yii::t('app', 'Тип'),
             'testDate' => Yii::t('app', 'Дата последней поверки'),
-            'period' => Yii::t('app', 'Период поверки'),
+            'period' => Yii::t('app', 'Период поверки (дн.)'),
             'inputDate' => Yii::t('app', 'Дата ввода в эксплуатацию'),
             'nextDate' => Yii::t('app', 'Дата следущей поверки'),
             'replaceDate' => Yii::t('app', 'Дата замены'),

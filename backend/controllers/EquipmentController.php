@@ -1030,9 +1030,9 @@ class EquipmentController extends ZhkhController
             if (isset($_POST["type"]))
                 $type = $_POST["type"];
             else $type = 0;
-            if (isset($_POST["uuid"]))
-                $source = '../equipment/tree-street';
-            else $source = '../equipment/tree';
+            if (isset($_POST["source"]))
+                $source = $_POST["source"];
+            else $source = '../equipment/tree-street';
 
             if ($folder == "true" && $uuid && $type) {
                 if ($type == 'street') {
@@ -1085,14 +1085,14 @@ class EquipmentController extends ZhkhController
     public function actionEdit()
     {
         if (isset($_POST["uuid"]))
-            $source = '../equipment/tree-street';
-        else $source = '../equipment/tree';
-        if (isset($_POST["uuid"]))
             $uuid = $_POST["uuid"];
         else $uuid = 0;
         if (isset($_POST["type"]))
             $type = $_POST["type"];
         else $type = 0;
+        if (isset($_POST["source"]))
+            $source = $_POST["source"];
+        else $source = '../equipment/tree-street';
 
         if ($uuid && $type) {
             if ($type == 'street') {

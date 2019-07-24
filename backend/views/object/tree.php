@@ -139,6 +139,29 @@ echo FancytreeWidget::widget([
                            }); 
                     }')
                 ],
+                'remove' => [
+                    'name' => "Отвязать контрагента",
+                    'icon' => "delete",
+                    'callback' => new JsExpression('function(key, opt) {
+                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                            $.each(sel, function (event, data) {
+                                var node = $.ui.fancytree.getNode(opt.$trigger);
+                                $.ajax({
+                                      url: "remove-link",
+                                      type: "post",
+                                      data: {
+                                          selected_node: data.key,
+                                          type: node.type,
+                                          object: node.data.object,
+                                          contragent: node.data.uuid
+                                      },
+                                      success: function (result) {
+                                        data.remove();            
+                                      }                                    
+                                   });
+                            });
+                         }')
+                ],
                 'delete' => [
                     'name' => "Удалить",
                     'icon' => "delete",
