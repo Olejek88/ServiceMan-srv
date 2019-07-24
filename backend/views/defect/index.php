@@ -103,7 +103,7 @@ $gridColumns = [
             $models = ['0' => 'Не обработан', '1' => 'Обработан'];
             return [
                 'header' => 'Статус',
-                'size' => 'lg',
+                'size' => 'sm',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'displayValueConfig' => $models,
                 'data' => $models

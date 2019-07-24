@@ -211,7 +211,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree"                                                                        
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDocumentation\').modal(\'show\');
@@ -232,7 +233,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree"                                                                                                                                                
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDefect\').modal(\'show\');

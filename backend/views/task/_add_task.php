@@ -4,10 +4,11 @@
 /* @var $requestUuid */
 /* @var $type_uuid */
 
+use common\models\Equipment;
 use common\models\TaskTemplateEquipmentType;
-use common\models\TaskType;
 use common\models\TaskVerdict;
 use common\models\Users;
+use common\models\UserSystem;
 use common\models\WorkStatus;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\select2\Select2;
@@ -49,7 +50,13 @@ use yii\helpers\Html;
     <?php if (isset($requestUuid)) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
 
     <?php
-    $users = Users::find()->where(['<>','name','sUser'])->all();
+    if (isset($_GET["equipmentUuid"])) {
+        $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
+        $users = UserSystem::find()
+            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid']])
+            ->all();
+    } else
+        $users = Users::find()->where(['<>','name','sUser'])->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     echo '<label class="control-label">Исполнитель</label>';
     echo Select2::widget(
@@ -89,7 +96,7 @@ use yii\helpers\Html;
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-        <p style="width: 0; margin-bottom: 0;">Дата назначения</p>
+        <p style="width: 0; margin-bottom: 0;">Дата начала работ</p>
         <?= DateTimePicker::widget([
             'model' => $model,
             'attribute' => 'taskDate',

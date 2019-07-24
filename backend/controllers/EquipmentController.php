@@ -132,6 +132,9 @@ class EquipmentController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
+        if (isset($_GET['type']) && $_GET['type']!='') {
+            $dataProvider->query->andWhere(['=','equipmentTypeUuid',$_GET['type']]);
+        }
         $dataProvider->pagination->pageSize = 150;
 
         return $this->render(
