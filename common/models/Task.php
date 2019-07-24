@@ -127,7 +127,7 @@ class Task extends ZhkhActiveRecord
             'taskVerdict' => Yii::t('app', 'Вердикт'),
             'taskTemplateUuid' => Yii::t('app', 'Шаблон'),
             'taskTemplate' => Yii::t('app', 'Шаблон'),
-            'taskDate' => Yii::t('app', 'Назначена'),
+            'taskDate' => Yii::t('app', 'Дата начала работ'),
             'deadlineDate' => Yii::t('app', 'Срок'),
             'startDate' => Yii::t('app', 'Начало'),
             'endDate' => Yii::t('app', 'Окончание'),

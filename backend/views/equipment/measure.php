@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\MeasureSearch */
 
+use common\models\EquipmentType;
 use common\models\Measure;
 use common\models\MeasureType;
 use kartik\grid\GridView;
@@ -93,8 +94,14 @@ $gridColumns = [
     ]
 ];
 
-$measureType = MeasureType::find()->all();
-$items = ArrayHelper::map($measureType, 'uuid', 'title');
+$equipmentType = EquipmentType::find()
+    ->where(['IN', 'uuid', [
+        EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER,
+        EquipmentType::EQUIPMENT_HVS_COUNTER,
+        EquipmentType::EQUIPMENT_HEAT_COUNTER
+    ]])
+    ->all();
+$items = ArrayHelper::map($equipmentType, 'uuid', 'title');
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';
 $type = '';

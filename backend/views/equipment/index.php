@@ -282,7 +282,7 @@ $gridColumns = [
             },
             'new' => function ($url, $model) {
                 return Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-                    ['/defect/add-table', 'uuid' => $model['uuid']],
+                    ['/defect/add-table', 'uuid' => $model['uuid'], 'source' => '../equipment'],
                     [
                         'title' => 'Добавить дефект',
                         'data-toggle' => 'modal',
@@ -376,6 +376,10 @@ function () {
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
 window.location.replace("../equipment/index");
+})');
+$this->registerJs('$("#modalDefects").on("hidden.bs.modal",
+function () {
+    $(this).removeData();
 })');
 
 $this->registerJs('$("#modalAddEquipment").on("hidden.bs.modal",

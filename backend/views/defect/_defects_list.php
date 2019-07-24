@@ -24,7 +24,7 @@
                 <td><?= $defect['defectType']['title'] ?></td>
                 <td><?= $defect['date'] ?></td>
                 <td><?php
-                    if ($model['defectStatus'])
+                    if ($defect['defectStatus'])
                         echo '<div class="progress"><div class="critical5">Обработан</div></div>';
                     else
                         echo '<div class="progress"><div class="critical1">Не обработан</div></div>';

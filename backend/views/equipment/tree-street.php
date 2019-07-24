@@ -7,85 +7,85 @@ use yii\web\JsExpression;
 $this->title = 'Дерево элементов по расположению';
 
 ?>
-<table id="tree" style="width: 100%">
-    <colgroup>
-        <col style="width:*">
-        <col style="width: *">
-        <col style="width:130px">
-        <col style="width:130px">
-        <col style="width:160px">
-        <col style="width:130px">
-        <col style="width: 100px">
-        <col style="width: 90px">
-    </colgroup>
-    <thead style="background-color: #337ab7; color: white">
-    <tr>
-        <th colspan="1">
-            <?php
-            try {
-                echo Select2::widget([
-                    'id' => 'user_select',
-                    'name' => 'user_select',
-                    'language' => 'ru',
-                    'data' => $users,
-                    'options' => ['placeholder' => 'Выберите пользователя...'],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]);
-            } catch (Exception $e) {
-            }
-            ?>
-        </th>
-        <th colspan="1" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">
-            <button class="btn btn-success" type="button" id="addButton" style="padding: 5px 10px">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-            </button>
-            &nbsp
-            <button class="btn btn-danger" type="button" id="removeButton" style="padding: 5px 10px">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-            </button>
-        </th>
-        <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
-        </th>
-    </tr>
-    <tr style="background-color: #3c8dbc; color: whitesmoke">
-        <th align="center">Элементы
-            <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
-                <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
-            </button>
-            <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
-                <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
-            </button>
-        </th>
-        <th>Задачи</th>
-        <th>Заводской номер</th>
-        <th>Статус</th>
-        <th>Исполнители</th>
-        <th>Дата ввода в эксплуатацию</th>
-        <th>Файлы</th>
-        <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-    </tr>
-    </tbody>
-</table>
+    <table id="tree" style="width: 100%">
+        <colgroup>
+            <col style="width:*">
+            <col style="width: *">
+            <col style="width:130px">
+            <col style="width:130px">
+            <col style="width:160px">
+            <col style="width:130px">
+            <col style="width: 100px">
+            <col style="width: 90px">
+        </colgroup>
+        <thead style="background-color: #337ab7; color: white">
+        <tr>
+            <th colspan="1">
+                <?php
+                try {
+                    echo Select2::widget([
+                        'id' => 'user_select',
+                        'name' => 'user_select',
+                        'language' => 'ru',
+                        'data' => $users,
+                        'options' => ['placeholder' => 'Выберите пользователя...'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);
+                } catch (Exception $e) {
+                }
+                ?>
+            </th>
+            <th colspan="1" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">
+                <button class="btn btn-success" type="button" id="addButton" style="padding: 5px 10px">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                </button>
+                &nbsp
+                <button class="btn btn-danger" type="button" id="removeButton" style="padding: 5px 10px">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </th>
+            <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
+            </th>
+        </tr>
+        <tr style="background-color: #3c8dbc; color: whitesmoke">
+            <th align="center">Элементы
+                <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
+                    <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
+                    <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+                </button>
+            </th>
+            <th>Задачи</th>
+            <th>Заводской номер</th>
+            <th>Статус</th>
+            <th>Исполнители</th>
+            <th>Дата ввода в эксплуатацию</th>
+            <th>Файлы</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+        </tr>
+        </tbody>
+    </table>
 
-<div class="modal remote fade" id="modalChange">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg"></div>
+    <div class="modal remote fade" id="modalChange">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg"></div>
+        </div>
     </div>
-</div>
 
 <?php
 $this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js',
@@ -211,7 +211,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree-street"                                                                        
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDocumentation\').modal(\'show\');
@@ -232,7 +233,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree-street"                                                                                                           
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDefect\').modal(\'show\');
@@ -294,83 +296,88 @@ try {
 }
 ?>
 
-<div class="modal remote fade" id="modalMeasures">
-    <div class="modal-dialog" style="width: 600px">
-        <div class="modal-content loader-lg">
+    <div class="modal remote fade" id="modalMeasures">
+        <div class="modal-dialog" style="width: 600px">
+            <div class="modal-content loader-lg">
+            </div>
         </div>
     </div>
-</div>
 
-<div class="modal remote fade" id="modalTasks">
-    <div class="modal-dialog" style="width: 1000px">
-        <div class="modal-content loader-lg">
+    <div class="modal remote fade" id="modalTasks">
+        <div class="modal-dialog" style="width: 1000px">
+            <div class="modal-content loader-lg">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalRegister">
-    <div class="modal-dialog" style="width: 800px">
-        <div class="modal-content loader-lg" id="modalRegisterContent">
+    <div class="modal remote fade" id="modalRegister">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content loader-lg" id="modalRegisterContent">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalStatus">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalStatus">
+        <div class="modal-dialog" style="width: 250px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalSN">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalSN">
+        <div class="modal-dialog" style="width: 250px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddTask">
-    <div class="modal-dialog" style="width: 400px; height: 300px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalAddTask">
+        <div class="modal-dialog" style="width: 400px; height: 300px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAttributes">
-    <div class="modal-dialog" style="width: 800px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalAttributes">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddPeriodicTask">
-    <div class="modal-dialog" style="width: 600px; height: 300px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px" id="modalContent">
+    <div class="modal remote fade" id="modalAddPeriodicTask">
+        <div class="modal-dialog" style="width: 600px; height: 300px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px" id="modalContent">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddDocumentation">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContent">
+    <div class="modal remote fade" id="modalAddDocumentation">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContent">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddDefect">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentDefect">
+    <div class="modal remote fade" id="modalAddDefect">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentDefect">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddEquipment">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentEquipment">
+    <div class="modal remote fade" id="modalAddEquipment">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentEquipment">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentRequest"></div>
+    <div class="modal remote fade" id="modalRequest">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentRequest"></div>
+        </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalMeasure">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentMeasure"></div>
+    <div class="modal remote fade" id="modalDefects">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContent"></div>
+        </div>
     </div>
-</div>
+    <div class="modal remote fade" id="modalMeasure">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentMeasure"></div>
+        </div>
+    </div>
 
 <?php
 $this->registerJs('$("#modalRegister").on("hidden.bs.modal",
