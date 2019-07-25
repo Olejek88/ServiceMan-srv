@@ -6,6 +6,7 @@ use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use common\models\Task;
+use yii\db\Exception;
 
 /**
  * TaskSearch represents the model behind the search form about `common\models\Task`.
@@ -19,7 +20,8 @@ class TaskSearch extends Task
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'comment', 'workStatusUuid', 'taskTemplateUuid', 'startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
+            [['uuid', 'comment', 'workStatusUuid', 'authorUuid', 'taskTemplateUuid',
+                'taskVerdictUuid','startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -39,10 +41,13 @@ class TaskSearch extends Task
      *
      * @return ActiveDataProvider
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
         $query = Task::find();
+        $query->joinWith('equipment.object.house');
+        $query->joinWith('equipment.object.house.street');
 
         // add conditions that should always apply here
 
@@ -62,6 +67,7 @@ class TaskSearch extends Task
         $query->andFilterWhere([
             '_id' => $this->_id,
             'taskTemplateUuid' => $this->taskTemplateUuid,
+            'taskVerdictUuid' => $this->taskVerdictUuid,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
             'createdAt' => $this->createdAt,
@@ -70,6 +76,7 @@ class TaskSearch extends Task
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'comment', $this->comment])
+            ->andFilterWhere(['like', 'authorUuid', $this->authorUuid])
             ->andFilterWhere(['like', 'workStatusUuid', $this->workStatusUuid]);
 
         return $dataProvider;

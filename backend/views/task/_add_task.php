@@ -26,7 +26,7 @@ use yii\helpers\Html;
 ?>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4 class="modal-title">Добавить задачу !</h4>
+    <h4 class="modal-title">Добавить задачу</h4>
 </div>
 <div class="modal-body">
     <?php
@@ -55,9 +55,11 @@ use yii\helpers\Html;
         $users = UserSystem::find()
             ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid']])
             ->all();
-    } else
-        $users = Users::find()->where(['<>','name','sUser'])->all();
-    $items = ArrayHelper::map($users, 'uuid', 'name');
+        $items = ArrayHelper::map($users, 'userUuid', 'user.name');
+    } else {
+        $users = Users::find()->where(['<>', 'name', 'sUser'])->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+    }
     echo '<label class="control-label">Исполнитель</label>';
     echo Select2::widget(
         [

@@ -118,7 +118,7 @@ class TaskTemplate extends ZhkhActiveRecord
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
             'description' => Yii::t('app', 'Описание'),
-            'normative' => Yii::t('app', 'Норматив (мин)'),
+            'normative' => Yii::t('app', 'Норматив (час)'),
             'taskTypeUuid' => Yii::t('app', 'Тип задачи'),
             'taskType' => Yii::t('app', 'Тип задачи'),
             'createdAt' => Yii::t('app', 'Создан'),

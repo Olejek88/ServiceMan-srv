@@ -1028,12 +1028,15 @@ class EquipmentController extends ZhkhController
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
-            if (isset($_GET["defectUuid"]))
+            if (isset($_GET["defectUuid"])) {
                 $defectUuid = $_GET["defectUuid"];
+                $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
+                $defect['defectStatus']=1;
+                $defect->save();
+                $model->comment = 'Задача создана по дефекту '.$defect['title'];
+            }
             else
                 $defectUuid = 0;
-            $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
-            $model->comment = 'Задача создана по дефекту '.$defect['title'];
             return $this->renderAjax('_select_task', [
                 'model' => $model,
                 'equipmentUuid' => $_GET["equipmentUuid"],
