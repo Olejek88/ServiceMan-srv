@@ -72,7 +72,7 @@ class m190604_063732_add_new_references extends Migration
         $this->insertIntoTaskTemplate('C299C2CB-7475-4BE9-8EEC-5052A9232D37',
             'Ликвидацию засоров мусоропроводов внутри многоквартирных',
             'Ликвидацию засоров мусоропроводов внутри многоквартирных',
-            23, TaskType::TASK_TYPE_REPAIR, $currentTime, $currentTime);
+            2, TaskType::TASK_TYPE_REPAIR, $currentTime, $currentTime);
         $this->insertIntoTaskTemplate('A892957E-F63D-40F0-8D46-F21D6EF226AF',
             'Устранение аварийных повреждений внутридомовых систем',
             'Устранение аварийных повреждений внутридомовых инженерных систем холодного и горячего водоснабжения, водоотведения',

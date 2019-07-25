@@ -65,10 +65,6 @@ class m190617_070258_new_changes extends Migration
             'Ликвидация засоров внутридомовой инженерной системы водоотведения',
             '970596BE-0BA3-49F3-A9C6-666E3FD2EE6F',
             $currentTime, $currentTime);
-        $this->insertIntoRequestType('request_type','1FA56BE9-0208-42B5-ACAE-89B1DE827A60',
-            'Ликвидация засоров внутридомовой инженерной системы водоотведения',
-            '3E5D09B6-6E83-4DD4-9CA2-89D7CF16FCCA',
-            $currentTime, $currentTime);
         $this->insertIntoRequestType('request_type','881AA443-FAA3-4AAB-B6FC-9C9B38BCACE6',
             'Локализация аварийных повреждений электроснабжения',
             '3E5D09B6-6E83-4DD4-9CA2-89D7CF16FCCA',

@@ -208,7 +208,7 @@ class TaskTemplateController extends ZhkhController
         foreach ($types as $type) {
             $expanded = false;
             $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
-                'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['_id'] . "",
+                'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['uuid'] . "",
                 'operation' => false];
             $childIdx = count($tree['children']) - 1;
             $taskTemplateTypes = TaskType::find()
@@ -844,7 +844,7 @@ class TaskTemplateController extends ZhkhController
         if (isset($_POST["types_id"]))
             $types_id = $_POST["types_id"];
 
-        if ($type_id && $types_id) {
+        if ($type_id) {
             $taskTemplate = new TaskTemplate();
 
             return $this->renderAjax('_add_task_type', [

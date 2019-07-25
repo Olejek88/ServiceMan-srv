@@ -9,6 +9,7 @@ use common\models\Contragent;
 use common\models\ContragentType;
 use common\models\Equipment;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
@@ -94,9 +95,12 @@ use yii\helpers\Html;
     echo '</br>';
 
     if (!$model->objectUuid) {
-        $objects = Objects::find()->all();
+        $objects = Objects::find()
+            ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
+            ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+            ->all();
         $items = ArrayHelper::map($objects, 'uuid', function ($object) {
-            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['title'];
+            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['objectType']['title'] .' '. $object['title'];
         });
         echo $form->field($model, 'objectUuid',
             ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
