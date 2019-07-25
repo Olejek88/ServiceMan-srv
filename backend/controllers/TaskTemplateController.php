@@ -219,10 +219,12 @@ class TaskTemplateController extends ZhkhController
                     ->where(['task_template.taskTypeUuid' => $taskTemplateType['uuid']])
                     ->andWhere(['equipmentTypeUuid' => $type['uuid']])
                     ->all();
-                if (count ($taskTemplateEquipmentTypes)) {
+                if (count($taskTemplateEquipmentTypes)) {
                     $tree['children'][$childIdx]['children'][] =
                         ['key' => $taskTemplateType["_id"] . "",
                             'folder' => true,
+                            'type_id' => $type["uuid"],
+                            'types_id' => $taskTemplateType["uuid"],
                             'uuid' => $taskTemplateType["uuid"],
                             'created' => $taskTemplateType["changedAt"],
                             'expanded' => true,
@@ -237,6 +239,8 @@ class TaskTemplateController extends ZhkhController
                         $tree['children'][$childIdx]['children'][$childIdx2]['children'][] =
                             ['key' => $taskTemplateEquipmentType["taskTemplate"]["_id"] . "",
                                 'folder' => false,
+                                'type_id' => $taskTemplateEquipmentType["equipmentType"]["uuid"],
+                                'task_id' => $taskTemplateEquipmentType["taskTemplate"]["uuid"],
                                 'uuid' => $taskTemplateEquipmentType["uuid"],
                                 'created' => $taskTemplateEquipmentType["taskTemplate"]["changedAt"],
                                 'description' => $taskTemplateEquipmentType["taskTemplate"]["description"],
@@ -476,6 +480,40 @@ class TaskTemplateController extends ZhkhController
             if ($folder == "false" && $task_operation_id > 0) {
                 self::removeTaskOperation($task_operation_id);
             }
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет удаление выбранного шаблона и всех операций
+     * @return mixed
+     * @throws StaleObjectException
+     * @throws \Throwable
+     */
+    public
+    function actionRemoveTemplate()
+    {
+        $task_id = 0;
+        $type_id = 0;
+        if (isset($_POST["type_id"]))
+            $type_id = $_POST["type_id"];
+        if (isset($_POST["task_id"]))
+            $task_id = $_POST["task_id"];
+
+        // задача
+        if ($task_id) {
+            $taskTemplate = TaskTemplate::find()->where(['uuid' => $task_id])->one();
+            if ($taskTemplate) {
+                $taskTemplateEquipmentType = TaskTemplateEquipmentType::find()
+                    ->where(['equipmentTypeUuid' => $type_id])
+                    ->andWhere(['taskTemplateUuid' => $task_id])
+                    ->one();
+                $taskTemplateEquipmentType->delete();
+                $taskTemplate->delete();
+                return 2;
+            }
+            return 1;
         }
         $this->enableCsrfValidation = false;
         return 0;
@@ -758,5 +796,96 @@ class TaskTemplateController extends ZhkhController
         }
         $this->enableCsrfValidation = false;
         return 0;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования, шаблона задачи или операции
+     *
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionEditTemplate()
+    {
+        $type_id = 0;
+        $task_id = 0;
+
+        if (isset($_POST["task_id"]))
+            $task_id = $_POST["task_id"];
+        if (isset($_POST["type_id"]))
+            $type_id = $_POST["type_id"];
+        $types_id=0;
+        if ($task_id) {
+            $taskTemplate = TaskTemplate::find()->where(['uuid' => $task_id])->one();
+            if ($taskTemplate) {
+                return $this->renderAjax('_add_task_type', [
+                    'types' => $types_id,
+                    'taskTemplate' => $taskTemplate,
+                    'equipmentTypeUuid' => $type_id
+                ]);
+            }
+            return 1;
+        }
+        $this->enableCsrfValidation = false;
+        return $task_id;
+    }
+
+    /**
+     * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
+     *
+     * @return mixed
+     */
+    public function actionAddTemplate()
+    {
+        $type_id = 0;
+        if (isset($_POST["type_id"]))
+            $type_id = $_POST["type_id"];
+        $types_id = 0;
+        if (isset($_POST["types_id"]))
+            $types_id = $_POST["types_id"];
+
+        if ($type_id && $types_id) {
+            $taskTemplate = new TaskTemplate();
+
+            return $this->renderAjax('_add_task_type', [
+                'types' => $types_id,
+                'taskTemplate' => $taskTemplate,
+                'equipmentTypeUuid' => $type_id
+            ]);
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    /**
+     * Creates a new TaskTemplate and correlation model.
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public
+    function actionNewTemplate()
+    {
+        if (isset($_POST['taskTemplateUuid']))
+            $model = TaskTemplate::find()->where(['uuid' => $_POST['taskTemplateUuid']])->one();
+        else
+            $model = new TaskTemplate();
+        $request = Yii::$app->getRequest();
+        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        if ($request->isPost && $model->load($request->post())) {
+            $model->save();
+            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            if (!isset($_POST['taskTemplateUuid'])) {
+                $taskTemplateEquipment = new TaskTemplateEquipmentType();
+                $taskTemplateEquipment->equipmentTypeUuid = $_POST['equipmentTypeUuid'];
+                $taskTemplateEquipment->taskTemplateUuid = $model->uuid;
+                $taskTemplateEquipment->uuid = MainFunctions::GUID();
+                $taskTemplateEquipment->save();
+                MainFunctions::log("tree.log", "[new] new TaskTemplateEquipment " .
+                    json_encode($taskTemplateEquipment->errors));
+                echo json_encode($taskTemplateEquipment->errors);
+            }
+        }
+        //return $this->redirect(['tree-type']);
     }
 }

@@ -286,6 +286,22 @@ class ContragentController extends ZhkhController
      * @throws Exception
      * @throws InvalidConfigException
      */
+    public function actionAddress()
+    {
+        if (isset($_POST['id']))
+            if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+                $object = ObjectContragent::find()->where(['contragentUuid' => $model['uuid']])->one();
+                if ($object)
+                    return $object['objectUuid'];
+            }
+        return '';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionName()
     {
         if (isset($_POST['id']))
