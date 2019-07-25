@@ -6,6 +6,7 @@ use backend\models\EquipmentSearch;
 use common\components\Errors;
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\Defect;
 use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentRegister;
@@ -1031,6 +1032,8 @@ class EquipmentController extends ZhkhController
                 $defectUuid = $_GET["defectUuid"];
             else
                 $defectUuid = 0;
+            $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
+            $model->comment = 'Задача создана по дефекту '.$defect['title'];
             return $this->renderAjax('_select_task', [
                 'model' => $model,
                 'equipmentUuid' => $_GET["equipmentUuid"],

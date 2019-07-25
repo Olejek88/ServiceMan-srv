@@ -121,7 +121,8 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd',
                 ]
-            ]) . '</div><div class="col-sm-2" style="width:12%">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+            ]) . '</div><div class="col-sm-2" style="width:12%">Только критичные<input name="type" type="checkbox" id="type"></div>
+             <div class="col-sm-2" style="width:12%">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']) . '</div>' .
             '<div class="col-sm-1" style="width:8%">' . '{export}' . '</div></div></form>',
             'options' => ['style' => 'width:100%']
@@ -147,9 +148,15 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
     'rowOptions' => function($model) {
-        if ($model['nextDate']<=date("Y-m-d 00:00:00", time()+24*3600*30))
-            return ['class' => 'danger'];
-        if ($model['replaceDate']<=date("Y-m-d 00:00:00", time()+24*3600*30))
+        if (isset($_GET['type'])) {
+            if ($model['nextDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30) ||
+                $model['replaceDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30))
+                return ['class' => 'danger'];
+            else
+                return ['class' => 'hide'];
+        }
+        if ($model['nextDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30) ||
+            $model['replaceDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30))
             return ['class' => 'danger'];
     }
 ]);

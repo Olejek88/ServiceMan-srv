@@ -59,52 +59,25 @@ $this->title = 'Дерево технологических карт';
         'checkbox' => true,
         'selectMode' => 3,
         'extensions' => ['table', 'contextMenu'],
-        'edit' => [
-            'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
-            'save' => new JsExpression('function(event, data) {
-                            setTimeout(function(){
-                                $(data.node.span).removeClass("pending");
-                                data.node.setTitle(data.node.title);
-                            }, 2000);
-                            return true;
-                        }'),
-            'close' => new JsExpression('function(event, data) {
-                            if(data.save) {
-                                 $(data.node.span).addClass("pending");
-                                 $.ajax({
-                                    url: "rename",
-                                    type: "post",
-                                    data: {
-                                      uuid: data.node.key,
-                                      param: data.node.title,
-                                      operation: data.node.data.operation                                         
-                                    },
-                                    success: function (data) {
-                                       }
-                                 });
-                            }
-                        }')
-        ],
         'contextMenu' => [
             'menu' => [
                 'add' => [
                     'name' => "Добавить",
                     'icon' => "add",
                     'callback' => new JsExpression('function(key, opt) {
-                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
                             var node = $.ui.fancytree.getNode(opt.$trigger);
                             $.ajax({
-                                url: "add",
+                                url: "add-template",
                                 type: "post",
                                 data: {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     type_id: node.data.type_id,
-                                    equipment_id: node.data.equipment_id,
-                                    task_id: node.data.task_id                                    
+                                    types_id: node.data.types_id,
+                                    task_id: node.data.task_id                                   
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAddOperation\').modal(\'show\');
+                                    $(\'#modalAddTask\').modal(\'show\');
                                     $(\'#modalContent\').html(data);
                                 }
                             });
@@ -114,31 +87,25 @@ $this->title = 'Дерево технологических карт';
                     'name' => "Удалить",
                     'icon' => "delete",
                     'callback' => new JsExpression('function(key, opt) {
-                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
-                            $.each(sel, function (event, data) {
                                 var node = $.ui.fancytree.getNode(opt.$trigger);
                                 $.ajax({
-                                      url: "remove",
+                                      url: "remove-template",
                                       type: "post",
                                       data: {
                                             selected_node: node.key,
                                             folder: node.folder,
                                             type_id: node.data.type_id,
-                                            equipment_id: node.data.equipment_id,
-                                            task_id: node.data.task_id,
-                                            task_template_equipment: node.data.task_template_equipment,
-                                            task_operation_id: node.data.task_operation_id                             
+                                            task_id: node.data.task_id
                                       },
                                       success: function (result) {
                                           console.log(result);
-                                          data.remove();            
+                                          node.remove();            
                                       },
                                       error: function (result) {
                                           console.log(result);
-                                          data.remove();            
+                                          node.remove();            
                                       }                                    
                                    });
-                            });
                          }')
                 ],
                 'edit' => [
@@ -147,19 +114,16 @@ $this->title = 'Дерево технологических карт';
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
                         $.ajax({
-                            url: "../task-template/edit",
+                            url: "edit-template",
                             type: "post",
                             data: {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     type_id: node.data.type_id,
-                                    equipment_id: node.data.equipment_id,
-                                    task_id: node.data.task_id,
-                                    task_template_equipment: node.data.task_template_equipment,
-                                    operation_id: node.data.operation_id                    
+                                    task_id: node.data.task_id
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAddOperation\').modal(\'show\');
+                                    $(\'#modalAddTask\').modal(\'show\');
                                     $(\'#modalContent\').html(data);
                                 }
                            }); 
@@ -184,9 +148,9 @@ $this->title = 'Дерево технологических карт';
     ]
 ]);
 
-$this->registerJs('$("#modalAddOperation").on("hidden.bs.modal",
+$this->registerJs('$("#modalAddTask").on("hidden.bs.modal",
 function () {
-     window.location.replace("tree");
+    window.location.replace("tree-type");
 })');
 
 $this->registerJs('$("#expandButton").on("click",function() {
@@ -206,7 +170,7 @@ $this->registerJs('$("#collapseButton").on("click",function() {
 })');
 ?>
 
-<div class="modal remote fade" id="modalAddOperation">
+<div class="modal remote fade" id="modalAddTask">
     <div class="modal-dialog">
         <div class="modal-content loader-lg" id="modalContent">
         </div>

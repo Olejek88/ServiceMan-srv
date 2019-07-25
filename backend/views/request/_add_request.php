@@ -6,6 +6,7 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Equipment;
 use common\models\Objects;
 use common\models\RequestStatus;
@@ -43,7 +44,11 @@ use yii\helpers\Html;
     echo Html::hiddenInput("receiptUuid", $receiptUuid);
 
     if ($source == 'table') {
-        $users = Contragent::find()->orderBy('title DESC')->all();
+        $users = Contragent::find()
+            ->where(['contragentTypeUuid' => ContragentType::ORGANIZATION])
+            ->orWhere(['contragentTypeUuid' => ContragentType::CITIZEN])
+            ->orderBy('title DESC')
+            ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
         echo $form->field($model, 'userUuid')->widget(Select2::class,
             [
@@ -68,8 +73,17 @@ use yii\helpers\Html;
                                     $('#phoneNumber').val(data);               
                                 }
                             });
-                    //console.log(data.params.data.id);
-                    //$('#phoneNumber').val(data.params.data.id);
+                        $.ajax({
+                                url: '../contragent/address',
+                                type: 'post',
+                                data: {
+                                    id: data.params.data.id
+                                },
+                                success: function (data) {
+                                    console.log(data);
+                                    $('#request-objectuuid').val(data).trigger('change');
+                                }
+                            });
                   }"]
             ]);
         echo '<label>Номер телефона заявителя</label></br>';

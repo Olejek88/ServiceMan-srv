@@ -41,7 +41,7 @@ class m190604_063732_add_new_references extends Migration
         $this->insertIntoType('task_type', TaskType::TASK_TYPE_VIEW, 'Осмотр');
         $this->insertIntoType('task_type', TaskType::TASK_TYPE_TO, 'Техобслуживание');
         //$this->insertIntoType('task_type',TaskType::TASK_TYPE_PLAN_TO, 'Плановое осблуживание');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLAN_TO, 'Внеплановое осблуживание');
+        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLAN_TO, 'Внеплановое обслуживание');
 
         $this->insertIntoType('task_type', TaskType::TASK_TYPE_REPAIR, 'Устранение аварий');
         $this->insertIntoType('task_type', TaskType::TASK_TYPE_CONTROL, 'Контроль и проверка');

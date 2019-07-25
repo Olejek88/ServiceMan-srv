@@ -597,13 +597,15 @@ class ObjectController extends ZhkhController
                                     EquipmentType::EQUIPMENT_ROOF_WATER_PIPE);
                             }
 
-                            $objectRoofUuid = self::createObject($model['uuid'], 'Внешний фасад',
+                            $objectWallUuid = self::createObject($model['uuid'], 'Внешний фасад',
                                 ObjectType::OBJECT_TYPE_SYSTEM_WALL);
-                            if ($objectRoofUuid) {
-                                self::createEquipment($objectRoofUuid, "Стены, конструкции, перекрытия",
+                            if ($objectWallUuid) {
+                                self::createEquipment($objectWallUuid, "Стены, конструкции, перекрытия",
                                     EquipmentType::EQUIPMENT_WALL);
-                                self::createEquipment($objectRoofUuid, "Водостоки",
+                                self::createEquipment($objectWallUuid, "Водостоки",
                                     EquipmentType::EQUIPMENT_WALL_WATER);
+                                self::createEquipment($objectWallUuid, "Фундамент",
+                                    EquipmentType::EQUIPMENT_BASEMENT);
                             }
 
                             if (isset($_POST['yard']) && $_POST['yard']) {
@@ -682,7 +684,7 @@ class ObjectController extends ZhkhController
                                 self::createEquipment($objectBasementUuid, "Помещение",
                                     EquipmentType::EQUIPMENT_BASEMENT_ROOM);
                                 self::createEquipment($objectBasementUuid, "Входные двери",
-                                    EquipmentType::EQUIPMENT_BASEMENT);
+                                    EquipmentType::EQUIPMENT_BASEMENT_DOOR);
                             }
 
                             if ((isset($_POST['stages']) && $_POST['stages'] > 0) &&
