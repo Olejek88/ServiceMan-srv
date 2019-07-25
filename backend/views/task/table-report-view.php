@@ -4,8 +4,10 @@
  */
 
 use common\components\MainFunctions;
+use common\models\EquipmentStatus;
 use common\models\Objects;
 use common\models\Request;
+use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -126,6 +128,13 @@ $gridColumns = [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'workStatusUuid',
         'headerOptions' => ['class' => 'text-center'],
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(WorkStatus::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'editableOptions' => function () {
@@ -159,7 +168,6 @@ $gridColumns = [
             $status = MainFunctions::getColorLabelByStatus($model['workStatus'], 'work_status_edit');
             return $status;
         },
-        'mergeHeader' => true,
         'format' => 'raw'
     ],
     [
@@ -169,6 +177,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data['equipment']['object']->getFullTitle();
@@ -219,7 +228,13 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'mergeHeader' => true,
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(Users::find()->where(['!=','name','sUser'])->orderBy('name')->all(),
+            'uuid', 'name'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if ($data['authorUuid'])

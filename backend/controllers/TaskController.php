@@ -10,8 +10,6 @@ use common\models\Equipment;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\Operation;
-use common\models\Orders;
-use common\models\OrderStatus;
 use common\models\Request;
 use common\models\Task;
 use common\models\TaskTemplate;
@@ -34,6 +32,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndex()
@@ -42,7 +41,12 @@ class TaskController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         $dataProvider->query->orderBy('_id DESC');
-
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
         return $this->render(
             'table-report-view',
             [
@@ -91,6 +95,12 @@ class TaskController extends ZhkhController
             $dataProvider2->query->andWhere(['<', 'startDate', $_GET['end_time']]);
         }
         $dataProvider2->pagination->pageParam = 'dp2';
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render(
             'table-user',
@@ -161,6 +171,12 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
         }
         $dataProvider->query->orderBy('_id DESC');
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
         return $this->render(
             'table-report-view',
             [
@@ -206,6 +222,13 @@ class TaskController extends ZhkhController
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
+
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'deadlineDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'deadlineDate', $_GET['end_time']]);
@@ -429,6 +452,7 @@ class TaskController extends ZhkhController
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
                     $defect->taskUuid = $task['uuid'];
+                    $defect['defectStatus'] = 1;
                     $defect->save();
                 }
             }

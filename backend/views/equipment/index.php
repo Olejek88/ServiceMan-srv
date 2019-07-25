@@ -262,7 +262,7 @@ $gridColumns = [
         'buttons' => [
             'add' => function ($url, $model) {
                 return Html::a('<span class="fa fa-tasks"></span>&nbsp',
-                    ['../task/form', 'equipmentUuid' => $model['uuid']],
+                    ['../task/form', 'equipmentUuid' => $model['uuid'], 'type_uuid'=> 0],
                     [
                         'title' => 'Добавить задачу',
                         'data-toggle' => 'modal',
