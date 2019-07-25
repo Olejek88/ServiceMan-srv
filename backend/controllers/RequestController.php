@@ -21,6 +21,7 @@ class RequestController extends ZhkhController
     /**
      * Lists all Request models.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndex()
@@ -123,6 +124,7 @@ class RequestController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionCreate()
     {

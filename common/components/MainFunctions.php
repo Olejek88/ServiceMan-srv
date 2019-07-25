@@ -242,7 +242,8 @@ class MainFunctions
         $task->equipmentUuid = $equipmentUuid;
         $task->workStatusUuid = WorkStatus::NEW;
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
-        //$task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
+        $task->taskDate = date('Y-m-d H:i:s',time());
+        $task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
         $task->comment = $comment;
         if ($model) {
             $task->authorUuid = $model->authorUuid;
@@ -250,7 +251,7 @@ class MainFunctions
             $task->deadlineDate = $model->deadlineDate;
         }
         if (!$task->save()) {
-            MainFunctions::log("request.log", json_encode($task->errors));
+            //MainFunctions::log("request.log", json_encode($task->errors));
             return null;
         } else {
             if ($userUuid) {
@@ -260,7 +261,7 @@ class MainFunctions
                 $taskUser->userUuid = $userUuid;
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
-                    MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    //MainFunctions::log("request.log", json_encode($taskUser->errors));
                     return null;
                 }
             }
@@ -272,7 +273,7 @@ class MainFunctions
             }
 
         }
-        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
+        //MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
         return $task;
     }
 
