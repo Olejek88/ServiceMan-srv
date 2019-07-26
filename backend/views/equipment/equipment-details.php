@@ -1,7 +1,6 @@
 <?php
 
 use app\commands\MainFunctions;
-use backend\controllers\EquipmentController;
 use common\models\Equipment;
 use common\models\EquipmentRegister;
 use common\models\Measure;
@@ -67,11 +66,21 @@ $sort_events = \common\components\MainFunctions::array_msort($events, ['date' =>
                             </tr>
                             <tr>
                                 <td>Дата ввода в эксплуатацию</td>
-                                <td class="text-right"><?php echo date('d-m-Y', strtotime($equipment['inputDate'])) ?></td>
+                                <td class="text-right"><?php
+                                    if (isset($equipment['inputDate']))
+                                        echo date('d-m-Y', strtotime($equipment['inputDate']));
+                                    else
+                                        echo 'не задано';
+                                    ?></td>
                             </tr>
                             <tr>
                                 <td>Дата поверки</td>
-                                <td class="text-right"><?php echo date('d-m-Y', strtotime($equipment['testDate'])) ?></td>
+                                <td class="text-right"><?php
+                                    if (isset($equipment['inputDate']))
+                                        echo date('d-m-Y', strtotime($equipment['inputDate']));
+                                    else
+                                        echo 'не задано';
+                                    ?></td>
                             </tr>
                             <tr>
                                 <td>Дата следущей поверки</td>

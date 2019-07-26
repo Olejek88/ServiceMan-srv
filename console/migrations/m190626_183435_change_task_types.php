@@ -14,20 +14,7 @@ class m190626_183435_change_task_types extends Migration
      */
     public function safeUp()
     {
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_CURRENT_REPAIR, 'Текущий ремонт');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_PLAN_REPAIR, 'Плановый ремонт');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_CURRENT_CHECK, 'Текущий осмотр');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLANNED_CHECK, 'Внеочередной осмотр');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_SEASON_CHECK, 'Сезонный осмотр');
-        //$this->insertIntoType('task_type',TaskType::TASK_TYPE_CONTROL, 'Контроль и проверка');
-        //$this->insertIntoType('task_type',TaskType::TASK_TYPE_REPAIR, 'Устранение аварий');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_NOT_PLAN_TO, 'Внеплановое осблуживание');
-        //$this->insertIntoType('task_type',TaskType::TASK_TYPE_PLAN_TO, 'Плановое осблуживание');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_MEASURE, 'Снятие показаний');
-        $this->insertIntoType('task_type',TaskType::TASK_TYPE_POVERKA, 'Поверка');
-        //$this->insertIntoType('task_type',TaskType::TASK_TYPE_INSTALL, 'Монтаж');
-
-        $taskTemplates = TaskTemplate::find()->where(['taskTypeUuid' => TaskType::TASK_TYPE_REPAIR])->all();
+/*        $taskTemplates = TaskTemplate::find()->where(['taskTypeUuid' => TaskType::TASK_TYPE_REPAIR])->all();
         foreach ($taskTemplates as $taskTemplate) {
             $taskTemplate->taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR;
             $taskTemplate->save();
@@ -71,7 +58,7 @@ class m190626_183435_change_task_types extends Migration
         }
         $taskType = TaskType::find()->where(['uuid' => TaskType::TASK_TYPE_OVERHAUL])->one();
         if ($taskType)
-            $taskType->delete();
+            $taskType->delete();*/
 
     }
 

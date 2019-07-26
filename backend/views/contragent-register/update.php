@@ -1,8 +1,9 @@
 <?php
-/* @var $model \common\models\ContragentRegister */
+/* @var $model ContragentRegister */
 
+use common\models\ContragentRegister;
 use yii\helpers\Html;
-$this->title = Yii::t('app', 'Обновить журнал оборудования');
+$this->title = Yii::t('app', 'Обновить журнал элементов');
 ?>
 <div class="Contragent-update box-padding">
 

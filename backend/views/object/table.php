@@ -6,6 +6,7 @@ use common\models\ObjectStatus;
 use common\models\ObjectType;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -42,14 +43,13 @@ $gridColumns = [
         'expandOneOnly' => true
     ],
     [
-        'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'house',
+        'attribute' => 'fullTitle',
         'vAlign' => 'middle',
         'mergeHeader' => true,
         'value' => function ($data) {
-            return 'ул.' . $data['house']['street']->title . ', д.' . $data['house']->number;
+            return $data->getFullTitle();
         },
-        'header' => 'Дом',
+        'header' => 'Дом'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'format' => 'raw',
     ],
     [
@@ -168,9 +168,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/object/create'], ['class' => 'btn btn-success']),
-            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
-                ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
+            Html::a('Новый', ['/object/create'], ['class' => 'btn btn-success'])
         ],
         '{export}',
     ],

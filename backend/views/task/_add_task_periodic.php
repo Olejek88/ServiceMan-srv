@@ -8,6 +8,7 @@ use common\components\MainFunctions;
 use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -44,9 +45,28 @@ use yii\helpers\Html;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
-    $taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
+//    $taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
+    //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
+    //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
+    //!5 сезонный осмотры const TASK_TYPE_SEASON_CHECK
+    //6 плановое обслуживание const TASK_TYPE_PLAN_TO
+    //10 снятие показаний const TASK_TYPE_MEASURE
+    //11 поверка const TASK_TYPE_POVERKA
+
+    $taskTemplate = TaskTemplateEquipmentType::find()
+        ->joinWith('taskTemplate')
+        ->where(['equipmentTypeUuid' => $type_uuid])
+        ->andWhere(['or',
+            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_TO],
+            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
+            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
+            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA]])
+        ->orderBy('task_template.taskTypeUuid')
+        ->all();
+
     $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
-        return $data['taskTemplate']['taskType']['title'].' : '.$data['taskTemplate']['title'];
+        return $data['taskTemplate']['taskType']['title'].' :: '.$data['taskTemplate']['title'];
     });
     echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
         [
@@ -63,7 +83,7 @@ use yii\helpers\Html;
     echo $form->field($model, 'period')->textInput(['maxlength' => true]);
     ?>
 
-    <label>Дата первого создания</label>
+    <label>Дата первого осмотра</label>
     <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
         <?= DatePicker::widget([
             'attribute' => 'last_date',

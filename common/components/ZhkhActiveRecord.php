@@ -38,7 +38,6 @@ class ZhkhActiveRecord extends ActiveRecord
                 }
             }
         }
-
         return $aq;
     }
 

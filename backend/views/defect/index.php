@@ -1,8 +1,11 @@
 <?php
 /* @var $searchModel backend\models\DefectSearch */
 
+use common\models\DefectType;
+use common\models\Users;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС::Дефекты');
@@ -16,11 +19,13 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '120px',
+        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
         'attribute' => 'title',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -28,32 +33,45 @@ $gridColumns = [
     ],
     [
         'attribute' => 'equipment.title',
-        'header' => 'Элементы',
+        'header' => 'Элемент',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
     ],
     [
-        'attribute' => 'defectType.title',
+        'attribute' => 'defectTypeUuid',
         'header' => 'Тип дефекта',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(DefectType::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'headerOptions' => ['class' => 'text-center'],
+        'format' => 'raw',
+        'content' => function ($data) {
+            return $data['defectType']['title'];
+        }
     ],
     [
-        'header' => 'Адрес',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'mergeHeader' => true,
         'headerOptions' => ['class' => 'text-center'],
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'value' => function ($model) {
             return $model['equipment']['object']->getFullTitle();
         },
@@ -93,11 +111,19 @@ $gridColumns = [
         },
     ],
     [
-        'attribute' => 'user.name',
+        'attribute' => 'userUuid',
+        'value' => 'user.name',
         'header' => 'Исполнитель',
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '200px',
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
+            'uuid', 'name'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -139,6 +165,7 @@ $gridColumns = [
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
     'columns' => $gridColumns,
     'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
     'beforeHeader' => [

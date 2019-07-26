@@ -1,7 +1,10 @@
 <?php
 /* @var $stages */
 
+use common\components\MainFunctions;
+use common\models\Request;
 use common\models\WorkStatus;
+use yii\helpers\Html;
 
 ?>
 <div class="modal-header">
@@ -12,15 +15,18 @@ use common\models\WorkStatus;
     <table class="table table-striped table-hover text-left">
         <thead>
         <tr>
+            <th>Дата</th>
             <th>Исполнитель</th>
             <th>Задача</th>
             <th>Статус</th>
-            <th>Дата</th>
+            <th>Вердикт</th>
+            <th>Заявка</th>
         </tr>
         </thead>
         <tbody>
         <?php foreach ($tasks as $task): ?>
             <tr>
+                <td><?= $task['changedAt'] ?></td>
                 <td><?php
                     $users = $task['users'];
                     $users_list="";
@@ -43,7 +49,21 @@ use common\models\WorkStatus;
                     if ($task['workStatusUuid']==WorkStatus::CANCELED) $class = "critical4";
                     echo '<div class="progress"><div class="'.$class.'">'.$task['workStatus']['title'].'</div></div>';
                     ?></td>
-                <td><?= $task['changedAt'] ?></td>
+                <td><?php
+                    echo MainFunctions::getColorLabelByStatus($task['taskVerdict'], 'task_verdict');
+                ?>
+                </td>
+                <td><?php
+                $request = Request::find()->where(['taskUuid' => $task['uuid']])->one();
+                if ($request) {
+                    $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+                    $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
+                    echo $link;
+                } else {
+                    echo "без заявки";
+                }
+                ?>
+                </td>
             </tr>
         <?php endforeach; ?>
         </tbody>

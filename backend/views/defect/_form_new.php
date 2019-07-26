@@ -45,6 +45,57 @@ use yii\widgets\ActiveForm;
 
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
 
+    $streets = Street::find()->all();
+    $items = ArrayHelper::map($streets, 'uuid', 'title');
+    echo Select2::widget(
+        [
+            'name' => 'street',
+            'language' => 'ru',
+            'data' => $items,
+            'options' => ['placeholder' => 'Улица ...'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+            'pluginEvents' => [
+                "select2:select" => "function(data) { 
+                    $.ajax({
+                         url: '../object/house',
+                         type: 'post',
+                         data: {
+                             id: data.params.data.id
+                         },
+                         success: function (data) {
+                              console.log(data);
+                              $('#house').val(data);
+                           }
+                        });
+                  }"]
+        ]);
+
+    echo Select2::widget(
+        [
+            'name' => 'house',
+            'language' => 'ru',
+            'options' => ['id' => 'house', 'placeholder' => 'Дом ...'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+            'pluginEvents' => [
+                "select2:select" => "function(data) { 
+                    $.ajax({
+                         url: '../object/get-objects',
+                         type: 'post',
+                         data: {
+                             id: data.params.data.id
+                         },
+                         success: function (data) {
+                              console.log(data);
+                              $('#phoneNumber').val(data);               
+                           }
+                        });
+                  }"]
+        ]);
+
     $equipments = Equipment::find()->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
         return $model->getFullTitle();
@@ -67,18 +118,18 @@ use yii\widgets\ActiveForm;
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-    <p style="width: 0; margin-bottom: 0;">Дата</p>
-        <?php echo $form->field($model, 'date')->widget(DateTimePicker::class,
-            [
-                'language' => 'ru',
-                'size' => 'ms',
-                'clientOptions' => [
-                    'autoclose' => true,
-                    'linkFormat' => 'yyyy-mm-dd H:ii:ss',
-                    'todayBtn' => true,
-                ]
+        <p style="width: 0; margin-bottom: 0;">Дата</p>
+        <?= DateTimePicker::widget([
+            'model' => $model,
+            'attribute' => 'date',
+            'language' => 'ru',
+            'size' => 'ms',
+            'clientOptions' => [
+                'autoclose' => true,
+                'linkFormat' => 'yyyy-mm-dd H:ii:ss',
+                'todayBtn' => true
             ]
-        );
+        ]);
         ?>
     </div>
 

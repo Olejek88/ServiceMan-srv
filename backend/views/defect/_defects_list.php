@@ -12,8 +12,8 @@
             <th>Пользователь</th>
             <th>Дефект</th>
             <th>Тип дефекта</th>
-            <th>Статус</th>
             <th>Время</th>
+            <th>Статус</th>
         </tr>
         </thead>
         <tbody>
@@ -22,6 +22,7 @@
                 <td><?= $defect['user']['name'] ?></td>
                 <td><?= $defect['title'] ?></td>
                 <td><?= $defect['defectType']['title'] ?></td>
+                <td><?= $defect['date'] ?></td>
                 <td><?php
                     if ($model['defectStatus'])
                         echo '<div class="progress"><div class="critical5">Обработан</div></div>';
@@ -29,7 +30,6 @@
                         echo '<div class="progress"><div class="critical1">Не обработан</div></div>';
                     ?>
                 </td>
-                <td><?= $defect['date'] ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>

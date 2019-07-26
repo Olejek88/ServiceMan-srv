@@ -6,6 +6,7 @@ use common\models\Equipment;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * EquipmentSearch represents the model behind the search form about `common\models\Equipment`.
@@ -39,10 +40,13 @@ class EquipmentSearch extends Equipment
      *
      * @return ActiveDataProvider
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
         $query = Equipment::find();
+        $query->joinWith('object.house');
+        $query->joinWith('object.house.street');
 
         // add conditions that should always apply here
 
@@ -61,6 +65,7 @@ class EquipmentSearch extends Equipment
         // grid filtering conditions
         $query->andFilterWhere([
             '_id' => $this->_id,
+            'equipment.deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

@@ -16,12 +16,12 @@ use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use common\models\TaskUser;
-use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -241,6 +241,7 @@ class TaskController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -346,6 +347,7 @@ class TaskController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTree()
@@ -407,6 +409,7 @@ class TaskController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionAddTask()
@@ -446,9 +449,10 @@ class TaskController extends ZhkhController
             $model = new Task();
             if (isset($_GET["requestUuid"]))
                 return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'requestUuid' => $_GET["requestUuid"]]);
+                    'requestUuid' => $_GET["requestUuid"], 'type_uuid' => $_GET["type_uuid"]]);
             else
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"]]);
+                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                    'type_uuid' => $_GET["type_uuid"]]);
         }
         return "";
     }
@@ -470,6 +474,7 @@ class TaskController extends ZhkhController
     /**
      * Creates a new Task model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public
@@ -513,7 +518,7 @@ class TaskController extends ZhkhController
                     $taskUser->uuid = MainFunctions::GUID();
                     $taskUser->taskUuid = $_POST['taskUuid'];
                     $taskUser->userUuid = $user['uuid'];
-                    $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+                    $taskUser->oid = Users::getCurrentOid();
                     $taskUser->save();
                     //MainFunctions::register('Смена исполнителя', 'К задаче ')
                 }
@@ -618,6 +623,7 @@ class TaskController extends ZhkhController
      * Displays a single Task model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionInfo()
     {
@@ -648,7 +654,7 @@ class TaskController extends ZhkhController
             $taskUser->uuid = MainFunctions::GUID();
             $taskUser->taskUuid = $taskUuid;
             $taskUser->userUuid = $userUuid;
-            $taskUser->oid = Users::getOid(Yii::$app->user->identity);
+            $taskUser->oid = Users::getCurrentOid();
             $taskUser->save();
             //MainFunctions::register('Смена исполнителя', 'К задаче ')
         } else {

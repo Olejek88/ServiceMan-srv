@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $model common\models\EquipmentStatus */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы оборудования'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Статусы элементов'), 'url' => ['index']];
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

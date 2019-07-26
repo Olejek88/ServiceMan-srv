@@ -25,6 +25,7 @@ use common\models\UserSystem;
 use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -97,6 +98,12 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render(
             'index',
@@ -111,6 +118,7 @@ class EquipmentController extends ZhkhController
      * Lists all Equipment models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -142,6 +150,12 @@ class EquipmentController extends ZhkhController
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'testDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
+        }
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
         }
 
         return $this->render(
@@ -197,6 +211,10 @@ class EquipmentController extends ZhkhController
                 MainFunctions::register('documentation', 'Добавлено оборудование',
                     '<a class="btn btn-default btn-xs">' . $model['equipmentType']['title'] . '</a> ' . $model['title'] . '<br/>' .
                     'Серийный номер <a class="btn btn-default btn-xs">' . $model['serial'] . '</a>');
+                EquipmentRegisterController::addEquipmentRegister($model['uuid'],
+                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
+                    "Добавлено оборудование");
+
                 return $this->redirect(['view', 'id' => $model->_id]);
             }
             echo json_encode($model->errors);
@@ -287,6 +305,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -308,7 +327,9 @@ class EquipmentController extends ZhkhController
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])
+                ->andWhere(['deleted' => false])
+                ->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
                     self::addEquipment($equipment,"");
@@ -333,6 +354,7 @@ class EquipmentController extends ZhkhController
      * @param $date_start
      * @param $date_end
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -356,6 +378,7 @@ class EquipmentController extends ZhkhController
                     $equipment = Equipment::find()
                         ->select('*')
                         ->where(['flatUuid' => $flat['uuid']])
+                        ->andWhere(['deleted' => false])
                         ->orderBy('changedAt desc')
                         ->one();
                     if ($equipment) {
@@ -456,6 +479,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -519,6 +543,7 @@ class EquipmentController extends ZhkhController
      * Build tree of equipment by user
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -528,6 +553,7 @@ class EquipmentController extends ZhkhController
         $fullTree = array();
         $streets = Street::find()
             ->select('*')
+            ->andWhere(['deleted' => false])
             ->orderBy('title')
             ->all();
         foreach ($streets as $street) {
@@ -541,8 +567,9 @@ class EquipmentController extends ZhkhController
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])->
-            orderBy('number')->all();
+            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])
+                ->andWhere(['deleted' => false])
+                ->orderBy('number')->all();
             foreach ($houses as $house) {
                 //$user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
                 $user = Users::find()->where(['uuid' =>
@@ -564,7 +591,9 @@ class EquipmentController extends ZhkhController
                         'folder' => true
                     ];
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])->all();
+                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])
+                    ->andWhere(['deleted' => false])
+                    ->all();
                 foreach ($objects as $object) {
                     if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
                         $title = $object['objectType']['title'] . ' ' . $object['title'];
@@ -582,7 +611,9 @@ class EquipmentController extends ZhkhController
                             'folder' => true
                         ];
                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
-                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
+                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])
+                        ->andWhere(['deleted' => false])
+                        ->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
                             self::addEquipment($equipment, $user_name);
@@ -590,6 +621,7 @@ class EquipmentController extends ZhkhController
                 }
             }
         }
+
         $users = Users::find()->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -679,6 +711,46 @@ class EquipmentController extends ZhkhController
             $user = $_POST["user"];
             if ($user && $node)
                 $this->updateUserHouse($user, $node);
+        }
+        $this->enableCsrfValidation = false;
+        return 0;
+    }
+
+    public function actionDeleted()
+    {
+        if (isset($_POST["type"]))
+            $type = $_POST["type"];
+        else $type = 0;
+
+        if (isset($_POST["selected_node"]) && $type) {
+            if ($type == 'street') {
+                $street = Street::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($street) {
+                    $street['deleted']=true;
+                    $street->save();
+                }
+            }
+            if ($type == 'house') {
+                $house = House::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($house) {
+                    $house['deleted']=true;
+                    $house->save();
+                }
+            }
+            if ($type == 'object') {
+                $object = Objects::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($object) {
+                    $object['deleted']=true;
+                    $object->save();
+                }
+            }
+            if ($type == 'equipment') {
+                $equipment = Equipment::find()->where(['uuid' => $_POST["selected_node"]])->one();
+                if ($equipment) {
+                    $equipment['deleted']=true;
+                    $equipment->save();
+                }
+            }
         }
         $this->enableCsrfValidation = false;
         return 0;
@@ -829,6 +901,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -868,6 +941,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -893,6 +967,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return bool|string
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1003,6 +1078,7 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет редактирование оборудования
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1073,6 +1149,7 @@ class EquipmentController extends ZhkhController
     /**
      * Creates a new Equipment model.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1197,6 +1274,7 @@ class EquipmentController extends ZhkhController
      * @param $equipment
      * @param $user
      * @return array
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1263,16 +1341,7 @@ class EquipmentController extends ZhkhController
                 [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
             );
         }
-
-        $links = Html::a('<span class="glyphicon glyphicon-check"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
-            [
-                'title' => 'Добавить заявку',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRequest',
-            ]
-        );
-        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+        $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Дефекты',
@@ -1289,7 +1358,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalChange',
             ]
         );*/
-        $links .= Html::a('<span class="glyphicon glyphicon-stats"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
             ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Измерения',
@@ -1297,7 +1366,7 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalMeasures',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-calendar"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-book"></span>&nbsp',
             ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Журнал событий',
@@ -1305,15 +1374,15 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalRegister',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-phone"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-list"></span>&nbsp',
             ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
             [
-                'title' => 'Перечень операций',
+                'title' => 'История работ',
                 'data-toggle' => 'modal',
                 'data-target' => '#modalTasks',
             ]
         );
-        $links .= Html::a('<span class="glyphicon glyphicon-plus"></span>&nbsp',
+        $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
             ['/measure/add', 'equipmentUuid' => $equipment['uuid']],
             [
                 'title' => 'Добавить измерение',
@@ -1354,6 +1423,7 @@ class EquipmentController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1386,6 +1456,7 @@ class EquipmentController extends ZhkhController
      *
      * @param $r
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
@@ -1504,13 +1575,14 @@ class EquipmentController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового оборудования
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      * @throws Exception
      */
     public function actionEditTable()
     {
-        if (isset($_POST["uuid"]))
-            $uuid = $_POST["uuid"];
+        if (isset($_GET["uuid"]))
+            $uuid = $_GET["uuid"];
         else $uuid = 0;
 
         $source = '../equipment';

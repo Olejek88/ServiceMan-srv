@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $searchModel backend\models\EquipmentSearchStatus */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = Yii::t('app', 'Статусы оборудования');
+$this->title = Yii::t('app', 'Статусы элементов');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php

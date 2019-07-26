@@ -131,7 +131,7 @@ $gridColumns = [
         'header' => 'Действия',
         'buttons' => [
             'delete2' => function ($url,$model) {
-                return Html::a(
+                    return Html::a(
                     '<span class="glyphicon glyphicon-trash"></span>',
                     'object-contragent/delete?id='.$model["_id"]);
             },
@@ -173,6 +173,10 @@ echo GridView::widget([
     'responsive' => true,
     'persistResize' => false,
     'hover' => true,
+    'rowOptions' => function($model) {
+        if ($model['contragent']['deleted']==1)
+                return ['class' => 'danger'];
+    },
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="glyphicon glyphicon-tags"></i>&nbsp; Контрагенты',

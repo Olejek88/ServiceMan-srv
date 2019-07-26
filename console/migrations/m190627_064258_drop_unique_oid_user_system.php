@@ -13,7 +13,7 @@ class m190627_064258_drop_unique_oid_user_system extends Migration
     public function safeUp()
     {
         $this->truncateTable('{{%user_system}}');
-        //$this->dropForeignKey('fk-user_system-organization-oid','user_system');
+        $this->dropForeignKey('fk-user_system-organization-oid','user_system');
         $this->alterColumn('user_system','oid', $this->string(45)->notNull());
         $this->addForeignKey(
             'fk-user_system-organization-oid',

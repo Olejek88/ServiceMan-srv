@@ -7,6 +7,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 use yii\db\Expression;
 
 /**
@@ -151,7 +152,7 @@ class Equipment extends ZhkhActiveRecord
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
             'title' => Yii::t('app', 'Название'),
-            'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
+            'equipmentTypeUuid' => Yii::t('app', 'Тип элемента'),
             'equipmentType' => Yii::t('app', 'Тип'),
             'testDate' => Yii::t('app', 'Дата последней поверки'),
             'period' => Yii::t('app', 'Период поверки'),
@@ -236,6 +237,7 @@ class Equipment extends ZhkhActiveRecord
     /**
      * @return string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getUser()
     {

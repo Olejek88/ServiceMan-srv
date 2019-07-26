@@ -64,7 +64,7 @@ foreach ($equipments as $next_equipment) {
                         echo '<div class="col-sm-2">';
                         echo '<table class="table table-bordered table-condensed table-hover small kv-table">
                                 <tr class="success">
-                                <th colspan="2" class="text-center text-danger">Параметры оборудования</th>
+                                <th colspan="2" class="text-center text-danger">Параметры элементов</th>
                                 </tr>
                                 <tr><td>Тип</td><td class="text-right">' . $equipment[$t]['equipmentType']->title . '</td></tr>
                                 <tr><td>Статус</td>

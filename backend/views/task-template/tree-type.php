@@ -3,9 +3,8 @@
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
-$this->title = 'Дерево задач';
+$this->title = 'Дерево технологических карт';
 
-/* @var $operations common\models\Operation */
 /* @var $users */
 
 ?>
@@ -13,15 +12,13 @@ $this->title = 'Дерево задач';
     <colgroup>
         <col width="*">
         <col width="*">
-        <col width="150px">
-        <col width="80px">
-        <col width="150px">
+        <col width="100px">
         <col width="150px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="6" style="background-color: #3c8dbc; color: whitesmoke">
-            Технологические карты (шаблоны) для элементов системы
+        <th align="center" colspan="4" style="background-color: #3c8dbc; color: whitesmoke">
+            Технологические карты (шаблоны) для типов оборудования системы
         </th>
     </tr>
     <tr style="background-color: #3c8dbc; color: whitesmoke; font-weight: normal">
@@ -33,18 +30,14 @@ $this->title = 'Дерево задач';
                 <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
             </button>
         </th>
-        <th>Описание</th>
         <th>Тип</th>
         <th>Норматив</th>
-        <th>Период</th>
         <th>Создан</th>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td></td>
-        <td class="alt" align="center"></td>
-        <td align="center"></td>
         <td class="alt" align="center"></td>
         <td align="center"></td>
         <td class="alt" align="center"></td>
@@ -102,29 +95,6 @@ $this->title = 'Дерево задач';
                             var node = $.ui.fancytree.getNode(opt.$trigger);
                             $.ajax({
                                 url: "add",
-                                type: "post",
-                                data: {
-                                    selected_node: node.key,
-                                    folder: node.folder,
-                                    type_id: node.data.type_id,
-                                    equipment_id: node.data.equipment_id,
-                                    task_id: node.data.task_id                                    
-                                },
-                                success: function (data) { 
-                                    $(\'#modalAddOperation\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
-                                }
-                            });
-                    }')
-                ],
-                'choose' => [
-                    'name' => "Назначить",
-                    'icon' => "add",
-                    'callback' => new JsExpression('function(key, opt) {
-                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
-                            var node = $.ui.fancytree.getNode(opt.$trigger);
-                            $.ajax({
-                                url: "choose",
                                 type: "post",
                                 data: {
                                     selected_node: node.key,
@@ -200,28 +170,19 @@ $this->title = 'Дерево задач';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "descriptionColumnIdx" => "2",
-            "typesColumnIdx" => "3",
-            "normativeColumnIdx" => "4",
-            "periodColumnIdx" => "5",
-            "createdColumnIdx" => "6",
+            "typesColumnIdx" => "2",
+            "normativeColumnIdx" => "3",
+            "createdColumnIdx" => "4",
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).html(node.data.description);
-            $tdList.eq(2).html(node.data.types);
-            $tdList.eq(3).text(node.data.normative);
-            $tdList.eq(4).html(node.data.period);
-            $tdList.eq(5).text(node.data.created);            
+            $tdList.eq(1).html(node.data.types);
+            $tdList.eq(2).text(node.data.normative);
+            $tdList.eq(3).text(node.data.created);            
         }')
     ]
 ]);
-
-$this->registerJs('$("#modalStatus").on("hidden.bs.modal",
-function () {
-     window.location.replace("tree");
-})');
 
 $this->registerJs('$("#modalAddOperation").on("hidden.bs.modal",
 function () {
@@ -244,13 +205,6 @@ $this->registerJs('$("#collapseButton").on("click",function() {
     });
 })');
 ?>
-
-<div class="modal remote fade" id="modalStatus">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
-        </div>
-    </div>
-</div>
 
 <div class="modal remote fade" id="modalAddOperation">
     <div class="modal-dialog">
