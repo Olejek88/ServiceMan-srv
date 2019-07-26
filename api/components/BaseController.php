@@ -201,20 +201,19 @@ class BaseController extends Controller
      * Сохраняет загруженый через форму файл.
      *
      * @param string $fileName
-     * @param string $imageRoot
+     * @param string $filePath
      * @param string $fileElementName
      * @return boolean
      */
-    protected static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
+    protected static function saveUploadFile($fileName, $filePath, $fileElementName = 'file')
     {
-        $dir = Yii::getAlias('@storage/') . $imageRoot;
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
+        if (!is_dir($filePath)) {
+            if (!mkdir($filePath, 0755, true)) {
                 return false;
             }
         }
 
-        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
+        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $filePath . '/' . $fileName);
     }
 
     protected function createBase()
