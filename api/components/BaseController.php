@@ -201,20 +201,19 @@ class BaseController extends Controller
      * Сохраняет загруженый через форму файл.
      *
      * @param string $fileName
-     * @param string $imageRoot
+     * @param string $filePath
      * @param string $fileElementName
      * @return boolean
      */
-    protected static function saveUploadFile($fileName, $imageRoot, $fileElementName = 'file')
+    protected static function saveUploadFile($fileName, $filePath, $fileElementName = 'file')
     {
-        $dir = Yii::getAlias('@storage/') . $imageRoot;
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
+        if (!is_dir($filePath)) {
+            if (!mkdir($filePath, 0755, true)) {
                 return false;
             }
         }
 
-        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $dir . '/' . $fileName);
+        return move_uploaded_file($_FILES[$fileElementName]['tmp_name'], $filePath . '/' . $fileName);
     }
 
     protected function createBase()
@@ -287,4 +286,45 @@ class BaseController extends Controller
 
         return $savedPhotos;
     }
+
+    /**
+     * Обновление атрибутов
+     *
+     * @return array
+     * @throws NotAcceptableHttpException
+     * @throws Exception
+     */
+    public function actionUpdateAttribute()
+    {
+        /** @var ActiveRecord $model */
+        $model = null;
+        /** @var ActiveRecord $class */
+        $class = $this->modelClass;
+        $request = Yii::$app->request;
+        $success = false;
+        $saved = array();
+        if ($request->isPost) {
+            $params = $request->bodyParams;
+            if ($params['attribute'] != null) {
+                $model = $class::find()->where(['uuid' => $params['modelUuid']])->one();
+                if ($model != null) {
+                    $model[$params['attribute']] = $params['value'];
+                }
+            } else {
+                $model = new $class;
+                $dataArray = json_decode($params['value'], true);
+                $model->load($dataArray, '');
+            }
+
+            if ($model->save()) {
+                $saved = $params['_id'];
+                $success = true;
+            }
+
+            return ['success' => $success, 'data' => $saved];
+        } else {
+            throw new NotAcceptableHttpException();
+        }
+    }
+
 }
