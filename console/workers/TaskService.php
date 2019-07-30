@@ -71,6 +71,7 @@ class  TaskService extends Worker
                         $start = strtotime($dates[$count]);
                         $date = date('Y-m-d h', $start);
                         $current = date('Y-m-d h', time());
+                        $this->log($date. ' = ' .$current);
                         if ($date == $current) {
                             $task = new Task();
                             $task->uuid = MainFunctions::GUID();

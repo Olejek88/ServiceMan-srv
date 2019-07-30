@@ -163,7 +163,7 @@ $this->title = Yii::t('app', 'Сводная');
                                     },
                                     tooltip: {
                                         headerFormat: '<b>{point.x}</b><br/>',
-                                        pointFormat: '{series.name}: {point.y}<br/>Всего: {point.stackTotal}'
+                                        pointFormat: '{series.name}: {point.y}'
                                     },
                                     plotOptions: {
                                         column: {
@@ -176,7 +176,7 @@ $this->title = Yii::t('app', 'Сводная');
                                     yAxis: {
                                         min: 0,
                                         title: {
-                                            text: 'Количество измерений по пользователям'
+                                            text: 'Количество задач по пользователям'
                                         }
                                     },
                                     series: [
