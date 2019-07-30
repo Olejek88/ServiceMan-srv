@@ -228,7 +228,6 @@ class TaskController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
-
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'deadlineDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'deadlineDate', $_GET['end_time']]);

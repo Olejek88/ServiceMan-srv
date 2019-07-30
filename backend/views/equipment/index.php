@@ -281,7 +281,7 @@ $gridColumns = [
                 );
             },
             'new' => function ($url, $model) {
-                return Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
+                return Html::a('<span class="fa fa-exclamation-triangle"></span>&nbsp',
                     ['/defect/add-table', 'uuid' => $model['uuid'], 'source' => '../equipment'],
                     [
                         'title' => 'Добавить дефект',
