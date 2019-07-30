@@ -51,7 +51,7 @@ use yii\helpers\Html;
             ->orderBy('title DESC')
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
-        echo $form->field($model, 'userUuid')->widget(Select2::class,
+        echo $form->field($model, 'contragentUuid')->widget(Select2::class,
             [
                 'data' => $items,
                 'language' => 'ru',
@@ -90,7 +90,7 @@ use yii\helpers\Html;
         echo '<label>Номер телефона заявителя</label></br>';
         echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
     } else {
-        echo $form->field($model, 'userUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
+        echo $form->field($model, 'contragentUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
     }
     echo '</br>';
 

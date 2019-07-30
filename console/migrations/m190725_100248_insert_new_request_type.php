@@ -43,7 +43,6 @@ class m190725_100248_insert_new_request_type extends Migration
     public function safeDown()
     {
         echo "m190725_100248_insert_new_request_type cannot be reverted.\n";
-
         return false;
     }
 

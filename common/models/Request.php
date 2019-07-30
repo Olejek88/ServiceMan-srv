@@ -15,7 +15,7 @@ use yii\db\Expression;
  * @property string $oid идентификатор организации
  * @property string $uuid
  * @property integer $type
- * @property string $userUuid
+ * @property string $contragentUuid
  * @property string $authorUuid
  * @property string $requestStatusUuid
  * @property string $requestTypeUuid
@@ -29,7 +29,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property Users $user
+ * @property Contragent $user
  * @property Contragent $author
  * @property RequestStatus $requestStatus
  * @property RequestType $requestType
@@ -197,10 +197,10 @@ class Request extends ZhkhActiveRecord
      *
      * @return ActiveQuery
      */
-    public function getUser()
+    public function getContragent()
     {
         return $this->hasOne(
-            Contragent::class, ['uuid' => 'userUuid']
+            Contragent::class, ['uuid' => 'contragentUuid']
         );
     }
 

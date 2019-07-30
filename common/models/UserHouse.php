@@ -4,8 +4,8 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
-use yii\db\ActiveQuery;
 use yii\base\InvalidConfigException;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "user_house".

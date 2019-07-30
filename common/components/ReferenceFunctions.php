@@ -5,6 +5,7 @@ namespace common\components;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\HouseType;
+use common\models\Organization;
 use common\models\TaskType;
 
 class ReferenceFunctions
@@ -586,6 +587,52 @@ class ReferenceFunctions
             8, [6, 7], EquipmentType::EQUIPMENT_BASEMENT_DOOR, $oid);
     }
 
+    /**
+     * @param $oid
+     * @param $db
+     */
+    public static function loadRequestTypes($oid, $db)
+    {
+        self::insertIntoRequestType($db, 'Внеочередной осмотр при форс-мажорных обстоятельствах',
+            24, TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
+        self::insertIntoRequestType($db, 'Устранение протечки кровли',
+            24, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение повреждения системы организованного водоотвода',
+            120, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение утраты связи отдельных кирпичей с кладкой наружных стен, угрожающей их выпадением',
+            24, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение повреждения окон подъезда в летний период',
+            72, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение повреждения окон подъезда в зимний период',
+            24, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение повреждения заполнения входных дверей',
+            24, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Отслоение штукатурки потолка или верхней части стены, угрожающее ее обрушению',
+            120, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Нарушение связи наружной облицовки на фасадах со стенами',
+            1, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение неисправности лифта',
+            24, TaskType::TASK_TYPE_REPAIR, $oid);
+
+        self::insertIntoRequestType($db, 'Локализация аварийных повреждений ХВС/ГВС',
+            0.5, TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
+        self::insertIntoRequestType($db, 'Локализация аварийных повреждений внутридомовых систем отопления',
+            0.5,TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
+        self::insertIntoRequestType($db,
+            'Ликвидация засоров внутридомовой инженерной системы водоотведения',
+            2, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Локализация аварийных повреждений электроснабжения',
+            0.5, TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
+        self::insertIntoRequestType($db, 'Ликвидацию засоров мусоропроводов внутри многоквартирных',
+            2, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение аварийных повреждений внутридомовых систем',
+            72, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение аварийных повреждений внутридомовых систем отопления',
+            72, TaskType::TASK_TYPE_REPAIR, $oid);
+        self::insertIntoRequestType($db, 'Устранение аварийных повреждений внутридомовых систем  электроснабжения',
+            72, TaskType::TASK_TYPE_REPAIR, $oid);
+    }
+
     private static function insertIntoHouseType($db, $uuid, $title, $organizationUuid)
     {
         $currentTime = date('Y-m-d\TH:i:s');
@@ -714,5 +761,36 @@ class ReferenceFunctions
             ]);
         }
     }
+
+    /**
+     * @param $db
+     * @param $title
+     * @param $normative
+     * @param $taskTypeUuid
+     * @param $organizationUuid
+     */
+    private static function insertIntoRequestType($db, $title, $normative, $taskTypeUuid, $organizationUuid) {
+        $currentTime = date('Y-m-d\TH:i:s');
+        $uuid = MainFunctions::GUID();
+        $db->insert('task_template', [
+            'uuid' => $uuid,
+            'title' => $title,
+            'description' => $title,
+            'normative' => $normative,
+            'oid' => $organizationUuid,
+            'taskTypeUuid' => $taskTypeUuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ]);
+
+        $db->insert('request_type', [
+            'uuid' => MainFunctions::GUID(),
+            'title' => $title,
+            'taskTemplateUuid' => $uuid,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ]);
+    }
+
 }
 

@@ -2,12 +2,12 @@
 
 namespace common\models;
 
+use Exception;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-use yii\base\InvalidConfigException;
-use Exception;
 
 /**
  * User model
