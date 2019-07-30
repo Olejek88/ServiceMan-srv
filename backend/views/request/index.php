@@ -80,7 +80,7 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой']
     ],
     [
-        'attribute' => 'user',
+        'attribute' => 'contragent',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'header' => 'Заявитель',
@@ -90,8 +90,8 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if ($data['userUuid']!= Contragent::DEFAULT_CONTRAGENT)
-                return $data['user']->title . '<br/> [' . $data['user']->phone . ']';
+            if ($data['contragentUuid']!= Contragent::DEFAULT_CONTRAGENT)
+                return $data['contragent']->title . '<br/> [' . $data['contragent']->phone . ']';
             else
                 return $data['author']->name;
         }

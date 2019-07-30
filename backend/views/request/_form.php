@@ -54,7 +54,7 @@ use common\models\requestStatus;
     <?php
     $users = Contragent::find()->orderBy('title DESC')->all();
     $items = ArrayHelper::map($users, 'uuid', 'title');
-    echo $form->field($model, 'userUuid')->widget(Select2::class,
+    echo $form->field($model, 'contragentUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',

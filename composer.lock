@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f82303c92de155c68728251f79ba1a81",
+    "content-hash": "46ae858b31419f28768aacfe800c4ff2",
     "packages": [
         {
             "name": "2amigos/yii2-date-time-picker-widget",
@@ -1443,6 +1443,46 @@
                 "icon"
             ],
             "time": "2016-10-24T15:52:54+00:00"
+        },
+        {
+            "name": "inpassor/yii2-daemon",
+            "version": "0.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Inpassor/yii2-daemon.git",
+                "reference": "a8efd68efa48e74295ff359938120ac12e1fb1bf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Inpassor/yii2-daemon/zipball/a8efd68efa48e74295ff359938120ac12e1fb1bf",
+                "reference": "a8efd68efa48e74295ff359938120ac12e1fb1bf",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "inpassor\\daemon\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Inpassor",
+                    "email": "inpassor@yandex.com"
+                }
+            ],
+            "description": "The simple daemon extension for the Yii 2 framework",
+            "keywords": [
+                "daemon",
+                "yii2"
+            ],
+            "time": "2018-11-19T12:10:19+00:00"
         },
         {
             "name": "kartik-v/bootstrap-fileinput",

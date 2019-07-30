@@ -162,7 +162,7 @@ class RequestController extends ZhkhController
             if (isset($_GET["objectUuid"]))
                 $model->objectUuid = $_GET["objectUuid"];
             if (isset($_GET["user"]))
-                $model->userUuid = $_GET["user"];
+                $model->contragentUuid = $_GET["user"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
             if (isset($_GET["source"]))
@@ -204,7 +204,7 @@ class RequestController extends ZhkhController
                     }
                 }
                 if (isset($_POST['phoneNumber'])) {
-                    $model_contragent =  $model['user'];
+                    $model_contragent =  $model['contragent'];
                     if ($model_contragent && ($model_contragent['phone']!=$_POST['phoneNumber'])) {
                         $model_contragent["phone"] = $_POST['phoneNumber'];
                         $model_contragent->save();
@@ -277,7 +277,7 @@ class RequestController extends ZhkhController
             $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
             if ($currentUser) {
                 // если заявку создал текущий пользователь или у него роль заказчика
-                if ($model->userUuid == $currentUser['uuid']) {
+                if ($model->contragentUuid == $currentUser['uuid']) {
                     $this->findModel($id)->delete();
                 }
             }

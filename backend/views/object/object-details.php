@@ -87,7 +87,7 @@ $gridColumns = [
         'attribute' => 'director',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Директор',
+        'header' => 'Комментарий',
         'contentOptions' => [
             'class' => 'table_class'
         ],
