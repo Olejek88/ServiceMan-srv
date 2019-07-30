@@ -54,7 +54,7 @@ class m190604_063732_add_new_references extends Migration
         //$this->insertIntoType('task_type', TaskType::TASK_TYPE_OVERHAUL, 'Технический ремонт');
 
 
-        $this->insertIntoTaskTemplate('D1C0ED69-A5E7-4CAA-A48B-E03D854AF983', 'Локализация аварийных повреждений ХВС/ГВС',
+        $this->insertIntoTaskTemplate('D1C0ED69-A5E7-4CAA-A48B-E03D854AF983', 'Локализация аварийных повреждений ХВС/ГВС и водоотведения',
             'Локализация аварийных повреждений внутридомовых инженерных систем холодного и горячего водоснабжения и водоотведения',
             0.5, TaskType::TASK_TYPE_VIEW, $currentTime, $currentTime);
         $this->insertIntoTaskTemplate('15B035EC-AF0C-424D-9A8C-543F22E0A63E',
@@ -74,7 +74,7 @@ class m190604_063732_add_new_references extends Migration
             'Ликвидацию засоров мусоропроводов внутри многоквартирных',
             2, TaskType::TASK_TYPE_REPAIR, $currentTime, $currentTime);
         $this->insertIntoTaskTemplate('A892957E-F63D-40F0-8D46-F21D6EF226AF',
-            'Устранение аварийных повреждений внутридомовых систем',
+            'Устранение аварийных повреждений внутридомовых систем ХВС/ГВС и водоотведения',
             'Устранение аварийных повреждений внутридомовых инженерных систем холодного и горячего водоснабжения, водоотведения',
             72, TaskType::TASK_TYPE_REPAIR, $currentTime, $currentTime);
         $this->insertIntoTaskTemplate('0A6EC5B1-7A2E-4BCE-897F-1E2F2056CA2B',

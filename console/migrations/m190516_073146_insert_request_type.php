@@ -13,7 +13,7 @@ class m190516_073146_insert_request_type extends Migration
     public function safeUp()
     {
         $this->addColumn('{{%request}}', 'type', $this->integer()->defaultValue(0));
-        $this->addColumn('{{%request}}', 'result', $this->string(512)->defaultValue("заявка выполнена"));
+        $this->addColumn('{{%request}}', 'result', $this->string(512)->defaultValue("не получен"));
         $this->addColumn('{{%request}}', 'verdict', $this->string(512)->defaultValue("нет задачи"));
 
         $this->createIndex(

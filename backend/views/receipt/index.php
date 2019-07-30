@@ -52,6 +52,20 @@ $gridColumns = [
         ],
     ],
     [
+        'attribute' => 'user',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'header' => 'Оператор',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['user']->name . '<br/> [' . $data['user']->whoIs . ']';
+        }
+    ],
+    [
         'class' => 'kartik\grid\EditableColumn',
         'vAlign' => 'middle',
         'hAlign' => 'center',
@@ -78,20 +92,6 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-    ],
-    [
-        'attribute' => 'user',
-        'vAlign' => 'middle',
-        'hAlign' => 'center',
-        'header' => 'Оператор',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['user']->name . '<br/> [' . $data['user']->whoIs . ']';
-        }
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -228,7 +228,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
     ],
-    [
+/*    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'closed',
         'hAlign' => 'center',
@@ -256,7 +256,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',

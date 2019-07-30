@@ -82,7 +82,7 @@ class BaseController extends Controller
         if ($changedAfter != null) {
             $query->andWhere(['>=', 'changedAt', $changedAfter]);
         }
-
+        $query->limit(1);
         // проверяем что хоть какие-то условия были заданы
         if ($query->where == null) {
             return [];

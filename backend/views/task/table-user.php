@@ -198,6 +198,8 @@ $gridColumns = [
     ],
     [
         'attribute'=>'authorUuid',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
         'contentOptions' =>[
             'class' => 'table_class'
         ],
