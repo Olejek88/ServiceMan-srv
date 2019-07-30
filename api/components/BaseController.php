@@ -86,7 +86,7 @@ class BaseController extends Controller
         if ($changedAfter != null) {
             $query->andWhere(['>=', 'changedAt', $changedAfter]);
         }
-        $query->limit(1);
+
         // проверяем что хоть какие-то условия были заданы
         if ($query->where == null) {
             return [];
@@ -131,7 +131,6 @@ class BaseController extends Controller
             case Operation::class :
             case OperationTemplate::class :
             case RequestStatus::class :
-            case RequestType::class :
             case Street::class :
             case TaskTemplate::class :
             case TaskType::class :
