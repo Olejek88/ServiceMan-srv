@@ -4,12 +4,12 @@ namespace common\models;
 
 use Cron\CronExpression;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Expression;
-use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "task_template_equipment".

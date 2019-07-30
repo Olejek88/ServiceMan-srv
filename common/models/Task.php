@@ -7,9 +7,9 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\db\Expression;
 use yii\helpers\Html;
-use yii\db\Exception;
 
 /**
  * This is the model class for table "task".

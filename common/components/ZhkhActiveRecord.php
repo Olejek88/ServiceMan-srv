@@ -8,8 +8,8 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\web\Application;
 use yii\db\Exception;
+use yii\web\Application;
 
 class ZhkhActiveRecord extends ActiveRecord
 {

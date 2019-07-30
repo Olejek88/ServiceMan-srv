@@ -1363,7 +1363,7 @@ class EquipmentController extends ZhkhController
         );
         $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatus'], "equipment");
         $status = Html::a($status,
-            ['/equipment/status', 'equipmentUuid' => $equipment['uuid']],
+            ['/equipment/status', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
             [
                 'title' => 'Сменить статус',
                 'data-toggle' => 'modal',

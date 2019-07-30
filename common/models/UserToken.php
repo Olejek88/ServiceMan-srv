@@ -3,9 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
-use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "{{%user_token}}".

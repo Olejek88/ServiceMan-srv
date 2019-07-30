@@ -8,6 +8,8 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Equipment */
+/* @var $status */
+/* @var $source */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -36,6 +38,8 @@ use yii\widgets\ActiveForm;
                 'allowClear' => true
             ],
         ])->label(false);
+
+        echo Html::hiddenInput("source", $source);
     ?>
 
     <div class="form-group text-center">
