@@ -4,8 +4,10 @@ namespace backend\models;
 
 use common\models\City;
 use common\models\Contragent;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * ContragentSearch represents the model behind the search form about `common\models\Contragent`.
@@ -20,7 +22,7 @@ class ContragentSearch extends Contragent
         return [
             [['_id'], 'integer'],
             [['uuid', 'title', 'address', 'phone', 'inn', 'director', 'email',
-                'status', 'contragentType', 'createdAt', 'changedAt'], 'safe'],
+                'status', 'contragentTypeUuid', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
 
@@ -39,6 +41,8 @@ class ContragentSearch extends Contragent
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
@@ -62,6 +66,7 @@ class ContragentSearch extends Contragent
         $query->andFilterWhere([
             '_id' => $this->_id,
             'contragentTypeUuid' => $this->contragentTypeUuid,
+            'deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

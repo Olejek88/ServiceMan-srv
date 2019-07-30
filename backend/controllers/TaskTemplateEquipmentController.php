@@ -273,7 +273,7 @@ class TaskTemplateEquipmentController extends ZhkhController
         $events = [];
         $categories = [];
         $all_task_equipment_count = 0;
-
+        $today = time();
         $equipments = Equipment::find()
             ->all();
         foreach ($equipments as $equipment) {
@@ -301,23 +301,20 @@ class TaskTemplateEquipmentController extends ZhkhController
                 if ($dates) {
                     $count = 0;
                     while ($count < count($dates)) {
-                        /*                        $taskTemplates = TaskTemplateEquipment::find()
-                                                    ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
-                                                    ->all();
-                                                foreach ($taskTemplates as $taskTemplate) {*/
                         $start = strtotime($dates[$count]);
                         //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
                         $finish = $start + 3600 * 24;
                         //$end_date = date("Y-m-d H:i:s", $finish);
-                        $tasks[] = [
-                            'title' => $taskTemplateEquipment['taskTemplate']['title'],
-                            'start' => $start * 1000,
-                            'end' => $finish * 1000,
-                            'id' => $taskTemplateEquipment['_id'],
-                            'y' => $task_equipment_count,
-                            'user' => $user
-                        ];
-                        /*                        }*/
+                        if ($start-$today<=3600*24*31*13) {
+                            $tasks[] = [
+                                'title' => $taskTemplateEquipment['taskTemplate']['title'],
+                                'start' => $start * 1000,
+                                'end' => $finish * 1000,
+                                'id' => $taskTemplateEquipment['_id'],
+                                'y' => $task_equipment_count,
+                                'user' => $user
+                            ];
+                        }
                         $count++;
                         if ($count > 5) break;
                     }

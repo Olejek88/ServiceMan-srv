@@ -4,12 +4,12 @@ namespace common\models;
 
 use Cron\CronExpression;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Expression;
-use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "task_template_equipment".
@@ -124,7 +124,7 @@ class TaskTemplateEquipment extends ActiveRecord
             'taskTemplate' => Yii::t('app', 'Шаблон задачи'),
             'equipmentUuid' => Yii::t('app', 'Оборудование'),
             'equipment' => Yii::t('app', 'Оборудование'),
-            'period' => Yii::t('app', 'Периодичность'),
+            'period' => Yii::t('app', 'Периодичность (дн.)'),
             'last_date' => Yii::t('app', 'Дата последнего запуска'),
             'next_dates' => Yii::t('app', 'Даты следующих запусков'),
             'createdAt' => Yii::t('app', 'Создан'),
@@ -249,17 +249,21 @@ class TaskTemplateEquipment extends ActiveRecord
                     $last_date = strtotime($dates[$count - 1]);
                 else
                     $last_date = strtotime($this->last_date);
-                if ($count > 0) $next_dates .= ',';
-
-                if (is_numeric($this->period)) {
-                    $next_date = $last_date + $this->period * 3600;
-                    $next_dates .= date("Y-m-d 00:00:00", $next_date);
-                    $dates[$count] = date("Y-m-d 00:00:00", $next_date);
+                if ($count > 0) {
+                    $next_dates .= ',';
+                    if (is_numeric($this->period)) {
+                        $next_date = $last_date + $this->period * 24 * 3600;
+                        $next_dates .= date("Y-m-d 00:00:00", $next_date);
+                        $dates[$count] = date("Y-m-d 00:00:00", $next_date);
+                    } else {
+                        $cron = CronExpression::factory($this->period);
+                        $next_date = $cron->getNextRunDate(date("Y-m-d 00:00:00", $last_date));
+                        $next_dates .= $next_date->format('Y-m-d 00:00:00');
+                        $dates[$count] = $next_date->format('Y-m-d 00:00:00');
+                    }
                 } else {
-                    $cron = CronExpression::factory($this->period);
-                    $next_date = $cron->getNextRunDate(date("Y-m-d 00:00:00", $last_date));
-                    $next_dates .= $next_date->format('Y-m-d 00:00:00');
-                    $dates[$count] = $next_date->format('Y-m-d 00:00:00');
+                    $next_dates .= date("Y-m-d 00:00:00", $last_date);
+                    $dates[$count] = date("Y-m-d 00:00:00", $last_date);
                 }
                 $count++;
             }

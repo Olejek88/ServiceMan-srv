@@ -1,15 +1,12 @@
 <?php
 
+use common\models\Request;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
-/* @var $model \common\models\Request */
+/* @var $model Request */
 
 $this->title = $model->comment;
-$this->params['breadcrumbs'][] = [
-    'label' => Yii::t('app', 'Заявки'),
-    'url' => ['index']
-];
 ?>
 <div class="task-request-view box-padding">
 
@@ -47,12 +44,8 @@ $this->params['breadcrumbs'][] = [
                                         'value' => $model->comment
                                     ],
                                     [
-                                        'label' => 'ФИО лица ведущего прием',
-                                        'value' => $model->userCheck
-                                    ],
-                                    [
                                         'label' => 'Пользователь',
-                                        'value' => $model['user']['name']
+                                        'value' => $model['contragent']['title']
                                     ],
                                     [
                                         'label' => 'Элементы',

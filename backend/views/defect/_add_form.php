@@ -1,6 +1,6 @@
 <?php
 /* @var $model */
-
+/* @var $source */
 /* @var $equipmentUuid */
 
 
@@ -34,7 +34,6 @@ use yii\helpers\Html;
         ->label(false);
 
     echo $form->field($model, 'defectStatus')->hiddenInput(['value' => 0])->label(false);
-    echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
     echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     $defect_types = DefectType::find()->all();
     $items = ArrayHelper::map($defect_types, 'uuid', 'title');
@@ -48,6 +47,8 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
+    echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
+    echo Html::hiddenInput("source", $source);
 
     if ($equipmentUuid) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);

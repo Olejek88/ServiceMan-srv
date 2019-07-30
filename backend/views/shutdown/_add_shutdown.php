@@ -3,6 +3,7 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\widgets\Select2;
@@ -31,7 +32,9 @@ use yii\helpers\Html;
             echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
         }
 
-        $contragents = Contragent::find()->all();
+        $contragents = Contragent::find()
+            ->where(['contragentTypeUuid' => ContragentType::CONTRACTOR])
+            ->all();
         $items = ArrayHelper::map($contragents, 'uuid', 'title');
         echo $form->field($model, 'contragentUuid',
             ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,

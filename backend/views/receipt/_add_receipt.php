@@ -3,6 +3,7 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Users;
 use kartik\widgets\DateTimePicker;
 use kartik\widgets\Select2;
@@ -63,6 +64,42 @@ use yii\bootstrap\ActiveForm;
             ]);
             ?>
         </div>
+        <?php
+        $users = Contragent::find()->orderBy('title DESC')
+            ->where(['contragentTypeUuid' => ContragentType::EMPLOYEE])
+            ->orWhere(['contragentTypeUuid' => ContragentType::WORKER])
+            ->all();
+        $items = ArrayHelper::map($users, 'uuid', 'title');
+        echo '<label>Лицо ведущее прием</label><br/>';
+        echo Select2::widget(
+            [
+                'data' => $items,
+                'name' => 'contragentUuid',
+                'language' => 'ru',
+                'options' => [
+                        'id' => 'contragent',
+                    'placeholder' => 'Лицо ведущее прием'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+                'pluginEvents' => [
+                    "select2:select" => "function(data) { 
+                        $.ajax({
+                                url: '../contragent/name',
+                                type: 'post',
+                                data: {
+                                    id: data.params.data.id
+                                },
+                                success: function (data) {
+                                    console.log(data);
+                                    $('#receipt-usercheck').val(data);               
+                                }
+                            });
+                  }"]
+            ]);
+        ?>
+
         <?= $form->field($model, 'userCheck')->textInput() ?>
         <?= $form->field($model, 'userCheckWho')->textInput() ?>
 

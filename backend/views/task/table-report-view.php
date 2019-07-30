@@ -4,8 +4,11 @@
  */
 
 use common\components\MainFunctions;
+use common\models\EquipmentStatus;
 use common\models\Objects;
 use common\models\Request;
+use common\models\TaskVerdict;
+use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -48,19 +51,6 @@ $gridColumns = [
         'expandOneOnly' => true
     ],
     [
-        'attribute' => 'taskTemplateUuid',
-        'vAlign' => 'middle',
-        'header' => 'Задача',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['taskTemplate']->title;
-        }
-    ],
-    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'taskDate',
         'hAlign' => 'center',
@@ -90,6 +80,87 @@ $gridColumns = [
                 ]
             ]
         ],
+    ],
+    [
+        'attribute' => 'authorUuid',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(Users::find()->where(['!=','name','sUser'])->orderBy('name')->all(),
+            'uuid', 'name'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            if ($data['authorUuid'])
+                return $data['author']->name;
+            else
+                return 'отсутствует';
+        }
+    ],
+    [
+        'header' => 'Заявка',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
+            if ($request) {
+                $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+                $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
+                return $link;
+            } else
+                return "без заявки";
+        },
+    ],
+    [
+        'attribute' => 'taskTemplateUuid',
+        'vAlign' => 'middle',
+        'header' => 'Задача',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'mergeHeader' => true,
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['taskTemplate']->title;
+        }
+    ],
+    [
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'comment',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Комментарий'
+    ],
+    [
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['equipment']['object']->getFullTitle();
+        },
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(Objects::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой']
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -123,115 +194,16 @@ $gridColumns = [
         ],
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'workStatusUuid',
-        'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'editableOptions' => function () {
-            $status = [];
-            $list = [];
-            $statuses = WorkStatus::find()->orderBy('title')->all();
-            foreach ($statuses as $stat) {
-                $color = 'background-color: white';
-                if ($stat['uuid'] == WorkStatus::CANCELED ||
-                    $stat['uuid'] == WorkStatus::NEW)
-                    $color = 'background-color: gray';
-                if ($stat['uuid'] == WorkStatus::IN_WORK)
-                    $color = 'background-color: yellow';
-                if ($stat['uuid'] == WorkStatus::UN_COMPLETE)
-                    $color = 'background-color: lightred';
-                if ($stat['uuid'] == WorkStatus::COMPLETE)
-                    $color = 'background-color: green';
-                $list[$stat['uuid']] = $stat['title'];
-                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;" .
-                    $stat['title'];
-            }
-            return [
-                'header' => 'Статус задачи',
-                'size' => 'md',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $status,
-                'data' => $list
-            ];
-        },
-        'value' => function ($model) {
-            $status = MainFunctions::getColorLabelByStatus($model['workStatus'], 'work_status_edit');
-            return $status;
-        },
-        'mergeHeader' => true,
-        'format' => 'raw'
-    ],
-    [
-        'vAlign' => 'middle',
-        'header' => 'Объект',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['equipment']['object']->getFullTitle();
-        },
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Objects::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой']
-    ],
-    [
-        'attribute' => 'taskVerdictUuid',
-        'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'width' => '180px',
-        'mergeHeader' => true,
-        'value' => function ($model) {
-            $status = MainFunctions::getColorLabelByStatus($model['taskVerdict'], 'task_verdict');
-            return $status;
-        },
-        'format' => 'raw'
-    ],
-    /*    [
-            'hAlign' => 'center',
-            'vAlign' => 'middle',
-            'header' => 'Операции',
-            'mergeHeader' => true,
-            'contentOptions' => [
-                'class' => 'table_class'
-            ],
-            'headerOptions' => ['class' => 'text-center'],
-            'content' => function ($data) {
-                $operation_list = "";
-                $count = 1;
-                $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
-                foreach ($operations as $operation) {
-                    $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
-                    $count++;
-                }
-                return $operation_list;
-            }
-        ],*/
-    [
-        'attribute' => 'authorUuid',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if ($data['authorUuid'])
-                return $data['author']->name;
-            else
-                return 'отсутствует';
-        }
-    ],
-    [
         'header' => 'Исполнители',
         'vAlign' => 'middle',
         'hAlign' => 'center',
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
+            'uuid', 'name'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -269,32 +241,90 @@ $gridColumns = [
         },
     ],
     [
-        'header' => 'Заявка',
-        'vAlign' => 'middle',
-        'hAlign' => 'center',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'workStatusUuid',
         'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
-            if ($request) {
-                $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
-                $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
-                return $link;
-            } else
-                return "без заявки";
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(WorkStatus::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'editableOptions' => function () {
+            $status = [];
+            $list = [];
+            $statuses = WorkStatus::find()->orderBy('title')->all();
+            foreach ($statuses as $stat) {
+                $color = 'background-color: white';
+                if ($stat['uuid'] == WorkStatus::CANCELED ||
+                    $stat['uuid'] == WorkStatus::NEW)
+                    $color = 'background-color: gray';
+                if ($stat['uuid'] == WorkStatus::IN_WORK)
+                    $color = 'background-color: yellow';
+                if ($stat['uuid'] == WorkStatus::UN_COMPLETE)
+                    $color = 'background-color: lightred';
+                if ($stat['uuid'] == WorkStatus::COMPLETE)
+                    $color = 'background-color: green';
+                $list[$stat['uuid']] = $stat['title'];
+                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;" .
+                    $stat['title'];
+            }
+            return [
+                'header' => 'Статус задачи',
+                'size' => 'md',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $status,
+                'data' => $list
+            ];
         },
+        'value' => function ($model) {
+            $status = MainFunctions::getColorLabelByStatus($model['workStatus'], 'work_status_edit');
+            return $status;
+        },
+        'format' => 'raw'
     ],
     [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'comment',
+        'attribute' => 'taskVerdictUuid',
+        'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Комментарий'
+        'width' => '180px',
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(TaskVerdict::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'value' => function ($model) {
+            $status = MainFunctions::getColorLabelByStatus($model['taskVerdict'], 'task_verdict');
+            return $status;
+        },
+        'format' => 'raw'
     ],
+    /*    [
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'header' => 'Операции',
+            'mergeHeader' => true,
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+            'headerOptions' => ['class' => 'text-center'],
+            'content' => function ($data) {
+                $operation_list = "";
+                $count = 1;
+                $operations = Operation::find()->where(['taskUuid' => $data['uuid']])->all();
+                foreach ($operations as $operation) {
+                    $operation_list = $count.'. '.$operation['operationTemplate']['title'].'</br>';
+                    $count++;
+                }
+                return $operation_list;
+            }
+        ],*/
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -400,6 +430,8 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
     'rowOptions' => function ($model) {
+        if (strtotime($model['deadlineDate'])<=time())
+            return ['class' => 'danger'];
         if (isset($_GET['uuid'])) {
             if ($_GET['uuid'] == $model['uuid'])
                 return ['class' => 'danger'];

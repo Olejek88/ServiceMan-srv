@@ -66,6 +66,19 @@ $this->title = Yii::t('app', 'Шаблоны задач');
                                         }
                                     ],
                                     [
+                                        'attribute' => 'normative',
+                                        'contentOptions' => [
+                                            'class' => 'table_class',
+                                            'style' => 'text-align: left'
+                                        ],
+                                        'headerOptions' => [
+                                            'class' => 'text-center'
+                                        ],
+                                        'content' => function ($data) {
+                                            return $data->normative;
+                                        }
+                                    ],
+                                    [
                                         'class' => 'yii\grid\ActionColumn',
                                         'header' => 'Действия',
                                         'headerOptions' => [

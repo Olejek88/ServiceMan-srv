@@ -80,7 +80,7 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой']
     ],
     [
-        'attribute' => 'user',
+        'attribute' => 'contragent',
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'header' => 'Заявитель',
@@ -90,8 +90,8 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if ($data['userUuid']!= Contragent::DEFAULT_CONTRAGENT)
-                return $data['user']->title . '<br/> [' . $data['user']->phone . ']';
+            if ($data['contragentUuid']!= Contragent::DEFAULT_CONTRAGENT)
+                return $data['contragent']->title . '<br/> [' . $data['contragent']->phone . ']';
             else
                 return $data['author']->name;
         }
@@ -185,9 +185,9 @@ $gridColumns = [
 
         'value' => function ($model) {
             if ($model->objectUuid)
-                return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
+                return "<span style='display: inline-block !important; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
             else
-                return "<span class='badge' style='background-color: grey; height: 22px; width: 100px'>нет</span>";
+                return "<span style='height: 22px; display: inline-block !important'>нет</span>";
 
     /*            if ($model->equipmentUuid) {
                 if ($model['equipment']['equipmentStatusUuid'] == EquipmentStatus::WORK)
@@ -227,11 +227,13 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'value' => function ($model) {
-            return "<span class='badge' style='background-color: gray; height: 22px'>" . $model['requestType']['title'] . "</span>";
+            return $model['requestType']['title'];
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(RequestType::find()->orderBy('title')->all(),
-            'uuid', 'title'),
+            'uuid', function ($data) {
+                return $data['title'];
+            }),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],
@@ -442,6 +444,12 @@ function () {
 })');
 
 ?>
+<style>
+    .grid-view td {
+        white-space: pre-line;
+    }
+</style>
+
 <div class="modal remote fade" id="modalRequest">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>

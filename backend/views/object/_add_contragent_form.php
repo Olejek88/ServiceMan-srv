@@ -1,6 +1,8 @@
 <?php
 /* @var $contragent
  * @var $source
+ * @var $uuid
+ * @var $address
  * @var $objectUuid
  */
 use common\components\MainFunctions;
@@ -15,7 +17,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => '../object/save',
+    'action' => '/object/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'
@@ -41,7 +43,7 @@ use yii\helpers\Html;
     echo $form->field($contragent, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($contragent, 'title')->textInput(['maxlength' => true]);
 
-    echo $form->field($contragent, 'address')->textInput(['maxlength' => true]);
+    echo $form->field($contragent, 'address')->textInput(['maxlength' => true, 'value' => $address]);
     echo $form->field($contragent, 'phone')->textInput(['maxlength' => true]);
     echo $form->field($contragent, 'inn')->textInput(['maxlength' => true]);
     echo $form->field($contragent, 'director')->textInput(['maxlength' => true]);

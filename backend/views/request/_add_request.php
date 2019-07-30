@@ -6,8 +6,10 @@
 
 use common\components\MainFunctions;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Equipment;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
@@ -43,9 +45,13 @@ use yii\helpers\Html;
     echo Html::hiddenInput("receiptUuid", $receiptUuid);
 
     if ($source == 'table') {
-        $users = Contragent::find()->orderBy('title DESC')->all();
+        $users = Contragent::find()
+            ->where(['contragentTypeUuid' => ContragentType::ORGANIZATION])
+            ->orWhere(['contragentTypeUuid' => ContragentType::CITIZEN])
+            ->orderBy('title DESC')
+            ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
-        echo $form->field($model, 'userUuid')->widget(Select2::class,
+        echo $form->field($model, 'contragentUuid')->widget(Select2::class,
             [
                 'data' => $items,
                 'language' => 'ru',
@@ -68,21 +74,33 @@ use yii\helpers\Html;
                                     $('#phoneNumber').val(data);               
                                 }
                             });
-                    //console.log(data.params.data.id);
-                    //$('#phoneNumber').val(data.params.data.id);
+                        $.ajax({
+                                url: '../contragent/address',
+                                type: 'post',
+                                data: {
+                                    id: data.params.data.id
+                                },
+                                success: function (data) {
+                                    console.log(data);
+                                    $('#request-objectuuid').val(data).trigger('change');
+                                }
+                            });
                   }"]
             ]);
         echo '<label>Номер телефона заявителя</label></br>';
         echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
     } else {
-        echo $form->field($model, 'userUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
+        echo $form->field($model, 'contragentUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
     }
     echo '</br>';
 
     if (!$model->objectUuid) {
-        $objects = Objects::find()->all();
+        $objects = Objects::find()
+            ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
+            ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+            ->all();
         $items = ArrayHelper::map($objects, 'uuid', function ($object) {
-            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['title'];
+            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['objectType']['title'] .' '. $object['title'];
         });
         echo $form->field($model, 'objectUuid',
             ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,

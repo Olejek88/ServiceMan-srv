@@ -24,6 +24,7 @@ use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use yii2fullcalendar\models\Event;
 
 class TaskController extends ZhkhController
 {
@@ -31,6 +32,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndex()
@@ -39,7 +41,12 @@ class TaskController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         $dataProvider->query->orderBy('_id DESC');
-
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
         return $this->render(
             'table-report-view',
             [
@@ -53,6 +60,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableUser()
@@ -87,6 +95,12 @@ class TaskController extends ZhkhController
             $dataProvider2->query->andWhere(['<', 'startDate', $_GET['end_time']]);
         }
         $dataProvider2->pagination->pageParam = 'dp2';
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
 
         return $this->render(
             'table-user',
@@ -101,6 +115,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableUserNormative()
@@ -136,6 +151,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTableReportView()
@@ -155,6 +171,12 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
         }
         $dataProvider->query->orderBy('_id DESC');
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
         return $this->render(
             'table-report-view',
             [
@@ -169,6 +191,7 @@ class TaskController extends ZhkhController
      * Lists all Task models.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTable()
@@ -199,6 +222,12 @@ class TaskController extends ZhkhController
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
+        if (isset($_GET['address'])) {
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
+                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
+                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            );
+        }
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'deadlineDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'deadlineDate', $_GET['end_time']]);
@@ -422,6 +451,7 @@ class TaskController extends ZhkhController
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
                     $defect->taskUuid = $task['uuid'];
+                    $defect['defectStatus'] = 1;
                     $defect->save();
                 }
             }
@@ -663,4 +693,87 @@ class TaskController extends ZhkhController
             }
         }
     }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionCalendar()
+    {
+        $events = [];
+        $today = time();
+        $equipments = Equipment::find()
+            ->all();
+        foreach ($equipments as $equipment) {
+            $taskTemplateEquipments = TaskTemplateEquipment::find()
+                ->where(['equipmentUuid' => $equipment['uuid']])
+                ->all();
+
+            $task_equipment_count = 0;
+
+            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+                $selected_user = $taskTemplateEquipment->getUser();
+                if ($selected_user)
+                    $user = $selected_user['name'];
+                else
+                    $user = 'Не назначен';
+                $taskTemplateEquipment->formDates();
+                $dates = $taskTemplateEquipment->getDates();
+                if ($dates) {
+                    $count = 0;
+                    while ($count < count($dates)) {
+                        $start = strtotime($dates[$count]);
+                        $finish = $start + 3600 * 24;
+                        if ($start-$today<=3600*24*31*13) {
+                            $event = new Event();
+                            $event->id = $taskTemplateEquipment['_id'];
+                            $event->title = '[' . $user . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
+                            $event->backgroundColor = '#aaaaaa';
+                            $event->start = $dates[$count];
+                            //$event->end = $order['closeDate'];
+                            $event->color = '#333333';
+                            $events[] = $event;
+                        }
+                        $count++;
+                        if ($count > 5) break;
+                    }
+                    $all_tasks = Task::find()
+                        ->select('*')
+                        ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                        ->all();
+                    foreach ($all_tasks as $task) {
+                        $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+                        $user_names = '';
+                        foreach ($taskUsers as $taskUser) {
+                            $user_names .= $taskUser['user']['name'];
+                        }
+
+                        $event = new Event();
+                        $event->id = $task['_id'];
+                        $event->title = '[' . $user_names . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
+                        if ($task['workStatusUuid']==WorkStatus::CANCELED ||
+                            $task['workStatusUuid']==WorkStatus::NEW)
+                            $event->backgroundColor='gray';
+                        if ($task['workStatusUuid']==WorkStatus::IN_WORK)
+                            $event->backgroundColor='yellow';
+                        if ($task['workStatusUuid']==WorkStatus::UN_COMPLETE)
+                            $event->backgroundColor='lightred';
+                        if ($task['workStatusUuid']==WorkStatus::COMPLETE)
+                            $event->backgroundColor='green';
+
+                        $event->start = $task["startDate"];
+                        $event->end = $task["endDate"];
+                        $event->color = '#000000';
+                        $events[] = $event;
+                    }
+                }
+                $task_equipment_count++;
+            }
+        }
+        return $this->render('calendar', [
+            'events' => $events
+        ]);
+    }
+
 }

@@ -5,6 +5,7 @@ use common\models\Measure;
 
 $measures = Measure::find()
     ->where(['equipmentUuid' => $equipmentUuid])
+    ->orderBy('date')
     ->all();
 
 $this->registerJsFile('/js/vendor/lib/HighCharts/highcharts.js');

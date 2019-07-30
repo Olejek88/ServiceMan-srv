@@ -2,6 +2,7 @@
 
 use common\components\MainFunctions;
 use common\models\Operation;
+use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
@@ -47,8 +48,7 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Элементы',
-        'mergeHeader' => true,
+        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -76,6 +76,13 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(WorkStatus::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'editableOptions'=> function () {
             $status=[];
             $list=[];
@@ -107,15 +114,20 @@ $gridColumns = [
             $status =MainFunctions::getColorLabelByStatus($model['workStatus'],'work_status_edit');
             return $status;
         },
-        'mergeHeader' => true,
         'format' => 'raw'
     ],
     [
         'attribute' => 'taskVerdictUuid',
         'headerOptions' => ['class' => 'text-center'],
+        'filterType' => GridView::FILTER_SELECT2,
+        'filter' => ArrayHelper::map(TaskVerdict::find()->orderBy('title')->all(),
+            'uuid', 'title'),
+        'filterWidgetOptions' => [
+            'pluginOptions' => ['allowClear' => true],
+        ],
+        'filterInputOptions' => ['placeholder' => 'Любой'],
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
         'value' => function ($model) {
             $status =MainFunctions::getColorLabelByStatus($model['taskVerdict'],'task_verdict');
             return $status;
@@ -186,6 +198,8 @@ $gridColumns = [
     ],
     [
         'attribute'=>'authorUuid',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
         'contentOptions' =>[
             'class' => 'table_class'
         ],
@@ -221,6 +235,9 @@ if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
+$user='';
+if (isset($_GET['user']))
+    $user = $_GET['user'];
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -237,7 +254,7 @@ echo GridView::widget([
             Select2::widget([
                 'name' => 'user',
                 'language' => 'ru',
-                'value' => $_GET['user'],
+                'value' => $user,
                 'data' => $items,
                 'options' => ['placeholder' => 'Все исполнители'],
                 'pluginOptions' => [

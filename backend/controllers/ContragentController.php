@@ -140,7 +140,7 @@ class ContragentController extends ZhkhController
                 $model->pin = '1234';
                 $model->name = $contragent->title;
                 if ($contragent->contragentTypeUuid == ContragentType::WORKER)
-                    $model->whoIs = 'Исполнитель';
+                    $model->whoIs = 'Сотрудник';
                 if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR)
                     $model->whoIs = 'Подрядная огранизация';
                 if ($contragent->contragentTypeUuid == ContragentType::EMPLOYEE)
@@ -240,13 +240,14 @@ class ContragentController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws \Throwable
-     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
         parent::actionDelete($id);
 
-        $this->findModel($id)->delete();
+        $contragent = $this->findModel($id);
+        $contragent['deleted'] = true;
+        $contragent->save();
 
         return $this->redirect(['table']);
     }
@@ -278,6 +279,35 @@ class ContragentController extends ZhkhController
         if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
             return $model['phone'];
         } else return '';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionAddress()
+    {
+        if (isset($_POST['id']))
+            if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+                $object = ObjectContragent::find()->where(['contragentUuid' => $model['uuid']])->one();
+                if ($object)
+                    return $object['objectUuid'];
+            }
+        return '';
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionName()
+    {
+        if (isset($_POST['id']))
+            if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+                return $model['title'];
+            } else return '';
     }
 
 }

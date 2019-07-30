@@ -6,10 +6,10 @@ use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
-use yii\db\Expression;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\Exception;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "operation".

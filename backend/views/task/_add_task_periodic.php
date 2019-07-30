@@ -23,6 +23,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => "../task/new-periodic",
     'options' => [
         'id' => 'form'
     ]]);
@@ -83,7 +84,7 @@ use yii\helpers\Html;
     echo $form->field($model, 'period')->textInput(['maxlength' => true]);
     ?>
 
-    <label>Дата первого осмотра</label>
+    <label>Дата отчета</label>
     <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
         <?= DatePicker::widget([
             'attribute' => 'last_date',
@@ -104,7 +105,7 @@ use yii\helpers\Html;
 </div>
 <script>
     $(document).on("beforeSubmit", "#dynamic-form", function ($e) {
-        console.log($e);
+        e.preventDefault();
     }).on('submit', function(e){
         e.preventDefault();
         $.ajax({

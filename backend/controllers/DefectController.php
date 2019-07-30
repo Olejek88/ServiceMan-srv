@@ -5,6 +5,8 @@ namespace backend\controllers;
 use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
+use common\models\Equipment;
+use common\models\EquipmentRegisterType;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -35,6 +37,16 @@ class DefectController extends ZhkhController
                     ['like', 'object.title', '%'.$_GET['address'].'%',false],
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
+        }
+        if (isset($_POST['editableAttribute'])) {
+            $model = Defect::find()
+                ->where(['_id' => $_POST['editableKey']])
+                ->one();
+            if ($_POST['editableAttribute'] == 'defectStatus') {
+                $model['defectStatus'] = $_POST['Defect'][$_POST['editableIndex']]['defectStatus'];
+            }
+            $model->save();
+            return "1";
         }
 
         return $this->render('index', [
@@ -266,7 +278,9 @@ class DefectController extends ZhkhController
             $model->uuid = MainFunctions::GUID();
             $model->date = date('Y-m-d\TH:i:s');
             if ($model->save(false)) {
-                return $this->redirect(['/equipment/tree']);
+                if (isset($_POST['source']))
+                    return $this->redirect($_POST['source']);
+                return $this->redirect('../equipment/tree');
             }
         }
         return false;
@@ -281,10 +295,15 @@ class DefectController extends ZhkhController
             if (isset($_POST["folder"]))
                 $folder = $_POST["folder"];
             else $folder = 0;
+            if (isset($_POST["source"]))
+                $source = $_POST["source"];
+            else $source = '../equipment/tree';
+
             if ($folder == "false") {
                 $defect = new Defect();
                 return $this->renderAjax('../defect/_add_form', [
                     'model' => $defect,
+                    'source' => $source,
                     'equipmentUuid' => $uuid
                 ]);
             }
@@ -300,7 +319,8 @@ class DefectController extends ZhkhController
         $defect = new Defect();
         return $this->renderAjax('../defect/_add_form', [
             'model' => $defect,
-            'equipmentUuid' => $uuid
+            'equipmentUuid' => $uuid,
+            'source' => '../equipment'
         ]);
     }
 

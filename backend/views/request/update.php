@@ -5,10 +5,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Request */
 
-$this->title = Yii::t('app', 'Обновить {modelClass}: ', [
-    'modelClass' => 'request',
-]) . $model->_id;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Заявки'), 'url' => ['index']];
+$this->title = Yii::t('app', 'Обновить');
 ?>
 <div class="task-request-update box-padding">
 

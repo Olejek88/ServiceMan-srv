@@ -4,10 +4,10 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\Expression;
-use yii\base\InvalidConfigException;
 
 /**
  * This is the model class for table "shutdown".

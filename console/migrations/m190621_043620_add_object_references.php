@@ -93,7 +93,6 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_HVS_TOWER,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Стояки ХВС');
 
-
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GVS_TOWER,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Стояки ГВС');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GVS_MAIN,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
@@ -121,6 +120,8 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_ROOF_WATER_PIPE,EquipmentSystem::EQUIPMENT_SYSTEM_ROOF,
             'Система водоотвода');
 
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT,EquipmentSystem::EQUIPMENT_SYSTEM_WALL,
+            'Фундамент');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_WALL,EquipmentSystem::EQUIPMENT_SYSTEM_WALL,
             'Стены, конструкции и перекрытия');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_WALL_WATER,EquipmentSystem::EQUIPMENT_SYSTEM_WALL,
@@ -171,22 +172,22 @@ class m190621_043620_add_object_references extends Migration
             'Стояки с проводкой');
 
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_INTERNET,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-            'Стояки с проводкой');
+            'Коммуникационные стояки');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_TV,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
             'Телевидение');
-        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_CONDITIONER,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-            'Вениляционные каналы');
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_CONDITIONER,EquipmentSystem::EQUIPMENT_SYSTEM_VENT,
+            'Вентиляционные каналы');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_DOMOPHONE,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
             'Домофоны');
 
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GAS,EquipmentSystem::EQUIPMENT_SYSTEM_GAS,
             'Система газоснабжения');
 
-        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-            'Фундамент');
-        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_ROOM,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT,EquipmentSystem::EQUIPMENT_SYSTEM_MAIN,
+            'Входные двери подвала');
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_ROOM,EquipmentSystem::EQUIPMENT_SYSTEM_MAIN,
             'Помещение');
-        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_WINDOWS,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_WINDOWS,EquipmentSystem::EQUIPMENT_SYSTEM_MAIN,
             'Окна в подвал');
     }
 

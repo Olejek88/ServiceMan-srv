@@ -140,7 +140,8 @@ try {
                                     uuid: node.data.uuid,
                                     type: node.type,
                                     model_uuid: node.data.model_uuid,
-                                    type_uuid: node.data.type_uuid                                                                        
+                                    type_uuid: node.data.type_uuid,
+                                    source: "../equipment/tree"                                                                                                            
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddEquipment\').modal(\'show\');
@@ -188,7 +189,8 @@ try {
                                     type: node.type,
                                     model_uuid: node.data.model_uuid,
                                     type_uuid: node.data.type_uuid,
-                                    reference: "equipment"                                                                        
+                                    reference: "equipment",
+                                    source: "../equipment/tree"                                                                        
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddEquipment\').modal(\'show\');
@@ -209,7 +211,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree"                                                                        
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDocumentation\').modal(\'show\');
@@ -230,7 +233,8 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
-                                    model_uuid: node.data.model_uuid                                    
+                                    model_uuid: node.data.model_uuid,
+                                    source: "../equipment/tree"                                                                                                                                                
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDefect\').modal(\'show\');
@@ -252,7 +256,8 @@ try {
                                     folder: node.folder,
                                     uuid: node.data.uuid,
                                     model_uuid: node.data.model_uuid,
-                                    type_uuid: node.data.type_uuid                                                                                                            
+                                    type_uuid: node.data.type_uuid,
+                                    source: "../equipment/tree"                                                                                                            
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddPeriodicTask\').modal(\'show\');
@@ -390,21 +395,25 @@ $this->registerJs('$("#modalDefects").on("hidden.bs.modal",
 function () {
     $(this).removeData();
 })');
+$this->registerJs('$("#modalMeasures").on("hidden.bs.modal",
+function () {
+    $(this).removeData();
+})');
 $this->registerJs('$("#modalSN").on("hidden.bs.modal",
 function () {
-     window.location.replace("tree-street");
+     window.location.replace("tree");
 })');
 $this->registerJs('$("#modalAddTask").on("hidden.bs.modal",
 function () {
 })');
 $this->registerJs('$("#modalStatus").on("hidden.bs.modal",
 function () {
-     window.location.replace("tree-street");
+     window.location.replace("tree");
 })');
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      $(this).removeData();
-     window.location.replace("tree-street");
+     window.location.replace("tree");
 })');
 
 $this->registerJs('$("#addButton").on("click",function() {

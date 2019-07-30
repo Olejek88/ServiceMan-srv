@@ -2,8 +2,6 @@
 /* @var $searchModel backend\models\RequestSearch */
 
 use common\models\Contragent;
-use common\models\EquipmentStatus;
-use common\models\EquipmentType;
 use common\models\Request;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
@@ -37,21 +35,35 @@ $gridColumns = [
         }*/
     ],
     [
-        'attribute' => 'date',
+        'attribute' => 'createdAt',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Дата приема',
+        'header' => 'Дата регистрации',
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'value' => function ($model) {
             return "<span class='badge' style='background-color: gray; height: 22px'>".
-                date('d-m-Y H:m', strtotime($model->date))."</span>";
+                date('d-m-Y H:m', strtotime($model->createdAt))."</span>";
 //            return $model->date;
         },
         'contentOptions' => [
             'class' => 'table_class'
         ],
+    ],
+    [
+        'attribute' => 'user',
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'header' => 'Оператор',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['user']->name . '<br/> [' . $data['user']->whoIs . ']';
+        }
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -80,20 +92,6 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'headerOptions' => ['class' => 'text-center'],
-    ],
-    [
-        'attribute' => 'user',
-        'vAlign' => 'middle',
-        'hAlign' => 'center',
-        'header' => 'Оператор',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['user']->name . '<br/> [' . $data['user']->whoIs . ']';
-        }
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -206,8 +204,8 @@ $gridColumns = [
             'inputType' => Editable::INPUT_WIDGET,
             'widgetClass' =>  'kartik\datecontrol\DateControl',
             'options' => [
-                'type' => DateControl::FORMAT_DATE,
-                'displayFormat' => 'dd-MM-yyyy',
+                'type' => DateControl::FORMAT_DATETIME,
+                'displayFormat' => 'dd-MM-yyyy H:i',
                 'saveFormat' => 'php:Y-m-d H:i:s',
                 'options' => [
                     'pluginOptions' => [
@@ -230,7 +228,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
     ],
-    [
+/*    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'closed',
         'hAlign' => 'center',
@@ -258,7 +256,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-    ],
+    ],*/
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',

@@ -21,7 +21,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => '../object/save',
+    'action' => '/object/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'

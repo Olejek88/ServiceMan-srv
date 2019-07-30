@@ -262,7 +262,7 @@ $gridColumns = [
         'buttons' => [
             'add' => function ($url, $model) {
                 return Html::a('<span class="fa fa-tasks"></span>&nbsp',
-                    ['../task/form', 'equipmentUuid' => $model['uuid']],
+                    ['../task/form', 'equipmentUuid' => $model['uuid'], 'type_uuid'=> 0],
                     [
                         'title' => 'Добавить задачу',
                         'data-toggle' => 'modal',
@@ -281,8 +281,8 @@ $gridColumns = [
                 );
             },
             'new' => function ($url, $model) {
-                return Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-                    ['/defect/add-table', 'uuid' => $model['uuid']],
+                return Html::a('<span class="fa fa-exclamation-triangle"></span>&nbsp',
+                    ['/defect/add-table', 'uuid' => $model['uuid'], 'source' => '../equipment'],
                     [
                         'title' => 'Добавить дефект',
                         'data-toggle' => 'modal',
@@ -376,6 +376,10 @@ function () {
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
 window.location.replace("../equipment/index");
+})');
+$this->registerJs('$("#modalDefects").on("hidden.bs.modal",
+function () {
+    $(this).removeData();
 })');
 
 $this->registerJs('$("#modalAddEquipment").on("hidden.bs.modal",

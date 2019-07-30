@@ -15,7 +15,7 @@ class m190529_123303_fix_sUser extends Migration
      */
     public function safeUp()
     {
-/*        $users = Users::findOne(['name' => 'sUser']);
+        $users = Users::findOne(['name' => 'sUser']);
         if ($users != null) {
             $user = User::findOne(['username' => 'sUser']);
             if ($user != null) {
@@ -38,7 +38,7 @@ class m190529_123303_fix_sUser extends Migration
         }
 
         $msg = Console::ansiFormat('Record with name/username "sUser" must be exists in {{%users}} and {{%user}}', [Console::FG_RED]);
-        echo $msg . PHP_EOL;*/
+        echo $msg . PHP_EOL;
         return true;
     }
 
