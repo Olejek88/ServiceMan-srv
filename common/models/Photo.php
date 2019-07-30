@@ -23,11 +23,12 @@ use yii\db\Expression;
  *
  * @property Users $user
  * @property Objects $object
- * @property string $photoUrl
+ * @property string $imagePath
+ * @property string $imageUrl
  */
 class Photo extends ActiveRecord implements IPhoto
 {
-    private static $_IMAGE_ROOT = 'main';
+    private static $_IMAGE_ROOT = 'photo';
 
     /**
      * Behaviors
@@ -153,17 +154,23 @@ class Photo extends ActiveRecord implements IPhoto
      *
      * @return string
      */
-    public function getPhotoUrl()
+    public function getImageUrl()
     {
-        // TODO реализовать выбор директории исходя из uuid объекта и его типа
-        $localPath = '/storage/' . self::$_IMAGE_ROOT . '/' . $this->uuid . '.jpg';
-        if (file_exists(Yii::getAlias('@backend/web/' . $localPath))) {
+        $localPath = self::$_IMAGE_ROOT . '/' . $this->objectUuid . '/' . $this->uuid . '.jpg';
+        if (file_exists(Yii::getAlias('@storage/' . $localPath))) {
             $url = $localPath;
         } else {
             $url = null;
         }
 
         return $url;
+    }
+
+    public function getImagePath()
+    {
+        $localPath = self::$_IMAGE_ROOT . '/' . $this->objectUuid;
+        $path = Yii::getAlias('@storage/' . $localPath);
+        return $path;
     }
 
     /**
