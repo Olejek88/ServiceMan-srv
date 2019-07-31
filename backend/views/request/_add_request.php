@@ -141,15 +141,20 @@ use yii\helpers\Html;
             */ ?>
 
     <?php
-    $type = RequestType::find()->all();
+    $type = RequestType::find()
+        ->innerJoinWith('taskTemplate')
+        ->where(['task_template.oid' => Users::getCurrentOid()])
+        ->all();
     $items = ArrayHelper::map($type, 'uuid', 'title');
     echo $form->field($model, 'requestTypeUuid',
         ['template' => MainFunctions::getAddButton("/request-type/create")])->widget(Select2::class,
         [
             'data' => $items,
+
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите тип..'
+                'placeholder' => 'Выберите тип..',
+                'value' => RequestType::GENERAL
             ],
             'pluginOptions' => [
                 'allowClear' => true
