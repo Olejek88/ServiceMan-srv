@@ -1,6 +1,7 @@
 <?php
 
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
 use common\models\Objects;
@@ -14,9 +15,24 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model common\models\Equipment */
 /* @var $form yii\widgets\ActiveForm */
+/* @var $tagType */
+/* @var $tagTypeList */
 ?>
 
 <div class="equipment-form">
+    <?php
+    $this->registerJs('
+    $("#dynamicmodel-tagtype").on("change", function() {
+      if ($(this).val() == "' . Tag::TAG_TYPE_DUMMY . '") {
+        console.log("type dummy");
+        $(".field-equipment-tag").hide();
+      } else {
+        console.log("type other");
+        $(".field-equipment-tag").show();
+      }
+    });
+    $("#dynamicmodel-tagtype").trigger("change");', \yii\web\View::POS_READY);
+    ?>
 
     <?php $form = ActiveForm::begin(
         [
@@ -75,42 +91,35 @@ use yii\widgets\ActiveForm;
 
     <?php echo $form->field($model, 'serial')->textInput(['maxlength' => true]) ?>
 
+    <?php echo $form->field($tagType, 'tagType')->dropDownList($tagTypeList)->label('Тип метки'); ?>
     <?php echo $form->field($model, 'tag')->textInput(['maxlength' => true]) ?>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
-    <div class="pole-mg" style="margin: 0 -15px 20px -15px">
-        <p style="width: 300px; margin-bottom: 0;">Дата поверки</p>
-        <?php echo DatePicker::widget(
-            [
-                'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
-                'model' => $model,
-                'attribute' => 'testDate',
-                'language' => 'ru',
-                'size' => 'ms',
-                'pluginOptions' => [
-                    'format' => 'yyyy-mm-dd',
-                    'todayHighlight' => true
-                ]
+    <?php echo $form->field($model, 'testDate')->widget(DatePicker::class,
+        [
+            'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
+            'language' => 'ru',
+            'size' => 'ms',
+            'pluginOptions' => [
+                'format' => 'yyyy-mm-dd',
+                'todayHighlight' => true
             ]
-        );
-        ?>
-    </div>
+        ]
+    );
+    ?>
 
-    <div class="pole-mg" style="margin: 0 -15px 20px -15px">
-        <p style="width: 300px; margin-bottom: 0;">Дата замены</p>
-        <?php echo $form->field($model, 'replaceDate')->widget(DatePicker::class,
-            [
-                'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
-                'language' => 'ru',
-                'size' => 'ms',
-                'pluginOptions' => [
-                    'format' => 'yyyy-mm-dd',
-                    'todayHighlight' => true
-                ]
+    <?php echo $form->field($model, 'replaceDate')->widget(DatePicker::class,
+        [
+            'type' => \kartik\widgets\DatePicker::TYPE_COMPONENT_APPEND,
+            'language' => 'ru',
+            'size' => 'ms',
+            'pluginOptions' => [
+                'format' => 'yyyy-mm-dd',
+                'todayHighlight' => true
             ]
-        );
-        ?>
-    </div>
+        ]
+    );
+    ?>
 
     <?php
     $object = Objects::find()->all();
