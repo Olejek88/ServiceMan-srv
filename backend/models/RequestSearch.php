@@ -6,6 +6,7 @@ use common\models\Request;
 use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * RequestSearch represents the model behind the search form about `common\models\Request`.
@@ -19,7 +20,7 @@ class RequestSearch extends Request
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'type', 'requestStatusUuid', 'requestTypeUuid', 'authorUuid', 'comment', 'userUuid', 'taskUuid',
+            [['uuid', 'type', 'requestStatusUuid', 'requestTypeUuid', 'authorUuid', 'comment', 'contragentUuid', 'taskUuid',
                 'equipmentUuid', 'objectUuid', 'stageUuid', 'closeDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
@@ -40,6 +41,7 @@ class RequestSearch extends Request
      *
      * @return ActiveDataProvider
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
@@ -66,7 +68,7 @@ class RequestSearch extends Request
             'requestStatusUuid' => $this->requestStatusUuid,
             'requestTypeUuid' => $this->requestTypeUuid,
             'comment' => $this->comment,
-            'userUuid' => $this->userUuid,
+            'contragentUuid' => $this->contragentUuid,
             'closeDate' => $this->closeDate,
             'equipmentUuid' => $this->equipmentUuid,
             'authorUuid' => $this->authorUuid,

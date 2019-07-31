@@ -20,10 +20,14 @@ use common\models\Measure;
 use common\models\Objects;
 use common\models\Photo;
 use common\models\Street;
+use common\models\Task;
+use common\models\TaskUser;
 use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
+use common\models\WorkStatus;
 use Yii;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -316,6 +320,7 @@ class SiteController extends Controller
      *
      * @return string
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionDashboard()
     {
@@ -353,11 +358,6 @@ class SiteController extends Controller
             ->limit(20)
             ->all();
 
-//        $users = Users::find()->all();
-
-        /**
-         * Работа с картой
-         */
         $userData = array();
         $users = Users::find()
             ->where('name != "sUser"')
@@ -368,7 +368,7 @@ class SiteController extends Controller
 
         $count = 0;
         $categories = "";
-        $bar = "{ name: 'измерений',";
+        $bar = "{ name: 'Выполнено в срок', color: 'green', ";
         $bar .= "data: [";
         foreach ($users as $current_user) {
             if ($count > 0) {
@@ -376,39 +376,50 @@ class SiteController extends Controller
                 $bar .= ",";
             }
             $categories .= '"' . $current_user['name'] . '"';
-            $values[$count] = Measure::find()
-                ->where('createdAt > (NOW()-(5*24*3600000))')
-                ->andWhere(['userUuid' => $current_user['uuid']])
-                ->count();
-            $bar .= $values[$count];
+            $taskGood=0;
+            $taskUsers = TaskUser::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskGood += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere('endDate <= deadlineDate')
+                    ->count();
+            }
+            $bar .= $taskGood;
             $count++;
         }
         $bar .= "]},";
 
-        $bar .= "{ name: 'объектов',";
+        $bar .= "{ name: 'Просрочено', color: 'red', ";
         $bar .= "data: [";
         $count = 0;
         foreach ($users as $current_user) {
             if ($count > 0)
                 $bar .= ",";
-            $houses = UserHouse::find()
+            $taskBad=0;
+            $taskUsers = TaskUser::find()
                 ->where(['userUuid' => $current_user['uuid']])
-                ->count();
-            $bar .= $houses;
-            $count++;
-        }
-        $bar .= "]},";
-
-        $bar .= "{ name: 'фотографий',";
-        $bar .= "data: [";
-        $count = 0;
-        foreach ($users as $current_user) {
-            if ($count > 0)
-                $bar .= ",";
-            $photos = Photo::find()
-                ->where(['userUuid' => $current_user['uuid']])
-                ->count();
-            $bar .= $photos;
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskBad += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere('deadlineDate > NOW()')
+                    ->andWhere(['workStatusUuid' => WorkStatus::NEW])
+                    ->count();
+                $taskBad += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere('deadlineDate > NOW()')
+                    ->andWhere(['workStatusUuid' => WorkStatus::IN_WORK])
+                    ->count();
+                $taskBad += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere('deadlineDate > endDate')
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->count();
+            }
+            $bar .= $taskBad;
             $count++;
         }
         $bar .= "]}";
