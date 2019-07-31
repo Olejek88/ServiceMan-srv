@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\components\Tag;
 use common\models\User;
 use common\models\Users;
 use Yii;
@@ -105,7 +106,7 @@ class UserArm extends Model
 
             [['tagType'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['tagType'], 'in', 'range' => [
-                Users::USERS_TAG_TYPE_PIN, Users::USERS_TAG_TYPE_GCODE, Users::USERS_TAG_TYPE_NFC, Users::USERS_TAG_TYPE_UHF
+                Tag::TAG_TYPE_PIN, Tag::TAG_TYPE_GRAPHIC_CODE, Tag::TAG_TYPE_NFC, Tag::TAG_TYPE_UHF
             ], 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['tagType'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE], 'when' => function ($model) {
                 return $model->type == Users::USERS_WORKER;

@@ -39,11 +39,6 @@ class Users extends ZhkhActiveRecord
     public const USERS_ARM = 1;
     public const USERS_WORKER = 2;
 
-    public const USERS_TAG_TYPE_PIN = 'PIN';
-    public const USERS_TAG_TYPE_GCODE = 'GCODE';
-    public const USERS_TAG_TYPE_NFC = 'NFC';
-    public const USERS_TAG_TYPE_UHF = 'UHF';
-
     /**
      * Behaviors.
      *

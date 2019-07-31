@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\ContragentSearch;
 use backend\models\UserArm;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Contragent;
 use common\models\ContragentType;
 use common\models\ObjectContragent;
@@ -14,8 +15,9 @@ use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
-use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use Throwable;
+
 /**
  * ContragentController implements the CRUD actions for Contragent model.
  */
@@ -97,9 +99,8 @@ class ContragentController extends ZhkhController
      * Creates a new Contragent model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
-     * @throws \yii\base\Exception
-     * @throws \Exception
-     * @throws \Throwable
+     * @throws Exception
+     * @throws Throwable
      */
     public function actionCreate()
     {
@@ -136,7 +137,7 @@ class ContragentController extends ZhkhController
                 $model->type = Users::USERS_WORKER;
                 // TODO пока для отладки - если понадобиться заходить с этого пользователя
                 $model->password =$contragent->inn;
-                $model->tagType = Users::USERS_TAG_TYPE_UHF;
+                $model->tagType = Tag::TAG_TYPE_UHF;
                 $model->pin = '1234';
                 $model->name = $contragent->title;
                 if ($contragent->contragentTypeUuid == ContragentType::WORKER)
@@ -239,7 +240,7 @@ class ContragentController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDelete($id)
     {
@@ -279,6 +280,7 @@ class ContragentController extends ZhkhController
         if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
             return $model['phone'];
         } else return '';
+        return '';
     }
 
     /**
@@ -308,6 +310,7 @@ class ContragentController extends ZhkhController
             if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
                 return $model['title'];
             } else return '';
+        return '';
     }
 
 }

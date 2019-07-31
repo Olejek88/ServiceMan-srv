@@ -6,9 +6,14 @@
 /* @var $source */
 
 /* @var string $object_uuid */
+
 /* @var string $objectUuid */
+/* @var $tagType */
+
+/* @var $tagTypeList */
 
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
@@ -16,11 +21,24 @@ use common\models\Objects;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
-use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+?>
+
+<?php
+$this->registerJs('
+    $("#dynamicmodel-tagtype").on("change", function() {
+      if ($(this).val() == "' . Tag::TAG_TYPE_DUMMY . '") {
+        console.log("type dummy");
+        $(".field-equipment-tag").hide();
+      } else {
+        console.log("type other");
+        $(".field-equipment-tag").show();
+      }
+    });
+    $("#dynamicmodel-tagtype").trigger("change");', \yii\web\View::POS_READY);
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -53,6 +71,9 @@ use yii\helpers\Html;
     echo $form->field($equipment, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
+
+
+    echo $form->field($tagType, 'tagType')->dropDownList($tagTypeList)->label('Тип метки');
     echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);
 
     echo $form->field($equipment, 'serial')->textInput(['maxlength' => true]);
@@ -99,54 +120,43 @@ use yii\helpers\Html;
     }
     ?>
 
-    <div class="pole-mg">
-        <p style="width: 300px; margin-bottom: 0;">Дата ввода в эксплуатацию</p>
-        <?php echo DatePicker::widget(
-            [
-                'model' => $equipment,
-                'attribute' => 'inputDate',
-                'language' => 'ru',
-                'size' => 'ms',
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd',
-                ]
+    <?php echo $form->field($equipment, 'inputDate')->widget(DatePicker::class,
+        [
+            'language' => 'ru',
+            'size' => 'ms',
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
             ]
-        );
-        ?>
-    </div>
-    <div class="pole-mg">
-        <p style="width: 300px; margin-bottom: 0;">Дата последней поверки</p>
-        <?php echo DatePicker::widget(
-            [
-                'model' => $equipment,
-                'attribute' => 'testDate',
-                'language' => 'ru',
-                'size' => 'ms',
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd',
-                ]
+        ]
+    );
+    ?>
+
+    <?php echo $form->field($equipment, 'testDate')->widget(DatePicker::class,
+        [
+            'language' => 'ru',
+            'size' => 'ms',
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
             ]
-        );
-        ?>
-    </div>
-    <div class="pole-mg">
-        <p style="width: 300px; margin-bottom: 0;">Дата замены</p>
-        <?php echo DatePicker::widget(
-            [
-                'model' => $equipment,
-                'attribute' => 'replaceDate',
-                'language' => 'ru',
-                'size' => 'ms',
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd',
-                ]
+        ]
+    );
+    ?>
+
+    <?php echo $form->field($equipment, 'replaceDate')->widget(DatePicker::class,
+        [
+            'model' => $equipment,
+            'attribute' => 'replaceDate',
+            'language' => 'ru',
+            'size' => 'ms',
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
             ]
-        );
-        ?>
-    </div>
+        ]
+    );
+    ?>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
@@ -159,7 +169,7 @@ use yii\helpers\Html;
         e.preventDefault();
         $.ajax({
             type: "post",
-            data: new FormData( this ),
+            data: new FormData(this),
             processData: false,
             contentType: false
             url: "../equipment/save",

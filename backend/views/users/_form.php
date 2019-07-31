@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use common\models\User;
 use common\models\Users;
 use yii\web\View;
+use common\components\Tag;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Users */
@@ -62,10 +63,10 @@ use yii\web\View;
     <?php
     if ($model->isNewRecord || (!$model->isNewRecord && $model->type == Users::USERS_WORKER)) {
         $tagTypeList = [
-            Users::USERS_TAG_TYPE_PIN => 'Пинкод',
-            Users::USERS_TAG_TYPE_GCODE => 'QR код',
-            Users::USERS_TAG_TYPE_NFC => 'NFC метка',
-            Users::USERS_TAG_TYPE_UHF => 'UHF метка'
+            Tag::TAG_TYPE_PIN => 'Пинкод',
+            Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+            Tag::TAG_TYPE_NFC => 'NFC метка',
+            Tag::TAG_TYPE_UHF => 'UHF метка'
         ];
         echo $form->field($userArm, 'tagType')
             ->dropDownList($tagTypeList);
