@@ -3,6 +3,8 @@
 namespace api\components;
 
 use common\models\Alarm;
+use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Defect;
 use common\models\DefectType;
 use common\models\Documentation;
@@ -14,6 +16,8 @@ use common\models\MeasureType;
 use common\models\Objects;
 use common\models\Operation;
 use common\models\OperationTemplate;
+use common\models\RequestStatus;
+use common\models\RequestType;
 use common\models\Street;
 use common\models\TaskTemplate;
 use common\models\TaskType;
@@ -82,7 +86,7 @@ class BaseController extends Controller
         if ($changedAfter != null) {
             $query->andWhere(['>=', 'changedAt', $changedAfter]);
         }
-        $query->limit(1);
+
         // проверяем что хоть какие-то условия были заданы
         if ($query->where == null) {
             return [];
@@ -107,6 +111,8 @@ class BaseController extends Controller
             case AlarmStatus::class :
             case AlarmType::class :
             case City::class :
+            case Contragent::class :
+            case ContragentType::class :
             case Defect::class :
             case DefectType::class :
             case Documentation::class :
@@ -124,6 +130,7 @@ class BaseController extends Controller
             case Objects::class :
             case Operation::class :
             case OperationTemplate::class :
+            case RequestStatus::class :
             case Street::class :
             case TaskTemplate::class :
             case TaskType::class :
