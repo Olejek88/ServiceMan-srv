@@ -3,6 +3,7 @@
 namespace console\workers;
 
 use common\components\MainFunctions;
+use common\models\Organization;
 use common\models\Task;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskVerdict;
@@ -25,7 +26,7 @@ class  TaskService extends Worker
 
     public $active = true;
     public $maxProcesses = 1;
-    public $delay = 7200;
+    public $delay = 72;
 
     /**
      * @throws InvalidConfigException
@@ -33,10 +34,10 @@ class  TaskService extends Worker
      */
     public function run()
     {
-        $database_name = Yii::$app->params['database_name'];
-        foreach ($database_name as $database) {
-            Yii::$app->set('db', Yii::$app->$database);
-            $this->checkNewTask();
+        $this->log('run');
+        $organisations = Organization::find()->all();
+        foreach ($organisations as $organisation) {
+            $this->checkNewTask($organisation);
             Yii::$app->db->close();
         }
     }
@@ -44,14 +45,16 @@ class  TaskService extends Worker
     /**
      * 1. читаем таблицу задач
      * 2. упаковываем их в наряд
+     * @param $organisation
      * @return string
-     * @throws InvalidConfigException
      * @throws Exception
+     * @throws InvalidConfigException
      */
-    public function checkNewTask()
+    public function checkNewTask($organisation)
     {
         $return = "";
         date_default_timezone_set('Asia/Yekaterinburg');
+        $this->log('check_new_task');
         $tableSchema = Yii::$app->db->schema->getTableSchema('task_template_equipment');
         if ($tableSchema != null) {
             $taskTemplateEquipments = TaskTemplateEquipment::find()

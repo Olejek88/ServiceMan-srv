@@ -81,7 +81,7 @@ class Request extends ZhkhActiveRecord
             [
                 [
                     'uuid',
-                    'userUuid',
+                    'contragentUuid',
                     'comment',
                     'requestStatusUuid',
                     'requestTypeUuid',
@@ -95,7 +95,7 @@ class Request extends ZhkhActiveRecord
             [
                 [
                     'uuid',
-                    'userUuid',
+                    'contragentUuid',
                     'requestStatusUuid',
                     'equipmentUuid',
                     'objectUuid',
@@ -170,8 +170,8 @@ class Request extends ZhkhActiveRecord
         return [
             '_id' => Yii::t('app', '№'),
             'uuid' => Yii::t('app', 'Uuid'),
-            'userUuid' => Yii::t('app', 'Заявитель'),
-            'user' => Yii::t('app', 'Заявитель'),
+            'contragentUuid' => Yii::t('app', 'Заявитель'),
+            'contragent' => Yii::t('app', 'Заявитель'),
             'type' => Yii::t('app', 'Тип'),
             'requestTypeUuid' => Yii::t('app', 'Характер обращения'),
             'requestType' => Yii::t('app', 'Характер обращения'),

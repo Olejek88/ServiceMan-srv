@@ -7,6 +7,7 @@ use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\Receipt;
 use common\models\Request;
+use common\models\TaskTemplate;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -211,7 +212,7 @@ class RequestController extends ZhkhController
                     }
                 }
 
-                if ($model['requestType']['taskTemplateUuid']) {
+                if ($model['requestType']['taskTemplateUuid'] && $model['requestType']['taskTemplateUuid']!=TaskTemplate::DEFAULT_TASK) {
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
