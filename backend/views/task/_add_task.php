@@ -98,7 +98,7 @@ use yii\helpers\Html;
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-        <p style="width: 0; margin-bottom: 0;">Дата начала работ</p>
+        <p style="width: 0; margin-bottom: 0; width: 300px">Дата начала работ</p>
         <?= DateTimePicker::widget([
             'model' => $model,
             'attribute' => 'taskDate',

@@ -450,9 +450,16 @@ class TaskController extends ZhkhController
             if (isset($_POST["defectUuid"]) && $task) {
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
-                    $defect->taskUuid = $task['uuid'];
+                    $defect['taskUuid'] = $task['uuid'];
                     $defect['defectStatus'] = 1;
                     $defect->save();
+                }
+            }
+            if (isset($_POST["requestUuid"]) && $task) {
+                $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
+                if ($request) {
+                    $request['taskUuid'] = $task['uuid'];
+                    $request->save();
                 }
             }
             MainFunctions::register('task', 'Создана задача',

@@ -272,7 +272,8 @@ $gridColumns = [
                 }
             }
             return Html::a("<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>",
-                ['../task/form', 'equipmentUuid' => $model['equipmentUuid'], 'requestUuid' => $model['uuid']],
+                ['../task/form', 'equipmentUuid' => $model['equipmentUuid'], 'requestUuid' => $model['uuid'],
+                    'type_uuid' => $model['equipment']['equipmentTypeUuid']],
                 [
                     'title' => 'Добавить задачу',
                     'data-toggle' => 'modal',
