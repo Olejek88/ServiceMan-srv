@@ -392,6 +392,27 @@ class SiteController extends Controller
         }
         $bar .= "]},";
 
+        $bar .= "{ name: 'Выполнено', color: 'blue', ";
+        $bar .= "data: [";
+        $count = 0;
+        foreach ($users as $current_user) {
+            if ($count > 0)
+                $bar .= ",";
+            $taskComplete=0;
+            $taskUsers = TaskUser::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskComplete += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->count();
+            }
+            $bar .= $taskComplete;
+            $count++;
+        }
+        $bar .= "]},";
+
         $bar .= "{ name: 'Просрочено', color: 'red', ";
         $bar .= "data: [";
         $count = 0;
