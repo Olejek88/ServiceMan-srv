@@ -24,6 +24,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii2fullcalendar\models\Event;
 
@@ -392,6 +393,11 @@ class TaskController extends ZhkhController
         $users = Users::find()
             ->where('name != "sUser"')
             ->all();
+        if (isset($_GET['user_select']) && $_GET['user_select']!='') {
+            $users = Users::find()
+                ->where(['uuid' => $_GET["user_select"]])
+                ->all();
+        }
         $user_array = [];
         $count = 0;
         $t_count = 1;
@@ -422,8 +428,9 @@ class TaskController extends ZhkhController
                         ->andWhere(['<','taskdate',$end_date])
                         ->all();
                     foreach ($tasks as $task) {
-                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid']) {
                             $taskTotal++;
+                        }
                     }
 
                     $tasks = Task::find()
@@ -538,12 +545,22 @@ class TaskController extends ZhkhController
         }
         $bar .= "]}";
 
+        $users = Users::find()
+            ->where('name != "sUser"')
+            ->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+
+        $equipmentSystems = EquipmentSystem::find()->all();
+        $items2 = ArrayHelper::map($equipmentSystems, 'uuid', 'title');
+
         return $this->render(
             'table-report',
             [
                 'bar' => $bar,
                 'categories' => $categories,
-                'users' => $user_array
+                'users' => $user_array,
+                'usersAll' => $items,
+                'systemAll' => $items2
             ]
         );
     }

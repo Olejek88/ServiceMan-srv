@@ -2,8 +2,11 @@
 /* @var $bar
  * @var $categories
  * @var $users
+ * @var $usersAll
+ * @var $systemAll
  */
 
+use kartik\select2\Select2;
 use kartik\widgets\DateTimePicker;
 use yii\helpers\Html;
 
@@ -11,15 +14,21 @@ $this->title = Yii::t('app', 'ТОИРУС ЖКХ::Отчет по исполн�
 
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';
+$user = '';
+$system = '';
 if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
+if (isset($_GET['user_select']))
+    $user = $_GET['user_select'];
+if (isset($_GET['system_select']))
+    $system = $_GET['system_select'];
 
 ?>
 <div id="requests-table-container" class="panel table-responsive kv-grid-container" style="overflow: auto">
     <form action="">
-        <table style="width: 800px; padding: 3px">
+        <table style="width: 1200px; padding: 3px">
             <tr>
                 <td style="width: 300px">
                     <?php
@@ -40,7 +49,30 @@ if (isset($_GET['start_time']))
                                 'autoclose' => true,
                                 'format' => 'yyyy-mm-dd hh:ii:ss'
                             ]
-                        ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                        ]) . '<td style="width: 300px">' .
+                        Select2::widget([
+                        'id' => 'user_select',
+                        'name' => 'user_select',
+                        'value' => $user,
+                        'language' => 'ru',
+                        'data' => $usersAll,
+                        'options' => ['placeholder' => 'Выберите пользователя...'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]) .'</td><td>&nbsp;</td>
+                    <td style="width: 300px">'.
+                        Select2::widget([
+                        'id' => 'system_select',
+                        'name' => 'system_select',
+                        'value' => $system,
+                        'language' => 'ru',
+                        'data' => $systemAll,
+                        'options' => ['placeholder' => 'Выберите систему...'],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                        ]) .'</td><td>&nbsp;</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                             'class' => 'btn btn-success']) . '';
                     ?>
                 </td>
@@ -57,8 +89,8 @@ if (isset($_GET['start_time']))
                 система
             </th>
             <th class="text-center kv-align-middle" data-col-seq="3">Всего задач</th>
-            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Выполнено</th>
-            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Выполнено в срок</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Выполнено в срок</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Выполнено</th>
             <th class="kv-align-center kv-align-middle" data-col-seq="6">Просрочено</th>
         </tr>
         </thead>
@@ -71,10 +103,10 @@ if (isset($_GET['start_time']))
                     . $user['count'] . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="1">' . $user['name'] . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $user['system'] . '</td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="3"><div class="progress"><div class="critical5">' . $user['total'] . '</div></div></td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="4"><div class="progress"><div class="critical5">' . $user['complete'] . '</div></div></td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="5"><div class="progress"><div class="critical5">' . $user['complete_good'] . '</div></div></td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="6"><div class="progress"><div class="critical5">' . $user['bad'] . '</div></div></td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="3"><div class="progress"><div class="critical6">' . $user['total'] . '</div></div></td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="5"><div class="progress"><div class="critical3">' . $user['complete_good'] . '</div></div></td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="4"><div class="progress"><div class="critical4">' . $user['complete'] . '</div></div></td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="6"><div class="progress"><div class="critical1">' . $user['bad'] . '</div></div></td>';
                 echo '</tr>';
             }
         }

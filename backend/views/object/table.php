@@ -156,7 +156,7 @@ $gridColumns = [
 ];
 
 echo GridView::widget([
-    'id' => 'flat-table',
+    'id' => 'object-table',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
