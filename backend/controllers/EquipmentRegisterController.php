@@ -135,7 +135,6 @@ class EquipmentRegisterController extends ZhkhController
             ->select('*')
             ->where(['equipmentUuid' => $equipmentUuid])
             ->all();
-        MainFunctions::log("main.log",date("Y-m-d H:i:s").' '.$equipmentUuid.' '.$_GET["equipmentUuid"]);
         return $this->renderAjax('_register_list', [
             'registers' => $registers,
             'equipmentUuid' => $equipmentUuid

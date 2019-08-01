@@ -1111,18 +1111,40 @@ class EquipmentController extends ZhkhController
                 }
                 if ($type == 'object') {
                     $equipment = new Equipment();
+                    $tagTypeList = [
+                        Tag::TAG_TYPE_DUMMY => 'Пустая',
+                        Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                        Tag::TAG_TYPE_NFC => 'NFC метка',
+                        Tag::TAG_TYPE_UHF => 'UHF метка'
+                    ];
+                    $tagType = new DynamicModel(['tagType']);
+                    $tagType->addRule(['tagType'], 'required');
+                    $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
                     return $this->renderAjax('_add_form', [
                         'equipment' => $equipment,
                         'objectUuid' => $uuid,
+                        'tagType' => $tagType,
+                        'tagTypeList' => $tagTypeList,
                         'equipmentTypeUuid' => null,
                         'source' => '../equipment/tree-street'
                     ]);
                 }
                 if ($type == 'type') {
                     $equipment = new Equipment();
+                    $tagTypeList = [
+                        Tag::TAG_TYPE_DUMMY => 'Пустая',
+                        Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                        Tag::TAG_TYPE_NFC => 'NFC метка',
+                        Tag::TAG_TYPE_UHF => 'UHF метка'
+                    ];
+                    $tagType = new DynamicModel(['tagType']);
+                    $tagType->addRule(['tagType'], 'required');
+                    $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
                     return $this->renderAjax('_add_form', [
                         'equipment' => $equipment,
                         'objectUuid' => null,
+                        'tagType' => $tagType,
+                        'tagTypeList' => $tagTypeList,
                         'equipmentTypeUuid' => $uuid,
                         'source' => '../equipment/tree'
                     ]);
@@ -1197,9 +1219,21 @@ class EquipmentController extends ZhkhController
             }
             if ($type == 'equipment') {
                 $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+                $tagTypeList = [
+                    Tag::TAG_TYPE_DUMMY => 'Пустая',
+                    Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                    Tag::TAG_TYPE_NFC => 'NFC метка',
+                    Tag::TAG_TYPE_UHF => 'UHF метка'
+                ];
+                $tagType = new DynamicModel(['tagType']);
+                $tagType->addRule(['tagType'], 'required');
+                $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+
                 return $this->renderAjax('../equipment/_add_form', [
                     'contragentUuid' => $uuid,
                     'equipment' => $equipment,
+                    'tagType' => $tagType,
+                    'tagTypeList' => $tagTypeList,
                     'reference' => '../equipment/tree-street',
                     'source' => $source,
                     'equipmentTypeUuid' => null,

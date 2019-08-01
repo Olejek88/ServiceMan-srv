@@ -1,6 +1,7 @@
 <?php
 
 use common\models\EquipmentType;
+use common\models\Users;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -125,6 +126,7 @@ use kartik\file\FileInput;
     <?php
     echo $form->field($model, 'path')
         ->widget(FileInput::class, ['options' => ['accept' => '*'],]);
+    echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     ?>
 
     <div class="form-group text-center">

@@ -78,6 +78,12 @@ td.alt {
     text-align: center;
     margin-top: -3px;
 }
+.progress > .critical6 {
+    background-color: grey;
+    color: white;
+    text-align: center;
+    margin-top: -3px;
+}
 table.fancytree-ext-table tbody tr.fancytree-active {
     background-color: #d0e9c6;
 }
