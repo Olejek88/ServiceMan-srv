@@ -23,7 +23,7 @@ class RequestController extends BaseController
         // проверяем параметры запроса
         $uuid = $req->getQueryParam('uuid');
         if ($uuid != null) {
-            $query->andWhere(['{{%task}}.uuid' => $uuid]);
+            $query->andWhere(['uuid' => $uuid]);
         }
 
         $changedAfter = $req->getQueryParam('changedAfter');
@@ -37,7 +37,6 @@ class RequestController extends BaseController
         }
 
         $query->with(['author']);
-        $query->with(['user']);
 
         $result = $query->asArray()->all();
         return $result;

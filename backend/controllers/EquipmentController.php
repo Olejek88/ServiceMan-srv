@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\EquipmentSearch;
 use common\components\Errors;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Contragent;
 use common\models\Defect;
 use common\models\Documentation;
@@ -25,6 +26,7 @@ use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
 use Yii;
+use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
@@ -56,37 +58,37 @@ class EquipmentController extends ZhkhController
                 $model['serial'] = $_POST['Equipment'][$_POST['editableIndex']]['serial'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Сменили серийный номер на ".$model['serial']);
+                    "Сменили серийный номер на " . $model['serial']);
             }
             if ($_POST['editableAttribute'] == 'tag') {
                 $model['tag'] = $_POST['Equipment'][$_POST['editableIndex']]['tag'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Смена тега на ".$model['tag']);
+                    "Смена тега на " . $model['tag']);
             }
             if ($_POST['editableAttribute'] == 'equipmentTypeUuid') {
                 $model['equipmentTypeUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentTypeUuid'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Смена типа элемента на ".$model['equipmentType']['title']);
+                    "Смена типа элемента на " . $model['equipmentType']['title']);
             }
             if ($_POST['editableAttribute'] == 'equipmentStatusUuid') {
                 $model['equipmentStatusUuid'] = $_POST['Equipment'][$_POST['editableIndex']]['equipmentStatusUuid'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
-                    "Смена статуса на ".$model['equipmentStatus']['title']);
+                    "Смена статуса на " . $model['equipmentStatus']['title']);
             }
             if ($_POST['editableAttribute'] == 'testDate') {
                 $model['testDate'] = $_POST['Equipment'][$_POST['editableIndex']]['testDate'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Смена даты поверки на ".$model['testDate']);
+                    "Смена даты поверки на " . $model['testDate']);
             }
             if ($_POST['editableAttribute'] == 'inputDate') {
                 $model['inputDate'] = $_POST['Equipment'][$_POST['editableIndex']]['inputDate'];
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Смена даты ввода в эксплуатацию на ".$model['inputDate']);
+                    "Смена даты ввода в эксплуатацию на " . $model['inputDate']);
             }
             $model->save();
             return json_encode($model['inputDate']);
@@ -99,9 +101,9 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
 
@@ -128,13 +130,13 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
-        if (isset($_GET['type']) && $_GET['type']!='') {
-            $dataProvider->query->andWhere(['=','equipmentTypeUuid',$_GET['type']]);
+        if (isset($_GET['type']) && $_GET['type'] != '') {
+            $dataProvider->query->andWhere(['=', 'equipmentTypeUuid', $_GET['type']]);
         }
         $dataProvider->pagination->pageSize = 150;
 
@@ -185,9 +187,9 @@ class EquipmentController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'testDate', $_GET['end_time']]);
         }
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
         return $this->render(
@@ -228,16 +230,31 @@ class EquipmentController extends ZhkhController
         parent::actionCreate();
 
         $model = new Equipment();
+        $tagTypeList = [
+            Tag::TAG_TYPE_DUMMY => 'Пустая',
+            Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+            Tag::TAG_TYPE_NFC => 'NFC метка',
+            Tag::TAG_TYPE_UHF => 'UHF метка'
+        ];
+        $tagType = new DynamicModel(['tagType']);
+        $tagType->addRule(['tagType'], 'required');
+        $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $tagType->load(Yii::$app->request->post())) {
             // проверяем все поля, если что-то не так показываем форму с ошибками
-            if (!$model->validate()) {
+            if (!$model->validate() || !$tagType->validate()) {
                 if (Yii::$app->request->isAjax) {
                     echo json_encode($model->errors);
                 }
 
-                return $this->render('create', ['model' => $model]);
+                return $this->render('create', [
+                    'model' => $model,
+                    'tagType' => $tagType,
+                    'tagTypeList' => $tagTypeList,
+                ]);
             }
+
+            $model->tag = Tag::getTag($tagType->tagType, $model->tag);
             // сохраняем запись
             if ($model->save(false)) {
                 MainFunctions::register('documentation', 'Добавлено оборудование',
@@ -252,7 +269,11 @@ class EquipmentController extends ZhkhController
             echo json_encode($model->errors);
         }
 
-        return $this->render('create', ['model' => $model]);
+        return $this->render('create', [
+            'model' => $model,
+            'tagType' => $tagType,
+            'tagTypeList' => $tagTypeList,
+        ]);
     }
 
     /**
@@ -364,7 +385,7 @@ class EquipmentController extends ZhkhController
                 ->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
-                    self::addEquipment($equipment,"../equipment/tree");
+                    self::addEquipment($equipment, "../equipment/tree");
             }
         }
         $users = Users::find()->all();
@@ -608,9 +629,9 @@ class EquipmentController extends ZhkhController
                     UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
                 ])->one();
                 if (!$user)
-                    $user_name=$user['name'];
+                    $user_name = $user['name'];
                 else
-                    $user_name="";
+                    $user_name = "";
                 $fullTree['children'][$childIdx]['children'][] =
                     [
                         'title' => $house['number'],
@@ -627,7 +648,7 @@ class EquipmentController extends ZhkhController
                     ->andWhere(['deleted' => false])
                     ->all();
                 foreach ($objects as $object) {
-                    if ($object['objectTypeUuid']==ObjectType::OBJECT_TYPE_FLAT)
+                    if ($object['objectTypeUuid'] == ObjectType::OBJECT_TYPE_FLAT)
                         $title = $object['objectType']['title'] . ' ' . $object['title'];
                     else
                         $title = $object['title'];
@@ -758,28 +779,28 @@ class EquipmentController extends ZhkhController
             if ($type == 'street') {
                 $street = Street::find()->where(['uuid' => $_POST["selected_node"]])->one();
                 if ($street) {
-                    $street['deleted']=true;
+                    $street['deleted'] = true;
                     $street->save();
                 }
             }
             if ($type == 'house') {
                 $house = House::find()->where(['uuid' => $_POST["selected_node"]])->one();
                 if ($house) {
-                    $house['deleted']=true;
+                    $house['deleted'] = true;
                     $house->save();
                 }
             }
             if ($type == 'object') {
                 $object = Objects::find()->where(['uuid' => $_POST["selected_node"]])->one();
                 if ($object) {
-                    $object['deleted']=true;
+                    $object['deleted'] = true;
                     $object->save();
                 }
             }
             if ($type == 'equipment') {
                 $equipment = Equipment::find()->where(['uuid' => $_POST["selected_node"]])->one();
                 if ($equipment) {
-                    $equipment['deleted']=true;
+                    $equipment['deleted'] = true;
                     $equipment->save();
                 }
             }
@@ -984,6 +1005,7 @@ class EquipmentController extends ZhkhController
                 ->one();
             return $this->renderAjax('_change_form', [
                 'model' => $model,
+                'source' => null,
             ]);
         }
         if ($_POST["Equipment"]["equipmentStatusUuid"]) {
@@ -1031,11 +1053,10 @@ class EquipmentController extends ZhkhController
             if (isset($_GET["defectUuid"])) {
                 $defectUuid = $_GET["defectUuid"];
                 $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
-                $defect['defectStatus']=1;
+                $defect['defectStatus'] = 1;
                 $defect->save();
-                $model->comment = 'Задача создана по дефекту '.$defect['title'];
-            }
-            else
+                $model->comment = 'Задача создана по дефекту ' . $defect['title'];
+            } else
                 $defectUuid = 0;
             return $this->renderAjax('_select_task', [
                 'model' => $model,
@@ -1148,7 +1169,8 @@ class EquipmentController extends ZhkhController
                     return $this->renderAjax('../object/_add_house_form', [
                         'houseUuid' => $uuid,
                         'house' => $house,
-                        'source' => $source
+                        'source' => $source,
+                        'streetUuid' => null,
                     ]);
                 }
             }
@@ -1158,7 +1180,8 @@ class EquipmentController extends ZhkhController
                     return $this->renderAjax('../object/_add_object_form', [
                         'objectUuid' => $uuid,
                         'object' => $object,
-                        'source' => $source
+                        'source' => $source,
+                        'houseUuid' => null,
                     ]);
                 }
             }
@@ -1167,7 +1190,9 @@ class EquipmentController extends ZhkhController
                 return $this->renderAjax('../object/_add_contragent_form', [
                     'contragentUuid' => $uuid,
                     'contragent' => $contragent,
-                    'source' => $source
+                    'source' => $source,
+                    'address' => null,
+                    'objectUuid' => null,
                 ]);
             }
             if ($type == 'equipment') {
@@ -1176,7 +1201,9 @@ class EquipmentController extends ZhkhController
                     'contragentUuid' => $uuid,
                     'equipment' => $equipment,
                     'reference' => '../equipment/tree-street',
-                    'source' => $source
+                    'source' => $source,
+                    'equipmentTypeUuid' => null,
+                    'objectUuid' => null,
                 ]);
             }
         }
@@ -1239,59 +1266,71 @@ class EquipmentController extends ZhkhController
                 }
             }
             if ($type == 'equipment') {
-                if (isset($_POST['equipmentUuid']))
+                $tagTypeList = [
+                    Tag::TAG_TYPE_DUMMY => 'Пустая',
+                    Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                    Tag::TAG_TYPE_NFC => 'NFC метка',
+                    Tag::TAG_TYPE_UHF => 'UHF метка'
+                ];
+                $tagType = new DynamicModel(['tagType']);
+                $tagType->addRule(['tagType'], 'required');
+                $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+
+                if (isset($_POST['equipmentUuid'])) {
                     $model = Equipment::find()->where(['uuid' => $_POST['equipmentUuid']])->one();
-                else
+                } else {
                     $model = new Equipment();
-                if ($model->load(Yii::$app->request->post())) {
+                }
+                if ($model->load(Yii::$app->request->post()) && $tagType->load(Yii::$app->request->post())) {
+                    $model->tag = Tag::getTag($tagType->tagType, $model->tag);
                     //public static function addEquipmentRegister($equipmentUuid, $registerTypeUuid, $description)
                     $changed_attributes = array_diff_assoc($model->getOldAttributes(), $model->getAttributes());
-                    foreach($changed_attributes as $field => $value) {
+                    foreach ($changed_attributes as $field => $value) {
                         //адрес, завод.номер,статус, дата ввода в эксп.
                         if ($field == 'objectUuid') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PLACE,
-                                "Элемент отнесли к ".$model['object']->getFullTitle());
+                                "Элемент отнесли к " . $model['object']->getFullTitle());
                         }
                         if ($field == 'serial') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Сменили серийный номер на ".$value);
+                                "Сменили серийный номер на " . $value);
                         }
                         if ($field == 'equipmentStatusUuid') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
-                                "Смена статуса на ".$model['equipmentStatus']['title']);
+                                "Смена статуса на " . $model['equipmentStatus']['title']);
                         }
                         if ($field == 'inputDate') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена даты ввода в эксплуатацию на ".$model['inputDate']);
+                                "Смена даты ввода в эксплуатацию на " . $model['inputDate']);
                         }
                         if ($field == 'tag') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена тега на ".$model['tag']);
+                                "Смена тега на " . $model['tag']);
                         }
                         if ($field == 'period') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена периода поверки на ".$model['period']);
+                                "Смена периода поверки на " . $model['period']);
                         }
                         if ($field == 'testDate') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена даты поверки на ".$model['testDate']);
+                                "Смена даты поверки на " . $model['testDate']);
                         }
                         if ($field == 'replaceDate') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена даты замены на ".$model['replaceDate']);
+                                "Смена даты замены на " . $model['replaceDate']);
                         }
                         if ($field == 'objectTypeUuid') {
                             EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                                 EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                                "Смена типа элемента на ".$model['objectType']['title']);
+                                "Смена типа элемента на " . $model['objectType']['title']);
                         }
                     }
                     if ($model->save(false) && isset($_POST['equipmentUuid'])) {
@@ -1386,15 +1425,15 @@ class EquipmentController extends ZhkhController
                 'data-target' => '#modalDefects',
             ]
         );
-/*
-        $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
-            ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
-            [
-                'title' => 'Добавить запись',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalChange',
-            ]
-        );*/
+        /*
+                $links .= Html::a('<span class="glyphicon glyphicon-briefcase"></span>&nbsp',
+                    ['/equipment-register/form', 'equipmentUuid' => $equipment['uuid']],
+                    [
+                        'title' => 'Добавить запись',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalChange',
+                    ]
+                );*/
         $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
             ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
             [
@@ -1548,7 +1587,8 @@ class EquipmentController extends ZhkhController
             return $this->render(
                 'view',
                 [
-                    'events' => $sort_events
+                    'events' => $sort_events,
+                    'model' => null,
                 ]
             );
         } else {
@@ -1601,10 +1641,25 @@ class EquipmentController extends ZhkhController
     {
         $source = '../equipment';
         $equipment = new Equipment();
+        $tagTypeList = [
+            Tag::TAG_TYPE_DUMMY => 'Пустая',
+            Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+            Tag::TAG_TYPE_NFC => 'NFC метка',
+            Tag::TAG_TYPE_UHF => 'UHF метка'
+        ];
+        $tagType = new DynamicModel(['tagType']);
+        $tagType->addRule(['tagType'], 'required');
+        $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+        $tagType->setAttributes(['tagType' => Tag::getTagType($equipment->tag)]);
         return $this->renderAjax('_add_form', [
+            'tagTypeList' => $tagTypeList,
+            'tagType' => $tagType,
             'equipment' => $equipment,
             'type' => 'equipment',
-            'source' => $source
+            'source' => $source,
+            'reference' => null,
+            'equipmentTypeUuid' => null,
+            'objectUuid' => null,
         ]);
     }
 
@@ -1624,11 +1679,27 @@ class EquipmentController extends ZhkhController
 
         $source = '../equipment';
         $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+
+        $tagTypeList = [
+            Tag::TAG_TYPE_DUMMY => 'Пустая',
+            Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+            Tag::TAG_TYPE_NFC => 'NFC метка',
+            Tag::TAG_TYPE_UHF => 'UHF метка'
+        ];
+        $tagType = new DynamicModel(['tagType']);
+        $tagType->addRule(['tagType'], 'required');
+        $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+        $tagType->setAttributes(['tagType' => Tag::getTagType($equipment->tag)]);
+        $equipment->tag = Tag::getTagId($equipment->tag);
         return $this->renderAjax('../equipment/_add_form', [
+            'tagTypeList' => $tagTypeList,
+            'tagType' => $tagType,
             'contragentUuid' => $uuid,
             'equipment' => $equipment,
             'reference' => '../equipment',
-            'source' => $source
+            'source' => $source,
+            'equipmentTypeUuid' => null,
+            'objectUuid' => null,
         ]);
     }
 }

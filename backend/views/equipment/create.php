@@ -3,6 +3,8 @@
 use yii\helpers\Html;
 
 /* @var $model \common\models\Equipment */
+/** @var $tagType */
+/** @var $tagTypeList */
 
 $this->title = Yii::t('app', 'Создать элементы');
 ?>
@@ -23,6 +25,8 @@ $this->title = Yii::t('app', 'Создать элементы');
                             '_form',
                             [
                                 'model' => $model,
+                                'tagType' => $tagType,
+                                'tagTypeList' => $tagTypeList,
                             ]
                         ) ?>
                     </h6>
