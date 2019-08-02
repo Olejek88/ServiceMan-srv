@@ -3,12 +3,10 @@
 namespace backend\controllers;
 
 use backend\models\DocumentationSearch;
-use common\components\MainFunctions;
 use common\models\Documentation;
 use common\models\EquipmentRegisterType;
 use common\models\Users;
 use Yii;
-use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
@@ -19,10 +17,14 @@ use yii\web\UploadedFile;
  */
 class DocumentationController extends ZhkhController
 {
+    protected $modelClass = Documentation::class;
+
     /**
      * Lists all Documentation models.
      *
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionIndex()
     {
@@ -92,69 +94,45 @@ class DocumentationController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
-     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
         parent::actionCreate();
 
         $model = new Documentation();
-        $entityType = new DynamicModel(['entityType']);
-        $entityType->addRule(['entityType'], 'string', ['max' => 45]);
-        $entityType->entityType = 'e';
-
+        $model->entityType = 'm';
+        $model->oid = Users::getCurrentOid();
         if ($model->load(Yii::$app->request->post())) {
-            $entityType->load(Yii::$app->request->post());
-            // проверяем все поля, если что-то не так показываем форму с ошибками
-            if (!$model->validate()) {
-                return $this->render(
-                    'create',
-                    ['model' => $model, 'entityType' => $entityType]
-                );
-            }
-
-            // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'path');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->path = $fileName;
-                }
-            }
-
-            if ($entityType['entityType'] == 'e') {
+            if ($model->entityType == 'e') {
                 $model->equipmentTypeUuid = null;
-            } else {
+            } else if ($model->entityType == 'm') {
                 $model->equipmentUuid = null;
             }
 
-            $model->oid = Users::getCurrentOid();
+            // получаем изображение для последующего сохранения
+            $uFile = $model->uploadDocFile();
 
-            // сохраняем запись
-            if ($model->save(false)) {
-                if ($model['equipmentTypeUuid'])
-                    $text = $model['equipmentType']['title'];
-                else
-                    $text = $model['equipment']['title'];
-                MainFunctions::register('documentation','Добавлена документация',
-                    '<a class="btn btn-default btn-xs">'.$model['documentationType']['title'].'</a>'.$model['title'].'<br/>'.
-                    '<a class="btn btn-default btn-xs">'.$text.'</a>');
-                EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
-                        EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                        "Добавлена документация ".$model['documentationType']['title'].' '.$model['title']);
-                return $this->redirect(['view', 'id' => $model->_id]);
+            if ($uFile !== false) {
+                $filePath = $model->getDocFullPath();
+                $targetDir = $model->getFileFullDir();
+                if (!file_exists($targetDir)) {
+                    mkdir($targetDir, 0777, true);
+                }
+
+                $uFile->saveAs($filePath);
             } else {
-                return $this->render(
-                    'create',
-                    ['model' => $model, 'entityType' => $entityType]
-                );
+                if ($model->path == '') {
+                    $model->addError('docFile', 'Укажите файл.');
+                    return $this->render('create', ['model' => $model]);
+                }
             }
-        } else {
-            return $this->render(
-                'create',
-                ['model' => $model, 'entityType' => $entityType]
-            );
+
+            if ($model->save(false)) {
+                return $this->redirect('index');
+            }
         }
+
+        return $this->render('create', ['model' => $model]);
     }
 
     /**
@@ -374,6 +352,7 @@ class DocumentationController extends ZhkhController
     /**
      * @return bool|string|\yii\web\Response
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function actionSave()
     {

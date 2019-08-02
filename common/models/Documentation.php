@@ -7,6 +7,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\Expression;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "documentation".
@@ -27,10 +28,17 @@ use yii\db\Expression;
  * @property DocumentationType $documentationType
  * @property Organization $organization
  * @property EquipmentType $equipmentType
+ *
+ * @property string $docLocalPath
+ * @property string $docFullPath
+ * @property string $fileLocalDir
+ * @property string $fileFullDir
  */
 class Documentation extends ZhkhActiveRecord
 {
-    private static $_IMAGE_ROOT = 'doc';
+    private static $_FILE_ROOT_DIR = 'doc';
+    public $docFile;
+    public $entityType;
 
     /**
      * Behaviors
@@ -73,18 +81,20 @@ class Documentation extends ZhkhActiveRecord
         return [
             [['uuid', 'title', 'documentationTypeUuid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [
-                ['path'],
-                'file', 'skipOnEmpty' => true,
+            [['path'], 'safe'],
+            [['docFile'],
+                'file',
+                'skipOnEmpty' => true,
                 'extensions' => 'png, jpg,  pdf, doc, docx, txt',
-                'maxSize' => 1024 * 1024 * 10
+                'maxSize' => 1024 * 1024 * 10,
             ],
             [
                 [
                     'uuid',
                     'equipmentUuid',
                     'documentationTypeUuid',
-                    'equipmentTypeUuid'
+                    'equipmentTypeUuid',
+                    'entityType'
                 ],
                 'string', 'max' => 45
             ],
@@ -198,6 +208,52 @@ class Documentation extends ZhkhActiveRecord
     }
 
     /**
+     * fetch stored image file name with complete path
+     * @return string
+     */
+    public function getDocFullPath()
+    {
+        return Yii::getAlias('@backend/web/' . $this->getFileLocalDir() . '/' . $this->path);
+    }
+
+    /**
+     * fetch stored image file name with complete path
+     * @return string
+     */
+    public function getDocLocalPath()
+    {
+        return $this->getFileLocalDir() . '/' . $this->path;
+    }
+
+    /**
+     *
+     */
+    public function getFileLocalDir()
+    {
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $users = $identity->users;
+        $org = $users->organization;
+
+        $modelDir = '';
+        if ($this->equipmentUuid != null) {
+            $modelDir = $this->equipmentUuid;
+        } else if ($this->equipmentTypeUuid != null) {
+            $modelDir = $this->equipmentTypeUuid;
+        }
+
+        return 'storage/files/' . $org->_id . '/' . self::$_FILE_ROOT_DIR . '/' . $modelDir;
+    }
+
+    /**
+     *
+     */
+    public function getFileFullDir()
+    {
+        return Yii::getAlias('@backend/web/' . $this->getFileLocalDir());
+    }
+
+    /**
      * Возвращает каталог в котором должен находится файл изображения,
      * относительно папки web.
      *
@@ -215,5 +271,32 @@ class Documentation extends ZhkhActiveRecord
     public function getOrganization()
     {
         return $this->hasOne(Organization::class, ['uuid' => 'oid']);
+    }
+
+    /**
+     * Process upload of image
+     *
+     * @return mixed the uploaded image instance
+     */
+    public function uploadDocFile()
+    {
+        // get the uploaded file instance. for multiple file uploads
+        // the following data will return an array (you may need to use
+        // getInstances method)
+        $uploadFile = UploadedFile::getInstance($this, 'docFile');
+
+        // if no image was uploaded abort the upload
+        if (empty($uploadFile)) {
+            return false;
+        }
+
+        $res = explode(".", $uploadFile->name);
+        $ext = end($res);
+
+        // generate a unique file name
+        $this->path = $this->uuid . ".{$ext}";
+
+        // the uploaded image instance
+        return $uploadFile;
     }
 }

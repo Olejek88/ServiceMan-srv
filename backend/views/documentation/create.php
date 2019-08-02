@@ -3,7 +3,6 @@
 use yii\helpers\Html;
 
 /* @var $model */
-/* @var $entityType */
 
 $this->title = Yii::t('app', 'Создание документации');
 ?>
@@ -24,7 +23,6 @@ $this->title = Yii::t('app', 'Создание документации');
                             '_form',
                             [
                                 'model' => $model,
-                                'entityType' => $entityType
                             ]
                         ) ?>
                     </h6>
