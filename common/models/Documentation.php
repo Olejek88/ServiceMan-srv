@@ -242,7 +242,7 @@ class Documentation extends ZhkhActiveRecord
             $modelDir = $this->equipmentTypeUuid;
         }
 
-        return 'storage/files/' . $org->_id . '/' . self::$_FILE_ROOT_DIR . '/' . $modelDir;
+        return 'storage/' . $org->_id . '/files/' . self::$_FILE_ROOT_DIR . '/' . $modelDir;
     }
 
     /**

@@ -136,7 +136,7 @@ $gridColumns = [
             'link' => function ($url,$model) {
                 /* @var $model Documentation */
                 return Html::a( '<span class="fa fa-file"></span>',
-                    $model->getDocLocalPath(),
+                    '/' . $model->getDocLocalPath(),
                     ['title' => $model->title, 'data-pjax' => '0']);
             }
         ],
