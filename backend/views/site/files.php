@@ -71,7 +71,8 @@ $this->title = 'Дерево файлов системы';
                                     selected_node: node.key,
                                     folder: node.folder,
                                     what: node.data.what,
-                                    types: node.data.types
+                                    types: node.data.types,                                 
+                                    source: "../site/files"
                                 },
                                 success: function (data) { 
                                     $(\'#modal_new\').modal(\'show\');
@@ -93,7 +94,8 @@ $this->title = 'Дерево файлов системы';
                                       data: {
                                           selected_node: data.key,
                                           folder: node.folder,
-                                          type: data.data.types
+                                          type: data.data.types,
+                                          source: "../site/files"                                        
                                       },
                                       success: function (result) {
                                         data.remove();            

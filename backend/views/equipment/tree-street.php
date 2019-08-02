@@ -20,33 +20,7 @@ $this->title = 'Дерево элементов по расположению';
         </colgroup>
         <thead style="background-color: #337ab7; color: white">
         <tr>
-            <th colspan="1">
-                <?php
-                try {
-                    echo Select2::widget([
-                        'id' => 'user_select',
-                        'name' => 'user_select',
-                        'language' => 'ru',
-                        'data' => $users,
-                        'options' => ['placeholder' => 'Выберите пользователя...'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                    ]);
-                } catch (Exception $e) {
-                }
-                ?>
-            </th>
-            <th colspan="1" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">
-                <button class="btn btn-success" type="button" id="addButton" style="padding: 5px 10px">
-                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                </button>
-                &nbsp
-                <button class="btn btn-danger" type="button" id="removeButton" style="padding: 5px 10px">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                </button>
-            </th>
-            <th colspan="8" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
+            <th colspan="10" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
             </th>
         </tr>
         <tr style="background-color: #3c8dbc; color: whitesmoke">
@@ -216,7 +190,7 @@ try {
                                 },
                                 success: function (data) { 
                                     $(\'#modalAddDocumentation\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
+                                    $(\'#modalContentDoc\').html(data);
                                 }
                             });
                     }')
@@ -347,7 +321,7 @@ try {
     </div>
     <div class="modal remote fade" id="modalAddDocumentation">
         <div class="modal-dialog">
-            <div class="modal-content loader-lg" id="modalContent">
+            <div class="modal-content loader-lg" id="modalContentDoc">
             </div>
         </div>
     </div>
@@ -413,52 +387,6 @@ function () {
      $(this).removeData();
      window.location.replace("tree-street");
 })');
-
-$this->registerJs('$("#addButton").on("click",function() {
-        var sel = $.ui.fancytree.getTree().getSelectedNodes();
-        var count = $(sel).length;
-        var i = 0;        
-        $.each(sel, function (event, data) {
-            if (data.folder==true && data.type=="house") {
-                $.ajax({
-                    url: "move",
-                    type: "post",
-                    data: {
-                        selected_node: data.data.uuid,
-                        user: $("#user_select").val()
-                    },
-                    success: function (data) {
-                        i = i + 1;
-                        if (i === count) {
-                            window.location.replace("tree-street");
-                        }                    
-                    }
-                });
-            }
-        });
-    })');
-$this->registerJs('$("#removeButton").on("click",function() {
-        var sel = $.ui.fancytree.getTree().getSelectedNodes();
-        var count = $(sel).length;
-        var i = 0;        
-        $.each(sel, function (event, data) {
-            if (data.folder==true && data.type=="house") {
-                $.ajax({
-                    url: "remove",
-                    type: "post",
-                    data: {
-                        selected_node: data.key,
-                    },
-                    success: function (data) {
-                        i = i + 1;
-                        if (i === count) {
-                            window.location.replace("tree-street");
-                        }                    
-                    }                  
-                });
-            }
-        });
-    })');
 
 $this->registerJs('$("#expandButton").on("click",function() {
     $("#tree").fancytree("getRootNode").visit(function(node){

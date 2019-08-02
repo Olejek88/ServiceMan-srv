@@ -426,7 +426,10 @@ class EquipmentController extends ZhkhController
             $object_count = 0;
             $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
             foreach ($user_houses as $user_house) {
-                $flats = Objects::find()->select('uuid')->where(['houseUuid' => $user_house['houseUuid']])->all();
+                $flats = Objects::find()->select('uuid')
+                    ->where(['houseUuid' => $user_house['houseUuid']])
+                    ->andWhere(['deleted' => 0])
+                    ->all();
                 foreach ($flats as $flat) {
                     $equipment = Equipment::find()
                         ->select('*')

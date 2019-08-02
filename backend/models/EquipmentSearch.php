@@ -75,6 +75,8 @@ class EquipmentSearch extends Equipment
         $query->andFilterWhere([
             '_id' => $this->_id,
             'equipment.deleted' => false,
+            'object.deleted' => false,
+            'house.deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

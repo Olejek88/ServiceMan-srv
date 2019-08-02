@@ -10,8 +10,10 @@ use common\models\Users;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -23,6 +25,8 @@ class DocumentationController extends ZhkhController
      * Lists all Documentation models.
      *
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -92,6 +96,7 @@ class DocumentationController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -361,9 +366,18 @@ class DocumentationController extends ZhkhController
             if (isset($_POST["model_uuid"]))
                 $model_uuid = $_POST["model_uuid"];
             else $model_uuid = 0;
+            if (isset($_POST["source"]))
+                $source = $_POST["source"];
+            else $source = 0;
+            if (isset($_POST["folder"]) && $_POST["folder"]=='true') {
+                $model_uuid = $_POST["uuid"];
+                $uuid = 0;
+            }
             $documentation = new Documentation();
+
             return $this->renderAjax('../documentation/_add_form', [
                 'documentation' => $documentation,
+                'source' => $source,
                 'equipmentUuid' => $uuid,
                 'equipmentTypeUuid' => $model_uuid
             ]);
@@ -372,8 +386,9 @@ class DocumentationController extends ZhkhController
     }
 
     /**
-     * @return bool|string|\yii\web\Response
+     * @return bool|string|Response
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionSave()
     {
@@ -405,9 +420,9 @@ class DocumentationController extends ZhkhController
                     "Добавлена документация ".$model['documentationType']['title'].' '.$model['title']);
 
                 if (isset($_POST['source']))
-                    return $this->redirect(['../site/files']);
+                    return $this->redirect($_POST['source']);
                 else
-                    return $this->redirect(['/equipment/tree-street']);
+                    return $this->redirect(['files']);
             }
         }
         return $this->render('_add_form', ['model' => $model]);
