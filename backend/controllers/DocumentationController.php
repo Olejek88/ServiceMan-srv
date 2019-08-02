@@ -7,12 +7,14 @@ use common\models\Documentation;
 use common\models\EquipmentRegisterType;
 use common\models\Users;
 use Yii;
+use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
+use Throwable;
 
 /**
  * DocumentationController implements the CRUD actions for Documentation model.
@@ -96,8 +98,6 @@ class DocumentationController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
-     * @throws Exception
-     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
@@ -114,7 +114,7 @@ class DocumentationController extends ZhkhController
             }
 
             // получаем изображение для последующего сохранения
-            $uFile = $model->uploadDocFile();
+            $uFile = $model->uploadDocFile('docFile');
 
             if ($uFile !== false) {
                 $filePath = $model->getDocFullPath();
@@ -273,7 +273,7 @@ class DocumentationController extends ZhkhController
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
@@ -318,7 +318,7 @@ class DocumentationController extends ZhkhController
      */
     private static function _saveFile($model, $file)
     {
-        $dir ='storage/doc/';
+        $dir = 'storage/doc/';
         if (!is_dir($dir)) {
             if (!mkdir($dir, 0755, true)) {
                 return null;
@@ -346,7 +346,7 @@ class DocumentationController extends ZhkhController
             if (isset($_POST["source"]))
                 $source = $_POST["source"];
             else $source = 0;
-            if (isset($_POST["folder"]) && $_POST["folder"]=='true') {
+            if (isset($_POST["folder"]) && $_POST["folder"] == 'true') {
                 $model_uuid = $_POST["uuid"];
                 $uuid = 0;
             }
@@ -356,7 +356,8 @@ class DocumentationController extends ZhkhController
                 'documentation' => $documentation,
                 'source' => $source,
                 'equipmentUuid' => $uuid,
-                'equipmentTypeUuid' => $model_uuid
+                'equipmentTypeUuid' => $model_uuid,
+                'equipmentType' => null,
             ]);
         }
         return 0;
@@ -374,27 +375,41 @@ class DocumentationController extends ZhkhController
         $model->equipmentUuid = null;
 
         if ($model->load(Yii::$app->request->post())) {
-            if ($model->equipmentTypeUuid=='')
+            if ($model->equipmentTypeUuid == '')
                 $model->equipmentTypeUuid = null;
-            if ($model->equipmentUuid=='')
+            if ($model->equipmentUuid == '')
                 $model->equipmentUuid = null;
             if (!$model->validate()) {
                 return false;
             }
 
             // получаем изображение для последующего сохранения
-            $file = UploadedFile::getInstance($model, 'path');
-            if ($file && $file->tempName) {
-                $fileName = self::_saveFile($model, $file);
-                if ($fileName) {
-                    $model->path = $fileName;
+            $file = $model->uploadDocFile('docFile');
+            if ($file !== false) {
+                $filePath = $model->getDocFullPath();
+                $targetDir = $model->getFileFullDir();
+                if (!file_exists($targetDir)) {
+                    mkdir($targetDir, 0777, true);
+                }
+
+                $file->saveAs($filePath);
+            } else {
+                if ($model->path == '') {
+                    $model->addError('docFile', 'Укажите файл.');
+                    return $this->render('_add_form', [
+                        'documentation' => $model,
+                        'equipmentType' => $model->equipmentType,
+                        'equipmentUuid' => $model->equipmentUuid,
+                        'equipmentTypeUuid' => $model->equipmentTypeUuid,
+                        'source' => Yii::$app->request->getBodyParam('source'),
+                    ]);
                 }
             }
 
             if ($model->save(false)) {
                 EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Добавлена документация ".$model['documentationType']['title'].' '.$model['title']);
+                    "Добавлена документация " . $model['documentationType']['title'] . ' ' . $model['title']);
 
                 if (isset($_POST['source']))
                     return $this->redirect($_POST['source']);
@@ -402,6 +417,13 @@ class DocumentationController extends ZhkhController
                     return $this->redirect(['files']);
             }
         }
-        return $this->render('_add_form', ['model' => $model]);
+
+        return $this->render('_add_form', [
+            'documentation' => $model,
+            'equipmentType' => $model->equipmentType,
+            'equipmentUuid' => $model->equipmentUuid,
+            'equipmentTypeUuid' => null,
+            'source' => Yii::$app->request->getBodyParam('source'),
+        ]);
     }
 }

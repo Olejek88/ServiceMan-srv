@@ -277,14 +277,15 @@ class Documentation extends ZhkhActiveRecord
     /**
      * Process upload of image
      *
+     * @param $fieldName
      * @return mixed the uploaded image instance
      */
-    public function uploadDocFile()
+    public function uploadDocFile($fieldName)
     {
         // get the uploaded file instance. for multiple file uploads
         // the following data will return an array (you may need to use
         // getInstances method)
-        $uploadFile = UploadedFile::getInstance($this, 'docFile');
+        $uploadFile = UploadedFile::getInstance($this, $fieldName);
 
         // if no image was uploaded abort the upload
         if (empty($uploadFile)) {
