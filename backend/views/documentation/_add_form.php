@@ -92,7 +92,7 @@ use yii\helpers\Html;
         echo Html::hiddenInput("source", $source);
     }
 
-    echo $form->field($documentation, 'path')
+    echo $form->field($documentation, 'docFile')
         ->widget(FileInput::class, ['options' => ['accept' => '*']]);
     ?>
 </div>
