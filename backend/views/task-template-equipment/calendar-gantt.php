@@ -30,50 +30,6 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 <div class="panel-body" style="position: relative;">
                     <div class="main-container">
                         <div id="container"></div>
-                        <div id="buttonGroup" class="button-row">
-                            <button id="btnShowDialog">
-                                <i class="fa fa-plus"></i>
-                                Добавить задачу
-                            </button>
-                            <button id="btnRemoveSelected" disabled="disabled">
-                                <i class="fa fa-remove"></i>
-                                Удалить выбранную
-                            </button>
-                        </div>
-
-                        <div id="addTaskDialog" class="hidden overlay">
-                            <div class="popup">
-                                <h3>Добавить задачу</h3>
-
-                                <label>Название задачи <input id="inputName" type="text" /></label>
-
-                                <label>Элементы
-                                    <?php
-                                    $equipments = Equipment::find()->all();
-                                    $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
-                                        return $model->getFullTitle();
-                                    });
-                                    echo Select2::widget(
-                                        ['id' => 'selectEquipment',
-                                            'name' => 'selectEquipment',
-                                            'data' => $items,
-                                            'language' => 'ru',
-                                            'options' => [
-                                                'placeholder' => 'Выберите элементы..'
-                                            ],
-                                            'pluginOptions' => [
-                                                'allowClear' => true
-                                            ],
-                                        ]);
-                                    ?>
-                                </label>
-
-                                <div class="button-row">
-                                    <button id="btnAddTask">Добавить</button>
-                                    <button id="btnCancelAddTask">Отменить</button>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
                         </div>
                     </div>
                 </div>

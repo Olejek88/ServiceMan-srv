@@ -1,340 +1,187 @@
 <?php
+/* @var $tasks_completed
+ * @var $tasks
+ * @var $users
+ */
 
 use common\components\MainFunctions;
-use common\models\Operation;
-use common\models\TaskVerdict;
-use common\models\Users;
-use common\models\WorkStatus;
-use kartik\datecontrol\DateControl;
-use kartik\editable\Editable;
-use kartik\grid\GridView;
 use kartik\select2\Select2;
-use kartik\widgets\DateTimePicker;
-use yii\helpers\ArrayHelper;
+use kartik\widgets\DatePicker;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'ТОИРУС ЖКХ::Таблица задач');
-
-$users = Users::find()->all();
-$items = ArrayHelper::map($users, 'uuid', 'name');
-
-$gridColumns = [
-    [
-        'attribute' => '_id',
-        'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class',
-            'style' => 'width: 50px; text-align: center; padding: 5px 10px 5px 10px;'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data->_id;
-        }
-    ],
-    [
-        'attribute' => 'taskTemplateUuid',
-        'vAlign' => 'middle',
-        'header' => 'Задача',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['taskTemplate']->title;
-        }
-    ],
-    [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['equipment']['title'];
-        }
-    ],
-    [
-        'attribute' => 'taskTemplateUuid',
-        'vAlign' => 'middle',
-        'header' => 'Адрес',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            return $data['equipment']['object']->getFullTitle();
-        }
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'workStatusUuid',
-        'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(WorkStatus::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'editableOptions'=> function () {
-            $status=[];
-            $list=[];
-            $statuses = WorkStatus::find()->orderBy('title')->all();
-            foreach ($statuses as $stat) {
-                $color='background-color: white';
-                if ($stat['uuid']==WorkStatus::CANCELED ||
-                    $stat['uuid']==WorkStatus::NEW)
-                    $color='background-color: gray';
-                if ($stat['uuid']==WorkStatus::IN_WORK)
-                    $color='background-color: yellow';
-                if ($stat['uuid']==WorkStatus::UN_COMPLETE)
-                    $color='background-color: lightred';
-                if ($stat['uuid']==WorkStatus::COMPLETE)
-                    $color='background-color: green';
-                $list[$stat['uuid']] = $stat['title'];
-                $status[$stat['uuid']] = "<span class='badge' style='".$color."; height: 12px; margin-top: -3px'> </span>&nbsp;".
-                    $stat['title'];
-            }
-            return [
-                'header' => 'Статус задачи',
-                'size' => 'md',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $status,
-                'data' => $list
-            ];
-        },
-        'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['workStatus'],'work_status_edit');
-            return $status;
-        },
-        'format' => 'raw'
-    ],
-    [
-        'attribute' => 'taskVerdictUuid',
-        'headerOptions' => ['class' => 'text-center'],
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(TaskVerdict::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'value' => function ($model) {
-            $status =MainFunctions::getColorLabelByStatus($model['taskVerdict'],'task_verdict');
-            return $status;
-        },
-        'format' => 'raw'
-    ],
-    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'taskDate',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Назначена',
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-        'content' => function ($data) {
-            if (strtotime($data->taskDate))
-                return date("d-m-Y h:m", strtotime($data->taskDate));
-            else
-                return 'не назначена';
-        },
-        'editableOptions' => [
-            'header' => 'Дата назначения',
-            'size' => 'md',
-            'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
-            'options' => [
-                'type' => DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'yyyy-MM-dd hh:mm:ss',
-                'saveFormat' => 'php:Y-m-d H:i:s',
-                'options' => [
-                    'pluginOptions' => [
-                        'autoclose' => true
-                    ]
-                ]
-            ]
-        ],
-    ],
-    [
-        'attribute' => 'startDate',
-        'header' => 'Начало',
-        'hAlign' => 'center',
-        'mergeHeader' => true,
-        'vAlign' => 'middle',
-        'contentOptions' => ['class' => 'kv-sticky-column'],
-        'content' => function ($data) {
-            if (strtotime($data->startDate))
-                return date("d-m-Y h:m", strtotime($data->startDate));
-            else
-                return 'не начата';
-        }
-    ],
-    [
-        'attribute' => 'endDate',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Закончена',
-        'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if (strtotime($data->endDate))
-                return date("d-m-Y h:m", strtotime($data->endDate));
-            else
-                return 'не закрыта';
-        }
-    ],
-    [
-        'attribute'=>'authorUuid',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' =>[
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if ($data['author'])
-                return $data['author']->name;
-            else
-                return 'отсутствует';
-        }
-    ],
-    [
-        'attribute' => 'comment',
-        'vAlign' => 'middle',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'mergeHeader' => true,
-        'content' => function ($data) {
-            if (isset($data['comment'])) {
-                return $data['comment'];
-            } else {
-                return 'неизвестно';
-            }
-        }
-    ]
-];
+$this->title = Yii::t('app', 'ТОИРУС ЖКХ::Отчет по исполнителям');
 
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';
+$user = '';
+$system = '';
 if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
-$user='';
 if (isset($_GET['user']))
     $user = $_GET['user'];
+if (isset($_GET['system_select']))
+    $system = $_GET['system_select'];
 
-echo GridView::widget([
-    'dataProvider' => $dataProvider,
-    'columns' => $gridColumns,
-    'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px'],
-    'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
-    'beforeHeader' => [
-        '{toggleData}'
-    ],
-    'toolbar' => [
-        ['content' =>
-            '<form action="/task/table-user"><table style="width: 100%"><tr>
-            <td style="margin: 3px; padding: 3px">' .
-            Select2::widget([
-                'name' => 'user',
-                'language' => 'ru',
-                'value' => $user,
-                'data' => $items,
-                'options' => ['placeholder' => 'Все исполнители'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ]
-            ]) . '</td><td style="margin: 3px; padding: 3px">'.
-            DateTimePicker::widget([
-                'name' => 'start_time',
-                'value' => $start_date,
-                'removeButton' => false,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd hh:ii:ss'
-                ]
-            ]).'</td><td style="margin: 3px; padding: 3px">'.
-            DateTimePicker::widget([
-                'name' => 'end_time',
-                'value' => $end_date,
-                'removeButton' => false,
-                'pluginOptions' => [
-                    'autoclose' => true,
-                    'format' => 'yyyy-mm-dd hh:ii:ss'
-                ]
-            ]).'</td><td style="margin: 3px; padding: 3px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
-                'class' => 'btn btn-success']).'</td><td>{export}</td></tr></table></form>',
-            'options' => ['style' => 'width:100%']
-        ],
-    ],
-    'export' => [
-        'target' => GridView::TARGET_BLANK,
-        'filename' => 'tasks'
-    ],
-    'pjax' => true,
-    'options' => ['style' => 'width:100%'],
-    'showPageSummary' => false,
-    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
-    'bordered' => true,
-    'striped' => false,
-    'condensed' => true,
-    'responsive' => false,
-    'hover' => true,
-    'floatHeader' => false,
-    'panel' => [
-        'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Выполненные задачи',
-        'headingOptions' => ['style' => 'background: #337ab7']
-    ],
-]);
+?>
+<div id="requests-table-container" class="panel table-responsive kv-grid-container" style="overflow: auto">
+    <form action="">
+        <table style="width: 1200px; padding: 3px">
+            <tr>
+                <td style="width: 300px">
+                    <?php
+                    echo DatePicker::widget([
+                            'name' => 'start_time',
+                            'value' => $start_date,
+                            'removeButton' => false,
+                            'pluginOptions' => [
+                                'autoclose' => true,
+                                'format' => 'yyyy-mm-dd'
+                            ]
+                        ]) . '</td><td style="width: 300px">' .
+                        DatePicker::widget([
+                            'name' => 'end_time',
+                            'value' => $end_date,
+                            'removeButton' => false,
+                            'pluginOptions' => [
+                                'autoclose' => true,
+                                'format' => 'yyyy-mm-dd'
+                            ]
+                        ]) . '<td style="width: 300px">' .
+                        Select2::widget([
+                            'id' => 'user',
+                            'name' => 'user',
+                            'value' => $user,
+                            'language' => 'ru',
+                            'data' => $users,
+                            'options' => ['placeholder' => 'Выберите пользователя...'],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]) . '</td><td>&nbsp;</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                            'class' => 'btn btn-success']) . '';
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <br/>
+    <table class="kv-grid-table table table-hover table-bordered table-condensed kv-table-wrap">
+        <thead>
+        <tr class="kartik-sheet-style" style="height: 20px; background-color: green; color: white">
+            <th colspan="10">Выполненные задачи</th>
+        </tr>
+        <tr class="kartik-sheet-style" style="height: 20px">
+            <th class="text-center kv-align-middle" data-col-seq="0" style="width: 3%;"></th>
+            <th class="text-center kv-align-middle" data-col-seq="1" style="width: 20%;">Задача</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="2" style="width: 25%;">Элемент</th>
+            <th class="text-center kv-align-middle" data-col-seq="3">Адрес</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Статус</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Вердикт</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="6">Дата назначения</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="8">Дата выполнения</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="9">Автор</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="10">Комментарий</th>
 
-/** @var $dataProvider2 */
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        $count = 1;
+        foreach ($tasks_completed as $data)
+            if ($data) {
+                echo '<tr data-key="1">';
+                echo '<td class="table_class kv-align-middle" style="width: 40px; text-align: center;" data-col-seq="0">' . $count . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="1">' . $data['taskTemplate']->title . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['title'] . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['object']->getFullTitle() . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $data['taskVerdict']['title'] . '</td>';
+                if (strtotime($data->taskDate))
+                    $value = date("d-m-Y h:m", strtotime($data->taskDate));
+                else
+                    $value = 'не назначена';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if (strtotime($data->endDate))
+                    $value = date("d-m-Y h:m", strtotime($data->endDate));
+                else
+                    $value = 'не закрыта';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if ($data['author'])
+                    $value = $data['author']->name;
+                else
+                    $value = 'отсутствует';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if (isset($data['comment'])) {
+                    $value = $data['comment'];
+                } else {
+                    $value = 'неизвестно';
+                }
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $value . '</td>';
+                echo '</tr>';
+                $count++;
+            }
+        ?>
+        </tbody>
+    </table>
+    <br/>
+    <table class="kv-grid-table table table-hover table-bordered table-condensed kv-table-wrap">
+        <thead>
+        <tr class="kartik-sheet-style" style="height: 20px; background-color: grey; color: white">
+            <th colspan="10">Не выполненные задачи</th>
+        </tr>
+        <tr class="kartik-sheet-style" style="height: 20px">
+            <th class="text-center kv-align-middle" data-col-seq="0" style="width: 3%;"></th>
+            <th class="text-center kv-align-middle" data-col-seq="1" style="width: 20%;">Задача</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="2" style="width: 25%;">Элемент</th>
+            <th class="text-center kv-align-middle" data-col-seq="3">Адрес</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Статус</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Вердикт</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="6">Дата назначения</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="8">Дата выполнения</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="9">Автор</th>
+            <th class="kv-align-center kv-align-middle" data-col-seq="10">Комментарий</th>
 
-echo GridView::widget([
-    'dataProvider' => $dataProvider2,
-    'columns' => $gridColumns,
-    'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px'],
-    'containerOptions' => ['style' => 'overflow: auto'],
-    'pjax' => true,
-    'showPageSummary' => false,
-    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
-    'bordered' => true,
-    'striped' => false,
-    'condensed' => true,
-    'responsive' => false,
-    'hover' => true,
-    'floatHeader' => false,
-    'toolbar' => [
-        ['content' =>
-            '<table style="width: 100%"><tr><td style="align-content: end">{export}</td></tr></table>',
-            'options' => ['style' => 'width:100%']
-        ],
-    ],
-    'export' => [
-        'target' => GridView::TARGET_BLANK,
-        'filename' => 'tasks'
-    ],
-    'panel' => [
-        'type' => GridView::TYPE_PRIMARY,
-        'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Задачи в работе',
-        'headingOptions' => ['style' => 'background: #337ab7']
-    ],
-]);
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        $count = 1;
+        foreach ($tasks as $data)
+            if ($data) {
+                echo '<tr data-key="1">';
+                echo '<td class="table_class kv-align-middle" style="width: 40px; text-align: center;" data-col-seq="0">' . $count . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="1">' . $data['taskTemplate']->title . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['title'] . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['object']->getFullTitle() . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $data['taskVerdict']['title'] . '</td>';
+                if (strtotime($data->taskDate))
+                    $value = date("d-m-Y h:m", strtotime($data->taskDate));
+                else
+                    $value = 'не назначена';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if (strtotime($data->endDate))
+                    $value = date("d-m-Y h:m", strtotime($data->endDate));
+                else
+                    $value = 'не закрыта';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if ($data['author'])
+                    $value = $data['author']->name;
+                else
+                    $value = 'отсутствует';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                if (isset($data['comment'])) {
+                    $value = $data['comment'];
+                } else {
+                    $value = 'неизвестно';
+                }
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $value . '</td>';
+                echo '</tr>';
+                $count++;
+            }
+        ?>
+        </tbody>
+    </table>
+</div>

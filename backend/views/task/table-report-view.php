@@ -36,21 +36,6 @@ $gridColumns = [
         }
     ],
     [
-        'class' => 'kartik\grid\ExpandRowColumn',
-        'width' => '50px',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'value' => function () {
-            return GridView::ROW_COLLAPSED;
-        },
-        'detail' => function ($model) {
-            return Yii::$app->controller->renderPartial('task-details', ['model' => $model]);
-        },
-        'expandIcon' => '<span class="glyphicon glyphicon-expand"></span>',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'expandOneOnly' => true
-    ],
-    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'taskDate',
         'hAlign' => 'center',
