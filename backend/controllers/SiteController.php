@@ -14,6 +14,7 @@ use common\models\Equipment;
 use common\models\EquipmentRegister;
 use common\models\EquipmentType;
 use common\models\Gpstrack;
+use common\models\House;
 use common\models\Journal;
 use common\models\LoginForm;
 use common\models\Measure;
@@ -94,6 +95,7 @@ class SiteController extends Controller
      * Displays homepage.
      *
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionIndex()
@@ -114,7 +116,7 @@ class SiteController extends Controller
         $gps2 = 0;
         $gpsStatus = false;
 
-        $users = Users::find()->select('*')->all();
+        $users = Users::find()->where('name!="sUser"')->all();
         $userList[] = $users;
 
         /**
@@ -166,19 +168,6 @@ class SiteController extends Controller
             $count++;
         }
 
-        if (count($userList) >= 1) {
-            // В случаи, если геоданные не были отправлены,
-            // ответ на запрос будет null
-            /*            $gps = Gpstrack::find()
-                            ->select('userUuid, latitude, longitude, date')
-                            ->where('date  >= CURDATE()')
-                            ->orderBy('date DESC')
-                            ->asArray()
-                            ->limit(30000)
-                            ->all();*/
-            $gpsStatus = true;
-        }
-
         if (!$gpsStatus) {
             $gps = Gpstrack::find()->orderBy('date DESC')->asArray()->one();
         }
@@ -186,69 +175,34 @@ class SiteController extends Controller
          * Настройки - История активности
          */
         $cnt = 0;
-        $photosGroup = 'var photos=L.layerGroup([';
+        $photosGroup = 'var houses=L.layerGroup([';
         $photosList = '';
-        $photoHouses = Photo::find()
+        $photoHouses = House::find()
             ->select('*')
-            //->groupBy('houseUuid')
-            //->asArray()
             ->all();
+        $default_coordinates = "[55.54,61.36]";
+        $coordinates = $default_coordinates;
 
         foreach ($photoHouses as $photoHouse) {
             if ($photoHouse["latitude"] > 0) {
-                $photosList .= 'var photo'
+                $photosList .= 'var house'
                     . $photoHouse["_id"]
                     . '= L.marker([' . $photoHouse["latitude"]
                     . ',' . $photoHouse["longitude"]
                     . '], {icon: houseIcon}).bindPopup("<b>'
-                    . $photoHouse["house"]["street"]->title . ', ' . $photoHouse["house"]->number . '</b><br/>'
-                    . $photoHouse["user"]->name . '[' . $photoHouse['createdAt'] . ']").openPopup();';
+                    . $photoHouse["street"]->title . ', ' . $photoHouse["number"] . '</b><br/>").openPopup();';
                 if ($cnt > 0) {
                     $photosGroup .= ',';
                 }
-                $photosGroup .= 'photo' . $photoHouse["_id"];
+                $coordinates = "[".$photoHouse["latitude"].",".$photoHouse["longitude"]."]";
+                if ($coordinates==$default_coordinates && $photoHouse["latitude"]>0) {
+                    $coordinates = "[".$photoHouse["latitude"].",".$photoHouse["longitude"]."]";
+                }
+                $photosGroup .= 'house' . $photoHouse["_id"];
                 $cnt++;
             }
         }
         $photosGroup .= ']);' . PHP_EOL;
-
-        /*
-        $accountUser = Yii::$app->user->identity;
-        $journalUserId = JournalUser::find()
-            ->where(['userId' => $accountUser['id']])
-            ->orderBy('_id DESC')
-            ->asArray()
-            ->all();
-
-        // TODO: нужно заменть email на username т.к. у пользователей нет email
-        $userJournal = User::find()
-            ->select('id, email')
-            ->where(['email' => $accountUser['email']])
-            ->asArray()
-            ->one();
-        Yii::$app->view->params['user'] = $userJournal;*/
-
-        /**
-         * Журнал событий
-         */
-
-        /*        // В случаи, если геоданные не были отправлены, ответ на запрос будет null
-                $journal = Journal::find()
-                    ->select('userUuid, description, date')
-                    ->where('date  >= NOW() - INTERVAL 1 DAY')
-                    ->asArray()
-                    ->all();*/
-
-//        $userUuid = Users::find()->select('uuid, name')->asArray()->all();
-//        $userUuid   = array_map("unserialize", array_unique(array_map("serialize", $userUuid)));
-
-        /*        foreach ($userUuid as $i => $user) {
-                    foreach ($journal as $j => $jrnl) {
-                        if ($userUuid[$i]['uuid'] === $journal[$j]['userUuid']) {
-                            $journal[$j]['userUuid'] = $userUuid[$i]['name'];
-                        }
-                    }
-                }*/
 
         $cnt = 0;
         $usersGroup = 'var users=L.layerGroup([';
@@ -263,7 +217,6 @@ class SiteController extends Controller
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
-
             $usersGroup .= 'user' . $user["_id"];
             $cnt++;
         }
@@ -301,16 +254,15 @@ class SiteController extends Controller
                 'users' => $userData,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
-                'photos' => $photoHouses,
-                'photosGroup' => $photosGroup,
-                'photosList' => $photosList,
+                'houses' => $photoHouses,
+                'housesGroup' => $photosGroup,
+                'housesList' => $photosList,
                 'ways' => $ways,
+                'coordinates' => $coordinates,
                 'wayUsers' => $wayUsers,
                 'lats' => $lats,
                 'gps' => $gps,
                 'gps2' => $gps2,
-                //'accountUser' => $accountUser,
-                //'activeUserLog' => $journalUserId
             ]
         );
     }
@@ -445,8 +397,35 @@ class SiteController extends Controller
         }
         $bar .= "]}";
 
+        $userData = array();
+        $lats = array();
+        $online = [];
+        $offline = [];
+        $wayUsers = [];
+        $gps = 0;
+        $gps2 = 0;
+        $gpsStatus = false;
+
+        $users = Users::find()->where('name!="sUser"')->all();
+        $userList[] = $users;
+
+        /**
+         * [userList description]
+         *
+         * @var $userList - Список активных пользователей за сутки
+         * @var $uuid - Uuid пользователя
+         * @var $connectionDate - Дата последнего соединения
+         */
+        $today = time();
+        $threshold = $today - 300000000;
         $count = 0;
         foreach ($users as $current_user) {
+            if (strtotime($current_user['changedAt']) >= $threshold) {
+                $online[count($online)] = $current_user['uuid'];
+            } else {
+                $offline[count($offline)] = $current_user['uuid'];
+            }
+
             $gps = Gpstrack::find()
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
@@ -460,31 +439,104 @@ class SiteController extends Controller
                 $userData[$count]['longitude'] = 0;
             }
 
-            $userData[$count]['id'] = $current_user['_id'];
+            $userData[$count]['_id'] = $current_user['_id'];
             $userData[$count]['name'] = $current_user['name'];
             $userData[$count]['contact'] = $current_user['contact'];
 
+            $gps = Gpstrack::find()
+                ->select('latitude, longitude, date')
+                ->orderBy('date DESC')
+                ->where(['userUuid' => $current_user['uuid']])
+                ->limit(5000)
+                ->all();
+            if ($gps) {
+                $lats[$count] = $gps;
+            } else {
+                $lats[$count] = [];
+            }
+
             $count++;
         }
+
+        if (!$gpsStatus) {
+            $gps = Gpstrack::find()->orderBy('date DESC')->asArray()->one();
+        }
+        /**
+         * Настройки - История активности
+         */
+        $cnt = 0;
+        $photosGroup = 'var houses=L.layerGroup([';
+        $photosList = '';
+        $photoHouses = House::find()
+            ->select('*')
+            ->all();
+        $default_coordinates = "[55.54,61.36]";
+        $coordinates = $default_coordinates;
+
+        foreach ($photoHouses as $photoHouse) {
+            if ($photoHouse["latitude"] > 0) {
+                $photosList .= 'var house'
+                    . $photoHouse["_id"]
+                    . '= L.marker([' . $photoHouse["latitude"]
+                    . ',' . $photoHouse["longitude"]
+                    . '], {icon: houseIcon}).bindPopup("<b>'
+                    . $photoHouse["street"]->title . ', ' . $photoHouse["number"] . '</b><br/>").openPopup();';
+                if ($cnt > 0) {
+                    $photosGroup .= ',';
+                }
+                $coordinates = "[".$photoHouse["latitude"].",".$photoHouse["longitude"]."]";
+                if ($coordinates==$default_coordinates && $photoHouse["latitude"]>0) {
+                    $coordinates = "[".$photoHouse["latitude"].",".$photoHouse["longitude"]."]";
+                }
+                $photosGroup .= 'house' . $photoHouse["_id"];
+                $cnt++;
+            }
+        }
+        $photosGroup .= ']);' . PHP_EOL;
 
         $cnt = 0;
         $usersGroup = 'var users=L.layerGroup([';
         $usersList = '';
         foreach ($userData as $user) {
-            $usersList .= 'var user' . $user["id"] . '= L.marker(['
-                . $user["latitude"] . ',' . $user["longitude"]
-                . '], {icon: userIcon}).bindPopup("<b>' . $user["name"]
-                . '</b><br/> ' . $user["contact"] . '").openPopup();';
+            $usersList .= 'var user' . $user["_id"]
+                . '= L.marker([' . $user["latitude"]
+                . ',' . $user["longitude"]
+                . '], {icon: userIcon}).bindPopup("<b>'
+                . $user["name"] . '</b><br/>'
+                . $user["contact"] . '").openPopup();';
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
-
-            $usersGroup .= 'user' . $user["id"];
+            $usersGroup .= 'user' . $user["_id"];
             $cnt++;
         }
-
         $usersGroup .= ']);' . PHP_EOL;
 
+        $ways = 'var lat;' . PHP_EOL;
+        $cnt = 0;
+        $ways .= 'var ways=L.layerGroup();' . PHP_EOL;
+        foreach ($userData as $user) {
+            $wayUsers[$cnt] = 'var wayUser' . $user['_id'] . '=L.layerGroup();' . PHP_EOL;
+            //$way = 'lat = []' . PHP_EOL;
+            if (count($lats[$cnt]) > 0) {
+                $way = 'lat = [';
+                foreach ($lats[$cnt] as $lat) {
+                    $way .= '[' . $lat["latitude"] . ',' . $lat["longitude"] . '],';
+                }
+                $way .= '];' . PHP_EOL;
+                $ways .= $way;
+                $color = MainFunctions::random_color();
+                $ways .= 'var way = L.polyline(lat, {color: "#'
+                    . $color . '"});' . PHP_EOL;
+                $wayUsers[$cnt] .= $way;
+                $wayUsers[$cnt] .= 'var wayUser = L.polyline(lat, {color: "#'
+                    . $color . '"});' . PHP_EOL;
+                $ways .= 'ways.addLayer(way);' . PHP_EOL;
+                $wayUsers[$cnt] .= 'wayUser' . $user['_id'] . '.addLayer(wayUser);'
+                    . PHP_EOL;
+            }
+            $cnt++;
+        }
 
         return $this->render(
             'dashboard',
@@ -507,7 +559,16 @@ class SiteController extends Controller
                 'contragentCount' => $contragentCount,
                 'currentUser' => $currentUser,
                 'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider
+                'dataProvider' => $dataProvider,
+                'houses' => $photoHouses,
+                'housesGroup' => $photosGroup,
+                'housesList' => $photosList,
+                'ways' => $ways,
+                'coordinates' => $coordinates,
+                'wayUsers' => $wayUsers,
+                'lats' => $lats,
+                'gps' => $gps,
+                'gps2' => $gps2
             ]
         );
     }
@@ -835,6 +896,10 @@ class SiteController extends Controller
             if (isset($_POST["types"]))
                 $type = $_POST["types"];
             else $type = 0;
+            if (isset($_POST["source"]))
+                $source = $_POST["source"];
+            else $source = 0;
+
             if ($folder == "true" && $type) {
                 if ($what == "documentation") {
                     $documentation = new Documentation();
@@ -843,7 +908,7 @@ class SiteController extends Controller
                         'equipmentType' => $type,
                         'equipmentUuid' => 0,
                         'equipmentTypeUuid' => 0,
-                        'source' => 'site/files'
+                        'source' => $source
                     ]);
                 }
                 return false;

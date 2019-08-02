@@ -68,6 +68,7 @@ class ObjectsSearch extends Objects
             'objectStatusUuid' => $this->objectStatusUuid,
             'objectTypeUuid' => $this->objectTypeUuid,
             'object.deleted' => false,
+            'house.deleted' => false,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,
         ]);

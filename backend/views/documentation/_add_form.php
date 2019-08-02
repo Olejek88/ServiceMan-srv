@@ -88,8 +88,9 @@ use yii\helpers\Html;
             ])->label(false);
     }
 
-    if (isset($source))
+    if (isset($source)) {
         echo Html::hiddenInput("source", $source);
+    }
 
     echo $form->field($documentation, 'path')
         ->widget(FileInput::class, ['options' => ['accept' => '*']]);
