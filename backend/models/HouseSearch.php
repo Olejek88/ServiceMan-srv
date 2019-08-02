@@ -3,8 +3,10 @@
 namespace backend\models;
 
 use common\models\House;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
 
 /**
  * HouseSearch represents the model behind the search form about `common\models\House`.
@@ -37,6 +39,8 @@ class HouseSearch extends House
      * @param array $params
      *
      * @return ActiveDataProvider
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function search($params)
     {
@@ -60,6 +64,7 @@ class HouseSearch extends House
         $query->andFilterWhere([
             '_id' => $this->_id,
             'streetUuid' => $this->streetUuid,
+            'deleted' => false,
             'houseStatusUuid' => $this->houseStatusUuid,
             'createdAt' => $this->createdAt,
             'changedAt' => $this->changedAt,

@@ -150,7 +150,6 @@ use yii\helpers\Html;
         ['template' => MainFunctions::getAddButton("/request-type/create")])->widget(Select2::class,
         [
             'data' => $items,
-
             'language' => 'ru',
             'options' => [
                 'placeholder' => 'Выберите тип..',

@@ -9,6 +9,7 @@
 use common\components\MainFunctions;
 use common\models\DocumentationType;
 use common\models\Equipment;
+use common\models\Users;
 use kartik\select2\Select2;
 use kartik\widgets\FileInput;
 use yii\bootstrap\ActiveForm;
@@ -58,6 +59,7 @@ use yii\helpers\Html;
                 ],
             ])->label(false);
     }
+    echo $form->field($documentation, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
 
     echo $form->field($documentation, 'required')->hiddenInput(['value' => 0])->label(false);
     if ($equipmentUuid && $equipmentTypeUuid) {
@@ -86,8 +88,9 @@ use yii\helpers\Html;
             ])->label(false);
     }
 
-    if (isset($source))
+    if (isset($source)) {
         echo Html::hiddenInput("source", $source);
+    }
 
     echo $form->field($documentation, 'path')
         ->widget(FileInput::class, ['options' => ['accept' => '*']]);

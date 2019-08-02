@@ -210,12 +210,18 @@ class ObjectController extends ZhkhController
                 'uuid' => $street['uuid'],
                 'folder' => true
             ];
-            $houses = House::find()->select('uuid, number')->where(['streetUuid' => $street['uuid']])->
-            orderBy('number')->all();
+            $houses = House::find()
+                ->select('uuid, number')
+                ->where(['streetUuid' => $street['uuid']])
+                ->andWhere(['deleted' => 0])
+                ->orderBy('number')
+                ->all();
             foreach ($houses as $house) {
-                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])
-                    ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
-                    ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+                $objects = Objects::find()
+                    ->where(['houseUuid' => $house['uuid']])
+                    ->andwhere(['IN', 'objectTypeUuid',
+                        [ObjectType::OBJECT_TYPE_FLAT,
+                            ObjectType::OBJECT_TYPE_COMMERCE]])
                     ->all();
                 if (count($objects)) {
                     $childIdx = count($fullTree['children']) - 1;
@@ -432,11 +438,10 @@ class ObjectController extends ZhkhController
                 if ($type == 'house') {
                     $house = House::find()->where(['uuid' => $uuid])->one();
                     if ($house) {
-                        $object = Objects::find()->where(['houseUuid' => $house['uuid']])->one();
-                        if (!$object) {
-                            $house->delete();
-                            return 'ok';
-                        }
+                        //$object = Objects::find()->where(['houseUuid' => $house['uuid']])->one();
+                        $house['deleted'] = true;
+                        $house->save();
+                        return 'ok';
                     }
                 }
                 if ($type == 'object') {

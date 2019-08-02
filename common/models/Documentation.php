@@ -91,6 +91,7 @@ class Documentation extends ZhkhActiveRecord
             [
                 [
                     'uuid',
+                    'oid',
                     'equipmentUuid',
                     'documentationTypeUuid',
                     'equipmentTypeUuid',

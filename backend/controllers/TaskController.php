@@ -17,12 +17,14 @@ use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
 use common\models\TaskUser;
 use common\models\Users;
+use common\models\UserSystem;
 use common\models\WorkStatus;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use yii2fullcalendar\models\Event;
 
@@ -373,6 +375,197 @@ class TaskController extends ZhkhController
     }
 
     /**
+     * Task report
+     *
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionReport()
+    {
+        $start_date = '2011-01-01 00:00:00';
+        $end_date = '2031-01-01 00:00:00';
+        if (isset($_GET['start_time'])) {
+            $start_date = $_GET['start_time'];
+            $end_date = $_GET['end_time'];
+        }
+
+        $users = Users::find()
+            ->where('name != "sUser"')
+            ->all();
+        if (isset($_GET['user_select']) && $_GET['user_select']!='') {
+            $users = Users::find()
+                ->where(['uuid' => $_GET["user_select"]])
+                ->all();
+        }
+        $user_array = [];
+        $count = 0;
+        $t_count = 1;
+        $categories = "";
+        $bar = "{ name: 'Выполнено в срок', color: 'green', ";
+        $bar .= "data: [";
+        foreach ($users as $current_user) {
+            $userSystems = UserSystem::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+
+            foreach ($userSystems as $userSystem) {
+                $user_array[$t_count]['count'] = $t_count;
+                $user_array[$t_count]['name'] = $current_user['name'];
+                $user_array[$t_count]['system'] = $userSystem['equipmentSystem']['title'];
+
+                $taskGood=0;
+                $taskBad=0;
+                $taskComplete=0;
+                $taskTotal=0;
+
+                $taskUsers = TaskUser::find()
+                    ->where(['userUuid' => $current_user['uuid']])
+                    ->all();
+                foreach ($taskUsers as $taskUser) {
+                    $tasks = Task::find()->where(['uuid' => $taskUser['taskUuid']])
+                        ->where(['>','taskdate',$start_date])
+                        ->andWhere(['<','taskdate',$end_date])
+                        ->all();
+                    foreach ($tasks as $task) {
+                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid']) {
+                            $taskTotal++;
+                        }
+                    }
+
+                    $tasks = Task::find()
+                        ->where(['uuid' => $taskUser['taskUuid']])
+                        ->andWhere(['>','taskdate',$start_date])
+                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                        ->andWhere('endDate <= deadlineDate')
+                        ->all();
+                    foreach ($tasks as $task) {
+                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                            $taskGood++;
+                    }
+                    $tasks = Task::find()
+                        ->where(['uuid' => $taskUser['taskUuid']])
+                        ->andWhere(['>','taskdate',$start_date])
+                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                        ->all();
+                    foreach ($tasks as $task) {
+                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                            $taskComplete++;
+                    }
+
+                    $tasks = Task::find()
+                        ->where(['uuid' => $taskUser['taskUuid']])
+                        ->andWhere(['>','taskdate',$start_date])
+                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere('deadlineDate > NOW()')
+                        ->andWhere(['IN', 'workStatusUuid', [
+                            WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
+                            ]])
+                        ->all();
+                    foreach ($tasks as $task) {
+                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                            $taskBad++;
+                    }
+                }
+                $user_array[$t_count]['complete_good'] = $taskGood;
+                $user_array[$t_count]['bad'] = $taskBad;
+                $user_array[$t_count]['complete'] = $taskComplete;
+                $user_array[$t_count]['total'] = $taskTotal;
+                $t_count++;
+            }
+            if ($count > 0) {
+                $categories .= ',';
+                $bar .= ",";
+            }
+            $categories .= '"' . $current_user['name'] . '"';
+            $taskGood=0;
+            $taskUsers = TaskUser::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskGood += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere(['>','taskdate',$start_date])
+                    ->andWhere(['<','taskdate',$end_date])
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere('endDate <= deadlineDate')
+                    ->count();
+            }
+            $bar .= $taskGood;
+            $count++;
+        }
+        $bar .= "]},";
+
+        $bar .= "{ name: 'Выполнено', color: 'blue', ";
+        $bar .= "data: [";
+        $count = 0;
+        foreach ($users as $current_user) {
+            if ($count > 0)
+                $bar .= ",";
+            $taskComplete=0;
+            $taskUsers = TaskUser::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskComplete += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere(['>','taskdate',$start_date])
+                    ->andWhere(['<','taskdate',$end_date])
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->count();
+            }
+            $bar .= $taskComplete;
+            $count++;
+        }
+        $bar .= "]},";
+
+        $bar .= "{ name: 'Просрочено', color: 'red', ";
+        $bar .= "data: [";
+        $count = 0;
+        foreach ($users as $current_user) {
+            if ($count > 0)
+                $bar .= ",";
+            $taskBad=0;
+            $taskUsers = TaskUser::find()
+                ->where(['userUuid' => $current_user['uuid']])
+                ->all();
+            foreach ($taskUsers as $taskUser) {
+                $taskBad += Task::find()
+                    ->where(['uuid' => $taskUser['taskUuid']])
+                    ->andWhere('deadlineDate > NOW()')
+                    ->andWhere(['IN', 'workStatusUuid', [
+                        WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
+                    ]])
+                    ->count();
+            }
+            $bar .= $taskBad;
+            $count++;
+        }
+        $bar .= "]}";
+
+        $users = Users::find()
+            ->where('name != "sUser"')
+            ->all();
+        $items = ArrayHelper::map($users, 'uuid', 'name');
+
+        $equipmentSystems = EquipmentSystem::find()->all();
+        $items2 = ArrayHelper::map($equipmentSystems, 'uuid', 'title');
+
+        return $this->render(
+            'table-report',
+            [
+                'bar' => $bar,
+                'categories' => $categories,
+                'users' => $user_array,
+                'usersAll' => $items,
+                'systemAll' => $items2
+            ]
+        );
+    }
+
+    /**
      * Build tree of equipment
      *
      * @return mixed
@@ -450,9 +643,16 @@ class TaskController extends ZhkhController
             if (isset($_POST["defectUuid"]) && $task) {
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
-                    $defect->taskUuid = $task['uuid'];
+                    $defect['taskUuid'] = $task['uuid'];
                     $defect['defectStatus'] = 1;
                     $defect->save();
+                }
+            }
+            if (isset($_POST["requestUuid"]) && $task) {
+                $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
+                if ($request) {
+                    $request['taskUuid'] = $task['uuid'];
+                    $request->save();
                 }
             }
             MainFunctions::register('task', 'Создана задача',
@@ -639,6 +839,7 @@ class TaskController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionUser()

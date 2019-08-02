@@ -6,6 +6,7 @@
 
 use common\models\Equipment;
 use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\UserSystem;
@@ -73,23 +74,55 @@ use yii\helpers\Html;
             ],
         ]);
 
-    $taskTemplate = TaskTemplateEquipmentType::find()
-        ->where(['equipmentTypeUuid' => $type_uuid])
-        ->all();
-    $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
-        return $data['taskTemplate']['taskType']['title'].' :: '.$data['taskTemplate']['title'];
-    });
-    echo $form->field($model, 'taskTemplateUuid')->widget(\kartik\widgets\Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Шаблон задачи'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
+    if (isset($_GET["equipmentUuid"])) {
+        $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
+        $taskTemplate = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
+            ->andWhere(['or',
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+            ->orderBy('task_template.taskTypeUuid')
+            ->all();
+        $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
+            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
+        });
+        echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите..'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+    } else {
+        $taskTemplate = TaskTemplateEquipmentType::find()
+            ->where(['equipmentTypeUuid' => $type_uuid])
+            ->all();
+        $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
+            return $data['taskTemplate']['taskType']['title'] . ' :: ' . $data['taskTemplate']['title'];
+        });
+        echo $form->field($model, 'taskTemplateUuid')->widget(\kartik\widgets\Select2::class,
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Шаблон задачи'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+    }
     ?>
 
     <?php
@@ -98,7 +131,7 @@ use yii\helpers\Html;
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
-        <p style="width: 0; margin-bottom: 0;">Дата начала работ</p>
+        <p style="width: 0; margin-bottom: 0; width: 300px">Дата начала работ</p>
         <?= DateTimePicker::widget([
             'model' => $model,
             'attribute' => 'taskDate',
