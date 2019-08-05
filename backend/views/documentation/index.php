@@ -1,6 +1,5 @@
 <?php
 
-use backend\controllers\EquipmentController;
 use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
@@ -94,7 +93,7 @@ $gridColumns = [
             $models = Documentation::find()->all();
             $filters =[];
             foreach ($models as $model) {
-                $filters[] = [$model['uuid'] => $model['equipment']['object']->getFullTitle()];
+                $filters[] = [$model['uuid'] => $model->equipment->object->getFullTitle()];
 
             }
         },
@@ -135,8 +134,9 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'buttons'=>[
             'link' => function ($url,$model) {
+                /* @var $model Documentation */
                 return Html::a( '<span class="fa fa-file"></span>',
-                    '../'.EquipmentController::getDocDir($model) . $model['path'],
+                    '/' . $model->getDocLocalPath(),
                     ['title' => $model->title, 'data-pjax' => '0']);
             }
         ],

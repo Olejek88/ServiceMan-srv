@@ -1451,7 +1451,7 @@ class EquipmentController extends ZhkhController
         $docs = '';
         foreach ($documentations as $documentation) {
             $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                [self::getDocDir($documentation) . '/' . $documentation['path']], ['title' => $documentation['title']]
+                [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
             );
         }
         $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',

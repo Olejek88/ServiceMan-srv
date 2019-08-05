@@ -7,14 +7,12 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 use common\models\DocumentationType;
 use common\models\Equipment;
-use common\models\EquipmentModel;
 use app\commands\MainFunctions;
 use kartik\file\FileInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Documentation */
 /* @var $form yii\widgets\ActiveForm */
-/* @var $entityType */
 ?>
 
 <div class="documentation-form">
@@ -91,14 +89,14 @@ use kartik\file\FileInput;
         }
         '
     ];
-    echo $form->field($entityType, 'entityType')->radioList($items, $opt)
+    echo $form->field($model, 'entityType')->radioList($items, $opt)
         ->label('Документация относится к');
     $this->registerJs(
         '
         jQuery(document).ready(function() {
-            $("#dynamicmodel-entitytype").change();
+            $("#documentation-entitytype").change();
         });
-        '
+        ', \yii\web\View::POS_READY
     );
     ?>
 
@@ -124,7 +122,7 @@ use kartik\file\FileInput;
     ?>
 
     <?php
-    echo $form->field($model, 'path')
+    echo $form->field($model, 'docFile')
         ->widget(FileInput::class, ['options' => ['accept' => '*'],]);
     echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     ?>

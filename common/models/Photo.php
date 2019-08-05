@@ -156,7 +156,12 @@ class Photo extends ActiveRecord implements IPhoto
      */
     public function getImageUrl()
     {
-        $localPath = self::$_IMAGE_ROOT . '/' . $this->objectUuid . '/' . $this->uuid . '.jpg';
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $users = $identity->users;
+        $org = $users->organization;
+
+        $localPath = $org->_id . '/' . self::$_IMAGE_ROOT . '/' . $this->objectUuid . '/' . $this->uuid . '.jpg';
         if (file_exists(Yii::getAlias('@storage/' . $localPath))) {
             $url = $localPath;
         } else {
@@ -168,7 +173,12 @@ class Photo extends ActiveRecord implements IPhoto
 
     public function getImagePath()
     {
-        $localPath = self::$_IMAGE_ROOT . '/' . $this->objectUuid;
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $users = $identity->users;
+        $org = $users->organization;
+
+        $localPath = $org->_id . '/' . self::$_IMAGE_ROOT . '/' . $this->objectUuid;
         $path = Yii::getAlias('@storage/' . $localPath);
         return $path;
     }
