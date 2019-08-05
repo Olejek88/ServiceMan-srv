@@ -1471,14 +1471,26 @@ class EquipmentController extends ZhkhController
                         'data-target' => '#modalChange',
                     ]
                 );*/
-        $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
-            ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
-            [
-                'title' => 'Измерения',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalMeasures',
-            ]
-        );
+        if ($equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER ||
+            $equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_HVS_COUNTER ||
+            $equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_HEAT_COUNTER) {
+            $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
+                ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
+                [
+                    'title' => 'Измерения',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalMeasures',
+                ]
+            );
+            $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
+                ['/measure/add', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
+                [
+                    'title' => 'Добавить измерение',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalMeasure',
+                ]
+            );
+        }
         $links .= Html::a('<span class="fa fa-book"></span>&nbsp',
             ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
             [
@@ -1493,14 +1505,6 @@ class EquipmentController extends ZhkhController
                 'title' => 'История работ',
                 'data-toggle' => 'modal',
                 'data-target' => '#modalTasks',
-            ]
-        );
-        $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-            ['/measure/add', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
-            [
-                'title' => 'Добавить измерение',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalMeasure',
             ]
         );
 

@@ -5,7 +5,9 @@ namespace backend\controllers;
 use backend\models\DocumentationSearch;
 use common\components\MainFunctions;
 use common\models\Documentation;
+use common\models\Equipment;
 use common\models\EquipmentRegisterType;
+use common\models\EquipmentType;
 use common\models\Users;
 use Yii;
 use yii\base\DynamicModel;
@@ -363,9 +365,6 @@ class DocumentationController extends ZhkhController
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
-            if (isset($_POST["model_uuid"]))
-                $model_uuid = $_POST["model_uuid"];
-            else $model_uuid = 0;
             if (isset($_POST["source"]))
                 $source = $_POST["source"];
             else $source = 0;
@@ -373,6 +372,17 @@ class DocumentationController extends ZhkhController
                 $model_uuid = $_POST["uuid"];
                 $uuid = 0;
             }
+            else $model_uuid = 0;
+            if (isset($_POST["model_uuid"]))
+                $model_uuid = $_POST["model_uuid"];
+
+            $equipmentType = EquipmentType::find()->where(['uuid' => $model_uuid])->one();
+            if (!$equipmentType)
+                $model_uuid = 0;
+            $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+            if (!$equipment)
+                $uuid = 0;
+
             $documentation = new Documentation();
 
             return $this->renderAjax('../documentation/_add_form', [

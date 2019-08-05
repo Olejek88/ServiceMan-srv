@@ -194,11 +194,11 @@ class MainFunctions
         }
         if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
-                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
+                $label = '<div class="critical5">' . $status['title'] . '</div>';
             else if ($status["uuid"] == TaskVerdict::INSPECTED)
-                $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
+                $label = '<div class="critical1">' . $status['title'] . '</div>';
             else
-                $label = '<div class="progress"><div class="critical5">' . $status['title'] . '</div></div>';
+                $label = '<div class="critical2">' . $status['title'] . '</div>';
         }
         if ($type == 'equipment_status') {
             if ($status['uuid'] == EquipmentStatus::NOT_MOUNTED) {
