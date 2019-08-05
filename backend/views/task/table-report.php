@@ -7,6 +7,7 @@
  */
 
 use kartik\select2\Select2;
+use kartik\widgets\DatePicker;
 use kartik\widgets\DateTimePicker;
 use yii\helpers\Html;
 
@@ -32,22 +33,22 @@ if (isset($_GET['system_select']))
             <tr>
                 <td style="width: 300px">
                     <?php
-                    echo DateTimePicker::widget([
+                    echo DatePicker::widget([
                             'name' => 'start_time',
                             'value' => $start_date,
                             'removeButton' => false,
                             'pluginOptions' => [
                                 'autoclose' => true,
-                                'format' => 'yyyy-mm-dd hh:ii:ss'
+                                'format' => 'yyyy-mm-dd'
                             ]
                         ]) . '</td><td style="width: 300px">' .
-                        DateTimePicker::widget([
+                        DatePicker::widget([
                             'name' => 'end_time',
                             'value' => $end_date,
                             'removeButton' => false,
                             'pluginOptions' => [
                                 'autoclose' => true,
-                                'format' => 'yyyy-mm-dd hh:ii:ss'
+                                'format' => 'yyyy-mm-dd'
                             ]
                         ]) . '<td style="width: 300px">' .
                         Select2::widget([
@@ -89,8 +90,8 @@ if (isset($_GET['system_select']))
                 система
             </th>
             <th class="text-center kv-align-middle" data-col-seq="3">Всего задач</th>
-            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Выполнено в срок</th>
-            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Выполнено</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="4">Выполнено</th>
+            <th class="text-center kv-align-center kv-align-middle" data-col-seq="5">Выполнено в срок</th>
             <th class="kv-align-center kv-align-middle" data-col-seq="6">Просрочено</th>
         </tr>
         </thead>
@@ -104,8 +105,8 @@ if (isset($_GET['system_select']))
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="1">' . $user['name'] . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $user['system'] . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="3"><div class="progress"><div class="critical6">' . $user['total'] . '</div></div></td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="5"><div class="progress"><div class="critical3">' . $user['complete_good'] . '</div></div></td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="4"><div class="progress"><div class="critical4">' . $user['complete'] . '</div></div></td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="5"><div class="progress"><div class="critical3">' . $user['complete_good'] . '</div></div></td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="6"><div class="progress"><div class="critical1">' . $user['bad'] . '</div></div></td>';
                 echo '</tr>';
             }
