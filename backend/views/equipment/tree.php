@@ -75,7 +75,7 @@ try {
             'id' => 'tree',
             'source' => $equipment,
             'checkbox' => true,
-            'selectMode' => 3,
+            'selectMode' => 2,
             'extensions' => ['table', 'contextMenu'],
             'edit' => [
                 'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
@@ -131,11 +131,11 @@ try {
                             var sel = $.ui.fancytree.getTree().getSelectedNodes();
                             $.each(sel, function (event, data) {
                                  $.ajax({
-                                      url: "remove",
+                                      url: "deleted",
                                       type: "post",
                                       data: {
-                                            type: data.node.type,
-                                            selected_node: data.key,
+                                            type: data.type,
+                                            selected_node: data.data.uuid
                                       },
                                     error: function (result) {
                                         console.log(result);                                 

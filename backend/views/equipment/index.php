@@ -48,7 +48,8 @@ $gridColumns = [
         'mergeHeader' => true,
         'vAlign' => 'middle',
         'width' => '280px',
-        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
+        'header' => 'Адрес' . '<table><tr><td><form action="">' . Html::textInput('address', '', ['style' => 'width:100%']) . '</form></td>
+        <td>' . Html::a('<span class="fa fa-times"></span>', '/equipment/index') . '</td></tr></table>',
         'format' => 'raw',
     ],
     [

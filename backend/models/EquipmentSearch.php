@@ -77,16 +77,12 @@ class EquipmentSearch extends Equipment
             'equipment.deleted' => false,
             'object.deleted' => false,
             'house.deleted' => false,
+            'equipmentTypeUuid' => $this->equipmentTypeUuid,
+            'equipmentStatusUuid' => $this->equipmentStatusUuid,
+            'objectUuid' => $this->objectUuid,
             'createdAt' => $this->createdAt,
-            'changedAt' => $this->changedAt,
+            'changedAt' => $this->changedAt
         ]);
-
-        $query->andFilterWhere(['like', 'uuid', $this->uuid])
-            ->andFilterWhere(['like', 'objectUuid', $this->objectUuid])
-            ->andFilterWhere(['like', 'equipmentTypeUuid', $this->equipmentTypeUuid])
-            ->andFilterWhere(['like', 'equipmentStatusUuid', $this->equipmentStatusUuid])
-            ->andFilterWhere(['like', 'serial', $this->serial])
-            ->orderBy(['changedAt' => SORT_DESC]);
 
         if(isset ($this->nextDate)&&$this->nextDate!=''){
             $date_explode=explode(" - ",$this->nextDate);
@@ -100,6 +96,9 @@ class EquipmentSearch extends Equipment
             $date2=trim($date_explode[1]);
             $query->andFilterWhere(['between','inputDate',$date1,$date2]);
         }
+
+        $query->andFilterWhere(['like', 'serial', $this->serial])
+            ->orderBy(['changedAt' => SORT_DESC]);
         return $dataProvider;
     }
 }

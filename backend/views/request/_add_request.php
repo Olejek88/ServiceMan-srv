@@ -117,6 +117,7 @@ use yii\helpers\Html;
     } else {
         echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
     }
+    echo $form->field($model, 'result')->hiddenInput(['value' => 'Нет результата'])->label(false);
 
     echo $form->field($model, 'comment')->textInput();
 

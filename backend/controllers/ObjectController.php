@@ -154,8 +154,6 @@ class ObjectController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

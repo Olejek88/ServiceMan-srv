@@ -87,7 +87,7 @@ $this->title = Yii::t('app', 'Сводная');
 
     <div class="col-md-3 col-sm-6 col-xs-12">
         <div class="info-box">
-            <a href="/objects"><span class="info-box-icon bg-green"><i class="fa fa-map-marker"></i></span></a>
+            <a href="/object/tree"><span class="info-box-icon bg-green"><i class="fa fa-map-marker"></i></span></a>
 
             <div class="info-box-content">
                 <span class="info-box-text">Субъекты</span>

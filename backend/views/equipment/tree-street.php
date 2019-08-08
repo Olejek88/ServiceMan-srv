@@ -1,6 +1,5 @@
 <?php
 
-use kartik\select2\Select2;
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
 
@@ -75,7 +74,7 @@ try {
             'id' => 'tree',
             'source' => $equipment,
             'checkbox' => true,
-            'selectMode' => 3,
+            'selectMode' => 2,
             'extensions' => ['table', 'contextMenu'],
             'edit' => [
                 'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],

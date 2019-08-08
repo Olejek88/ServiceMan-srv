@@ -13,7 +13,16 @@ $title = 'Задача №' . $task['_id'];
     <h4 class="modal-title text-center"><?= $title ?></h4>
 </div>
 <div class="modal-body">
-    <?php echo DetailView::widget(
+    <?php
+    $users = $task['users'];
+    $users_list = "";
+    $cnt = 0;
+    foreach ($users as $user) {
+        if ($cnt > 0) $users_list .= ', ';
+        $users_list .= $user['name'];
+        $cnt++;
+    }
+    echo DetailView::widget(
         [
             'model' => $task,
             'mode'=>DetailView::MODE_VIEW,
@@ -55,7 +64,7 @@ $title = 'Задача №' . $task['_id'];
                 ],
                 [
                     'label' => 'Исполнители',
-                    'value' => 'Выведу позже'
+                    'value' => $users_list
                 ],
                 [
                     'label' => 'Заявка',
