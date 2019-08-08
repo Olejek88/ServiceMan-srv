@@ -663,6 +663,12 @@ class TaskController extends ZhkhController
     {
         $model = new Task();
         if ($model->load(Yii::$app->request->post())) {
+            if (isset($_POST["requestUuid"])) {
+                $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
+                if ($request) {
+                    $model->comment = $request['comment'];
+                }
+            }
             $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
                 $model->comment, $model->oid, $_POST['userUuid'], $model);
             if (isset($_POST["defectUuid"]) && $task) {

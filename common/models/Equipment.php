@@ -109,8 +109,7 @@ class Equipment extends ZhkhActiveRecord
                     'uuid',
                     'title',
                     'equipmentTypeUuid',
-                    'equipmentStatusUuid',
-                    'replaceDate',
+                    'equipmentStatusUuid'
                 ],
                 'required'
             ],

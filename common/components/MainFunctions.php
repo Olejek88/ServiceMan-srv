@@ -235,6 +235,7 @@ class MainFunctions
      */
     public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model)
     {
+        date_default_timezone_set('Asia/Yekaterinburg');
         $task = new Task();
         $task->uuid = MainFunctions::GUID();
         $task->taskTemplateUuid = $taskTemplate['uuid'];
@@ -243,7 +244,10 @@ class MainFunctions
         $task->workStatusUuid = WorkStatus::NEW;
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
         $task->taskDate = date('Y-m-d H:i:s',time());
-        $task->deadlineDate = date('Y-m-d H:i:s',time()+$taskTemplate['normative']*3600);
+        if ($taskTemplate['normative'] == 0)
+            $task->deadlineDate = date('Y-m-d H:i:s', time() + 1800);
+        else
+            $task->deadlineDate = date('Y-m-d H:i:s', time() + $taskTemplate['normative'] * 3600);
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
         $task->authorUuid = $currentUser['uuid'];
