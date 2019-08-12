@@ -57,7 +57,7 @@ $this->title = Yii::t('app', 'Создать тип задачи');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {delete}{link}',
+                                'template' => '{view} {update} {link}',
                             ]
                         ],
                     ]); ?>

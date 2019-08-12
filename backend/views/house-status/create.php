@@ -62,7 +62,7 @@ $this->title = Yii::t('app', 'Создать статус дома');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {delete}{link}',
+                                'template' => '{view} {update} {link}',
                             ]
                         ],
                     ]); ?>

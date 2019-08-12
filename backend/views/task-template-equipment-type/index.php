@@ -87,7 +87,7 @@ $this->title = Yii::t('app', 'Связь задачи с типом оборуд
                                             'contentOptions' => [
                                                 'class' => 'text-center',
                                             ],
-                                            'template' => '{view} {update} {delete}{link}',
+                                            'template' => '{view} {update} {link}',
                                         ],
                                     ],
                                 ]
