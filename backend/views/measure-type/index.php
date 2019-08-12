@@ -60,7 +60,7 @@ $this->title = Yii::t('app', 'Типы измерений');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {delete}{link}',
+                                'template' => '{view} {update} {link}',
                             ],
                         ],
                     ]); ?>

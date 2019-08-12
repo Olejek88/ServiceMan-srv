@@ -71,7 +71,7 @@ $this->title = Yii::t('app', 'Статусы задач/операций');
                                     'contentOptions' =>[
                                         'class' => 'text-center'
                                     ],
-                                    'template' => '{view} {update} {delete}{link}',
+                                    'template' => '{view} {update} {link}',
                                 ],
                             ],
                         ]); ?>

@@ -56,7 +56,7 @@ $this->title = Yii::t('app', 'Создать тип контрагента');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {delete}{link}',
+                                'template' => '{view} {update} {link}',
                             ]
                         ],
                     ]); ?>

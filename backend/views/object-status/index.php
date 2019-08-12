@@ -88,7 +88,7 @@ $this->title = Yii::t('app', ' Статусы объектов');
                                         'contentOptions' => [
                                             'class' => 'text-center',
                                         ],
-                                        'template' => '{view} {update} {delete}{link}',
+                                        'template' => '{view} {update} {link}',
                                     ],
                                 ],
                             ]
