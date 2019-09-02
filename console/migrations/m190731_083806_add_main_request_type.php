@@ -17,28 +17,30 @@ class m190731_083806_add_main_request_type extends Migration
      */
     public function safeUp()
     {
-        $currentTime = date('Y-m-d\TH:i:s');
-        Yii::$app->set('db', $this->db);
-        $organisations = Organization::find()->all();
-        foreach ($organisations as $organisation) {
-            $this->insert('task_template', [
-                'uuid' => TaskTemplate::DEFAULT_TASK,
-                'title' => 'Задача по-умолчанию',
-                'description' => 'Задача по-умолчанию',
-                'normative' => 0,
-                'oid' => $organisation['uuid'],
-                'taskTypeUuid' => TaskType::TASK_TYPE_VIEW,
-                'createdAt' => $currentTime,
-                'changedAt' => $currentTime
-            ]);
-        }
-        $this->insert('request_type', [
-            'uuid' => RequestType::GENERAL,
-            'title' => 'Другой характер обращения',
-            'taskTemplateUuid' => TaskTemplate::DEFAULT_TASK,
-            'createdAt' => $currentTime,
-            'changedAt' => $currentTime
-        ]);
+        // пересмотрена логика, для каждой организации создаём свои типы обращений
+        // особый тип ищем по названию 'Другой характер обращения'
+//        $currentTime = date('Y-m-d\TH:i:s');
+//        Yii::$app->set('db', $this->db);
+//        $organisations = Organization::find()->all();
+//        foreach ($organisations as $organisation) {
+//            $this->insert('task_template', [
+//                'uuid' => TaskTemplate::DEFAULT_TASK,
+//                'title' => 'Задача по-умолчанию',
+//                'description' => 'Задача по-умолчанию',
+//                'normative' => 0,
+//                'oid' => $organisation['uuid'],
+//                'taskTypeUuid' => TaskType::TASK_TYPE_VIEW,
+//                'createdAt' => $currentTime,
+//                'changedAt' => $currentTime
+//            ]);
+//        }
+//        $this->insert('request_type', [
+//            'uuid' => RequestType::GENERAL,
+//            'title' => 'Другой характер обращения',
+//            'taskTemplateUuid' => TaskTemplate::DEFAULT_TASK,
+//            'createdAt' => $currentTime,
+//            'changedAt' => $currentTime
+//        ]);
     }
 
     /**

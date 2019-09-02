@@ -7,6 +7,7 @@ use common\models\User;
 use common\models\Users;
 use Yii;
 use yii\base\Model;
+use yii\db\Query;
 
 /**
  *
@@ -85,6 +86,7 @@ class UserArm extends Model
             [['type'], 'in', 'range' => [Users::USERS_ARM, Users::USERS_WORKER],
                 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['type'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+            [['type'], 'checkLimit', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['whoIs'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['whoIs'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
@@ -140,4 +142,25 @@ class UserArm extends Model
         ];
     }
 
+    /**
+     * @param $attr
+     * @param $param
+     */
+    public function checkLimit($attr, $param)
+    {
+        $limit = (new Query())
+            ->select('*')
+            ->from('{{%system_settings}}')
+            ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
+            ->one();
+        if ($limit == null) {
+            $this->addError('type', 'Создание мобильных пользователей ограничено.');
+        }
+
+        $users = Users::findAll(['type' => Users::USERS_WORKER]);
+        if (count($users) >= $limit['value']) {
+            $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+        }
+
+    }
 }

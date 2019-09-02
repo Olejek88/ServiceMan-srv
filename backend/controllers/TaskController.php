@@ -26,6 +26,7 @@ use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
+use yii\db\Expression;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -206,7 +207,7 @@ class TaskController extends ZhkhController
             }
             if ($_GET['type'] == '1') {
                 $dataProvider->query
-                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
+                    ->andWhere(['or', ['<=', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
             }
             if ($_GET['type'] == '2') {
                 $dataProvider->query

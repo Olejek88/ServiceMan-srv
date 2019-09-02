@@ -3,6 +3,7 @@
 namespace api\models\form;
 
 use api\models\User;
+use common\models\Users;
 use yii\base\Model;
 use yii\web\UnauthorizedHttpException;
 
@@ -62,6 +63,9 @@ class LoginForm extends Model
     {
         if ($this->user === null) {
             $this->user = User::findByUuid($this->login);
+            if ($this->user->users->type != Users::USERS_WORKER) {
+                return null;
+            }
         }
 
         return $this->user;

@@ -56,7 +56,7 @@ $userImage = Yii::$app->view->params['userImage'];
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы домов", ['../house-type']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-object-group\"></i> Статусы объектов", ['../object-status']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы объектов", ['../object-type']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы запрооов", ['../request-status']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Статусы запросов", ['../request-status']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Характеры обращений", ['../request-type']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Типы задач", ['../task-type']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-cogs\"></i> Вердикты задач", ['../task-verdict']); ?> </li>
