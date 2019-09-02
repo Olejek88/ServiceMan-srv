@@ -943,6 +943,8 @@ class SiteController extends Controller
         ReferenceFunctions::loadReferences($oid, Yii::$app->db);
         ReferenceFunctions::loadReferencesNext($oid, Yii::$app->db);
         ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesAll2($organization->uuid, Yii::$app->db);
+        ReferenceFunctions::loadRequestTypes($organization->uuid, Yii::$app->db);
     }
 
 }
