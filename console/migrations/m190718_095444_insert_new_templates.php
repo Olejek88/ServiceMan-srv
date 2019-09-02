@@ -18,7 +18,7 @@ class m190718_095444_insert_new_templates extends Migration
 
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
-            ReferenceFunctions::loadReferencesAll($organisation['uuid'],$this);
+            ReferenceFunctions::loadReferencesAll($organisation['uuid'], $this->db);
         }
     }
 

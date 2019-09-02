@@ -4,20 +4,26 @@ namespace common\components;
 
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
-use common\models\HouseType;
 use common\models\Organization;
 use common\models\TaskType;
+use yii\db\Connection;
+use yii\db\Exception;
 
 class ReferenceFunctions
 {
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws Exception
+     */
     public static function loadReferences($oid, $db)
     {
-        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_MKD,
-            'Многоквартирный дом', $oid);
-        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_COMMERCE,
-            'Коммерческий объект', $oid);
-        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_BUDGET,
-            'Бюджетное учереждение', $oid);
+//        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_MKD,
+//            'Многоквартирный дом', $oid);
+//        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_COMMERCE,
+//            'Коммерческий объект', $oid);
+//        self::insertIntoHouseType($db, HouseType::HOUSE_TYPE_BUDGET,
+//            'Бюджетное учереждение', $oid);
 
         self::insertIntoTaskTemplate($db, 'Проверка межэтажных перекрытий',
             'Проверка межэтажных перекрытий', 8,
@@ -77,6 +83,11 @@ class ReferenceFunctions
             TaskType::TASK_TYPE_REPAIR, EquipmentType::EQUIPMENT_HVS_TOWER, $oid);
     }
 
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws Exception
+     */
     public static function loadReferencesNext($oid, $db)
     {
         //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
@@ -99,6 +110,11 @@ class ReferenceFunctions
             $oid);
     }
 
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws Exception
+     */
     public static function loadReferencesAll($oid, $db)
     {
         //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
@@ -573,6 +589,11 @@ class ReferenceFunctions
             8, [6, 7], EquipmentType::EQUIPMENT_BASEMENT_WINDOWS, $oid);
     }
 
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws Exception
+     */
     public static function loadReferencesAll2($oid, $db)
     {
         if ($oid == Organization::ORG_SERVICE_UUID) {
@@ -591,7 +612,8 @@ class ReferenceFunctions
 
     /**
      * @param $oid
-     * @param $db
+     * @param $db Connection
+     * @throws Exception
      */
     public static function loadRequestTypes($oid, $db)
     {
@@ -633,26 +655,54 @@ class ReferenceFunctions
             72, TaskType::TASK_TYPE_REPAIR, $oid);
         self::insertIntoRequestType($db, 'Устранение аварийных повреждений внутридомовых систем  электроснабжения',
             72, TaskType::TASK_TYPE_REPAIR, $oid);
-    }
-
-    private static function insertIntoHouseType($db, $uuid, $title, $organizationUuid)
-    {
+        // Особый тип без шаблона задачи
         $currentTime = date('Y-m-d\TH:i:s');
-        $db->insert('house_type', [
-            'uuid' => $uuid,
-            'title' => $title,
-            'oid' => $organizationUuid,
+        $db->createCommand()->insert('request_type', [
+            'uuid' => MainFunctions::GUID(),
+            'oid' => $oid,
+            'title' => 'Другой характер обращения',
+            'taskTemplateUuid' => null,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
+
     }
 
+    /**
+     * @param $db Connection
+     * @param $uuid
+     * @param $title
+     * @param $organizationUuid
+     * @throws Exception
+     */
+//    private static function insertIntoHouseType($db, $uuid, $title, $organizationUuid)
+//    {
+//        $currentTime = date('Y-m-d\TH:i:s');
+//        $db->createCommand()->insert('{{%house_type}}', [
+//            'uuid' => $uuid,
+//            'title' => $title,
+//            'oid' => $organizationUuid,
+//            'createdAt' => $currentTime,
+//            'changedAt' => $currentTime
+//        ])->execute();
+//    }
+
+    /**
+     * @param $db Connection
+     * @param $title
+     * @param $description
+     * @param $normative
+     * @param $taskTypeUuid
+     * @param $equipmentTypeUuid
+     * @param $organizationUuid
+     * @throws Exception
+     */
     private static function insertIntoTaskTemplate($db, $title, $description, $normative, $taskTypeUuid, $equipmentTypeUuid,
                                                    $organizationUuid)
     {
         $currentTime = date('Y-m-d\TH:i:s');
         $uuid = MainFunctions::GUID();
-        $db->insert('task_template', [
+        $db->createCommand()->insert('task_template', [
             'uuid' => $uuid,
             'title' => $title,
             'description' => $description,
@@ -661,28 +711,44 @@ class ReferenceFunctions
             'oid' => $organizationUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
 
-        $db->insert('task_template_equipment_type', [
+        $db->createCommand()->insert('task_template_equipment_type', [
             'uuid' => MainFunctions::GUID(),
             'equipmentTypeUuid' => $equipmentTypeUuid,
             'taskTemplateUuid' => $uuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
     }
 
+    /**
+     * @param $db Connection
+     * @param $uuid
+     * @param $equipmentSystemUuid
+     * @param $title
+     * @throws Exception
+     */
     private static function insertIntoEquipmentType($db, $uuid, $equipmentSystemUuid, $title) {
         $currentTime = date('Y-m-d\TH:i:s');
-        $db->insert('equipment_type', [
+        $db->createCommand()->insert('equipment_type', [
             'uuid' => $uuid,
             'title' => $title,
             'equipmentSystemUuid' => $equipmentSystemUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
     }
 
+    /**
+     * @param $db Connection
+     * @param $title
+     * @param $normative
+     * @param $taskTypes
+     * @param $equipmentTypeUuid
+     * @param $organizationUuid
+     * @throws Exception
+     */
     private static function insertIntoTaskTemplateNew($db, $title, $normative, $taskTypes, $equipmentTypeUuid, $organizationUuid)
     {
         $currentTime = date('Y-m-d\TH:i:s');
@@ -743,7 +809,7 @@ class ReferenceFunctions
                     $taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR;
             }
 
-            $db->insert('task_template', [
+            $db->createCommand()->insert('task_template', [
                 'uuid' => $uuid,
                 'title' => $title,
                 'description' => $title,
@@ -752,29 +818,30 @@ class ReferenceFunctions
                 'oid' => $organizationUuid,
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
-            ]);
+            ])->execute();
 
-            $db->insert('task_template_equipment_type', [
+            $db->createCommand()->insert('task_template_equipment_type', [
                 'uuid' => $uuid,
                 'equipmentTypeUuid' => $equipmentTypeUuid,
                 'taskTemplateUuid' => $uuid,
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
-            ]);
+            ])->execute();
         }
     }
 
     /**
-     * @param $db
+     * @param $db Connection
      * @param $title
      * @param $normative
      * @param $taskTypeUuid
      * @param $organizationUuid
+     * @throws Exception
      */
     private static function insertIntoRequestType($db, $title, $normative, $taskTypeUuid, $organizationUuid) {
         $currentTime = date('Y-m-d\TH:i:s');
         $uuid = MainFunctions::GUID();
-        $db->insert('task_template', [
+        $db->createCommand()->insert('task_template', [
             'uuid' => $uuid,
             'title' => $title,
             'description' => $title,
@@ -783,15 +850,16 @@ class ReferenceFunctions
             'taskTypeUuid' => $taskTypeUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
 
-        $db->insert('request_type', [
+        $db->createCommand()->insert('request_type', [
             'uuid' => MainFunctions::GUID(),
+            'oid' => $organizationUuid,
             'title' => $title,
             'taskTemplateUuid' => $uuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ]);
+        ])->execute();
     }
 
 }

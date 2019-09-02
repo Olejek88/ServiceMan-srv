@@ -17,7 +17,7 @@ class m190725_060829_insert_new_templates extends Migration
         Yii::$app->set('db', $this->db);
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
-            ReferenceFunctions::loadReferencesAll2($organisation['uuid'],$this);
+            ReferenceFunctions::loadReferencesAll2($organisation['uuid'], $this->db);
         }
     }
 
