@@ -4,8 +4,11 @@
  */
 
 use common\components\MainFunctions;
+use common\models\Defect;
 use common\models\EquipmentStatus;
+use common\models\Measure;
 use common\models\Objects;
+use common\models\Photo;
 use common\models\Request;
 use common\models\TaskVerdict;
 use common\models\Users;
@@ -286,6 +289,32 @@ $gridColumns = [
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'value' => function ($model) {
             $status = MainFunctions::getColorLabelByStatus($model['taskVerdict'], 'task_verdict');
+            $images = Photo::find()->where(['objectUuid' => $model['uuid']])->all();
+            $cnt = 0;
+            foreach ($images as $image) {
+                if ($cnt == 0)
+                    $status .= '<br/>Изображения: ';
+                $path = 'storage/' . Users::getCurrentOid() . '/photo/' . $image['objectUuid'] . '/' . $image['uuid'];
+                $status .= Html::a('<span class="fa fa-photo"></span>', $path);
+                $cnt++;
+            }
+            $measure = Measure::find()
+                ->where(['equipmentUuid' => $model['equipmentUuid']])
+                ->orderBy('date desc')
+                ->one();
+            if ($measure) {
+                $status .= '<br/>Измерения: ' . $measure['value'];
+            }
+            $defects = Defect::find()->where(['taskUuid' => $model['uuid']])->all();
+            $cnt = 0;
+            foreach ($defects as $defect) {
+                if ($cnt == 0)
+                    $status .= '<br/>Дефекты: ';
+                $status .= Html::a('<span class="fa fa-warning"></span>&nbsp;' . $defect['title'],
+                    ['../defect/index', 'uuid' => $defect['uuid']]);
+                $cnt++;
+            }
+
             return $status;
         },
         'format' => 'raw'
@@ -341,6 +370,50 @@ $gridColumns = [
             else
                 return 'не закончена';
         }
+    ],
+    [
+        'class' => 'kartik\grid\ActionColumn',
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'header' => 'Действия',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'buttons' => [
+            'measure' => function ($url, $model) {
+                return Html::a('<span class="fa fa-bar-chart"></span>',
+                    ['../task/measures', 'uuid' => $model['equipmentUuid'], 'date' => $model['startDate']],
+                    [
+                        'title' => 'Измерения',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalMeasure',
+                    ]
+                );
+            },
+            'photo' => function ($url, $model) {
+                return Html::a('<span class="fa fa-photo"></span>',
+                    ['../task/photos', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'Фотографии',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalPhoto',
+                    ]
+                );
+            },
+            'defect' => function ($url, $model) {
+                return Html::a('<span class="fa fa-warning"></span>',
+                    ['../task/defects', 'uuid' => $model['equipmentUuid'], 'date' => $model['startDate']],
+                    [
+                        'title' => 'Дефекты',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalDefects',
+                    ]
+                );
+            }
+        ],
+        'template' => '{measure} {photo} {defect}',
     ]
 ];
 
@@ -415,7 +488,7 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
     'rowOptions' => function ($model) {
-        if (strtotime($model['deadlineDate'])<=time())
+        if ($model['workStatusUuid'] != WorkStatus::COMPLETE && strtotime($model['deadlineDate']) <= time())
             return ['class' => 'danger'];
         if (isset($_GET['uuid'])) {
             if ($_GET['uuid'] == $model['uuid'])
@@ -429,6 +502,21 @@ function () {
      window.location.replace("../task/table");
 })');
 
+$this->registerJs('$("#modalMeasure").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
+
+$this->registerJs('$("#modalDefects").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
+
+$this->registerJs('$("#modalPhoto").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
+
 ?>
 <style>
     .grid-view td {
@@ -438,5 +526,23 @@ function () {
 <div class="modal remote fade" id="modalUser">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+<div class="modal remote fade" id="modalMeasure">
+    <div class="modal-dialog" style="width: 700px">
+        <div class="modal-content loader-lg" id="modalContentMeasure">
+        </div>
+    </div>
+</div>
+<div class="modal remote fade" id="modalDefects">
+    <div class="modal-dialog" style="width: 700px">
+        <div class="modal-content loader-lg" id="modalContentDefects">
+        </div>
+    </div>
+</div>
+<div class="modal remote fade" id="modalPhoto">
+    <div class="modal-dialog" style="width: 800px; height: 400px">
+        <div class="modal-content loader-lg" id="modalContentPhoto">
+        </div>
     </div>
 </div>

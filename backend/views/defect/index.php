@@ -199,6 +199,12 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
 
     ],
+    'rowOptions' => function ($model) {
+        if (isset($_GET['uuid'])) {
+            if ($_GET['uuid'] == $model['uuid'])
+                return ['class' => 'danger'];
+        }
+    }
 ]);
 
 $this->registerJs('$("#modalAddTask").on("hidden.bs.modal",

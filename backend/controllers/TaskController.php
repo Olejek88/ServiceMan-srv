@@ -7,9 +7,12 @@ use backend\models\TaskSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\Equipment;
+use common\models\EquipmentRegister;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\Measure;
 use common\models\Operation;
+use common\models\Photo;
 use common\models\Request;
 use common\models\Task;
 use common\models\TaskTemplate;
@@ -1008,4 +1011,66 @@ class TaskController extends ZhkhController
         ]);
     }
 
+    /**
+     * Lists all Defects models for Task.
+     * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionDefects()
+    {
+        $defects = [];
+        if (isset($_GET['uuid']) && isset($_GET['date'])) {
+            $start = date("Y-m-d 00:00:00", strtotime($_GET['date']));
+            $end = date("Y-m-d 23:59:59", strtotime($_GET['date']));
+            $defects = Defect::find()
+                ->where(['equipmentUuid' => $_GET['uuid']])
+                ->andWhere('date >=\'' . $start . '\'')
+                ->andWhere('date <\'' . $end . '\'')
+                ->all();
+        }
+        return $this->renderAjax('_list_defect', [
+            'defects' => $defects
+        ]);
+    }
+
+    /**
+     * Lists all Measures models for Task.
+     * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionMeasures()
+    {
+        $measures = [];
+        if (isset($_GET['uuid']) && isset($_GET['date'])) {
+            $start = date("Y-m-d 00:00:00", strtotime($_GET['date']));
+            $end = date("Y-m-d 23:59:59", strtotime($_GET['date']));
+            $measures = Measure::find()
+                ->where(['equipmentUuid' => $_GET['uuid']])
+                ->andWhere('date >=\'' . $start . '\'')
+                ->andWhere('date <\'' . $end . '\'')
+                ->all();
+        }
+        return $this->renderAjax('_list_measure', [
+            'measures' => $measures
+        ]);
+    }
+
+    /**
+     * Lists all Photos for Task.
+     * @return mixed
+     */
+    public function actionPhotos()
+    {
+        $photos = [];
+        if ($_GET['uuid']) {
+            $photos = Photo::find()
+                ->where(['objectUuid' => $_GET['uuid']])
+                ->all();
+        }
+        return $this->renderAjax('_list_photo', [
+            'photos' => $photos
+        ]);
+    }
 }
