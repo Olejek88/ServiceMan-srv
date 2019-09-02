@@ -12,6 +12,10 @@ use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Объекты');
 
+$value = '';
+if (isset($_GET['address']))
+    $value = $_GET['address'];
+
 $gridColumns = [
     [
         'attribute' => '_id',
@@ -49,7 +53,8 @@ $gridColumns = [
         'value' => function ($data) {
             return $data->getFullTitle();
         },
-        'header' => 'Дом'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
+        'header' => 'Дом' . '<table><tr><form action=""><td>' .
+            Html::textInput('address', $value, ['style' => 'width:100%']) . '</td></form></tr></table>',
         'format' => 'raw',
     ],
     [

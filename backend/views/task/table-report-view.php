@@ -5,7 +5,6 @@
 
 use common\components\MainFunctions;
 use common\models\Defect;
-use common\models\EquipmentStatus;
 use common\models\Measure;
 use common\models\Objects;
 use common\models\Photo;
@@ -16,6 +15,7 @@ use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use kartik\select2\Select2;
 use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -23,6 +23,10 @@ use yii\helpers\Html;
 if (!isset($titles))
     $titles = "Журнал задач";
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::' . $titles);
+
+$type = '';
+if (isset($_GET['type']))
+    $type = $_GET['type'];
 
 $gridColumns = [
     [
@@ -113,7 +117,29 @@ $gridColumns = [
     [
         'attribute' => 'taskTemplateUuid',
         'vAlign' => 'middle',
-        'header' => 'Задача',
+        'header' => 'Задача' . '<table><tr><form action=""><td>' .
+            Select2::widget([
+                'id' => 'type',
+                'name' => 'type',
+                'language' => 'ru',
+                'data' => [
+                    '0' => 'Выполненные в срок',
+                    '1' => 'Не выполненные в срок',
+                    '2' => 'Выполненные не в срок',
+                    '3' => 'Отмененные'
+                ],
+                'value' => $type,
+                'options' => ['placeholder' => 'Статус по времени'],
+                'pluginEvents' => [
+                    "select2:select" => "function() {
+                        window.location.replace('table-report-view?type='+document.getElementById('type').value); 
+                        }"
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ]
+            ])
+            . '</td></form></tr></table>',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -488,8 +514,12 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
     'rowOptions' => function ($model) {
-        if ($model['workStatusUuid'] != WorkStatus::COMPLETE && strtotime($model['deadlineDate']) <= time())
+        if ($model['workStatusUuid'] != WorkStatus::COMPLETE && (strtotime($model['deadlineDate']) <= time()))
             return ['class' => 'danger'];
+        if ($model['workStatusUuid'] == WorkStatus::COMPLETE && (strtotime($model['deadlineDate']) < strtotime($model['endDate'])))
+            return ['class' => 'warning'];
+        if ($model['workStatusUuid'] == WorkStatus::CANCELED)
+            return ['class' => 'info'];
         if (isset($_GET['uuid'])) {
             if ($_GET['uuid'] == $model['uuid'])
                 return ['class' => 'danger'];

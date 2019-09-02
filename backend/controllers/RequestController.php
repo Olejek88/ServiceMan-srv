@@ -212,7 +212,7 @@ class RequestController extends ZhkhController
                     }
                 }
 
-                if ($model['requestType']['taskTemplateUuid'] && $model['requestType']['taskTemplateUuid']!=TaskTemplate::DEFAULT_TASK) {
+                if (!$model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,

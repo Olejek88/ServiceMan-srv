@@ -198,6 +198,26 @@ class TaskController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
+        if (isset($_GET['type'])) {
+            if ($_GET['type'] == '0') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
+            }
+            if ($_GET['type'] == '1') {
+                $dataProvider->query
+                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
+            }
+            if ($_GET['type'] == '2') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere(['>', 'deadlineDate', 'endDate']);
+            }
+            if ($_GET['type'] == '3') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::CANCELED]);
+            }
+        }
         return $this->render(
             'table-report-view',
             [

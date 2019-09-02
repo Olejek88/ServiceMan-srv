@@ -1,6 +1,7 @@
 <?php
 /* @var $photos Photo[] */
 
+use api\helpers\Html;
 use common\models\Photo;
 
 ?>
@@ -13,7 +14,7 @@ use common\models\Photo;
         <tbody>
         <tr>
             <?php foreach ($photos as $photo): ?>
-                <td><?= $photo->getImageUrl() . '<br/>' . $photo['changedAt'] ?></td>
+                <td><?= Html::a('<img width="300px" border=0 src="' . $photo->getImageUrl() . '"/>', $photo->getImageUrl()) . '<br/>' . $photo['changedAt'] ?></td>
             <?php endforeach; ?>
         </tr>
         </tbody>

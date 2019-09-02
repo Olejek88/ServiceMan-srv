@@ -560,7 +560,8 @@ class ObjectController extends ZhkhController
                                 }
                             }
                             $objectGUuid = null;
-                            if (isset($_POST['water_system']) && $_POST['water_system']) {
+                            //if (isset($_POST['water_system']) && $_POST['water_system']) {
+                            if (true) {
                                 $objectGUuid = self::createObject($model['uuid'], 'Система ГВС', ObjectType::OBJECT_TYPE_SYSTEM_GVS);
                                 if ($objectGUuid) {
                                     self::createEquipment($objectGUuid, "Главный узел ГВС",
@@ -709,8 +710,10 @@ class ObjectController extends ZhkhController
                                             EquipmentType::EQUIPMENT_ENTRANCE_DOOR);
                                         self::createEquipment($objectEntranceUuid, "Дверь тамбура",
                                             EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR);
-                                        self::createEquipment($objectEntranceUuid, "Мусоропровод",
-                                            EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE);
+                                        if (isset($_POST['trash_pipe']) && $_POST['trash_pipe']) {
+                                            self::createEquipment($objectEntranceUuid, "Мусоропровод",
+                                                EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE);
+                                        }
                                         self::createEquipment($objectEntranceUuid, "Лестничная клетка",
                                             EquipmentType::EQUIPMENT_ENTRANCE_STAIRS);
                                         self::createEquipment($objectEntranceUuid, "Входная группа",
