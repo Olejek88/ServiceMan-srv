@@ -30,12 +30,16 @@ class AuthController extends Controller
         $model->load(Yii::$app->request->bodyParams, '');
         if ($model->validate()) {
             $user = $model->getUser();
-            $token = $user->generateAccessToken(60 * 60 * 24 * 7);
-            $user->save();
-            return [
-                'usersUuid' => $user->getUsers()->uuid,
-                'token' => $token,
-            ];
+            if ($user != null) {
+                $token = $user->generateAccessToken(60 * 60 * 24 * 7);
+                $user->save();
+                return [
+                    'usersUuid' => $user->getUsers()->uuid,
+                    'token' => $token,
+                ];
+            } else {
+                return $model;
+            }
         } else {
             return $model;
         }
