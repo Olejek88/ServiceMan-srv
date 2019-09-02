@@ -97,9 +97,9 @@ class SignupForm extends Model
                     $am->assign($roleAdmin, $user->_id);
                     Yii::$app->user->login(User::findByUsername($user->username), true ? 3600 * 24 * 30 : 0);
                     // создаём набор данных для новой организации
-                    //ReferenceFunctions::loadReferences($organization->uuid);
-                    //ReferenceFunctions::loadReferencesNext($organization->uuid);
-                    //ReferenceFunctions::loadReferencesAll($organization->uuid);
+                    ReferenceFunctions::loadReferences($organization->uuid, Yii::$app->db);
+                    ReferenceFunctions::loadReferencesNext($organization->uuid, Yii::$app->db);
+                    ReferenceFunctions::loadReferencesAll($organization->uuid, Yii::$app->db);
                     return $user;
                 } else {
                     $user->delete();

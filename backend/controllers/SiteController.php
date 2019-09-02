@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\SignupForm;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
+use common\components\ReferenceFunctions;
 use common\models\Alarm;
 use common\models\City;
 use common\models\Contragent;
@@ -932,4 +933,16 @@ class SiteController extends Controller
         }
         return self::actionFiles();
     }
+
+    /**
+     * @throws Exception
+     */
+    public function actionPicec()
+    {
+        $oid = Users::getCurrentOid();
+        ReferenceFunctions::loadReferences($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesNext($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
+    }
+
 }

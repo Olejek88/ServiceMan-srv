@@ -22,7 +22,7 @@ class m190626_094953_add_task_templates extends Migration
 
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
-            ReferenceFunctions::loadReferences($organisation['uuid'], $this);
+            ReferenceFunctions::loadReferences($organisation['uuid'], $this->db);
         }
     }
 

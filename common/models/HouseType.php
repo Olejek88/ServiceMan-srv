@@ -24,6 +24,7 @@ class HouseType extends ZhkhActiveRecord
     public const HOUSE_TYPE_MKD = "583C8D20-CE23-401D-8E90-0FFCDAA6BE50";
     public const HOUSE_TYPE_COMMERCE = "A156A75E-CE7A-4ED9-87D5-0FCEF89DBC9F";
     public const HOUSE_TYPE_BUDGET = "9AA5A1B4-224C-4BF4-B79D-2039CF314C40";
+    public const HOUSE_TYPE_TOWNHOUSE = "EB9E96C0-0F93-447F-9F25-F325F3B67546";
 
     public function behaviors()
     {

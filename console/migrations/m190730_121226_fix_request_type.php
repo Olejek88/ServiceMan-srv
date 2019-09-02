@@ -18,7 +18,7 @@ class m190730_121226_fix_request_type extends Migration
         $organisations = Organization::find()->all();
         foreach ($organisations as $organisation) {
             if ($organisation['uuid']!=Organization::ORG_SERVICE_UUID)
-                ReferenceFunctions::loadRequestTypes($organisation['uuid'],$this);
+                ReferenceFunctions::loadRequestTypes($organisation['uuid'], $this->db);
         }
         $this->renameColumn('request', 'userUuid', 'contragentUuid');
     }
