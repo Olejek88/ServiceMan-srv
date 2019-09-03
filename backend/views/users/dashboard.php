@@ -9,6 +9,9 @@ use yii\helpers\Html;
 $this->title = Yii::t('app', 'Пользователи');
 ?>
 <div class="orders-index box-padding-index">
+    <a href="/users/create" class="btn btn-success">Добавить</a>
+</div>
+<div class="orders-index box-padding-index">
 
     <h2 class="page-header">Пользователи</h2>
     <?php

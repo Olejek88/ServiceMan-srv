@@ -46,8 +46,7 @@ use yii\helpers\Html;
 
     if ($source == 'table') {
         $users = Contragent::find()
-            ->where(['contragentTypeUuid' => ContragentType::ORGANIZATION])
-            ->orWhere(['contragentTypeUuid' => ContragentType::CITIZEN])
+            ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
             ->orderBy('title DESC')
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
@@ -96,11 +95,11 @@ use yii\helpers\Html;
 
     if (!$model->objectUuid) {
         $objects = Objects::find()
-            ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
-            ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
+            ->where(['objectTypeUuid' => [ObjectType::OBJECT_TYPE_FLAT, ObjectType::OBJECT_TYPE_COMMERCE]])
             ->all();
         $items = ArrayHelper::map($objects, 'uuid', function ($object) {
-            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['objectType']['title'] .' '. $object['title'];
+            /* @var Objects $object */
+            return $object->house->street->title . ', ' . $object->house->number . ', ' . $object->objectType->title . ' ' . $object->title;
         });
         echo $form->field($model, 'objectUuid',
             ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
