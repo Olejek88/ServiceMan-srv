@@ -31,14 +31,15 @@ use yii\widgets\ActiveForm;
 
     <label>Объект, связанный с контрагентом</label></br>
     <?php
-    $object = Objects::find()
-        ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
-        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL])
-        ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
-        ->all();
+    $object = Objects::find()->where(['objectTypeUuid' => [
+        ObjectType::OBJECT_TYPE_FLAT,
+        ObjectType::OBJECT_TYPE_GENERAL,
+        ObjectType::OBJECT_TYPE_COMMERCE,
+    ]])->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {
-        return $model['house']['street']->title . ', ' . $model['house']->number .
-            ', ' . $model['objectType']['title'] . ' ' . $model['title'];
+        /* @var Objects $model */
+        return $model->house->street->title . ', ' . $model->house->number .
+            ', ' . $model->objectType->title . ' ' . $model->title;
     });
     echo Select2::widget(
         [
