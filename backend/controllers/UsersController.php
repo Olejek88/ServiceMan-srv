@@ -336,19 +336,19 @@ class UsersController extends ZhkhController
 
         $users = $this->findModel($id);
 
+        $roles = $am->getRoles();
+        $roleList = ArrayHelper::map($roles, 'name', 'description');
+        $assignments = $am->getAssignments($users->user_id);
         $model = new UserArm();
         $model->load($users->user->attributes, '');
         $model->load($users->attributes, '');
         $model->scenario = UserArm::SCENARIO_UPDATE;
         if ($model->load(Yii::$app->request->post())) {
+            // загружаем данные из формы в моделе
             $user = $users->user;
             $user->load($model->attributes, '');
             if (!empty($model->password)) {
                 $user->setPassword($model->password);
-            }
-
-            if ($user->save()) {
-                MainFunctions::register('user', 'Обновлен профиль пользователя ' . $user->username, '');
             }
 
             $users->load($model->attributes, '');
@@ -361,6 +361,19 @@ class UsersController extends ZhkhController
                 $newRole = $am->getRole($model->role);
                 $am->assign($newRole, $users->user_id);
                 MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name, '');
+            } else {
+                // прокинуть на форму с указанием ошибки
+                $model->addError('type', $users->getFirstError('type') . ' (измените тип)');
+                $model->addError('status', $users->getFirstError('type') . ' (измените статус)');
+                return $this->render('update', [
+                    'userArm' => $model,
+                    'model' => $users,
+                    'roleList' => $roleList,
+                ]);
+            }
+
+            if ($user->save()) {
+                MainFunctions::register('user', 'Обновлен профиль пользователя ' . $user->username, '');
                 return $this->redirect(['/users/view', 'id' => $users->_id]);
             }
 
@@ -377,9 +390,7 @@ class UsersController extends ZhkhController
             $model->pin = $pin;
         }
 
-        $roles = $am->getRoles();
-        $roleList = ArrayHelper::map($roles, 'name', 'description');
-        $assignments = $am->getAssignments($users->user_id);
+        // текущая роль пользователя
         foreach ($assignments as $value) {
             $model->role = $value->roleName;
             break;

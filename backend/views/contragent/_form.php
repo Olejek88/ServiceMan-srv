@@ -68,23 +68,23 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
     <?php
-    $contragentType = ContragentType::find()->all();
-    $items = ArrayHelper::map($contragentType, 'uuid', 'title');
-    echo $form->field($model, 'contragentTypeUuid',
-        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/contragent-type/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
+    //    $contragentType = ContragentType::find()->all();
+    //    $items = ArrayHelper::map($contragentType, 'uuid', 'title');
+    //    echo $form->field($model, 'contragentTypeUuid',
+    //        ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
+    //        <a href=\"/contragent-type/create\">
+    //        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
+    //        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
+    //        [
+    //            'data' => $items,
+    //            'language' => 'ru',
+    //            'options' => [
+    //                'placeholder' => 'Выберите тип..'
+    //            ],
+    //            'pluginOptions' => [
+    //                'allowClear' => true
+    //            ],
+    //        ]);
     ?>
 
     <div class="form-group text-center">

@@ -16,6 +16,7 @@
  * @var $equipments Equipment[]
  * @var $messagesChat
  * @var $usersCount
+ * @var $activeUsersCount
  * @var $currentUser
  * @var $objectsCount
  * @var $objectsTypeCount
@@ -104,7 +105,7 @@ $this->title = Yii::t('app', 'Сводная');
             <div class="info-box-content">
                 <span class="info-box-text">Пользователи</span>
                 <span>Всего / Активных</span>
-                <span class="info-box-number"><?= $usersCount ?>/<?= $usersCount ?></span>
+                <span class="info-box-number"><?= $usersCount ?>/<?= $activeUsersCount ?></span>
             </div>
             <!-- /.info-box-content -->
         </div>
