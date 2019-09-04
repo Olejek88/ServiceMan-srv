@@ -33,7 +33,7 @@ use common\components\Tag;
             $(".field-userarm-password").hide();
         }
     });
-    $("#userarm-type").val(1).trigger("change");', View::POS_READY);
+    $("#userarm-type").trigger("change");', View::POS_READY);
     ?>
 
     <?php
@@ -48,30 +48,23 @@ use common\components\Tag;
         Users::USERS_ARM => 'Оператор',
         Users::USERS_WORKER => 'Исполнитель',
     ];
-    if ($model->isNewRecord) {
-        echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
-            ->dropDownList($typeList);
-    }
+    echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
+        ->dropDownList($typeList);
     ?>
 
     <?php
-    if ($model->isNewRecord || (!$model->isNewRecord && $model->type == Users::USERS_ARM)) {
-        echo $form->field($userArm, 'password')->passwordInput(['autofocus' => true]);
-    }
+    echo $form->field($userArm, 'password')->passwordInput(['autofocus' => true]);
     ?>
 
     <?php
-    if ($model->isNewRecord || (!$model->isNewRecord && $model->type == Users::USERS_WORKER)) {
-        $tagTypeList = [
-            Tag::TAG_TYPE_PIN => 'Пинкод',
-            Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
-            Tag::TAG_TYPE_NFC => 'NFC метка',
-            Tag::TAG_TYPE_UHF => 'UHF метка'
-        ];
-        echo $form->field($userArm, 'tagType')
-            ->dropDownList($tagTypeList);
-        echo $form->field($userArm, 'pin')->textInput([]);
-    }
+    $tagTypeList = [
+        Tag::TAG_TYPE_PIN => 'Пинкод',
+        Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+        Tag::TAG_TYPE_NFC => 'NFC метка',
+        Tag::TAG_TYPE_UHF => 'UHF метка'
+    ];
+    echo $form->field($userArm, 'tagType')->dropDownList($tagTypeList);
+    echo $form->field($userArm, 'pin')->textInput([]);
     ?>
 
     <?php echo $form->field($userArm, 'name')->textInput([]) ?>

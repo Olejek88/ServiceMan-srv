@@ -66,8 +66,7 @@ use yii\bootstrap\ActiveForm;
         </div>
         <?php
         $users = Contragent::find()->orderBy('title DESC')
-            ->where(['contragentTypeUuid' => ContragentType::EMPLOYEE])
-            ->orWhere(['contragentTypeUuid' => ContragentType::WORKER])
+            ->where(['contragentTypeUuid' => [ContragentType::EMPLOYEE, ContragentType::WORKER]])
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');
         echo '<label>Лицо ведущее прием</label><br/>';

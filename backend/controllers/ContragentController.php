@@ -3,6 +3,7 @@
 namespace backend\controllers;
 
 use backend\models\ContragentSearch;
+use backend\models\SignupForm;
 use backend\models\UserArm;
 use common\components\MainFunctions;
 use common\components\Tag;
@@ -120,10 +121,8 @@ class ContragentController extends ZhkhController
                 $objectContragent->objectUuid = $_POST['objectUuid'];
                 $objectContragent->save();
             }
-            if ($contragent->contragentTypeUuid == ContragentType::WORKER ||
-                $contragent->contragentTypeUuid == ContragentType::CONTRACTOR ||
-                $contragent->contragentTypeUuid == ContragentType::EMPLOYEE) {
-
+            $contractorTypes = [ContragentType::WORKER, ContragentType::CONTRACTOR, ContragentType::EMPLOYEE];
+            if (in_array($contragent->contragentTypeUuid, $contractorTypes)) {
                 $model = new UserArm();
                 $am = Yii::$app->getAuthManager();
                 $existUser = User::find()->all();
@@ -136,7 +135,7 @@ class ContragentController extends ZhkhController
 
                 $model->type = Users::USERS_WORKER;
                 // TODO пока для отладки - если понадобиться заходить с этого пользователя
-                $model->password =$contragent->inn;
+                $model->password = SignupForm::randomString();
                 $model->tagType = Tag::TAG_TYPE_UHF;
                 $model->pin = '1234';
                 $model->name = $contragent->title;

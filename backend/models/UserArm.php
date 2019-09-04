@@ -148,19 +148,20 @@ class UserArm extends Model
      */
     public function checkLimit($attr, $param)
     {
-        $limit = (new Query())
-            ->select('*')
-            ->from('{{%system_settings}}')
-            ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
-            ->one();
-        if ($limit == null) {
-            $this->addError('type', 'Создание мобильных пользователей ограничено.');
-        }
+        if ($this->type == Users::USERS_WORKER) {
+            $limit = (new Query())
+                ->select('*')
+                ->from('{{%system_settings}}')
+                ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
+                ->one();
+            if ($limit == null) {
+                $this->addError('type', 'Создание мобильных пользователей ограничено.');
+            }
 
-        $users = Users::findAll(['type' => Users::USERS_WORKER]);
-        if (count($users) >= $limit['value']) {
-            $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+            $users = Users::findAll(['type' => Users::USERS_WORKER]);
+            if (count($users) >= $limit['value']) {
+                $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+            }
         }
-
     }
 }

@@ -79,7 +79,7 @@ class SignupForm extends Model
             $organization->uuid = MainFunctions::GUID();
             $organization->title = $this->organizationTitle;
             $organization->inn = $this->organizationInn;
-            $organization->secret = $this->randomString(8);
+            $organization->secret = self::randomString(8);
             if ($organization->save()) {
                 $users = new Users();
                 $users->scenario = 'signup';
@@ -123,7 +123,7 @@ class SignupForm extends Model
      * @param $length the length of the string to create
      * @return $str the string
      */
-    function randomString($length = 6)
+    static function randomString($length = 6)
     {
         $str = "";
         $characters = array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9'));

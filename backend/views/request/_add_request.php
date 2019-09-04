@@ -55,8 +55,7 @@ use yii\helpers\Html;
 
     if ($source == 'table') {
         $users = Contragent::find()
-            ->where(['contragentTypeUuid' => ContragentType::ORGANIZATION])
-            ->orWhere(['contragentTypeUuid' => ContragentType::CITIZEN])
+            ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
             ->orderBy('title DESC')
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'title');

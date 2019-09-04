@@ -6,6 +6,8 @@ use backend\models\UserArm;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
+use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Gpstrack;
 use common\models\Journal;
 use common\models\Measure;
@@ -13,6 +15,7 @@ use common\models\Message;
 use common\models\Photo;
 use common\models\User;
 use common\models\TaskUser;
+use common\models\UserContragent;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
@@ -174,6 +177,43 @@ class UsersController extends ZhkhController
                     $newRole = $am->getRole($model->role);
                     $am->assign($newRole, $users->user_id);
                     MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact);
+                    $contractor = new Contragent();
+                    $contractor->uuid = MainFunctions::GUID();
+                    $contractor->oid = Users::getCurrentOid();
+                    $contractor->title = $users->name;
+                    $contractor->address = '-';
+                    $contractor->phone = $users->contact;
+                    $contractor->inn = '-';
+                    $contractor->account = '-';
+                    $contractor->director = '-';
+                    $contractor->email = $user->email;
+                    $contractor->contragentTypeUuid = ContragentType::WORKER;
+                    if (!$contractor->save()) {
+                        // TODO: решить что делать! удалять всё или нет.
+                        $errorString = '';
+                        foreach ($contractor->errors as $error) {
+                            $errorString .= $error;
+                        }
+
+                        MainFunctions::register('нет', 'Создание пользователя',
+                            'Не удалось создать контрагента. Error: ' . $errorString);
+                    } else {
+                        $userContractor = new UserContragent();
+                        $userContractor->uuid = MainFunctions::GUID();
+                        $userContractor->oid = Users::getCurrentOid();
+                        $userContractor->userUuid = $users->uuid;
+                        $userContractor->contragentUuid = $contractor->uuid;
+                        if (!$userContractor->save()) {
+                            $errorString = '';
+                            foreach ($contractor->errors as $error) {
+                                $errorString .= $error;
+                            }
+
+                            MainFunctions::register('нет', 'Создание пользователя',
+                                'Не удалось создать связь между пользователем и контрагентом. Error: ' . $errorString);
+                        }
+                    }
+
                     return $this->redirect(['/users/view', 'id' => $users->_id]);
                 } else {
                     $user->delete();
@@ -312,7 +352,10 @@ class UsersController extends ZhkhController
             }
 
             $users->load($model->attributes, '');
-            $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
+            if ($users->type == Users::USERS_WORKER) {
+                $users->pin = $model->tagType . ':' . $model->pin;
+            }
+
             if ($users->save()) {
                 $am->revokeAll($users->user_id);
                 $newRole = $am->getRole($model->role);
@@ -596,7 +639,7 @@ class UsersController extends ZhkhController
         $equipmentUserPresent = UserSystem::find()->where(['equipmentSystemUuid' => $systemUuid])
             ->andWhere(['userUuid' => $userUuid])
             ->one();
-        if ($equipmentUserPresent && $add==false) {
+        if ($equipmentUserPresent && $add == false) {
             $equipmentUserPresent->delete();
         }
     }
