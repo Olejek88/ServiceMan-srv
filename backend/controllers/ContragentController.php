@@ -108,6 +108,7 @@ class ContragentController extends ZhkhController
         parent::actionCreate();
 
         $contragent = new Contragent();
+        $contragent->contragentTypeUuid = ContragentType::CONTRACTOR;
         $searchModel = new ContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
@@ -121,7 +122,7 @@ class ContragentController extends ZhkhController
                 $objectContragent->objectUuid = $_POST['objectUuid'];
                 $objectContragent->save();
             }
-            $contractorTypes = [ContragentType::WORKER, ContragentType::CONTRACTOR, ContragentType::EMPLOYEE];
+            $contractorTypes = [ContragentType::CONTRACTOR];
             if (in_array($contragent->contragentTypeUuid, $contractorTypes)) {
                 $model = new UserArm();
                 $am = Yii::$app->getAuthManager();
@@ -134,7 +135,6 @@ class ContragentController extends ZhkhController
                 $model->username = $model->email;
 
                 $model->type = Users::USERS_WORKER;
-                // TODO пока для отладки - если понадобиться заходить с этого пользователя
                 $model->password = SignupForm::randomString();
                 $model->tagType = Tag::TAG_TYPE_UHF;
                 $model->pin = '1234';

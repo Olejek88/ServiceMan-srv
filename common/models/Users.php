@@ -4,9 +4,12 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 use yii\db\Expression;
+use yii\db\Query;
 
 /**
  * Class Users
@@ -94,6 +97,7 @@ class Users extends ZhkhActiveRecord
             [['oid'], 'checkOrganizationOwn', 'on' => 'default'],
             [['user_id'], 'exist', 'targetClass' => User::class, 'targetAttribute' => ['user_id' => '_id'], 'on' => ['default', 'signup'],],
             [['user_id'], 'unique', 'on' => ['default', 'signup'],],
+            [['type'], 'checkLimit'],
         ];
     }
 
@@ -215,5 +219,32 @@ class Users extends ZhkhActiveRecord
         $identity = Yii::$app->user->identity;
         $oid = $identity->users->oid;
         return $oid;
+    }
+
+    /**
+     * @param $attr
+     * @param $param
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function checkLimit($attr, $param)
+    {
+        if ($this->type == Users::USERS_WORKER) {
+            $limit = (new Query())
+                ->select('*')
+                ->from('{{%system_settings}}')
+                ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
+                ->one();
+            if ($limit == null) {
+                $this->addError('type', 'Создание мобильных пользователей ограничено.');
+            }
+
+            $users = Users::find()->where(['type' => Users::USERS_WORKER, 'user.status' => User::STATUS_ACTIVE])
+                ->leftJoin('user', 'users.user_id = user._id')
+                ->all();
+            if (count($users) >= $limit['value'] && $this->user->status == User::STATUS_ACTIVE) {
+                $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+            }
+        }
     }
 }
