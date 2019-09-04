@@ -821,7 +821,7 @@ class ReferenceFunctions
             ])->execute();
 
             $db->createCommand()->insert('task_template_equipment_type', [
-                'uuid' => $uuid,
+                'uuid' => MainFunctions::GUID(),
                 'equipmentTypeUuid' => $equipmentTypeUuid,
                 'taskTemplateUuid' => $uuid,
                 'createdAt' => $currentTime,

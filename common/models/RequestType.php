@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "request_type".
@@ -18,7 +18,7 @@ use yii\db\ActiveRecord;
  *
  * @property TaskTemplate $taskTemplate
  */
-class RequestType extends ActiveRecord
+class RequestType extends ZhkhActiveRecord
 {
     const GENERAL = "E49AE9AD-3C31-42F8-A751-AAEB890C2190";
     const REQUEST_PAY = 1;
@@ -38,10 +38,12 @@ class RequestType extends ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'title'], 'required'],
+            [['uuid', 'title', 'oid'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
             [['uuid'], 'string', 'max' => 50],
             [['title'], 'string', 'max' => 100],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 

@@ -84,13 +84,10 @@ $this->registerJs('
     if (isset($objectUuid)) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
     } else {
-        $object = Objects::find()->all();
-        $items = ArrayHelper::map($object, 'uuid', function ($model) {
-            return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
-        });
-        echo $form->field($equipment, 'objectUuid')->widget(Select2::class,
-            [
-                'data' => $items,
+        echo $this->render('../object/_select_object_subform', ['form' => $form]);
+        echo $form->field($equipment, 'objectUuid')->widget(\kartik\widgets\Select2::class,
+            ['id' => 'objectUuid',
+                'name' => 'objectUuid',
                 'language' => 'ru',
                 'options' => [
                     'placeholder' => 'Выберите объект..'

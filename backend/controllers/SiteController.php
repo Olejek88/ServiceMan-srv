@@ -65,7 +65,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove', 'picec'],
+                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -941,8 +941,10 @@ class SiteController extends Controller
     {
         $oid = Users::getCurrentOid();
         ReferenceFunctions::loadReferences($oid, Yii::$app->db);
-        //ReferenceFunctions::loadReferencesNext($oid, Yii::$app->db);
-        //ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesNext($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesAll2($oid, Yii::$app->db);
+        ReferenceFunctions::loadRequestTypes($oid, Yii::$app->db);
     }
 
 }

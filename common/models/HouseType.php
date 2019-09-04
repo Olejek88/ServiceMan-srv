@@ -2,9 +2,9 @@
 
 namespace common\models;
 
-use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -12,13 +12,12 @@ use yii\db\Expression;
  *
  * @property integer $_id
  * @property string $uuid
- * @property string $oid идентификатор организации
  * @property string $gis_id глобальный идентификатор в ГИС ЖКХ
  * @property string $title
  * @property string $createdAt
  * @property string $changedAt
  */
-class HouseType extends ZhkhActiveRecord
+class HouseType extends ActiveRecord
 {
     public const HOUSE_TYPE_PRIVATE = "6A0AB43B-AEA7-44BE-8E6C-001F4F854A4F";
     public const HOUSE_TYPE_MKD = "583C8D20-CE23-401D-8E90-0FFCDAA6BE50";
@@ -54,9 +53,7 @@ class HouseType extends ZhkhActiveRecord
         return [
             [['uuid', 'title'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'title', 'oid'], 'string', 'max' => 50],
-            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
-            [['oid'], 'checkOrganizationOwn'],
+            [['uuid', 'title'], 'string', 'max' => 50],
         ];
     }
 

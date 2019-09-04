@@ -56,6 +56,7 @@ $gridColumns = [
         ],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'type',
         'vAlign' => 'middle',
         'hAlign' => 'center',
@@ -77,7 +78,21 @@ $gridColumns = [
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],
-        'filterInputOptions' => ['placeholder' => 'Любой']
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'editableOptions' => function () {
+            $types = [
+                0 => "Бесплатная заявка", 1 => "Платная заявка"
+            ];
+            $status = ["<span class='badge' style='background-color: seagreen; height: 22px'>Бесплатная</span>",
+                "<span class='badge' style='background-color: darkorange; height: 22px'>Платная</span>"];
+            $list = $types;
+            return [
+                'size' => 'md',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $status,
+                'data' => $list
+            ];
+        },
     ],
     [
         'attribute' => 'contragent',

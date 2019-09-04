@@ -8,8 +8,6 @@ use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\ContragentType;
 use common\models\Equipment;
-use common\models\Objects;
-use common\models\ObjectType;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
@@ -43,6 +41,17 @@ use yii\helpers\Html;
 
     <?php
     echo Html::hiddenInput("receiptUuid", $receiptUuid);
+    echo $form->field($model, 'type')->widget(Select2::class,
+        [
+            'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите тип..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
 
     if ($source == 'table') {
         $users = Contragent::find()
@@ -95,17 +104,10 @@ use yii\helpers\Html;
     echo '</br>';
 
     if (!$model->objectUuid) {
-        $objects = Objects::find()
-            ->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])
-            ->orWhere(['objectTypeUuid' => ObjectType::OBJECT_TYPE_COMMERCE])
-            ->all();
-        $items = ArrayHelper::map($objects, 'uuid', function ($object) {
-            return $object['house']['street']->title . ', ' . $object['house']->number . ', ' . $object['objectType']['title'] .' '. $object['title'];
-        });
-        echo $form->field($model, 'objectUuid',
-            ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,
-            [
-                'data' => $items,
+        echo $this->render('../object/_select_object_subform', ['form' => $form]);
+        echo $form->field($model, 'objectUuid')->widget(Select2::class,
+            ['id' => 'objectUuid',
+                'name' => 'objectUuid',
                 'language' => 'ru',
                 'options' => [
                     'placeholder' => 'Выберите объект..'
@@ -120,26 +122,7 @@ use yii\helpers\Html;
     echo $form->field($model, 'result')->hiddenInput(['value' => 'Нет результата'])->label(false);
 
     echo $form->field($model, 'comment')->textInput();
-
-    /*        $objectContragent = 0;
-            if ($model['objectUuid'])
-                $objectContragent = ObjectContragent::find()->where(['objectUuid' => $model['objectUuid']])->one();
-            $contragents = Contragent::find()->all();
-            $items = ArrayHelper::map($contragents, 'uuid', 'title');
-            echo $form->field($model, 'contragentUuid',
-                ['template' => MainFunctions::getAddButton("/contragent/create")])->widget(Select2::class,
-                [
-                    'data' => $items,
-                    'value' => $objectContragent,
-                    'language' => 'ru',
-                    'options' => [
-                        'placeholder' => 'Выберите исполнителя..'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]);
-            */ ?>
+    ?>
 
     <?php
     $type = RequestType::find()
@@ -147,8 +130,7 @@ use yii\helpers\Html;
         ->where(['task_template.oid' => Users::getCurrentOid()])
         ->all();
     $items = ArrayHelper::map($type, 'uuid', 'title');
-    echo $form->field($model, 'requestTypeUuid',
-        ['template' => MainFunctions::getAddButton("/request-type/create")])->widget(Select2::class,
+    echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',
@@ -168,8 +150,7 @@ use yii\helpers\Html;
         $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
             return $equipment->getFullTitle();
         });
-        echo $form->field($model, 'equipmentUuid',
-            ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
+        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
             [
                 'data' => $items,
                 'language' => 'ru',
@@ -183,19 +164,6 @@ use yii\helpers\Html;
     } else {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
     }
-
-    echo $form->field($model, 'type')->widget(Select2::class,
-        [
-            'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-
     ?>
 
 

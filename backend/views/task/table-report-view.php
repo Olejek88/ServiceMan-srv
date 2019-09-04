@@ -27,6 +27,9 @@ $this->title = Yii::t('app', 'ТОИРУС ЖКХ::' . $titles);
 $type = '';
 if (isset($_GET['type']))
     $type = $_GET['type'];
+$request = '';
+if (isset($_GET['request']))
+    $type = $_GET['request'];
 
 $gridColumns = [
     [
@@ -54,24 +57,32 @@ $gridColumns = [
             if (strtotime($data->taskDate) > 0)
                 return date("d-m-Y H:m", strtotime($data->taskDate));
             else
-                return 'не открыт';
+                return 'не назначен';
         },
-        'editableOptions' => [
-            'header' => 'Дата назначения',
-            'size' => 'md',
-            'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' => 'kartik\datecontrol\DateControl',
-            'options' => [
-                'type' => DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'dd-MM-yyyy HH:mm',
-                'saveFormat' => 'php:Y-m-d H:i:s',
-                'options' => [
-                    'pluginOptions' => [
-                        'autoclose' => true
+        'editableOptions' => function ($data) {
+            if ($data['workStatusUuid'] == WorkStatus::NEW)
+                return [
+                    'header' => 'Дата назначения',
+                    'size' => 'md',
+                    'inputType' => Editable::INPUT_WIDGET,
+                    'widgetClass' => 'kartik\datecontrol\DateControl',
+                    'options' => [
+                        'type' => DateControl::FORMAT_DATETIME,
+                        'displayFormat' => 'dd-MM-yyyy HH:mm',
+                        'saveFormat' => 'php:Y-m-d H:i:s',
+                        'options' => [
+                            'pluginOptions' => [
+                                'autoclose' => true
+                            ]
+                        ]
                     ]
-                ]
-            ]
-        ],
+                ];
+            else
+                return [
+                    'header' => 'Дату назначения нельзя после начала работ',
+                    'readonly' => true
+                ];
+        }
     ],
     [
         'attribute' => 'authorUuid',
@@ -96,20 +107,44 @@ $gridColumns = [
         }
     ],
     [
-        'header' => 'Заявка',
         'vAlign' => 'middle',
         'hAlign' => 'center',
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'mergeHeader' => true,
+        'header' => 'Заявка',
+        /*    . '<table><tr><form action=""><td>' .
+                    Select2::widget([
+                        'id' => 'request',
+                        'name' => 'request',
+                        'language' => 'ru',
+                        'data' => [
+                            '0' => 'Бесплатная заявка',
+                            '1' => 'Платная заявка'
+                        ],
+                        'value' => $request,
+                        'options' => ['placeholder' => 'Тип заявки'],
+                        'pluginEvents' => [
+                            "select2:select" => "function() {
+                                window.location.replace('table?request='+document.getElementById('request').value);
+                            }"
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ]
+                    ])
+                    . '</td></form></tr></table>',*/
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
             if ($request) {
                 $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
                 $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
-                return $link;
+                $type = "<span class='badge' style='background-color: seagreen; height: 22px'>Бесплатная</span>";
+                if ($request['type'] == 1)
+                    $type = "<span class='badge' style='background-color: darkorange; height: 22px'>Платная</span>";
+                return $link . '<br/>' . $type;
             } else
                 return "без заявки";
         },
@@ -132,7 +167,7 @@ $gridColumns = [
                 'options' => ['placeholder' => 'Статус по времени'],
                 'pluginEvents' => [
                     "select2:select" => "function() {
-                        window.location.replace('table-report-view?type='+document.getElementById('type').value); 
+                        window.location.replace('table?type='+document.getElementById('type').value); 
                         }"
                 ],
                 'pluginOptions' => [
@@ -155,7 +190,16 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Комментарий'
+        'header' => 'Комментарий',
+        'editableOptions' => function ($data) {
+            if ($data['workStatusUuid'] == WorkStatus::NEW)
+                return [];
+            else
+                return [
+                    'header' => ' комментарий нельзя после начала работ',
+                    'readonly' => true
+                ];
+        }
     ],
     [
         'vAlign' => 'middle',
@@ -190,22 +234,15 @@ $gridColumns = [
             else
                 return 'не задан';
         },
-        'editableOptions' => [
-            'header' => 'Срок',
-            'size' => 'md',
-            'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' => 'kartik\datecontrol\DateControl',
-            'options' => [
-                'type' => DateControl::FORMAT_DATETIME,
-                'displayFormat' => 'dd-MM-yyyy HH:mm',
-                'saveFormat' => 'php:Y-m-d H:i:s',
-                'options' => [
-                    'pluginOptions' => [
-                        'autoclose' => true
-                    ]
-                ]
-            ]
-        ],
+        'editableOptions' => function ($data) {
+            if ($data['workStatusUuid'] == WorkStatus::NEW)
+                return [];
+            else
+                return [
+                    'header' => ' срок нельзя после начала работ',
+                    'readonly' => true
+                ];
+        }
     ],
     [
         'header' => 'Исполнители',
@@ -233,13 +270,17 @@ $gridColumns = [
                 $cnt++;
             }
             if ($cnt > 0) {
-                $link = Html::a($users_list,
-                    ['../task/user', 'taskUuid' => $data['uuid']],
-                    [
-                        'title' => 'Исполнители',
-                        'data-toggle' => 'modal',
-                        'data-target' => '#modalUser'
-                    ]);
+                if ($data['workStatusUuid'] == WorkStatus::NEW) {
+                    $link = Html::a($users_list,
+                        ['../task/user', 'taskUuid' => $data['uuid']],
+                        [
+                            'title' => 'Исполнители',
+                            'data-toggle' => 'modal',
+                            'data-target' => '#modalUser'
+                        ]);
+                } else {
+                    $link = $users_list;
+                }
                 return $link;
             } else {
                 $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
@@ -250,6 +291,7 @@ $gridColumns = [
                         'data-toggle' => 'modal',
                         'data-target' => '#modalUser'
                     ]);
+                if ($data['workStatusUuid'] == WorkStatus::NEW) $link = $name;
                 return $link;
             }
         },

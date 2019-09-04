@@ -7,7 +7,6 @@ use backend\models\TaskSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\Equipment;
-use common\models\EquipmentRegister;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\Measure;
@@ -26,7 +25,6 @@ use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
-use yii\db\Expression;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
@@ -199,26 +197,6 @@ class TaskController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
-        if (isset($_GET['type'])) {
-            if ($_GET['type'] == '0') {
-                $dataProvider->query
-                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
-            }
-            if ($_GET['type'] == '1') {
-                $dataProvider->query
-                    ->andWhere(['or', ['<=', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
-            }
-            if ($_GET['type'] == '2') {
-                $dataProvider->query
-                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                    ->andWhere(['>', 'deadlineDate', 'endDate']);
-            }
-            if ($_GET['type'] == '3') {
-                $dataProvider->query
-                    ->andWhere(['workStatusUuid' => WorkStatus::CANCELED]);
-            }
-        }
         return $this->render(
             'table-report-view',
             [
@@ -273,6 +251,30 @@ class TaskController extends ZhkhController
         if (isset($_GET['start_time'])) {
             $dataProvider->query->andWhere(['>=', 'deadlineDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'deadlineDate', $_GET['end_time']]);
+        }
+        if (isset($_GET['type'])) {
+            if ($_GET['type'] == '0') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
+            }
+            if ($_GET['type'] == '1') {
+                $dataProvider->query
+                    ->andWhere(['!=', 'workStatusUuid', WorkStatus::COMPLETE])
+                    ->andWhere(['and', ['<=', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
+            }
+            if ($_GET['type'] == '2') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere(['and', ['<', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
+            }
+            if ($_GET['type'] == '3') {
+                $dataProvider->query
+                    ->andWhere(['workStatusUuid' => WorkStatus::CANCELED]);
+            }
+        }
+        if (isset($_GET['uuid'])) {
+            $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
         $dataProvider->query->orderBy('_id DESC');
         return $this->render(
