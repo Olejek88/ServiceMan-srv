@@ -352,7 +352,10 @@ class UsersController extends ZhkhController
             }
 
             $users->load($model->attributes, '');
-            $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
+            if ($users->type == Users::USERS_WORKER) {
+                $users->pin = $model->tagType . ':' . $model->pin;
+            }
+
             if ($users->save()) {
                 $am->revokeAll($users->user_id);
                 $newRole = $am->getRole($model->role);
