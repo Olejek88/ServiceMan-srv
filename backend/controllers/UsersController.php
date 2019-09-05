@@ -71,6 +71,10 @@ class UsersController extends ZhkhController
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        if ($model->user_id != Yii::$app->user->id ||
+            !Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+            $this->redirect('index');
+        }
 
         $user_photo = Photo::find()->where(['userUuid' => $model['uuid']])->count();
         $user_property['photo'] = $user_photo;
@@ -331,10 +335,12 @@ class UsersController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-        $am = Yii::$app->getAuthManager();
-
         $users = $this->findModel($id);
+        if ($users->user_id != Yii::$app->user->id) {
+            parent::actionUpdate($id);
+        }
+
+        $am = Yii::$app->getAuthManager();
 
         $roles = $am->getRoles();
         $roleList = ArrayHelper::map($roles, 'name', 'description');
