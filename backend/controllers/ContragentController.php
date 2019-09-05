@@ -108,7 +108,6 @@ class ContragentController extends ZhkhController
         parent::actionCreate();
 
         $contragent = new Contragent();
-        $contragent->contragentTypeUuid = ContragentType::CONTRACTOR;
         $searchModel = new ContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
@@ -139,12 +138,11 @@ class ContragentController extends ZhkhController
                 $model->tagType = Tag::TAG_TYPE_UHF;
                 $model->pin = '1234';
                 $model->name = $contragent->title;
-                if ($contragent->contragentTypeUuid == ContragentType::WORKER)
-                    $model->whoIs = 'Сотрудник';
-                if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR)
+                // очевидно из за условия выше данная проверка линяя
+                if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR) {
                     $model->whoIs = 'Подрядная огранизация';
-                if ($contragent->contragentTypeUuid == ContragentType::EMPLOYEE)
-                    $model->whoIs = 'Сотрудник';
+                }
+
                 $model->contact = $contragent->phone;
                 $model->role = User::ROLE_OPERATOR;
                 $model->status = User::STATUS_ACTIVE;
