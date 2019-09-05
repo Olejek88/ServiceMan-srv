@@ -113,7 +113,8 @@ class ObjectController extends ZhkhController
             //if ($_GET['from'])
             MainFunctions::register('object', 'Добавлен объект',
                 '<a class="btn btn-default btn-xs">' . $model['objectType']['title'] . '</a> ' . $model['title'] . '<br/>' .
-                '<a class="btn btn-default btn-xs">Адрес</a> ул.' . $model['house']['street']['title'] . ',д.' . $model['house']['number']);
+                '<a class="btn btn-default btn-xs">Адрес</a> ул.' . $model['house']['street']['title'] . ',д.' . $model['house']['number'],
+                $model->uuid);
 
             return $this->render('table', [
                 'searchModel' => $searchModel,

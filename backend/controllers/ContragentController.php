@@ -170,7 +170,7 @@ class ContragentController extends ZhkhController
                         if ($users->validate() && $users->save()) {
                             $newRole = $am->getRole($model->role);
                             $am->assign($newRole, $users->user_id);
-                            MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact);
+                            MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact, $users->uuid);
                             $userContragent = new UserContragent();
                             $userContragent->uuid = MainFunctions::GUID();
                             $userContragent->userUuid = $users->uuid;

@@ -358,9 +358,19 @@ $gridColumns = [
                         'data-target' => '#modalRequest',
                     ]
                 );
+            },
+            'history' => function ($url, $model) {
+                return Html::a('<span class="fa fa-history"></span>',
+                    ['../request/history', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'История изменения',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalRequestHistory',
+                    ]
+                );
             }
         ],
-        'template' => '{edit} {delete}',
+        'template' => ' {edit} {history} {delete}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];
@@ -454,6 +464,10 @@ $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      window.location.replace("../request/index");
 })');
+$this->registerJs('$("#modalRequestHistory").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
      window.location.replace("../request/index");
@@ -481,5 +495,12 @@ function () {
 <div class="modal remote fade" id="modalTaskInfo">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalRequestHistory">
+    <div class="modal-dialog" style="width: 800px; height: 400px">
+        <div class="modal-content loader-lg" id="modalContentHistory">
+        </div>
     </div>
 </div>

@@ -326,7 +326,8 @@ class TaskController extends ZhkhController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             MainFunctions::register('task', 'Создана задача',
                 '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
-                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
+                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
+                $model->uuid);
             // TODO реализовать логику выбора пользователя
             $user = Users::find()->one();
             $modelTU = new TaskUser();
@@ -714,7 +715,8 @@ class TaskController extends ZhkhController
             }
             MainFunctions::register('task', 'Создана задача',
                 '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
-                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
+                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
+                $task->uuid);
 
             return self::actionIndex();
         } else {
