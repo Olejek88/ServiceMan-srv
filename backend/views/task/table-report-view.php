@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\TaskSearch
  * @var $titles
+ * @var $warnings
  */
 
 use common\components\MainFunctions;
@@ -338,6 +339,10 @@ $gridColumns = [
         },
         'value' => function ($model) {
             $status = MainFunctions::getColorLabelByStatus($model['workStatus'], 'work_status_edit');
+            if ($model['workStatusUuid'] == WorkStatus::CANCELED) {
+                $status .= Html::a('<span class="fa fa-refresh"></span>',
+                    ['../task/refresh', 'uuid' => $model['uuid']], ['title' => 'Повторно создать задачу']);
+            }
             return $status;
         },
         'format' => 'raw'
@@ -479,11 +484,28 @@ $gridColumns = [
                         'data-target' => '#modalDefects',
                     ]
                 );
+            },
+            'refresh' => function ($url, $model) {
+                if ($model['workStatusUuid'] == WorkStatus::CANCELED) {
+                    return Html::a('<span class="fa fa-refresh"></span>',
+                        ['../task/refresh', 'uuid' => $model['uuid']], ['title' => 'Повторно создать задачу']);
+                }
+                return '';
             }
         ],
-        'template' => '{measure} {photo} {defect}',
+        'template' => '{measure} {photo} {defect} {refresh}',
     ]
 ];
+
+foreach ($warnings as $warning) {
+    if ($warning != '') {
+        echo '<div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <h4><i class="icon fa fa-ban"></i> Внимание!</h4>';
+        echo $warning;
+        echo '</div>';
+    }
+}
 
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';
@@ -571,7 +593,7 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalUser").on("hidden.bs.modal",
 function () {
-     window.location.replace("../task/table");
+     window.location.reload();
 })');
 
 $this->registerJs('$("#modalMeasure").on("hidden.bs.modal",

@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ObjectsSearch;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Contragent;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
@@ -823,7 +824,9 @@ class ObjectController extends ZhkhController
         $equipment->objectUuid = $objectUuid;
         $equipment->equipmentStatusUuid = EquipmentStatus::WORK;
         $equipment->equipmentTypeUuid = $equipmentTypeUuid;
-        $equipment->tag = $equipment->uuid;
+        $equipment->tag = Tag::getTag(Tag::TAG_TYPE_DUMMY, "1234");
+
+        $equipment->uuid;
         $equipment->period = 0;
         $equipment->replaceDate = date("Y-m-d H:i:s");
         $equipment->inputDate = date("Y-m-d H:i:s");

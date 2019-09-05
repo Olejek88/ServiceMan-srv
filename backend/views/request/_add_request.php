@@ -2,6 +2,7 @@
 /* @var $model common\models\Request
  * @var $receiptUuid string
  * @var $source string
+ * @var $path string
  */
 
 use common\components\MainFunctions;
@@ -30,47 +31,50 @@ use yii\helpers\Html;
     <h4 class="modal-title">Добавить/редактировать заявку</h4>
 </div>
 <div class="modal-body">
-    <?php
-    if ($model['uuid']) {
-        echo Html::hiddenInput("requestUuid", $model['uuid']);
-        echo $form->field($model, 'uuid')->hiddenInput(['value' => $model['uuid']])->label(false);
-    } else {
-        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
-    }
-    ?>
+    <table>
+        <tr>
+            <td style="width: 48%; vertical-align: top">
+                <?php
+                echo $form->field($model, 'type')->widget(Select2::class,
+                    [
+                        'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
+                        'language' => 'ru',
+                        'options' => [
+                            'placeholder' => 'Выберите тип..'
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);
 
-    <?php
-    echo Html::hiddenInput("receiptUuid", $receiptUuid);
-    echo $form->field($model, 'type')->widget(Select2::class,
-        [
-            'data' => [0 => "Бесплатная заявка", 1 => "Платная заявка"],
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-
-    if ($source == 'table') {
-        $users = Contragent::find()
-            ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
-            ->orderBy('title DESC')
-            ->all();
-        $items = ArrayHelper::map($users, 'uuid', 'title');
-        echo $form->field($model, 'contragentUuid')->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Заявитель'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-                'pluginEvents' => [
-                    "select2:select" => "function(data) { 
+                if ($source == 'table') {
+                    $users = Contragent::find()
+                        ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
+                        ->orderBy('title DESC')
+                        ->all();
+                    $items = ArrayHelper::map($users, 'uuid', 'title');
+                    echo $form->field($model, 'contragentUuid',
+                        ['template' => '{label}<div class="input-group">{input} <span class="input-group-btn">' .
+                            Html::a('<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>',
+                                ['../contragent/form'],
+                                [
+                                    'class' => 'btn btn-success',
+                                    'title' => 'Добавить контрагента',
+                                    'data-toggle' => 'modal',
+                                    'data-target' => '#modalContragent',
+                                ]) .
+                            '</span></div>'])->widget(Select2::class,
+                        [
+                            'data' => $items,
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => 'Заявитель'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                            'pluginEvents' => [
+                                "select2:select" => "function(data) { 
                         $.ajax({
                                 url: '../contragent/phone',
                                 type: 'post',
@@ -94,102 +98,117 @@ use yii\helpers\Html;
                                 }
                             });
                   }"]
-            ]);
-        echo '<label>Номер телефона заявителя</label></br>';
-        echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
-    } else {
-        echo $form->field($model, 'contragentUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
-    }
-    echo '</br>';
+                        ]);
+                    echo '<label>Номер телефона заявителя</label></br>';
+                    echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
+                } else {
+                    echo $form->field($model, 'contragentUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
+                }
+                echo '</br>';
 
-    if (!$model->objectUuid) {
-        echo $this->render('../object/_select_object_subform', ['form' => $form]);
-        echo $form->field($model, 'objectUuid')->widget(Select2::class,
-            ['id' => 'objectUuid',
-                'name' => 'objectUuid',
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите объект..'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-    } else {
-        echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
-    }
-    echo $form->field($model, 'result')->hiddenInput(['value' => 'Нет результата'])->label(false);
+                if (!$model->objectUuid) {
+                    echo $this->render('../object/_select_object_subform');
+                    echo $form->field($model, 'objectUuid')->widget(Select2::class,
+                        ['id' => 'objectUuid',
+                            'name' => 'objectUuid',
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => 'Выберите объект..'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]);
+                } else {
+                    echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
+                }
+                echo $form->field($model, 'result')->hiddenInput(['value' => 'Нет результата'])->label(false);
+                ?>
+            </td>
+            <td style="width: 4%"></td>
+            <td style="width: 48%; vertical-align: top">
+                <?php
+                echo $form->field($model, 'comment')->textInput();
+                $type = RequestType::find()
+                    ->innerJoinWith('taskTemplate')
+                    ->where(['task_template.oid' => Users::getCurrentOid()])
+                    ->all();
+                $items = ArrayHelper::map($type, 'uuid', 'title');
+                echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,
+                    [
+                        'data' => $items,
+                        'language' => 'ru',
+                        'options' => [
+                            'placeholder' => 'Выберите тип..',
+                            'value' => RequestType::GENERAL
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ]);
+                ?>
 
-    echo $form->field($model, 'comment')->textInput();
-    ?>
+                <?php
+                echo $this->render('../object/_select_equipment_subform');
 
-    <?php
-    $type = RequestType::find()
-        ->innerJoinWith('taskTemplate')
-        ->where(['task_template.oid' => Users::getCurrentOid()])
-        ->all();
-    $items = ArrayHelper::map($type, 'uuid', 'title');
-    echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..',
-                'value' => RequestType::GENERAL
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    ?>
-
-    <?php
-    if (!$model->equipmentUuid) {
-        $equipments = Equipment::find()->all();
-        $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
-            return $equipment->getFullTitle();
-        });
-        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите элементы..'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-    } else {
-        echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
-    }
-    ?>
+                if (!$model->equipmentUuid) {
+                    $equipments = Equipment::find()->all();
+                    $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                        return $equipment->getFullTitle();
+                    });
+                    echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+                        [
+                            'data' => $items,
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => 'Выберите элементы..'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]);
+                } else {
+                    echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
+                }
+                ?>
 
 
-    <?php
-    if ($model->objectUuid && $model->equipmentUuid && false) {
-        $tasks = Task::find()->all();
-        $items = ArrayHelper::map($tasks, 'uuid', 'taskTemplate.title');
-        echo $form->field($model, 'taskUuid')->widget(Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Задача'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
-    }
-    ?>
+                <?php
+                if ($model->objectUuid && $model->equipmentUuid && false) {
+                    $tasks = Task::find()->all();
+                    $items = ArrayHelper::map($tasks, 'uuid', 'taskTemplate.title');
+                    echo $form->field($model, 'taskUuid')->widget(Select2::class,
+                        [
+                            'data' => $items,
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => 'Задача'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]);
+                }
+                ?>
 
-    <?php
-    $accountUser = Yii::$app->user->identity;
-    $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-    echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
-    echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
-    ?>
+                <?php
+                $accountUser = Yii::$app->user->identity;
+                $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+                echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
+                echo $form->field($model, 'requestStatusUuid')->hiddenInput(['value' => RequestStatus::NEW_REQUEST])->label(false);
+
+                if ($model['uuid']) {
+                    echo Html::hiddenInput("requestUuid", $model['uuid']);
+                    echo $form->field($model, 'uuid')->hiddenInput(['value' => $model['uuid']])->label(false);
+                } else {
+                    echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
+                }
+
+                echo Html::hiddenInput("receiptUuid", $receiptUuid);
+                ?>
+            </td>
+        </tr>
+    </table>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 </div>
 <div class="modal-footer">
@@ -207,6 +226,7 @@ use yii\helpers\Html;
             data: $('form').serialize(),
             success: function () {
                 $('#modalRequest').modal('hide');
+                window.location.reload();
             },
             error: function () {
             }
@@ -214,3 +234,10 @@ use yii\helpers\Html;
     });
 </script>
 <?php ActiveForm::end(); ?>
+
+<div class="modal remote fade" id="modalContragent">
+    <div class="modal-dialog" style="width: 600px; height: 650px">
+        <div class="modal-content loader-lg" id="modalContragentContent">
+        </div>
+    </div>
+</div>

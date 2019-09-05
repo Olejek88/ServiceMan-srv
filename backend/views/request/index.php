@@ -265,11 +265,6 @@ $gridColumns = [
             if ($model['taskUuid']) {
                 $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
                 if ($task) {
-/*                    $order = Html::a('Задача №' . $task['_id'],
-                        ['../task', 'uuid' => $task['uuid']],
-                        [
-                            'title' => 'Редактировать заявку',
-                        ]);*/
                     $order = Html::a('Задача №' . $task['_id'],
                         ['../task/info', 'task' => $task['uuid']],
                         [
@@ -462,7 +457,7 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
-     window.location.replace("../request/index");
+     //window.location.reload();
 })');
 $this->registerJs('$("#modalRequestHistory").on("hidden.bs.modal",
 function () {
@@ -470,7 +465,7 @@ function () {
 })');
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
-     window.location.replace("../request/index");
+     window.location.reload();
 })');
 
 ?>
@@ -481,7 +476,7 @@ function () {
 </style>
 
 <div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 1000px; height: 700px">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>

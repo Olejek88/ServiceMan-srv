@@ -1,7 +1,4 @@
 <?php
-/* @var $form
- * @var $model
- */
 
 use common\models\City;
 use kartik\widgets\Select2;
@@ -13,7 +10,6 @@ $items = ArrayHelper::map($cities, 'uuid', 'title');
 $city = '';
 $street = '';
 $house = '';
-
 
 echo '<label>Адрес</label></br>';
 echo '<label>Город</label></br>';
@@ -30,6 +26,7 @@ echo Select2::widget(
         ],
         'pluginEvents' => [
             "select2:select" => "function(data) { 
+
                         $.ajax({
                                 url: '../city/streets',
                                 type: 'post',
@@ -38,12 +35,18 @@ echo Select2::widget(
                                 },
                                 success: function (data) {
                                     var streets = JSON.parse(data);
-                                    $('#streets').val(JSON.parse(data));
-                                    var select = document.getElementById(\"streets\");
+                                    var select = document.getElementById('streets');                                    
                                     select.options.length = 0;
                                     for(index in streets) {
                                         select.options[select.options.length] = new Option(streets[index], index);
                                     }
+                                    select = document.getElementById('streets2');
+                                    if (select) {                                                                        
+                                        select.options.length = 0;
+                                        for(index in streets) {
+                                            select.options[select.options.length] = new Option(streets[index], index);
+                                        }
+                                    }                                    
                                 }
                             });
                   }"]
@@ -70,12 +73,18 @@ echo Select2::widget([
                                 },
                                 success: function (data) {
                                     var houses = JSON.parse(data);
-                                    $('#houses').val(JSON.parse(data));
                                     var select = document.getElementById(\"houses\");
                                     select.options.length = 0;
                                     for(index in houses) {
                                         select.options[select.options.length] = new Option(houses[index], index);
                                     }               
+                                    select = document.getElementById(\"houses2\");
+                                    if (select) {
+                                        select.options.length = 0;
+                                        for(index in houses) {
+                                            select.options[select.options.length] = new Option(houses[index], index);
+                                        }            
+                                    }   
                                 }
                             });
             }"]

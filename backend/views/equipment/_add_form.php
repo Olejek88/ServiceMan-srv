@@ -17,7 +17,6 @@ use common\components\Tag;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Objects;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -71,7 +70,6 @@ $this->registerJs('
     echo $form->field($equipment, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
-
 
     echo $form->field($tagType, 'tagType')->dropDownList($tagTypeList)->label('Тип метки');
     echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);

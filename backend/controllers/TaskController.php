@@ -13,6 +13,7 @@ use common\models\Measure;
 use common\models\Operation;
 use common\models\Photo;
 use common\models\Request;
+use common\models\RequestType;
 use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
@@ -46,9 +47,9 @@ class TaskController extends ZhkhController
         $dataProvider->pagination->pageSize = 25;
         $dataProvider->query->orderBy('_id DESC');
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
         return $this->render(
@@ -56,6 +57,7 @@ class TaskController extends ZhkhController
             [
                 'searchModel' => $searchModel,
                 'dataProvider' => $dataProvider,
+                'warnings' => []
             ]
         );
     }
@@ -82,7 +84,7 @@ class TaskController extends ZhkhController
         $tasks = [];
         $tasks_completed = [];
         $taskUsers = TaskUser::find()->all();
-        if (isset($_GET['user']) && $_GET['user']!="")
+        if (isset($_GET['user']) && $_GET['user'] != "")
             $taskUsers = TaskUser::find()->where(['userUuid' => $_GET['user']])->all();
         foreach ($taskUsers as $taskUser) {
             $task = null;
@@ -91,17 +93,16 @@ class TaskController extends ZhkhController
                 $task_complete = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
                     ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE]])
-                    ->andWhere('taskDate > ' . date("YmdHis",strtotime($_GET['start_time'])))
-                    ->andWhere('taskDate < ' . date("YmdHis",strtotime($_GET['end_time'])))
+                    ->andWhere('taskDate > ' . date("YmdHis", strtotime($_GET['start_time'])))
+                    ->andWhere('taskDate < ' . date("YmdHis", strtotime($_GET['end_time'])))
                     ->one();
                 $task = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
                     ->andWhere(['IN', 'workStatusUuid', [WorkStatus::NEW, WorkStatus::IN_WORK]])
-                    ->andWhere('taskDate > ' . date("Ymdhis",strtotime($_GET['start_time'])))
-                    ->andWhere('taskDate < ' . date("Ymdhis",strtotime($_GET['end_time'])))
+                    ->andWhere('taskDate > ' . date("Ymdhis", strtotime($_GET['start_time'])))
+                    ->andWhere('taskDate < ' . date("Ymdhis", strtotime($_GET['end_time'])))
                     ->one();
-            }
-            else {
+            } else {
                 $task_complete = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
                     ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE]])
@@ -126,7 +127,8 @@ class TaskController extends ZhkhController
             [
                 'tasks' => $tasks,
                 'tasks_completed' => $tasks_completed,
-                'users' => $items
+                'users' => $items,
+                'warnings' => []
             ]
         );
     }
@@ -149,9 +151,9 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['>=', 'endDate', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'endDate', $_GET['end_time']]);
         }
-        if (isset($_GET['user']) && $_GET['user']!='') {
+        if (isset($_GET['user']) && $_GET['user'] != '') {
             $taskUsers = TaskUser::find()->select('taskUuid')->where(['userUuid' => $_GET['user']])->all();
-            $list=[];
+            $list = [];
             foreach ($taskUsers as $taskUser) {
                 $list[] = $taskUser['taskUuid'];
             }
@@ -180,7 +182,7 @@ class TaskController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         $taskTemplates = TaskTemplate::find()->select('uuid, taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
-        $list=[];
+        $list = [];
         foreach ($taskTemplates as $taskTemplate) {
             $list[] = $taskTemplate['uuid'];
         }
@@ -192,9 +194,9 @@ class TaskController extends ZhkhController
         }
         $dataProvider->query->orderBy('_id DESC');
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
         return $this->render(
@@ -202,7 +204,8 @@ class TaskController extends ZhkhController
             [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
-                'titles' => 'Журнал осмотров'
+                'titles' => 'Журнал осмотров',
+                'warnings' => []
             ]
         );
     }
@@ -222,7 +225,7 @@ class TaskController extends ZhkhController
                 ->one();
             if ($_POST['editableAttribute'] == 'workStatusUuid') {
                 $status = $_POST['Task'][$_POST['editableIndex']]['workStatusUuid'];
-                if ($status==WorkStatus::COMPLETE) {
+                if ($status == WorkStatus::COMPLETE) {
                     $model['startDate'] = $model['taskDate'];
                     $model['endDate'] = date("Y-m-d H:i:s");
                 }
@@ -243,9 +246,9 @@ class TaskController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 25;
         if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%'.$_GET['address'].'%',false],
-                    ['like', 'object.title', '%'.$_GET['address'].'%',false],
-                    ['like', 'street.title', '%'.$_GET['address'].'%',false]]
+            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
         if (isset($_GET['start_time'])) {
@@ -277,11 +280,49 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
         $dataProvider->query->orderBy('_id DESC');
+
+        $warnings[] = NULL;
+        /*
+        [ ] Сообщения в таблицах: исполнитель становится неактивным + задача не отправлена (новая)
+        [ ] Сообщения в таблицах: срок задачи истек, но она не выполнена + аварийный характер
+        [ ] Сообщения в таблицах: длительный период от новой к “в работе”
+        */
+
+        $tasks = Task::find()->all();
+        foreach ($tasks as $task) {
+            if ($task['workStatusUuid'] == WorkStatus::NEW) {
+                $users_list = '';
+                foreach ($task['users'] as $user) {
+                    if ($user->active == 0) {
+                        $warnings[] = 'Задача #' . $task['_id'] . ' ' . $task['taskTemplate']['title'] . ' назначена на ' .
+                            date("d-m-Y H:i", strtotime($task['taskDate'])) . ' ' .
+                            ' пользователю(лям) ' . $user['name'] . ', но он сейчас не активен';
+                        $users_list .= $user['name'] . ' ';
+                    }
+                }
+                if ((time() - strtotime($task['createdAt'])) > 24 * 3600) {
+                    $warnings[] = 'Задача #' . $task['_id'] . ' ' . $task['taskTemplate']['title'] . ' создана ' .
+                        date("d-m-Y H:i", strtotime($task['createdAt'])) .
+                        ', но до сих пор не получена исполнителем ' . $users_list;
+                }
+            }
+            if (($task['workStatusUuid'] == WorkStatus::NEW || $task['workStatusUuid'] == WorkStatus::IN_WORK
+                    || $task['workStatusUuid'] == WorkStatus::UN_COMPLETE || !$task['endDate']) &&
+                (time() > strtotime($task['deadlineDate']))) {
+                $request = Request::find()->where(['taskUuid' => $task->uuid])->one();
+                if ($request && $request['requestTypeUuid'] != RequestType::GENERAL) {
+                    $warnings[] = 'Задача #' . $task['_id'] . ' создана в связи с характером обращения ' .
+                        $request['requestType']['title'] . ', но до сих пор не выполнена';
+                }
+            }
+        }
+
         return $this->render(
             'table-report-view',
             [
                 'dataProvider' => $dataProvider,
                 'searchModel' => $searchModel,
+                'warnings' => $warnings,
                 'titles' => 'Журнал задач'
             ]
         );
@@ -429,14 +470,14 @@ class TaskController extends ZhkhController
         $start_date = '2011-01-01 00:00:00';
         $end_date = '2031-01-01 00:00:00';
         if (isset($_GET['start_time'])) {
-            $start_date = $_GET['start_time'].' 00:00:00';
-            $end_date = $_GET['end_time'].' 00:00:00';
+            $start_date = $_GET['start_time'] . ' 00:00:00';
+            $end_date = $_GET['end_time'] . ' 00:00:00';
         }
 
         $users = Users::find()
             ->where('name != "sUser"')
             ->all();
-        if (isset($_GET['user_select']) && $_GET['user_select']!='') {
+        if (isset($_GET['user_select']) && $_GET['user_select'] != '') {
             $users = Users::find()
                 ->where(['uuid' => $_GET["user_select"]])
                 ->all();
@@ -449,7 +490,7 @@ class TaskController extends ZhkhController
         $bar .= "data: [";
         $count = 0;
         foreach ($users as $current_user) {
-            $taskComplete=0;
+            $taskComplete = 0;
             if ($count > 0) {
                 $categories .= ',';
                 $bar .= ",";
@@ -462,9 +503,9 @@ class TaskController extends ZhkhController
             foreach ($taskUsers as $taskUser) {
                 $taskComplete += Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['>','taskdate',$start_date])
-                    ->andWhere(['<','taskdate',$end_date])
-                    ->andWhere(['IN','workStatusUuid',[WorkStatus::COMPLETE,WorkStatus::UN_COMPLETE,WorkStatus::CANCELED]])
+                    ->andWhere(['>', 'taskdate', $start_date])
+                    ->andWhere(['<', 'taskdate', $end_date])
+                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE, WorkStatus::CANCELED]])
                     ->count();
             }
             $bar .= $taskComplete;
@@ -472,7 +513,7 @@ class TaskController extends ZhkhController
         }
         $bar .= "]},";
 
-        $count=0;
+        $count = 0;
         $bar .= "{ name: 'Выполнено в срок', color: 'green', ";
         $bar .= "data: [";
         foreach ($users as $current_user) {
@@ -489,10 +530,10 @@ class TaskController extends ZhkhController
                 $user_array[$t_count]['name'] = $current_user['name'];
                 $user_array[$t_count]['system'] = $userSystem['equipmentSystem']['title'];
 
-                $taskGood=0;
-                $taskBad=0;
-                $taskComplete=0;
-                $taskTotal=0;
+                $taskGood = 0;
+                $taskBad = 0;
+                $taskComplete = 0;
+                $taskTotal = 0;
 
                 $taskUsers = TaskUser::find()
                     ->where(['userUuid' => $current_user['uuid']])
@@ -500,8 +541,8 @@ class TaskController extends ZhkhController
                 foreach ($taskUsers as $taskUser) {
                     $tasks = Task::find()
                         ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>','taskdate',$start_date])
-                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['>', 'taskdate', $start_date])
+                        ->andWhere(['<', 'taskdate', $end_date])
                         ->all();
                     foreach ($tasks as $task) {
                         if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid']) {
@@ -511,8 +552,8 @@ class TaskController extends ZhkhController
 
                     $tasks = Task::find()
                         ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>','taskdate',$start_date])
-                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['>', 'taskdate', $start_date])
+                        ->andWhere(['<', 'taskdate', $end_date])
                         ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
                         ->andWhere('endDate <= deadlineDate')
                         ->all();
@@ -522,8 +563,8 @@ class TaskController extends ZhkhController
                     }
                     $tasks = Task::find()
                         ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>','taskdate',$start_date])
-                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['>', 'taskdate', $start_date])
+                        ->andWhere(['<', 'taskdate', $end_date])
                         ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
                         ->all();
                     foreach ($tasks as $task) {
@@ -533,8 +574,8 @@ class TaskController extends ZhkhController
 
                     $tasks = Task::find()
                         ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>','taskdate',$start_date])
-                        ->andWhere(['<','taskdate',$end_date])
+                        ->andWhere(['>', 'taskdate', $start_date])
+                        ->andWhere(['<', 'taskdate', $end_date])
                         ->andWhere('deadlineDate > NOW()')
                         ->andWhere(['IN', 'workStatusUuid', [
                             WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
@@ -548,19 +589,19 @@ class TaskController extends ZhkhController
                 $user_array[$t_count]['complete_good'] = $taskGood;
                 $user_array[$t_count]['bad'] = $taskBad;
                 $user_array[$t_count]['complete'] = $taskComplete;
-                $user_array[$t_count]['total'] = $taskComplete+$taskBad;
+                $user_array[$t_count]['total'] = $taskComplete + $taskBad;
                 $t_count++;
             }
 
-            $taskGood=0;
+            $taskGood = 0;
             $taskUsers = TaskUser::find()
                 ->where(['userUuid' => $current_user['uuid']])
                 ->all();
             foreach ($taskUsers as $taskUser) {
                 $taskGood += Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['>','taskdate',$start_date])
-                    ->andWhere(['<','taskdate',$end_date])
+                    ->andWhere(['>', 'taskdate', $start_date])
+                    ->andWhere(['<', 'taskdate', $end_date])
                     ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
                     ->andWhere('endDate <= deadlineDate')
                     ->count();
@@ -570,22 +611,22 @@ class TaskController extends ZhkhController
         }
         $bar .= "]},";
 
-        $count=0;
+        $count = 0;
         $bar .= "{ name: 'Просрочено', color: 'red', ";
         $bar .= "data: [";
         foreach ($users as $current_user) {
             if ($count > 0) {
                 $bar .= ",";
             }
-            $taskBad=0;
+            $taskBad = 0;
             $taskUsers = TaskUser::find()
                 ->where(['userUuid' => $current_user['uuid']])
                 ->all();
             foreach ($taskUsers as $taskUser) {
                 $taskBad += Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['>','taskdate',$start_date])
-                    ->andWhere(['<','taskdate',$end_date])
+                    ->andWhere(['>', 'taskdate', $start_date])
+                    ->andWhere(['<', 'taskdate', $end_date])
                     ->andWhere('deadlineDate > NOW()')
                     ->andWhere(['IN', 'workStatusUuid', [
                         WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
@@ -802,7 +843,7 @@ class TaskController extends ZhkhController
                 $taskUserPresent = TaskUser::find()->where(['taskUuid' => $_POST['taskUuid']])
                     ->andWhere(['userUuid' => $user['uuid']])
                     ->count();
-                if ($taskUserPresent==0) {
+                if ($taskUserPresent == 0) {
                     $taskUser = new TaskUser();
                     $taskUser->uuid = MainFunctions::GUID();
                     $taskUser->taskUuid = $_POST['taskUuid'];
@@ -814,10 +855,10 @@ class TaskController extends ZhkhController
             }
         }
         //foreach ($_POST as $key => $value) {}
-        $users = Users::find()->where(['!=','name','sUser'])->all();
+        $users = Users::find()->where(['!=', 'name', 'sUser'])->all();
         foreach ($users as $user) {
-            $id = 'user-'.$user['_id'];
-            if (isset($_POST[$id]) && ($_POST[$id]==1 || $_POST[$id]=="1")) {
+            $id = 'user-' . $user['_id'];
+            if (isset($_POST[$id]) && ($_POST[$id] == 1 || $_POST[$id] == "1")) {
                 self::checkAddUser($_POST['taskUuid'], $user['uuid'], false);
             }
         }
@@ -939,7 +980,7 @@ class TaskController extends ZhkhController
         $taskUserPresent = TaskUser::find()->where(['taskUuid' => $taskUuid])
             ->andWhere(['userUuid' => $userUuid])
             ->one();
-        if (!$taskUserPresent && $add==true) {
+        if (!$taskUserPresent && $add == true) {
             $taskUser = new TaskUser();
             $taskUser->uuid = MainFunctions::GUID();
             $taskUser->taskUuid = $taskUuid;
@@ -985,7 +1026,7 @@ class TaskController extends ZhkhController
                     while ($count < count($dates)) {
                         $start = strtotime($dates[$count]);
                         $finish = $start + 3600 * 24;
-                        if ($start-$today<=3600*24*31*13) {
+                        if ($start - $today <= 3600 * 24 * 31 * 13) {
                             $event = new Event();
                             $event->id = $taskTemplateEquipment['_id'];
                             $event->title = '[' . $user . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
@@ -1012,15 +1053,15 @@ class TaskController extends ZhkhController
                         $event = new Event();
                         $event->id = $task['_id'];
                         $event->title = '[' . $user_names . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
-                        if ($task['workStatusUuid']==WorkStatus::CANCELED ||
-                            $task['workStatusUuid']==WorkStatus::NEW)
-                            $event->backgroundColor='gray';
-                        if ($task['workStatusUuid']==WorkStatus::IN_WORK)
-                            $event->backgroundColor='yellow';
-                        if ($task['workStatusUuid']==WorkStatus::UN_COMPLETE)
-                            $event->backgroundColor='lightred';
-                        if ($task['workStatusUuid']==WorkStatus::COMPLETE)
-                            $event->backgroundColor='green';
+                        if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                            $task['workStatusUuid'] == WorkStatus::NEW)
+                            $event->backgroundColor = 'gray';
+                        if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                            $event->backgroundColor = 'yellow';
+                        if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                            $event->backgroundColor = 'lightred';
+                        if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                            $event->backgroundColor = 'green';
 
                         $event->start = $task["startDate"];
                         $event->end = $task["endDate"];
@@ -1097,5 +1138,31 @@ class TaskController extends ZhkhController
         return $this->renderAjax('_list_photo', [
             'photos' => $photos
         ]);
+    }
+
+    /**
+     * Re-Create a new task model.
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionRefresh()
+    {
+        $task = Task::find()->where(['uuid' => $_GET["uuid"]])->one();
+        if ($task) {
+            $taskUser = TaskUser::find()
+                ->where(['taskUuid' => $task['uuid']])
+                ->one();
+            if ($taskUser) {
+                $task = MainFunctions::createTask($task['taskTemplate'], $task['equipmentUuid'],
+                    $task['comment'], $task['oid'], $taskUser['userUuid'], null);
+                MainFunctions::register('task', 'Создана задача',
+                    '<a class="btn btn-default btn-xs">' . $task['taskTemplate']['taskType']['title'] . '</a> ' .
+                    $task['taskTemplate']['title'] . '<br/>' .
+                    '<a class="btn btn-default btn-xs">' . $task['equipment']['title'] . '</a> ' . $task['comment'],
+                    $task->uuid);
+            }
+        }
+        return "";
     }
 }

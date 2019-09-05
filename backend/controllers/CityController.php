@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\CitySearch;
 use common\models\City;
+use common\models\Equipment;
 use common\models\House;
 use common\models\Objects;
 use common\models\ObjectType;
@@ -179,11 +180,31 @@ class CityController extends ZhkhController
                 $objects = Objects::find()->where(['houseUuid' => $_POST['id']])->all();
             }
             $items = ArrayHelper::map($objects, 'uuid', function ($data) {
-                return $data['objectType']['title'] . ' ' . $data['title'];
+                if ($data['objectTypeUuid'] == ObjectType::OBJECT_TYPE_FLAT)
+                    return $data['objectType']['title'] . ' ' . $data['title'];
+                else
+                    return $data['title'];
             });
             return json_encode($items);
         }
         return json_encode([]);
     }
 
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionEquipments()
+    {
+        if (isset($_POST['id'])) {
+            $equipments = Equipment::find()
+                ->where(['objectUuid' => $_POST['id']])
+                ->all();
+            $items = ArrayHelper::map($equipments, 'uuid', function ($data) {
+                return $data['title'];
+            });
+            return json_encode($items);
+        }
+        return json_encode([]);
+    }
 }
