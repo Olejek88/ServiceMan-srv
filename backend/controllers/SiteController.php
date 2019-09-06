@@ -117,7 +117,10 @@ class SiteController extends Controller
         $gps2 = 0;
         $gpsStatus = false;
 
-        $users = Users::find()->where('name!="sUser"')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->andWhere(['type' => Users::USERS_WORKER])
+            ->all();
         $userList[] = $users;
 
         /**
@@ -284,6 +287,7 @@ class SiteController extends Controller
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
             ->where(['user_id' => $accountUser['id']])
+            ->andWhere(['type' => Users::USERS_WORKER])
             ->asArray()
             ->one();
 
@@ -412,7 +416,10 @@ class SiteController extends Controller
         $gps2 = 0;
         $gpsStatus = false;
 
-        $users = Users::find()->where('name!="sUser"')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->andWhere(['type' => Users::USERS_WORKER])
+            ->all();
         $userList[] = $users;
 
         /**

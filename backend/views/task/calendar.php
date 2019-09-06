@@ -27,16 +27,6 @@ $this->title = 'Календарь задач';
 <div class="site-index">
     <div class="body-content">
 <?php
-    $JSCode = <<<EOF
-    function(start, end) {
-        $.get("/task/new",{ start: ""+start.format()+"" },
-        function() {	})
-        .done(function(data) {
-            $('#modalAddOrder').modal('show');
-            $('#modalContent').html(data);
-    	})
-    }
-EOF;
         $JSDropEvent = <<<EOF
     function( event, delta, revertFunc, jsEvent, ui, view ) {
         if (window.keyCode == 16) {
@@ -110,7 +100,7 @@ EOF;
                 'editable' => true,
                 'eventDrop' => new JsExpression($JSDropEvent),
                 'eventDragStop' => new JsExpression($JSDragStopEvent),
-                'select' => new JsExpression($JSCode),
+                /*                'select' => new JsExpression($JSCode),*/
                 'defaultDate' => date('Y-m-d'),
                 'defaultView' => 'month',
                 'columnFormat' => 'ddd',

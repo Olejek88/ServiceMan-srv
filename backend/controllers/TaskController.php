@@ -1080,6 +1080,67 @@ class TaskController extends ZhkhController
                 $task_equipment_count++;
             }
         }
+
+        $all_tasks = Task::find()
+            ->where(['workStatusUuid' => WorkStatus::COMPLETE])
+            ->all();
+        foreach ($all_tasks as $task) {
+            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $user_names = '';
+            foreach ($taskUsers as $taskUser) {
+                $user_names .= $taskUser['user']['name'];
+            }
+
+            $event = new Event();
+            $event->id = $task['_id'];
+            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                $task['workStatusUuid'] == WorkStatus::NEW)
+                $event->backgroundColor = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                $event->backgroundColor = 'yellow';
+            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                $event->backgroundColor = 'lightred';
+            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                $event->backgroundColor = 'green';
+
+            $event->start = $task["startDate"];
+            $event->end = $task["endDate"];
+            $event->color = 'green';
+            $events[] = $event;
+        }
+
+        $all_tasks = Task::find()
+            ->where('workStatusUuid !=\'' . WorkStatus::COMPLETE . '\'')
+            ->all();
+        foreach ($all_tasks as $task) {
+            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $user_names = '';
+            foreach ($taskUsers as $taskUser) {
+                $user_names .= $taskUser['user']['name'];
+            }
+
+            $event = new Event();
+            $event->id = $task['_id'];
+            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                $task['workStatusUuid'] == WorkStatus::NEW)
+                $event->backgroundColor = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                $event->backgroundColor = 'yellow';
+            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                $event->backgroundColor = 'lightred';
+            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                $event->backgroundColor = 'green';
+
+            $event->start = $task["taskDate"];
+            $event->end = date("Y-m-d H:i:s", strtotime($task["taskDate"]) + 3600 * 12);
+            $event->color = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED)
+                $event->color = 'red';
+            $events[] = $event;
+        }
+
         return $this->render('calendar', [
             'events' => $events
         ]);

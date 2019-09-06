@@ -50,6 +50,7 @@ use yii\helpers\Html;
                 if ($source == 'table') {
                     $users = Contragent::find()
                         ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
+                        ->andWhere(['deleted' => 0])
                         ->orderBy('title DESC')
                         ->all();
                     $items = ArrayHelper::map($users, 'uuid', 'title');

@@ -4,7 +4,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-$this->title = Yii::t('app', 'Статусы задач/операций');
+$this->title = Yii::t('app', 'Статусы задач');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php
@@ -63,15 +63,6 @@ $this->title = Yii::t('app', 'Статусы задач/операций');
                                     'content'=>function($data){
                                         return $data->title;
                                     }
-                                ],
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
-                                        'class' => 'text-center'
-                                    ],
-                                    'template' => '{view} {update} {link}',
                                 ],
                             ],
                         ]); ?>

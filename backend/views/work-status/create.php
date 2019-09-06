@@ -4,7 +4,7 @@
 use kartik\grid\GridView;
 use yii\helpers\Html;
 
-$this->title = Yii::t('app', 'Создать статус задачи/операции');
+$this->title = Yii::t('app', 'Создать статус задачи');
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">
     <?php
@@ -49,15 +49,6 @@ $this->title = Yii::t('app', 'Создать статус задачи/опер�
                                 'content' => function ($data) {
                                     return $data->title;
                                 }
-                            ],
-                            [
-                                'class' => 'yii\grid\ActionColumn',
-                                'header' => 'Действия',
-                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
-                                'contentOptions' => [
-                                    'class' => 'text-center',
-                                ],
-                                'template' => '{view} {update} {link}',
                             ]
                         ],
                     ]); ?>
