@@ -2,8 +2,22 @@
 
 use common\models\Journal;
 use common\models\OrderStatus;
+use common\models\Settings;
+use yii\helpers\Html;
+use yii\widgets\Pjax;
 
-$journals = Journal::find()->select('*')->orderBy('date DESC')->limit(3)->all();
+$journals = Journal::find()->select('*')->orderBy('date DESC')->limit(8)->all();
+
+$settings = Settings::find()->all();
+$period = "0";
+$move = 0;
+foreach ($settings as $setting) {
+    if ($setting['uuid'] == Settings::SETTING_TASK_PAUSE_BEFORE_WARNING)
+        $period = $setting['parameter'];
+    if ($setting['uuid'] == Settings::SETTING_SHOW_WARNINGS)
+        $warnings = $setting['parameter'];
+}
+
 ?>
 <!-- Control Sidebar -->
 <aside class="control-sidebar control-sidebar-dark">
@@ -22,124 +36,65 @@ $journals = Journal::find()->select('*')->orderBy('date DESC')->limit(3)->all();
                 $count = 0;
                 foreach ($journals as $journal) {
                     print '<li><a href="javascript:void(0)">';
-                    if (strstr($journal['description'], 'наряд'))
-                        print '<i class="menu-icon fa fa-file-code-o bg-green"></i>';
-                    if (strstr($journal['description'], 'пользоват'))
+                    if ($journal['type'] == 'task')
+                        print '<i class="menu-icon fa fa-tasks bg-green"></i>';
+                    if ($journal['type'] == 'request')
+                        print '<i class="menu-icon fa fa-reply bg-blue"></i>';
+                    if ($journal['type'] == 'user')
                         print '<i class="menu-icon fa fa-user bg-yellow"></i>';
                     print '<div class="menu-info">
                                 <h4 class="control-sidebar-subheading">' . $journal['date'] . '</h4>
-                           <p>' . $journal['description'] . '</p>
+                           <p>' . $journal['title'] . '</p>
                            </div></a></li>';
                 }
                 ?>
             </ul>
-            <!-- /.control-sidebar-menu -->
-
-            <h3 class="control-sidebar-heading">Прогресс нарядов</h3>
-            <ul class="control-sidebar-menu">
-                <?php
-                $orders = $this->params['lastOrders'];
-                foreach ($orders as $order) {
-                    $percent = 0;
-                    $color = 'label-danger';
-                    if ($order['orderStatusUuid'] == OrderStatus::COMPLETE) {
-                        $percent = 100;
-                        $color = 'label-info';
-                    }
-                    if ($order['orderStatusUuid'] == OrderStatus::IN_WORK) {
-                        $percent = 55;
-                        $color = 'label-warning';
-                    }
-                    echo '<li>
-                                <a href="/orders/view?id=' . $order["_id"] . '">
-                                <h4 class="control-sidebar-subheading">' . $order['title'] . '
-                                <span class="label ' . $color . ' pull-right">' . $percent . '%</span>
-                                </h4>
-                                <div class="progress progress-xxs">
-                                    <div class="progress-bar progress-bar-danger" style="width: ' . $percent . '%"></div>
-                                </div>
-                                </a>
-                            </li>';
-                }
-                ?>
-            </ul>
-            <!-- /.control-sidebar-menu -->
-
         </div>
-        <!-- /.tab-pane -->
-        <!-- Stats tab content -->
+
         <div class="tab-pane" id="control-sidebar-stats-tab">Настройки</div>
-        <!-- /.tab-pane -->
-        <!-- Settings tab content -->
         <div class="tab-pane" id="control-sidebar-settings-tab">
-            <form method="post">
-                <h3 class="control-sidebar-heading">Основные настройки</h3>
+            <?php Pjax::begin(['id' => 'options']); ?>
+            <?= Html::beginForm(['../site/config'], 'post', ['data-pjax' => '', 'class' => 'form-inline']);
+            ?>
+            <h3 class="control-sidebar-heading">Основные настройки</h3>
+            <input type="hidden" value="<?= $_SERVER['REQUEST_URI'] ?>" id="url" name="url">
+            <div class="form-group">
+                <label class="control-sidebar-subheading">
+                    Время на получение задачи<br/>
+                    <select id="period" name="period" style="color: #0a0a0a; font-size: 13px; font-family: inherit">
+                        <option value="1" <?= $period == '1' ? ' selected="selected"' : ''; ?>>1 час</option>
+                        <option value="2" <?= $period == '2' ? ' selected="selected"' : ''; ?>>2 часа</option>
+                        <option value="4" <?= $period == '4' ? ' selected="selected"' : ''; ?>>4 часа</option>
+                        <option value="12" <?= $period == '12' ? ' selected="selected"' : ''; ?>>12 часов</option>
+                        <option value="24" <?= $period == '24' ? ' selected="selected"' : ''; ?>>1 день</option>
+                        <option value="48" <?= $period == '48' ? ' selected="selected"' : ''; ?>>2 дня</option>
+                        <option value="10000" <?= $period == '10000' ? ' selected="selected"' : ''; ?>>Не определено
+                        </option>
+                    </select>
+                </label>
+                <p>
+                    Время на получение задачи до выдачи предупреждения
+                </p>
+            </div>
 
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Настройка
-                        <input type="checkbox" class="pull-right" checked>
-                    </label>
-                    <p>
-                        Полный вывод информации
-                    </p>
-                </div>
-                <!-- /.form-group -->
-
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Показывать уведомления
-                        <input type="checkbox" class="pull-right" checked>
-                    </label>
-                    <p>
-                        Разрешает push уведомления
-                    </p>
-                </div>
-                <!-- /.form-group -->
-
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Разрешает генерацию нарядов
-                        <input type="checkbox" class="pull-right" checked>
-                    </label>
-
-                    <p>
-                        Разрешить/запретить автоматическое добавление
-                    </p>
-                </div>
-                <!-- /.form-group -->
-
-                <h3 class="control-sidebar-heading">Функционал</h3>
-
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Показывать мой статус
-                        <input type="checkbox" class="pull-right" checked>
-                    </label>
-                </div>
-                <!-- /.form-group -->
-
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Отключить отправку сообщений
-                        <input type="checkbox" class="pull-right">
-                    </label>
-                </div>
-                <!-- /.form-group -->
-
-                <div class="form-group">
-                    <label class="control-sidebar-subheading">
-                        Удалить журнал при выходе
-                        <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-                    </label>
-                </div>
-                <!-- /.form-group -->
-            </form>
+            <div class="form-group">
+                <label class="control-sidebar-subheading">
+                    Предупреждения<br/>
+                </label>
+                <input type="checkbox" id="warning"
+                       name="warning" <?php if ($warnings == 1) echo "checked='checked'"; ?> />
+                <p>
+                    Показывать предупреждения в таблице задач
+                </p>
+            </div>
+            <br/>
+            <br/>
+            <button type="submit" class="btn btn-info btn-sm">сохранить настройки</button>
+            <?php
+            echo Html::endForm();
+            Pjax::end();
+            ?>
         </div>
-        <!-- /.tab-pane -->
     </div>
 </aside>
-<!-- /.control-sidebar -->
-<!-- Add the sidebar's background. This div must be placed
-     immediately after the control sidebar -->
 <div class="control-sidebar-bg"></div>

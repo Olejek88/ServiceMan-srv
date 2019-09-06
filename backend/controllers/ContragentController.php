@@ -336,7 +336,13 @@ class ContragentController extends ZhkhController
      */
     public function actionList()
     {
-        $contragents = Contragent::find()->orderBy("title")->all();
+        //if (isset($_POST["uuid"]))
+        //$contragents = Contragent::find()->orderBy("title")->all();
+        $contragents = Contragent::find()
+            ->where(['contragentTypeUuid' => [ContragentType::ORGANIZATION, ContragentType::CITIZEN]])
+            ->andWhere(['deleted' => false])
+            ->orderBy('title DESC')
+            ->all();
         $items = ArrayHelper::map($contragents, 'uuid', 'title');
         return json_encode($items);
     }

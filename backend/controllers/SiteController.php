@@ -21,6 +21,7 @@ use common\models\LoginForm;
 use common\models\Measure;
 use common\models\Objects;
 use common\models\Photo;
+use common\models\Settings;
 use common\models\Street;
 use common\models\Task;
 use common\models\TaskUser;
@@ -64,7 +65,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove'],
+                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove', 'config'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -957,6 +958,24 @@ class SiteController extends Controller
         ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
         ReferenceFunctions::loadReferencesAll2($oid, Yii::$app->db);
         ReferenceFunctions::loadRequestTypes($oid, Yii::$app->db);
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionConfig()
+    {
+        if (isset($_POST["period"])) {
+            Settings::storeSetting(Settings::SETTING_TASK_PAUSE_BEFORE_WARNING, $_POST["period"]);
+        }
+        if (isset($_POST["warning"])) {
+            Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "1");
+        } else {
+            Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "0");
+        }
+        return $this->actionIndex();
     }
 
 }

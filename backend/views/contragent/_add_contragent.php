@@ -86,6 +86,9 @@ use yii\helpers\Html;
                 $('#modalContragent').modal('hide');
                 $.ajax({
                     url: '../contragent/list',
+                    data: {
+                        type: 1
+                    },
                     type: 'post',
                     success: function (data) {
                         var contragents = JSON.parse(data);

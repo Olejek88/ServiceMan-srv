@@ -65,6 +65,13 @@ if (Yii::$app->controller->action->id === 'login' || Yii::$app->controller->acti
                 'directoryAsset' => $directoryAsset,
             ]
         ) ?>
+        <?= $this->render(
+            'control.php',
+            [
+                'content' => $content,
+                'directoryAsset' => $directoryAsset,
+            ]
+        ) ?>
 
     </div>
     <?php $this->endBody() ?>
