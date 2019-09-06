@@ -72,11 +72,12 @@ class MainFunctions
      * @param $type
      * @param $title
      * @param string $description сообщение в журнал
+     * @param $referenceUuid
      * @return integer код ошибкиы
-     * @throws InvalidConfigException
      * @throws Exception
+     * @throws InvalidConfigException
      */
-    public static function register($type, $title, $description)
+    public static function register($type, $title, $description, $referenceUuid)
     {
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
@@ -88,6 +89,7 @@ class MainFunctions
         $journal->description = $description;
         $journal->type = $type;
         $journal->title = $title;
+        $journal->referenceUuid = $referenceUuid;
         $journal->date = date('Y-m-d H:i:s');
         if ($journal->save())
             return Errors::OK;

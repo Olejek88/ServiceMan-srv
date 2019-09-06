@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property string $date
  * @property string $type
  * @property string $title
+ * @property string $referenceUuid
  *
  * @property Users $user
  */
@@ -34,7 +35,7 @@ class Journal extends ActiveRecord
     {
         return [
             [['userUuid', 'description'], 'required'],
-            [['description'], 'string'],
+            [['description', 'referenceUuid'], 'string'],
             [['date'], 'safe'],
             [['userUuid', 'type'], 'string', 'max' => 50],
         ];
@@ -47,7 +48,7 @@ class Journal extends ActiveRecord
     {
         return [
             '_id' => '№',
-            'userUuid' => 'Uuid Пользователя',
+            'userUuid' => 'Пользователь',
             'description' => 'Описание',
             'date' => 'Дата',
         ];

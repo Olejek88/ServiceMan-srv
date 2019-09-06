@@ -9,13 +9,18 @@ use common\components\MainFunctions;
 use common\components\Tag;
 use common\models\Contragent;
 use common\models\ContragentType;
+use common\models\Equipment;
 use common\models\ObjectContragent;
+use common\models\Objects;
+use common\models\ObjectType;
+use common\models\Request;
 use common\models\User;
 use common\models\UserContragent;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
 use Throwable;
 
@@ -168,7 +173,7 @@ class ContragentController extends ZhkhController
                         if ($users->validate() && $users->save()) {
                             $newRole = $am->getRole($model->role);
                             $am->assign($newRole, $users->user_id);
-                            MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact);
+                            MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact, $users->uuid);
                             $userContragent = new UserContragent();
                             $userContragent->uuid = MainFunctions::GUID();
                             $userContragent->userUuid = $users->uuid;
@@ -310,4 +315,29 @@ class ContragentController extends ZhkhController
         return '';
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionForm()
+    {
+        if (isset($_GET["uuid"])) {
+            $model = Contragent::find()->where(['uuid' => $_GET["uuid"]])->one();
+        } else {
+            $model = new Contragent();
+        }
+        return $this->renderAjax('_add_contragent', ['model' => $model]);
+    }
+
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionList()
+    {
+        $contragents = Contragent::find()->orderBy("title")->all();
+        $items = ArrayHelper::map($contragents, 'uuid', 'title');
+        return json_encode($items);
+    }
 }

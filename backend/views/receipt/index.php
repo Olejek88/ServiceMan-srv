@@ -314,11 +314,11 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalAdd").on("hidden.bs.modal",
 function () {
-     window.location.replace("../receipt/index");
+     window.location.reload();
 })');
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
-     window.location.replace("../receipt/index");
+     window.location.reload();
 })');
 ?>
 <div class="modal remote fade" id="modalAdd">

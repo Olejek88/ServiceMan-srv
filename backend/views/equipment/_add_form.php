@@ -17,7 +17,6 @@ use common\components\Tag;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
-use common\models\Objects;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\select2\Select2;
@@ -72,7 +71,6 @@ $this->registerJs('
     echo $form->field($equipment, 'title')->textInput(['maxlength' => true]);
     echo $form->field($equipment, 'equipmentStatusUuid')->hiddenInput(['value' => EquipmentStatus::WORK])->label(false);
 
-
     echo $form->field($tagType, 'tagType')->dropDownList($tagTypeList)->label('Тип метки');
     echo $form->field($equipment, 'tag')->textInput(['maxlength' => true]);
 
@@ -84,13 +82,10 @@ $this->registerJs('
     if (isset($objectUuid)) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
     } else {
-        $object = Objects::find()->all();
-        $items = ArrayHelper::map($object, 'uuid', function ($model) {
-            return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
-        });
-        echo $form->field($equipment, 'objectUuid')->widget(Select2::class,
-            [
-                'data' => $items,
+        echo $this->render('../object/_select_object_subform', ['form' => $form]);
+        echo $form->field($equipment, 'objectUuid')->widget(\kartik\widgets\Select2::class,
+            ['id' => 'objectUuid',
+                'name' => 'objectUuid',
                 'language' => 'ru',
                 'options' => [
                     'placeholder' => 'Выберите объект..'

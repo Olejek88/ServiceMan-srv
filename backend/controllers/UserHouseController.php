@@ -7,7 +7,6 @@ use backend\models\UserHouseSearch;
 use common\models\EquipmentSystem;
 use common\models\House;
 use common\models\Street;
-use common\models\TaskUser;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;

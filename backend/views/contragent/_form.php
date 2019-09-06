@@ -1,6 +1,7 @@
 <?php
 
 use app\commands\MainFunctions;
+use common\models\City;
 use common\models\ContragentType;
 use common\models\Objects;
 use common\models\ObjectType;
@@ -31,19 +32,10 @@ use yii\widgets\ActiveForm;
 
     <label>Объект, связанный с контрагентом</label></br>
     <?php
-    $object = Objects::find()->where(['objectTypeUuid' => [
-        ObjectType::OBJECT_TYPE_FLAT,
-        ObjectType::OBJECT_TYPE_GENERAL,
-        ObjectType::OBJECT_TYPE_COMMERCE,
-    ]])->all();
-    $items = ArrayHelper::map($object, 'uuid', function ($model) {
-        /* @var Objects $model */
-        return $model->house->street->title . ', ' . $model->house->number .
-            ', ' . $model->objectType->title . ' ' . $model->title;
-    });
+    echo $this->render('../object/_select_object_subform', ['form' => $form, 'model' => $model]);
+    echo '</br><label>Объект</label></br>';
     echo Select2::widget(
-        [
-            'data' => $items,
+        ['id' => 'objectUuid',
             'name' => 'objectUuid',
             'language' => 'ru',
             'options' => [

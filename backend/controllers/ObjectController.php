@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ObjectsSearch;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Contragent;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
@@ -113,7 +114,8 @@ class ObjectController extends ZhkhController
             //if ($_GET['from'])
             MainFunctions::register('object', 'Добавлен объект',
                 '<a class="btn btn-default btn-xs">' . $model['objectType']['title'] . '</a> ' . $model['title'] . '<br/>' .
-                '<a class="btn btn-default btn-xs">Адрес</a> ул.' . $model['house']['street']['title'] . ',д.' . $model['house']['number']);
+                '<a class="btn btn-default btn-xs">Адрес</a> ул.' . $model['house']['street']['title'] . ',д.' . $model['house']['number'],
+                $model->uuid);
 
             return $this->render('table', [
                 'searchModel' => $searchModel,
@@ -560,7 +562,8 @@ class ObjectController extends ZhkhController
                                 }
                             }
                             $objectGUuid = null;
-                            if (isset($_POST['water_system']) && $_POST['water_system']) {
+                            //if (isset($_POST['water_system']) && $_POST['water_system']) {
+                            if (true) {
                                 $objectGUuid = self::createObject($model['uuid'], 'Система ГВС', ObjectType::OBJECT_TYPE_SYSTEM_GVS);
                                 if ($objectGUuid) {
                                     self::createEquipment($objectGUuid, "Главный узел ГВС",
@@ -709,8 +712,10 @@ class ObjectController extends ZhkhController
                                             EquipmentType::EQUIPMENT_ENTRANCE_DOOR);
                                         self::createEquipment($objectEntranceUuid, "Дверь тамбура",
                                             EquipmentType::EQUIPMENT_ENTRANCE_DOOR_TAMBUR);
-                                        self::createEquipment($objectEntranceUuid, "Мусоропровод",
-                                            EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE);
+                                        if (isset($_POST['trash_pipe']) && $_POST['trash_pipe']) {
+                                            self::createEquipment($objectEntranceUuid, "Мусоропровод",
+                                                EquipmentType::EQUIPMENT_ENTRANCE_TRASH_PIPE);
+                                        }
                                         self::createEquipment($objectEntranceUuid, "Лестничная клетка",
                                             EquipmentType::EQUIPMENT_ENTRANCE_STAIRS);
                                         self::createEquipment($objectEntranceUuid, "Входная группа",
@@ -819,7 +824,9 @@ class ObjectController extends ZhkhController
         $equipment->objectUuid = $objectUuid;
         $equipment->equipmentStatusUuid = EquipmentStatus::WORK;
         $equipment->equipmentTypeUuid = $equipmentTypeUuid;
-        $equipment->tag = $equipment->uuid;
+        $equipment->tag = Tag::getTag(Tag::TAG_TYPE_DUMMY, "1234");
+
+        $equipment->uuid;
         $equipment->period = 0;
         $equipment->replaceDate = date("Y-m-d H:i:s");
         $equipment->inputDate = date("Y-m-d H:i:s");

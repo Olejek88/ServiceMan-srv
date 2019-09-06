@@ -259,7 +259,7 @@ class EquipmentController extends ZhkhController
             if ($model->save(false)) {
                 MainFunctions::register('documentation', 'Добавлено оборудование',
                     '<a class="btn btn-default btn-xs">' . $model['equipmentType']['title'] . '</a> ' . $model['title'] . '<br/>' .
-                    'Серийный номер <a class="btn btn-default btn-xs">' . $model['serial'] . '</a>');
+                    'Серийный номер <a class="btn btn-default btn-xs">' . $model['serial'] . '</a>', $model->uuid);
                 EquipmentRegisterController::addEquipmentRegister($model['uuid'],
                     EquipmentRegisterType::REGISTER_TYPE_CHANGE_STATUS,
                     "Добавлено оборудование");

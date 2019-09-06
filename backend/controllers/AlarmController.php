@@ -63,7 +63,7 @@ class AlarmController extends ZhkhController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             MainFunctions::register('alarm','Зарегистрирована авария',
                 '<a class="btn btn-default btn-xs">'.$model['alarmType']['title'].'</a>'.$model->comment.'<br/>'.
-            '<a class="btn btn-default btn-xs">'.$model['object']['title'].'</a>');
+                '<a class="btn btn-default btn-xs">' . $model['object']['title'] . '</a>', $model['uuid']);
             return $this->redirect(['view', 'id' => $model->_id]);
         } else {
             return $this->render('create', [

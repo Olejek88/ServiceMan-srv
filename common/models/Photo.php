@@ -146,7 +146,7 @@ class Photo extends ActiveRecord implements IPhoto
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, ['uuid' => 'userUuid']);
+        return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
     }
 
     /**

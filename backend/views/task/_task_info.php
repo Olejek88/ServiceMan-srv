@@ -29,7 +29,9 @@ $title = 'Задача №' . $task['_id'];
             'attributes' => [
                 [
                     'label' => '_id',
-                    'value' => $task->_id
+                    'format' => 'raw',
+                    'value' => Html::a("<span class='badge' style='background-color: lightblue; height: 22px'>Задача #" . $task['_id'] . "</span>",
+                        ['../task/table', 'uuid' => $task['uuid']], ['title' => 'Задача'])
                 ],
                 [
                     'label' => 'Шаблон этапа',
@@ -60,7 +62,7 @@ $title = 'Задача №' . $task['_id'];
                 ],
                 [
                     'label' => 'Автор',
-                    'value' => $task['authorUuid']
+                    'value' => $task['author']['name']
                 ],
                 [
                     'label' => 'Исполнители',
@@ -71,7 +73,6 @@ $title = 'Задача №' . $task['_id'];
                     'format'=>'raw',
                     'value' => $task['request']
                 ],
-
                 [
                     'label' => 'Комментарий',
                     'value' => $task->comment

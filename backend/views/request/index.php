@@ -56,6 +56,7 @@ $gridColumns = [
         ],
     ],
     [
+        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'type',
         'vAlign' => 'middle',
         'hAlign' => 'center',
@@ -77,7 +78,21 @@ $gridColumns = [
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],
-        'filterInputOptions' => ['placeholder' => 'Любой']
+        'filterInputOptions' => ['placeholder' => 'Любой'],
+        'editableOptions' => function () {
+            $types = [
+                0 => "Бесплатная заявка", 1 => "Платная заявка"
+            ];
+            $status = ["<span class='badge' style='background-color: seagreen; height: 22px'>Бесплатная</span>",
+                "<span class='badge' style='background-color: darkorange; height: 22px'>Платная</span>"];
+            $list = $types;
+            return [
+                'size' => 'md',
+                'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                'displayValueConfig' => $status,
+                'data' => $list
+            ];
+        },
     ],
     [
         'attribute' => 'contragent',
@@ -250,11 +265,6 @@ $gridColumns = [
             if ($model['taskUuid']) {
                 $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
                 if ($task) {
-/*                    $order = Html::a('Задача №' . $task['_id'],
-                        ['../task', 'uuid' => $task['uuid']],
-                        [
-                            'title' => 'Редактировать заявку',
-                        ]);*/
                     $order = Html::a('Задача №' . $task['_id'],
                         ['../task/info', 'task' => $task['uuid']],
                         [
@@ -343,9 +353,19 @@ $gridColumns = [
                         'data-target' => '#modalRequest',
                     ]
                 );
+            },
+            'history' => function ($url, $model) {
+                return Html::a('<span class="fa fa-history"></span>',
+                    ['../request/history', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'История изменения',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalRequestHistory',
+                    ]
+                );
             }
         ],
-        'template' => '{edit} {delete}',
+        'template' => ' {edit} {history} {delete}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];
@@ -437,11 +457,15 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
-     window.location.replace("../request/index");
+     //window.location.reload();
+})');
+$this->registerJs('$("#modalRequestHistory").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
 })');
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
-     window.location.replace("../request/index");
+     window.location.reload();
 })');
 
 ?>
@@ -452,7 +476,7 @@ function () {
 </style>
 
 <div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 1000px; height: 700px">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>
@@ -466,5 +490,12 @@ function () {
 <div class="modal remote fade" id="modalTaskInfo">
     <div class="modal-dialog">
         <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalRequestHistory">
+    <div class="modal-dialog" style="width: 800px; height: 400px">
+        <div class="modal-content loader-lg" id="modalContentHistory">
+        </div>
     </div>
 </div>

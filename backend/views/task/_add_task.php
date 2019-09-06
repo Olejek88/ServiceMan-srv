@@ -126,8 +126,9 @@ use yii\helpers\Html;
     ?>
 
     <?php
-    echo $form->field($model, 'comment')
-        ->textarea(['rows' => 4, 'style' => 'resize: none;'])
+    if (!isset($requestUuid))
+        echo $form->field($model, 'comment')
+            ->textarea(['rows' => 4, 'style' => 'resize: none;'])
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">

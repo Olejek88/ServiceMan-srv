@@ -25,7 +25,6 @@ use common\models\Street;
 use common\models\Task;
 use common\models\TaskUser;
 use common\models\User;
-use common\models\UserHouse;
 use common\models\Users;
 use common\models\WorkStatus;
 use Yii;
@@ -670,14 +669,16 @@ class SiteController extends Controller
      * Displays a timeline
      *
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionTimeline()
     {
+        ini_set('memory_limit', '-1');
         $events = [];
         $measures = Measure::find()
             ->orderBy('date DESC')
-            ->limit(100)
+            ->limit(10)
             ->all();
         foreach ($measures as $measure) {
             $photo = Photo::find()
@@ -722,7 +723,10 @@ class SiteController extends Controller
                 'alarm', 0, '', $text, $alarm['user']->name)];
         }
 
-        $journals = Journal::find()->orderBy('date DESC')->all();
+        $journals = Journal::find()
+            ->orderBy('date DESC')
+            ->limit(20)
+            ->all();
         foreach ($journals as $journal) {
             $events[] = ['date' => $journal['date'], 'event' => self::formEvent($journal['date'], $journal['type'],
                 0, $journal['title'], $journal['description'], $journal['user']['name'])];
@@ -732,7 +736,7 @@ class SiteController extends Controller
             ->limit(5)
             ->all();
         foreach ($photos as $photo) {
-            $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
+            $text = '<a class="btn btn-default btn-xs">Объект</a><br/>';
             $events[] = ['date' => $photo['createdAt'], 'event' => self::formEvent($photo['createdAt'], 'photo',
                 $photo['_id'], 'Добавлено фото', $text, $photo['user']['name'])];
         }
@@ -826,6 +830,8 @@ class SiteController extends Controller
      * Build tree of files
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionFiles()
     {

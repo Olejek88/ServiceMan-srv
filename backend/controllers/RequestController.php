@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
 use common\models\Equipment;
+use common\models\Journal;
 use common\models\Receipt;
 use common\models\Request;
 use common\models\TaskTemplate;
@@ -34,25 +35,28 @@ class RequestController extends ZhkhController
                 ->one();
             if ($_POST['editableAttribute'] == 'closeDate') {
                 $model['closeDate'] = date("Y-m-d H:i:s", $_POST['Request'][$_POST['editableIndex']]['closeDate']);
+                MainFunctions::register('request', 'Изменена дата закрытия заявки',
+                    'Комментарий: изменена дата закрытия заявки №' . $model['_id'] . ' на ' . $model['closeDate'], $model['uuid']);
             }
             if ($_POST['editableAttribute'] == 'requestStatusUuid') {
                 $model['requestStatusUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestStatusUuid'];
+                MainFunctions::register('request', 'Изменен статус заявки',
+                    'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'], $model['uuid']);
             }
             if ($_POST['editableAttribute'] == 'comment') {
                 $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
+                MainFunctions::register('request', 'Изменен комментарий заявки',
+                    'Комментарий: изменен комментарий заявки №' . $model['_id'] . ' на ' . $model['comment'], $model['uuid']);
             }
             if ($_POST['editableAttribute'] == 'verdict') {
                 $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
-            }
-            if ($_POST['editableAttribute'] == 'comment') {
-                $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
+                MainFunctions::register('request', 'Изменен вердикт заявки',
+                    'Комментарий: изменен вердикт заявки №' . $model['_id'] . ' на ' . $model['verdict'], $model['uuid']);
             }
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
-            }
-
-            if ($_POST['editableAttribute'] == 'orderVerdictUuid') {
-                $model['orderVerdictUuid'] = $_POST['Orders'][$_POST['editableIndex']]['orderVerdictUuid'];
+                MainFunctions::register('request', 'Изменен результат',
+                    'Комментарий: изменен результат контроля заявки №' . $model['_id'] . ' на ' . $model['result'], $model['uuid']);
             }
 
             if ($model->save())
@@ -135,10 +139,10 @@ class RequestController extends ZhkhController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->equipmentUuid)
                 MainFunctions::register('request', 'Создана заявка по оборудованию ' . $model['equipment']['title'],
-                    'Комментарий: ' . $model->comment);
+                    'Комментарий: ' . $model->comment, $model->uuid);
             if ($model->objectUuid)
                 MainFunctions::register('request', 'Создана заявка по объекту ' . $model['equipment']['title'],
-                    'Комментарий: ' . $model->comment);
+                    'Комментарий: ' . $model->comment, $model->uuid);
             return $this->redirect(['index', 'id' => $model->_id]);
         } else {
             return $this->render('create', [
@@ -212,7 +216,10 @@ class RequestController extends ZhkhController
                     }
                 }
 
-                if ($model['requestType']['taskTemplateUuid'] && $model['requestType']['taskTemplateUuid']!=TaskTemplate::DEFAULT_TASK) {
+                MainFunctions::register('request', 'Создана заявка #' . $model['_id'],
+                    'Комментарий: заявитель ' . $model['contragent']['title'], $model->uuid);
+
+                if (!$model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
@@ -224,7 +231,8 @@ class RequestController extends ZhkhController
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .
                             $model['requestType']['taskTemplate']['title'] . '<br/>' .
-                            '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment']);
+                            '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
+                            $task->uuid);
                         $model['taskUuid'] = $task['uuid'];
                         $model->save();
                     }
@@ -301,5 +309,17 @@ class RequestController extends ZhkhController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function actionHistory()
+    {
+        $registers = [];
+        if (isset($_GET["uuid"])) {
+            $registers = Journal::find()->where(['referenceUuid' => $_GET["uuid"]])->all();
+        }
+        return $this->renderAjax('_history', ['registers' => $registers]);
     }
 }

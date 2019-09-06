@@ -180,7 +180,7 @@ class UsersController extends ZhkhController
                 if ($users->validate() && $users->save()) {
                     $newRole = $am->getRole($model->role);
                     $am->assign($newRole, $users->user_id);
-                    MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact);
+                    MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact, $users->uuid);
                     $contractor = new Contragent();
                     $contractor->uuid = MainFunctions::GUID();
                     $contractor->oid = Users::getCurrentOid();
@@ -200,7 +200,7 @@ class UsersController extends ZhkhController
                         }
 
                         MainFunctions::register('нет', 'Создание пользователя',
-                            'Не удалось создать контрагента. Error: ' . $errorString);
+                            'Не удалось создать контрагента. Error: ' . $errorString, "");
                     } else {
                         $userContractor = new UserContragent();
                         $userContractor->uuid = MainFunctions::GUID();
@@ -214,7 +214,7 @@ class UsersController extends ZhkhController
                             }
 
                             MainFunctions::register('нет', 'Создание пользователя',
-                                'Не удалось создать связь между пользователем и контрагентом. Error: ' . $errorString);
+                                'Не удалось создать связь между пользователем и контрагентом. Error: ' . $errorString, "");
                         }
                     }
 
@@ -357,6 +357,11 @@ class UsersController extends ZhkhController
                 $user->setPassword($model->password);
             }
 
+            if ($user->save()) {
+                MainFunctions::register('user', 'Обновлен профиль пользователя ' . $user->username,
+                    '', $users->uuid);
+            }
+
             $users->load($model->attributes, '');
             if ($users->type == Users::USERS_WORKER) {
                 $users->pin = $model->tagType . ':' . $model->pin;
@@ -366,7 +371,8 @@ class UsersController extends ZhkhController
                 $am->revokeAll($users->user_id);
                 $newRole = $am->getRole($model->role);
                 $am->assign($newRole, $users->user_id);
-                MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name, '');
+                MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name,
+                    '', $users->uuid);
             } else {
                 // прокинуть на форму с указанием ошибки
                 $model->addError('type', $users->getFirstError('type') . ' (измените тип)');
@@ -379,7 +385,8 @@ class UsersController extends ZhkhController
             }
 
             if ($user->save()) {
-                MainFunctions::register('user', 'Обновлен профиль пользователя ' . $user->username, '');
+                MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name,
+                    '', $users->uuid);
                 return $this->redirect(['/users/view', 'id' => $users->_id]);
             }
 

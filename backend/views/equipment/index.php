@@ -371,12 +371,12 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalAdd").on("hidden.bs.modal",
 function () {
-     window.location.replace("../equipment/index");
+     window.location.reload();
 })');
 
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
-window.location.replace("../equipment/index");
+     window.location.reload();
 })');
 $this->registerJs('$("#modalDefects").on("hidden.bs.modal",
 function () {
@@ -385,7 +385,7 @@ function () {
 
 $this->registerJs('$("#modalAddEquipment").on("hidden.bs.modal",
 function () {
-window.location.replace("../equipment/index");
+     window.location.reload();
 })');
 
 $this->registerJs('$("#modalTasks").on("hidden.bs.modal",
