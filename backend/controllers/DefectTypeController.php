@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 use common\models\DefectType;
 use yii\web\Controller;
@@ -95,14 +96,13 @@ class DefectTypeController extends Controller
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
-     * @throws NotFoundHttpException
-     * @throws \Exception
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $defectType = DefectType::find()->where(['id' => $id])->one();
+        if ($defectType && $defectType->uuid != DefectType::DEFECT_DEFAULT) {
+            $defectType->delete();
+        }
 
         return $this->redirect(['index']);
     }

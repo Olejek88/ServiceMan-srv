@@ -10,6 +10,7 @@ use common\models\Measure;
 use common\models\Objects;
 use common\models\Photo;
 use common\models\Request;
+use common\models\Settings;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -497,13 +498,16 @@ $gridColumns = [
     ]
 ];
 
-foreach ($warnings as $warning) {
-    if ($warning != '') {
-        echo '<div class="alert alert-danger alert-dismissible">
+$show = Settings::getSettings(Settings::SETTING_SHOW_WARNINGS);
+if ($show && $show == '1') {
+    foreach ($warnings as $warning) {
+        if ($warning != '') {
+            echo '<div class="alert alert-danger alert-dismissible">
           <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
           <h4><i class="icon fa fa-ban"></i> Внимание!</h4>';
-        echo $warning;
-        echo '</div>';
+            echo $warning;
+            echo '</div>';
+        }
     }
 }
 

@@ -51,15 +51,6 @@ $this->title = Yii::t('app', 'Создать статус');
                                 'content' => function ($data) {
                                     return $data->title;
                                 }
-                            ],
-                            [
-                                'class' => 'yii\grid\ActionColumn',
-                                'header' => 'Действия',
-                                'headerOptions' => ['class' => 'text-center', 'width' => '70'],
-                                'contentOptions' => [
-                                    'class' => 'text-center',
-                                ],
-                                'template' => '{view} {update} {link}',
                             ]
                         ],
                     ]); ?>

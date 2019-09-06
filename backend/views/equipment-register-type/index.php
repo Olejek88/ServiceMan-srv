@@ -72,7 +72,7 @@ $this->title = Yii::t('app', 'Типы записей в журнал событ
                                     'contentOptions' => [
                                         'class' => 'text-center'
                                     ],
-                                    'template' => '{view} {update} {delete}{link}',
+                                    'template' => '{view} {link}',
                                 ],
                             ],
                         ]); ?>

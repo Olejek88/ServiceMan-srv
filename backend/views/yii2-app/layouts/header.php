@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use yii\helpers\Html;
 use yii\web\View;
 
@@ -42,7 +43,7 @@ $userImage = Yii::$app->view->params['userImage'];
 
                 <li class="dropdown references-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-cogs"></i>
+                        <i class="fa fa-cog"></i>
                     </a>
                     <ul class="dropdown-menu">
                         <li><?= Html::a("<i class=\"fa fa-warning\"></i> Предупреждения статус", ['../alarm-status']); ?></li>
@@ -123,6 +124,10 @@ $userImage = Yii::$app->view->params['userImage'];
                         </li>
                     </ul>
                 </li>
+                <?php
+                if (Yii::$app->user->can(User::PERMISSION_ADMIN))
+                    echo $this->render('header_control');
+                ?>
             </ul>
         </div>
     </nav>

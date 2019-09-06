@@ -57,7 +57,7 @@ $this->title = Yii::t('app', 'Создать тип измерения');
                                 'contentOptions' => [
                                     'class' => 'text-center',
                                 ],
-                                'template' => '{view} {update} {link}',
+                                'template' => '{view} {update} {delete} {link}',
                             ]
                         ],
                     ]); ?>

@@ -21,6 +21,7 @@ use common\models\LoginForm;
 use common\models\Measure;
 use common\models\Objects;
 use common\models\Photo;
+use common\models\Settings;
 use common\models\Street;
 use common\models\Task;
 use common\models\TaskUser;
@@ -64,7 +65,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove'],
+                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove', 'config'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -116,7 +117,10 @@ class SiteController extends Controller
         $gps2 = 0;
         $gpsStatus = false;
 
-        $users = Users::find()->where('name!="sUser"')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->andWhere(['type' => Users::USERS_WORKER])
+            ->all();
         $userList[] = $users;
 
         /**
@@ -283,6 +287,7 @@ class SiteController extends Controller
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
             ->where(['user_id' => $accountUser['id']])
+            ->andWhere(['type' => Users::USERS_WORKER])
             ->asArray()
             ->one();
 
@@ -411,7 +416,10 @@ class SiteController extends Controller
         $gps2 = 0;
         $gpsStatus = false;
 
-        $users = Users::find()->where('name!="sUser"')->all();
+        $users = Users::find()
+            ->where('name!="sUser"')
+            ->andWhere(['type' => Users::USERS_WORKER])
+            ->all();
         $userList[] = $users;
 
         /**
@@ -957,6 +965,24 @@ class SiteController extends Controller
         ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
         ReferenceFunctions::loadReferencesAll2($oid, Yii::$app->db);
         ReferenceFunctions::loadRequestTypes($oid, Yii::$app->db);
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionConfig()
+    {
+        if (isset($_POST["period"])) {
+            Settings::storeSetting(Settings::SETTING_TASK_PAUSE_BEFORE_WARNING, $_POST["period"]);
+        }
+        if (isset($_POST["warning"])) {
+            Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "1");
+        } else {
+            Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "0");
+        }
+        return $this->actionIndex();
     }
 
 }

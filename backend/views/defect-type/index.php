@@ -61,7 +61,7 @@ $this->title = Yii::t('app', 'Типы дефектов');
                                     'contentOptions' =>[
                                         'class' => 'text-center',
                                     ],
-                                    'template' => '{view} {update} {link}',
+                                    'template' => '{view} {update} {link} {delete}',
                                 ],
                             ],
                         ]); ?>

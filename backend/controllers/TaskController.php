@@ -14,6 +14,7 @@ use common\models\Operation;
 use common\models\Photo;
 use common\models\Request;
 use common\models\RequestType;
+use common\models\Settings;
 use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
@@ -42,24 +43,25 @@ class TaskController extends ZhkhController
      */
     public function actionIndex()
     {
-        $searchModel = new TaskSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 25;
-        $dataProvider->query->orderBy('_id DESC');
-        if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
-                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
-                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
-            );
-        }
-        return $this->render(
-            'table-report-view',
-            [
-                'searchModel' => $searchModel,
-                'dataProvider' => $dataProvider,
-                'warnings' => []
-            ]
-        );
+        /*        $searchModel = new TaskSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+                $dataProvider->pagination->pageSize = 25;
+                $dataProvider->query->orderBy('_id DESC');
+                if (isset($_GET['address'])) {
+                    $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                            ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                            ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
+                    );
+                }
+                return $this->render(
+                    'table-report-view',
+                    [
+                        'searchModel' => $searchModel,
+                        'dataProvider' => $dataProvider,
+                        'warnings' => []
+                    ]
+                );*/
+        return $this->actionTable();
     }
 
     /**
@@ -178,36 +180,38 @@ class TaskController extends ZhkhController
      */
     public function actionTableReportView()
     {
-        $searchModel = new TaskSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 25;
-        $taskTemplates = TaskTemplate::find()->select('uuid, taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
-        $list = [];
-        foreach ($taskTemplates as $taskTemplate) {
-            $list[] = $taskTemplate['uuid'];
-        }
-        $dataProvider->query->andWhere(['taskTemplateUuid' => $list])->all();
+        return $this->actionTable();
+        /*
+                $searchModel = new TaskSearch();
+                $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+                $dataProvider->pagination->pageSize = 25;
+                $taskTemplates = TaskTemplate::find()->select('uuid, taskTypeUuid')->where(['taskTypeUuid' => TaskType::TASK_TYPE_VIEW])->all();
+                $list = [];
+                foreach ($taskTemplates as $taskTemplate) {
+                    $list[] = $taskTemplate['uuid'];
+                }
+                $dataProvider->query->andWhere(['taskTemplateUuid' => $list])->all();
 
-        if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
-            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
-        }
-        $dataProvider->query->orderBy('_id DESC');
-        if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
-                    ['like', 'object.title', '%' . $_GET['address'] . '%', false],
-                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
-            );
-        }
-        return $this->render(
-            'table-report-view',
-            [
-                'dataProvider' => $dataProvider,
-                'searchModel' => $searchModel,
-                'titles' => 'Журнал осмотров',
-                'warnings' => []
-            ]
-        );
+                if (isset($_GET['start_time'])) {
+                    $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
+                    $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
+                }
+                $dataProvider->query->orderBy('_id DESC');
+                if (isset($_GET['address'])) {
+                    $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
+                            ['like', 'object.title', '%' . $_GET['address'] . '%', false],
+                            ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
+                    );
+                }
+                return $this->render(
+                    'table-report-view',
+                    [
+                        'dataProvider' => $dataProvider,
+                        'searchModel' => $searchModel,
+                        'titles' => 'Журнал осмотров',
+                        'warnings' => []
+                    ]
+                );*/
     }
 
     /**
@@ -300,7 +304,11 @@ class TaskController extends ZhkhController
                         $users_list .= $user['name'] . ' ';
                     }
                 }
-                if ((time() - strtotime($task['createdAt'])) > 24 * 3600) {
+                $time = 24 * 3600;
+                $period = Settings::getSettings(Settings::SETTING_TASK_PAUSE_BEFORE_WARNING);
+                if ($period)
+                    $time = $period * 3600;
+                if ((time() - strtotime($task['createdAt'])) > $time) {
                     $warnings[] = 'Задача #' . $task['_id'] . ' ' . $task['taskTemplate']['title'] . ' создана ' .
                         date("d-m-Y H:i", strtotime($task['createdAt'])) .
                         ', но до сих пор не получена исполнителем ' . $users_list;
@@ -1072,6 +1080,67 @@ class TaskController extends ZhkhController
                 $task_equipment_count++;
             }
         }
+
+        $all_tasks = Task::find()
+            ->where(['workStatusUuid' => WorkStatus::COMPLETE])
+            ->all();
+        foreach ($all_tasks as $task) {
+            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $user_names = '';
+            foreach ($taskUsers as $taskUser) {
+                $user_names .= $taskUser['user']['name'];
+            }
+
+            $event = new Event();
+            $event->id = $task['_id'];
+            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                $task['workStatusUuid'] == WorkStatus::NEW)
+                $event->backgroundColor = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                $event->backgroundColor = 'yellow';
+            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                $event->backgroundColor = 'lightred';
+            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                $event->backgroundColor = 'green';
+
+            $event->start = $task["startDate"];
+            $event->end = $task["endDate"];
+            $event->color = 'green';
+            $events[] = $event;
+        }
+
+        $all_tasks = Task::find()
+            ->where('workStatusUuid !=\'' . WorkStatus::COMPLETE . '\'')
+            ->all();
+        foreach ($all_tasks as $task) {
+            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $user_names = '';
+            foreach ($taskUsers as $taskUser) {
+                $user_names .= $taskUser['user']['name'];
+            }
+
+            $event = new Event();
+            $event->id = $task['_id'];
+            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                $task['workStatusUuid'] == WorkStatus::NEW)
+                $event->backgroundColor = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                $event->backgroundColor = 'yellow';
+            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                $event->backgroundColor = 'lightred';
+            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                $event->backgroundColor = 'green';
+
+            $event->start = $task["taskDate"];
+            $event->end = date("Y-m-d H:i:s", strtotime($task["taskDate"]) + 3600 * 12);
+            $event->color = 'gray';
+            if ($task['workStatusUuid'] == WorkStatus::CANCELED)
+                $event->color = 'red';
+            $events[] = $event;
+        }
+
         return $this->render('calendar', [
             'events' => $events
         ]);

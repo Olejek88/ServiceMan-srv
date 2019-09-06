@@ -243,7 +243,7 @@ class UsersController extends ZhkhController
     {
         $users = Users::find()
             ->where('name!="sUser"')
-            ->orderBy('createdAt DESC')
+            ->andWhere(['type' => Users::USERS_WORKER])
             ->all();
         $user_property[][] = '';
         $count = 0;

@@ -64,15 +64,6 @@ $this->title = Yii::t('app', 'Статусы заявок');
                                         return $data->title;
                                     }
                                 ],
-                                [
-                                    'class' => 'yii\grid\ActionColumn',
-                                    'header'=>'Действия',
-                                    'headerOptions' => ['class' => 'text-center','width' => '70'],
-                                    'contentOptions' =>[
-                                        'class' => 'text-center',
-                                    ],
-                                    'template' => '{view} {update} {link}',
-                                ],
                             ],
                         ]); ?>
                     </h6>
