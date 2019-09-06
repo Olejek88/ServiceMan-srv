@@ -317,12 +317,17 @@ class SiteController extends Controller
             ->all();
         $userList[] = $users;
         $usersCount = count($users);
+        $activeUsersCount = 0;
 
         $count = 0;
         $categories = "";
         $bar = "{ name: 'Выполнено в срок', color: 'green', ";
         $bar .= "data: [";
         foreach ($users as $current_user) {
+            if ($current_user->user->status == User::STATUS_ACTIVE) {
+                $activeUsersCount++;
+            }
+
             if ($count > 0) {
                 $categories .= ',';
                 $bar .= ",";
@@ -544,6 +549,7 @@ class SiteController extends Controller
                 'cityCount' => $cityCount,
                 'streetCount' => $streetCount,
                 'usersCount' => $usersCount,
+                'activeUsersCount' => $activeUsersCount,
                 'flatCount' => $flatCount,
                 'measures' => $measures,
                 'equipments' => $equipments,
@@ -603,9 +609,9 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
-        if (!Yii::$app->user->isGuest) {
+//        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
-        }
+//        }
 
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {

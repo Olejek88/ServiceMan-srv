@@ -6,7 +6,9 @@ use common\components\Tag;
 use common\models\User;
 use common\models\Users;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\base\Model;
+use yii\db\Exception;
 use yii\db\Query;
 
 /**
@@ -145,6 +147,8 @@ class UserArm extends Model
     /**
      * @param $attr
      * @param $param
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function checkLimit($attr, $param)
     {
@@ -158,7 +162,9 @@ class UserArm extends Model
                 $this->addError('type', 'Создание мобильных пользователей ограничено.');
             }
 
-            $users = Users::findAll(['type' => Users::USERS_WORKER]);
+            $users = Users::find()->where(['type' => Users::USERS_WORKER, 'user.status' => User::STATUS_ACTIVE])
+                ->leftJoin('user', 'users.user_id = user._id')
+                ->all();
             if (count($users) >= $limit['value']) {
                 $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
             }

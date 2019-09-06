@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\User;
 use common\models\Users;
 use Yii;
 use common\models\Organization;
@@ -19,6 +20,10 @@ class OrganizationController extends ZhkhController
      */
     public function actionIndex()
     {
+        if (!Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+            $this->goHome();
+        }
+
         $dataProvider = new ActiveDataProvider([
             'query' => Organization::find()->where(['uuid' => Users::getCurrentOid()]),
         ]);
@@ -36,6 +41,10 @@ class OrganizationController extends ZhkhController
      */
     public function actionView($id)
     {
+        if (!Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+            $this->goHome();
+        }
+
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);

@@ -126,7 +126,7 @@ class ContragentController extends ZhkhController
                 $objectContragent->objectUuid = $_POST['objectUuid'];
                 $objectContragent->save();
             }
-            $contractorTypes = [ContragentType::WORKER, ContragentType::CONTRACTOR, ContragentType::EMPLOYEE];
+            $contractorTypes = [ContragentType::CONTRACTOR];
             if (in_array($contragent->contragentTypeUuid, $contractorTypes)) {
                 $model = new UserArm();
                 $am = Yii::$app->getAuthManager();
@@ -139,17 +139,15 @@ class ContragentController extends ZhkhController
                 $model->username = $model->email;
 
                 $model->type = Users::USERS_WORKER;
-                // TODO пока для отладки - если понадобиться заходить с этого пользователя
                 $model->password = SignupForm::randomString();
                 $model->tagType = Tag::TAG_TYPE_UHF;
                 $model->pin = '1234';
                 $model->name = $contragent->title;
-                if ($contragent->contragentTypeUuid == ContragentType::WORKER)
-                    $model->whoIs = 'Сотрудник';
-                if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR)
+                // очевидно из за условия выше данная проверка линяя
+                if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR) {
                     $model->whoIs = 'Подрядная огранизация';
-                if ($contragent->contragentTypeUuid == ContragentType::EMPLOYEE)
-                    $model->whoIs = 'Сотрудник';
+                }
+
                 $model->contact = $contragent->phone;
                 $model->role = User::ROLE_OPERATOR;
                 $model->status = User::STATUS_ACTIVE;

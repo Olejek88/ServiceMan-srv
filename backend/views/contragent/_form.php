@@ -64,9 +64,9 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($contragentType, 'uuid', 'title');
     echo $form->field($model, 'contragentTypeUuid',
         ['template' => "{label}\n<div class=\"input-group\">{input}\n<span class=\"input-group-btn\">
-        <a href=\"/contragent-type/create\">
-        <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
-        </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
+            <a href=\"/contragent-type/create\">
+            <button class=\"btn btn-success\" type=\"button\"><span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span>
+            </button></a></span></div>\n{hint}\n{error}"])->widget(Select2::class,
         [
             'data' => $items,
             'language' => 'ru',

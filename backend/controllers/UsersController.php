@@ -71,6 +71,10 @@ class UsersController extends ZhkhController
     public function actionView($id)
     {
         $model = $this->findModel($id);
+        if ($model->user_id != Yii::$app->user->id ||
+            !Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+            $this->redirect('index');
+        }
 
         $user_photo = Photo::find()->where(['userUuid' => $model['uuid']])->count();
         $user_property['photo'] = $user_photo;
@@ -331,16 +335,22 @@ class UsersController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
+        $users = $this->findModel($id);
+        if ($users->user_id != Yii::$app->user->id) {
+            parent::actionUpdate($id);
+        }
+
         $am = Yii::$app->getAuthManager();
 
-        $users = $this->findModel($id);
-
+        $roles = $am->getRoles();
+        $roleList = ArrayHelper::map($roles, 'name', 'description');
+        $assignments = $am->getAssignments($users->user_id);
         $model = new UserArm();
         $model->load($users->user->attributes, '');
         $model->load($users->attributes, '');
         $model->scenario = UserArm::SCENARIO_UPDATE;
         if ($model->load(Yii::$app->request->post())) {
+            // загружаем данные из формы в моделе
             $user = $users->user;
             $user->load($model->attributes, '');
             if (!empty($model->password)) {
@@ -363,6 +373,20 @@ class UsersController extends ZhkhController
                 $am->assign($newRole, $users->user_id);
                 MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name,
                     '', $users->uuid);
+            } else {
+                // прокинуть на форму с указанием ошибки
+                $model->addError('type', $users->getFirstError('type') . ' (измените тип)');
+                $model->addError('status', $users->getFirstError('type') . ' (измените статус)');
+                return $this->render('update', [
+                    'userArm' => $model,
+                    'model' => $users,
+                    'roleList' => $roleList,
+                ]);
+            }
+
+            if ($user->save()) {
+                MainFunctions::register('users', 'Обновлен профиль пользователя ' . $users->name,
+                    '', $users->uuid);
                 return $this->redirect(['/users/view', 'id' => $users->_id]);
             }
 
@@ -379,9 +403,7 @@ class UsersController extends ZhkhController
             $model->pin = $pin;
         }
 
-        $roles = $am->getRoles();
-        $roleList = ArrayHelper::map($roles, 'name', 'description');
-        $assignments = $am->getAssignments($users->user_id);
+        // текущая роль пользователя
         foreach ($assignments as $value) {
             $model->role = $value->roleName;
             break;
