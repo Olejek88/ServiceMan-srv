@@ -28,7 +28,7 @@ echo Select2::widget(
             'allowClear' => true
         ],
         'pluginEvents' => [
-            "select2:select" => "function(data) { 
+            "select2:select" => "function(data) {
                         $.ajax({
                                 url: '../city/streets',
                                 type: 'post',

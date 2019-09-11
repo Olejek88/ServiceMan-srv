@@ -301,18 +301,19 @@ class SiteController extends Controller
 
         $last_measures = Measure::find()
             ->where('createdAt > (NOW()-(4*24*3600000))')
+            ->orderBy('date DESC')
             ->count();
         $complete = 0;
         if ($flatCount > 0)
             $complete = number_format($last_measures * 100 / $flatCount, 2);
 
         $measures = Measure::find()
-            ->orderBy('date')
+            ->orderBy('date desc')
             ->all();
 
         $equipments = Equipment::find()
             ->orderBy('_id DESC')
-            ->limit(20)
+            ->limit(15)
             ->all();
 
         $userData = array();

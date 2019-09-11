@@ -283,6 +283,7 @@ $gridColumns = [
                 } else {
                     $link = $users_list;
                 }
+                if ($data['workStatusUuid'] != WorkStatus::NEW) $link = $users_list;
                 return $link;
             } else {
                 $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
@@ -293,7 +294,7 @@ $gridColumns = [
                         'data-toggle' => 'modal',
                         'data-target' => '#modalUser'
                     ]);
-                if ($data['workStatusUuid'] == WorkStatus::NEW) $link = $name;
+                if ($data['workStatusUuid'] != WorkStatus::NEW) $link = $name;
                 return $link;
             }
         },

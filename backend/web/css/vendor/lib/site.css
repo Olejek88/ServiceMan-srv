@@ -179,15 +179,6 @@ a.desc:after {
     white-space: normal;
 }
 
-.fc-delete-button {
-    background-size: 100% 100%;
-    width: 72px !important;
-    height: 78px !important;
-    box-shadow: none !important;
-    background: url("../../../images/trashcan.png") !important;
-    background-image: url("../../../images/trashcan.png") !important;
-}
-
 .modal-dashboard-1 {
     width: 300px;
     height: 200px;

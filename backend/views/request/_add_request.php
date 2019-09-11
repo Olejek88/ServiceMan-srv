@@ -2,6 +2,7 @@
 /* @var $model common\models\Request
  * @var $receiptUuid string
  * @var $source string
+ * @var $equipmentUuid string
  * @var $path string
  */
 
@@ -18,6 +19,8 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+if (isset($_GET["equipmentUuid"]))
+    $equipmentUuid = $_GET["equipmentUuid"];
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -31,7 +34,7 @@ use yii\helpers\Html;
     <h4 class="modal-title">Добавить/редактировать заявку</h4>
 </div>
 <div class="modal-body">
-    <table>
+    <table style="width: 100%">
         <tr>
             <td style="width: 48%; vertical-align: top">
                 <?php
@@ -150,26 +153,27 @@ use yii\helpers\Html;
                 ?>
 
                 <?php
-                echo $this->render('../object/_select_equipment_subform');
-
-                if (!$model->equipmentUuid) {
-                    $equipments = Equipment::find()->all();
-                    $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
-                        return $equipment->getFullTitle();
-                    });
-                    echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
-                        [
-                            'data' => $items,
-                            'language' => 'ru',
-                            'options' => [
-                                'placeholder' => 'Выберите элементы..'
-                            ],
-                            'pluginOptions' => [
-                                'allowClear' => true
-                            ],
-                        ]);
+                if ($source == 'table') {
+                    echo $this->render('../object/_select_equipment_subform');
+                    if (!$model->equipmentUuid) {
+                        $equipments = Equipment::find()->all();
+                        $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                            return $equipment->getFullTitle();
+                        });
+                        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+                            [
+                                'data' => $items,
+                                'language' => 'ru',
+                                'options' => [
+                                    'placeholder' => 'Выберите элементы..'
+                                ],
+                                'pluginOptions' => [
+                                    'allowClear' => true
+                                ],
+                            ]);
+                    }
                 } else {
-                    echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $model['equipmentUuid']])->label(false);
+                    echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
                 }
                 ?>
 

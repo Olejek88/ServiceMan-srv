@@ -2,11 +2,13 @@
 
 namespace common\components;
 
+use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\Journal;
 use common\models\Operation;
 use common\models\OperationTemplate;
 use common\models\Task;
+use common\models\TaskTemplateEquipment;
 use common\models\TaskUser;
 use common\models\TaskVerdict;
 use common\models\Users;
@@ -98,7 +100,7 @@ class MainFunctions
         }
     }
 
-/**
+    /**
      * return generated UUID
      * @return string generated UUID
      */
@@ -301,6 +303,46 @@ class MainFunctions
         }
         MainFunctions::log("request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
         return $operation;
+    }
+
+    /**
+     * @param $oid
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public static function checkTasks($oid)
+    {
+        $today = time();
+        $equipments = Equipment::find()->all();
+        foreach ($equipments as $equipment) {
+            $taskTemplateEquipments = TaskTemplateEquipment::find()
+                ->where(['equipmentUuid' => $equipment['uuid']])
+                ->all();
+
+            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+                $user = $taskTemplateEquipment->getUser();
+                $taskTemplateEquipment->formDates();
+                $dates = $taskTemplateEquipment->getDates();
+                if ($dates) {
+                    $count = 0;
+                    while ($count < count($dates)) {
+                        $start = strtotime($dates[$count]);
+                        if ($start < $today) {
+                            //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
+                            MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
+                                $equipment['uuid'], 'Задача создана по план-графику',
+                                $oid, $user, null);
+                            $taskTemplateEquipment->last_date = $dates[$count];
+                            $taskTemplateEquipment->save();
+                            $taskTemplateEquipment->popDate();
+                        }
+                        $count++;
+                        if ($count > 5) break;
+                    }
+                }
+            }
+        }
     }
 }
 

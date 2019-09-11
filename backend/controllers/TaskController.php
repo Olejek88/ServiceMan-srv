@@ -16,9 +16,7 @@ use common\models\Request;
 use common\models\RequestType;
 use common\models\Settings;
 use common\models\Task;
-use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
-use common\models\TaskType;
 use common\models\TaskUser;
 use common\models\Users;
 use common\models\UserSystem;
@@ -968,11 +966,12 @@ class TaskController extends ZhkhController
     {
         if (isset($_GET["task"])) {
             $task = Task::find()
-                ->where(['uuid' => $_GET["task"]])
+                ->where(['_id' => $_GET["task"]])
                 ->one();
             if ($task)
                 return $this->renderAjax('_task_info', ['task' => $task]);
         }
+        return "1";
     }
 
     /**
@@ -1036,8 +1035,9 @@ class TaskController extends ZhkhController
                         $finish = $start + 3600 * 24;
                         if ($start - $today <= 3600 * 24 * 31 * 13) {
                             $event = new Event();
-                            $event->id = $taskTemplateEquipment['_id'];
-                            $event->title = '[' . $user . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
+                            //$event->id = $taskTemplateEquipment['_id'];
+                            $event->id = 0;
+                            $event->title = '[x][' . $user . '] ' . $taskTemplateEquipment['taskTemplate']['title'];
                             $event->backgroundColor = '#aaaaaa';
                             $event->start = $dates[$count];
                             //$event->end = $order['closeDate'];
@@ -1065,7 +1065,7 @@ class TaskController extends ZhkhController
                             $task['workStatusUuid'] == WorkStatus::NEW)
                             $event->backgroundColor = 'gray';
                         if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
-                            $event->backgroundColor = 'yellow';
+                            $event->backgroundColor = 'orange';
                         if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
                             $event->backgroundColor = 'lightred';
                         if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
@@ -1098,7 +1098,7 @@ class TaskController extends ZhkhController
                 $task['workStatusUuid'] == WorkStatus::NEW)
                 $event->backgroundColor = 'gray';
             if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
-                $event->backgroundColor = 'yellow';
+                $event->backgroundColor = 'orange';
             if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
                 $event->backgroundColor = 'lightred';
             if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
@@ -1127,7 +1127,7 @@ class TaskController extends ZhkhController
                 $task['workStatusUuid'] == WorkStatus::NEW)
                 $event->backgroundColor = 'gray';
             if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
-                $event->backgroundColor = 'yellow';
+                $event->backgroundColor = 'orange';
             if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
                 $event->backgroundColor = 'lightred';
             if ($task['workStatusUuid'] == WorkStatus::COMPLETE)

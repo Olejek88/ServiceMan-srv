@@ -17,7 +17,7 @@ $this->title = 'Календарь задач';
     }
 </script>
 
-<div class="modal remote fade" id="modalAddOrder">
+<div class="modal remote fade" id="modalTaskInfo">
     <div class="modal-dialog" style="width: 800px">
         <div class="modal-content loader-lg" id="modalContent">
         </div>
@@ -27,7 +27,20 @@ $this->title = 'Календарь задач';
 <div class="site-index">
     <div class="body-content">
 <?php
-        $JSDropEvent = <<<EOF
+$JSCode = <<<EOF
+        function(start, end) {
+            $.get("../task/info",{ task: ""+start.id+"" },
+            function() {	
+            })
+            .done(function(data) {
+                console.log(data);
+                $('#modalTaskInfo').modal('show');
+                $('#modalContent').html(data);
+    	    })
+        }
+EOF;
+
+$JSDropEvent = <<<EOF
     function( event, delta, revertFunc, jsEvent, ui, view ) {
         if (window.keyCode == 16) {
 	        var jqxhr = $.post("/task/copy",{ event_start: ""+event.start.format()+"", event_id: ""+event.id+"" },
@@ -100,7 +113,7 @@ EOF;
                 'editable' => true,
                 'eventDrop' => new JsExpression($JSDropEvent),
                 'eventDragStop' => new JsExpression($JSDragStopEvent),
-                /*                'select' => new JsExpression($JSCode),*/
+                'eventClick' => new JsExpression($JSCode),
                 'defaultDate' => date('Y-m-d'),
                 'defaultView' => 'month',
                 'columnFormat' => 'ddd',
@@ -120,6 +133,11 @@ EOF;
             ],
             'ajaxEvents' => $events,
         ));
-        ?>
+
+$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+            function () {
+                window.location.reload();
+        })');
+?>
     </div>
 </div>
