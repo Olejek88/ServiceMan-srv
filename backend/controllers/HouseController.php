@@ -5,6 +5,8 @@ namespace backend\controllers;
 use backend\models\HouseSearch;
 use common\models\House;
 use Yii;
+use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 /**
@@ -15,6 +17,8 @@ class HouseController extends ZhkhController
     /**
      * Lists all House models.
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -45,6 +49,8 @@ class HouseController extends ZhkhController
      * Creates a new House model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {

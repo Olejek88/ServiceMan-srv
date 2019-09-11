@@ -62,7 +62,6 @@ use yii\helpers\Html;
     echo $form->field($documentation, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
 
     echo $form->field($documentation, 'required')->hiddenInput(['value' => 0])->label(false);
-    echo $equipmentUuid .'&&'. $equipmentTypeUuid;
 
     if ($equipmentUuid && $equipmentTypeUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);

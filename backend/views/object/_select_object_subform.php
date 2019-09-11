@@ -26,7 +26,7 @@ echo Select2::widget(
         ],
         'pluginEvents' => [
             "select2:select" => "function(data) { 
-
+                $('#city2').val(data.params.data.id).trigger('change');
                         $.ajax({
                                 url: '../city/streets',
                                 type: 'post',
@@ -65,7 +65,8 @@ echo Select2::widget([
     ],
     'pluginEvents' => [
         "select2:select" => "function(data) { 
-                        $.ajax({
+            $('#streets2').val(data.params.data.id).trigger('change');
+            $.ajax({
                                 url: '../city/houses',
                                 type: 'post',
                                 data: {
@@ -103,6 +104,7 @@ echo Select2::widget([
     ],
     'pluginEvents' => [
         "select2:select" => "function(data) { 
+            $('#houses2').val(data.params.data.id).trigger('change');
                         $.ajax({
                                 url: '../city/objects',
                                 type: 'post',

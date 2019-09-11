@@ -4,11 +4,8 @@
 /* @var $taskTemplateEquipment */
 
 use common\components\MainFunctions;
-use common\models\OperationType;
 use common\models\Users;
-use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 ?>

@@ -33,7 +33,10 @@ use yii\helpers\Html;
         }
 
         $contragents = Contragent::find()
-            ->where(['contragentTypeUuid' => ContragentType::CONTRACTOR])
+            ->where(['IN', 'contragentTypeUuid', [
+                ContragentType::CONTRACTOR,
+                ContragentType::ORGANIZATION
+            ]])
             ->all();
         $items = ArrayHelper::map($contragents, 'uuid', 'title');
         echo $form->field($model, 'contragentUuid',

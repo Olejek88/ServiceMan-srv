@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\MainFunctions;
 use Cron\CronExpression;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -173,7 +174,10 @@ class TaskTemplateEquipment extends ActiveRecord
             // если в специализации пользователя есть нужная - выберем пользователя по-умолчанию
             foreach ($userSystems as $userSystem) {
                 if ($equipmentSystem['uuid'] == $userSystem['equipmentSystemUuid']) {
-                    $user = Users::find()->where(['uuid' => $userHouse['userUuid']])->one();
+                    $user = Users::find()
+                        ->where(['uuid' => $userHouse['userUuid']])
+                        ->andWhere(['active' => 1])
+                        ->one();
                     if ($user)
                         return $user;
                 }
@@ -219,14 +223,18 @@ class TaskTemplateEquipment extends ActiveRecord
     {
         $next_dates = "";
         $dates = explode(',', $this->next_dates);
+        MainFunctions::log('task.log', $this->next_dates);
         if ($dates) {
-            $first = true;
+            $first = 0;
             foreach ($dates as $date) {
-                if (!$first)
+                if ($first == 1)
                     $next_dates .= $date;
-                $first = false;
+                if ($first > 1)
+                    $next_dates .= "," . $date;
+                $first++;
             }
             $this->next_dates = $next_dates;
+            MainFunctions::log('task.log', $next_dates);
             $this->save();
             return $dates[0];
         }
@@ -244,11 +252,15 @@ class TaskTemplateEquipment extends ActiveRecord
         if ($dates) {
             $count = count($dates);
             if (strlen($this->next_dates) < 6) $count = 0;
+
             while (self::TASK_DEEP - $count) {
                 if ($count > 0)
                     $last_date = strtotime($dates[$count - 1]);
                 else
                     $last_date = strtotime($this->last_date);
+                if (($last_date + 3600) < time())
+                    $this->popDate();
+
                 if ($count > 0) {
                     $next_dates .= ',';
                     if (is_numeric($this->period)) {

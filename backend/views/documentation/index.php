@@ -63,16 +63,10 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'width' => '180px',
+        'mergeHeader' => true,
         'content' => function ($data) {
             return $data->equipment['title'];
         },
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Equipment::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
     ],
     [
         'contentOptions' => [
@@ -82,6 +76,7 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'header' => 'Местоположение',
+        'mergeHeader' => true,
         'content' => function ($data) {
             if ($data && $data['equipment'])
               return $data->equipment['object']->getFullTitle();
@@ -106,15 +101,9 @@ $gridColumns = [
         'attribute' => 'equipmentTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
+        'mergeHeader' => true,
         'width' => '180px',
         'value' => 'equipmentType.title',
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(EquipmentType::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
         'contentOptions' => [
             'class' => 'table_class'
@@ -159,7 +148,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-          Html::a('Новое', ['/documentation/create'], ['class' => 'btn btn-success']),
+            Html::a('Новая', ['/documentation/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],

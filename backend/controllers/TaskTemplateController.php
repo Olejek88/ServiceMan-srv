@@ -271,7 +271,9 @@ class TaskTemplateController extends ZhkhController
     public
     static function addEquipmentStageToTree($tree, $modelClass, $entityClass, $linkField)
     {
-        $types = EquipmentType::find()->all();
+        $types = EquipmentType::find()
+            ->orderBy('title')
+            ->all();
         foreach ($types as $type) {
             $expanded = false;
             $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
@@ -663,7 +665,7 @@ class TaskTemplateController extends ZhkhController
             $taskTemplateEquipment->save();
         }
 
-        if (isset($_POST["taskTemplateUuid"])) {
+        if (isset($_POST["taskTemplateUuid"]) && isset($_POST["operationTemplateUuid"])) {
             $taskOperation = new TaskOperation();
             $taskOperation->uuid = MainFunctions::GUID();
             $taskOperation->taskTemplateUuid = $_POST["taskTemplateUuid"];
@@ -795,7 +797,7 @@ class TaskTemplateController extends ZhkhController
             }
         }
         $this->enableCsrfValidation = false;
-        return 0;
+        return "";
     }
 
     /**

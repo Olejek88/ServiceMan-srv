@@ -210,9 +210,9 @@ class UserHouseController extends ZhkhController
                     $userSystems = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystem['uuid']])->all();
                     $userHouses = UserHouse::find()->where(['houseUuid' => $house['uuid']])->all();
                     $user_list='';
+                    $count = 0;
                     foreach ($userSystems as $userSystem) {
                         foreach ($userHouses as $userHouse) {
-                            $count=0;
                             if ($userSystem['userUuid']==$userHouse['userUuid']) {
                                 if ($count>0) $user_list.=', ';
                                 $user_list.=$userSystem['user']['name'];

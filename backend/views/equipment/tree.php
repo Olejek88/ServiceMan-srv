@@ -303,7 +303,7 @@ try {
     </div>
 </div>
 <div class="modal remote fade" id="modalAddTask">
-    <div class="modal-dialog" style="width: 400px; height: 300px">
+    <div class="modal-dialog" style="width: 800px; height: 400px">
         <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
         </div>
     </div>
@@ -344,7 +344,7 @@ try {
     </div>
 </div>
 <div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="width: 1000px; height: 400px">
         <div class="modal-content loader-lg" id="modalContentRequest"></div>
     </div>
 </div>

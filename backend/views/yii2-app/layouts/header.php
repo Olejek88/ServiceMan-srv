@@ -35,12 +35,12 @@ $userImage = Yii::$app->view->params['userImage'];
                     </a>
                 </li>
                 <!-- Notifications: style can be found in dropdown.less -->
-                <li class="dropdown notifications-menu">
-                    <a href="/alarm" class="dropdown-toggle">
-                        <i class="fa fa-bell-o"></i>
-                    </a>
-                </li>
-
+                <!--                <li class="dropdown notifications-menu">
+                                    <a href="/alarm" class="dropdown-toggle">
+                                        <i class="fa fa-bell-o"></i>
+                                    </a>
+                                </li>
+                -->
                 <li class="dropdown references-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-cog"></i>
@@ -75,6 +75,7 @@ $userImage = Yii::$app->view->params['userImage'];
                     <ul class="dropdown-menu">
                         <li><?= Html::a("<i class=\"fa fa-home\"></i> Города", ['../city']); ?></li>
                         <li><?= Html::a("<i class=\"fa fa-street-view\"></i> Улицы", ['../street']); ?> </li>
+                        <li><?= Html::a("<i class=\"fa fa-home\"></i> Дома", ['../equipment/tree-street']); ?> </li>
                     </ul>
                 </li>
 

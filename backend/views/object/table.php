@@ -101,7 +101,6 @@ $gridColumns = [
         'format' => 'raw'
     ],*/
     [
-        'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'objectTypeUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
@@ -115,19 +114,10 @@ $gridColumns = [
         ],
         'filterInputOptions' => ['placeholder' => 'Любой'],
         'format' => 'raw',
+        'value' => 'objectType.title',
         'contentOptions' => [
             'class' => 'table_class'
-        ],
-        'editableOptions' => function ($model, $key, $index, $widget) {
-            $models = ArrayHelper::map(ObjectType::find()->orderBy('title')->all(), 'uuid', 'title');
-            return [
-                'header' => 'Тип объекта',
-                'size' => 'lg',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $models,
-                'data' => $models
-            ];
-        },
+        ]
     ],
     [
         'class' => 'kartik\grid\EditableColumn',

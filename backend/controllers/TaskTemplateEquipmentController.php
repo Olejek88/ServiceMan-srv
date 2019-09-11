@@ -2,14 +2,15 @@
 
 namespace backend\controllers;
 
-use app\commands\MainFunctions;
 use backend\models\TaskTemplateEquipmentSearch;
 use common\components\Errors;
+use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
+use common\models\Users;
 use Cron\CronExpression;
 use Exception;
 use Yii;
@@ -268,8 +269,14 @@ class TaskTemplateEquipmentController extends ZhkhController
         } else return Errors::WRONG_INPUT_PARAMETERS;
     }
 
+    /**
+     * @return string
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function actionCalendarGantt()
     {
+        MainFunctions::checkTasks(Users::getCurrentOid());
         $events = [];
         $categories = [];
         $all_task_equipment_count = 0;

@@ -12,7 +12,6 @@ $this->title = 'Дерево задач';
 <table id="tree" style="background-color: white; width: 100%">
     <colgroup>
         <col width="*">
-        <col width="*">
         <col width="150px">
         <col width="80px">
         <col width="150px">
@@ -33,7 +32,6 @@ $this->title = 'Дерево задач';
                 <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
             </button>
         </th>
-        <th>Описание</th>
         <th>Тип</th>
         <th>Норматив</th>
         <th>Период</th>
@@ -200,20 +198,18 @@ $this->title = 'Дерево задач';
         'table' => [
             'indentation' => 20,
             "titleColumnIdx" => "1",
-            "descriptionColumnIdx" => "2",
-            "typesColumnIdx" => "3",
-            "normativeColumnIdx" => "4",
-            "periodColumnIdx" => "5",
-            "createdColumnIdx" => "6",
+            "typesColumnIdx" => "2",
+            "normativeColumnIdx" => "3",
+            "periodColumnIdx" => "4",
+            "createdColumnIdx" => "5",
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
             $tdList = $(node.tr).find(">td");
-            $tdList.eq(1).html(node.data.description);
-            $tdList.eq(2).html(node.data.types);
-            $tdList.eq(3).text(node.data.normative);
-            $tdList.eq(4).html(node.data.period);
-            $tdList.eq(5).text(node.data.created);            
+            $tdList.eq(1).html(node.data.types);
+            $tdList.eq(2).text(node.data.normative);
+            $tdList.eq(3).html(node.data.period);
+            $tdList.eq(4).text(node.data.created);            
         }')
     ]
 ]);
