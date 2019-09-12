@@ -1,8 +1,10 @@
 <?php
+
 /* @var $house
  * @var $source
  * @var $streetUuid
  */
+
 use common\components\MainFunctions;
 use common\models\HouseStatus;use common\models\HouseType;use common\models\Users;
 use dosamigos\leaflet\layers\Marker;
@@ -57,19 +59,23 @@ use yii\helpers\Html;
     echo Html::hiddenInput("type", "house");
     echo Html::hiddenInput("source", $source);
 
-    $types = HouseType::find()->all();
-    $items = ArrayHelper::map($types, 'uuid', 'title');
-    echo $form->field($house, 'houseTypeUuid')->widget(\kartik\widgets\Select2::class,
-        [
-            'data' => $items,
-            'language' => 'ru',
-            'options' => [
-                'placeholder' => 'Выберите тип..'
-            ],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
+    if ($house['uuid']) {
+        echo $form->field($house, 'houseTypeUuid')->hiddenInput(['value' => $house['houseTypeUuid']])->label(false);
+    } else {
+        $types = HouseType::find()->all();
+        $items = ArrayHelper::map($types, 'uuid', 'title');
+        echo $form->field($house, 'houseTypeUuid')->widget(\kartik\widgets\Select2::class,
+            [
+                'data' => $items,
+                'language' => 'ru',
+                'options' => [
+                    'placeholder' => 'Выберите тип..'
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+    }
     echo $form->field($house, 'latitude')->hiddenInput(['maxlength' => true, 'value' => $latDefault])->label(false);
     echo $form->field($house, 'longitude')->hiddenInput(['maxlength' => true, 'value' => $lngDefault])->label(false);
     //echo $form->field($house, 'latitude')->textInput(['maxlength' => true, 'value' => $latDefault]);

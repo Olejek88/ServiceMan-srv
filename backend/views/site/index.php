@@ -40,13 +40,13 @@ $this->title = Yii::t('app', 'Карта');
         var userIcon = L.icon({
             iconUrl: '/images/worker_male1600.png',
             iconSize: [35, 35],
-            iconAnchor: [22, 94],
+            iconAnchor: [14, 35],
             popupAnchor: [-3, -76]
         });
         var houseIcon = L.icon({
             iconUrl: '/images/marker_house.png',
             iconSize: [32, 51],
-            iconAnchor: [22, 94],
+            iconAnchor: [14, 51],
             popupAnchor: [-3, -76]
         });
 
@@ -77,7 +77,7 @@ $this->title = Yii::t('app', 'Карта');
             }
             ?>
         };
-        var map = L.map('mapid', {zoomControl: false, layers: [users, houses, ways]}).setView(<?= $coordinates ?>, 13);
+        var map = L.map('mapid', {zoomControl: false, layers: [users, houses, ways]}).setView(<?= $coordinates ?>, 16);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
             maxZoom: 18,
             id: 'mapbox.streets'
