@@ -1,6 +1,7 @@
 <?php
 /* @var $form
  * @var $model
+ * @var $equipmentUuid
  */
 
 use common\models\City;

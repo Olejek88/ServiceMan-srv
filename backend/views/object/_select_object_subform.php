@@ -39,14 +39,14 @@ echo Select2::widget(
                                     select.options.length = 0;
                                     for(index in streets) {
                                         select.options[select.options.length] = new Option(streets[index], index);
-                                    }
+                                    }                                    
                                     select = document.getElementById('streets2');
                                     if (select) {                                                                        
                                         select.options.length = 0;
                                         for(index in streets) {
                                             select.options[select.options.length] = new Option(streets[index], index);
                                         }
-                                    }                                    
+                                    }
                                 }
                             });
                   }"]

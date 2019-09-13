@@ -511,7 +511,7 @@ class TaskController extends ZhkhController
                     ->where(['uuid' => $taskUser['taskUuid']])
                     ->andWhere(['>', 'taskdate', $start_date])
                     ->andWhere(['<', 'taskdate', $end_date])
-                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE, WorkStatus::CANCELED]])
+                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
                     ->count();
             }
             $bar .= $taskComplete;
@@ -567,6 +567,7 @@ class TaskController extends ZhkhController
                         if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
                             $taskGood++;
                     }
+
                     $tasks = Task::find()
                         ->where(['uuid' => $taskUser['taskUuid']])
                         ->andWhere(['>', 'taskdate', $start_date])
@@ -579,13 +580,8 @@ class TaskController extends ZhkhController
                     }
 
                     $tasks = Task::find()
-                        ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>', 'taskdate', $start_date])
-                        ->andWhere(['<', 'taskdate', $end_date])
-                        ->andWhere('deadlineDate > NOW()')
-                        ->andWhere(['IN', 'workStatusUuid', [
-                            WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
-                        ]])
+                        ->where(['AND', ['=', 'uuid', $taskUser['taskUuid']], ['>', 'taskdate', $start_date], ['<', 'taskdate', $end_date], ['>', 'deadlineDate', 'NOW()'], ['!=', 'workStatusUuid', WorkStatus::COMPLETE]])
+                        ->orWhere(['AND', ['=', 'uuid', $taskUser['taskUuid']], ['>', 'taskdate', $start_date], ['<', 'taskdate', $end_date], ['>', 'deadlineDate', 'endDate'], ['=', 'workStatusUuid', WorkStatus::COMPLETE]])
                         ->all();
                     foreach ($tasks as $task) {
                         if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
@@ -595,7 +591,7 @@ class TaskController extends ZhkhController
                 $user_array[$t_count]['complete_good'] = $taskGood;
                 $user_array[$t_count]['bad'] = $taskBad;
                 $user_array[$t_count]['complete'] = $taskComplete;
-                $user_array[$t_count]['total'] = $taskComplete + $taskBad;
+                $user_array[$t_count]['total'] = $taskTotal;
                 $t_count++;
             }
 
@@ -967,6 +963,7 @@ class TaskController extends ZhkhController
         if (isset($_GET["task"])) {
             $task = Task::find()
                 ->where(['_id' => $_GET["task"]])
+                ->orWhere(['uuid' => $_GET["task"]])
                 ->one();
             if ($task)
                 return $this->renderAjax('_task_info', ['task' => $task]);
