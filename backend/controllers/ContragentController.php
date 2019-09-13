@@ -13,12 +13,12 @@ use common\models\ObjectContragent;
 use common\models\User;
 use common\models\UserContragent;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
-use Throwable;
 
 /**
  * ContragentController implements the CRUD actions for Contragent model.
@@ -106,7 +106,11 @@ class ContragentController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
+        //parent::actionCreate();
+        if (!Yii::$app->user->can(User::PERMISSION_ADMIN) &&
+            !Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
+            $this->redirect('index');
+        }
 
         $contragent = new Contragent();
         $searchModel = new ContragentSearch();

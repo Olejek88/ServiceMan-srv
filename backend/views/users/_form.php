@@ -1,11 +1,11 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use common\components\Tag;
 use common\models\User;
 use common\models\Users;
+use yii\helpers\Html;
 use yii\web\View;
-use common\components\Tag;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Users */

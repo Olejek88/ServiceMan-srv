@@ -8,6 +8,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+
 /**
  * ShutdownController implements the CRUD actions for Shutdown model.
  */

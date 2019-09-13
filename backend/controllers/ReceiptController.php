@@ -8,6 +8,7 @@ use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+
 /**
  * ReceiptController implements the CRUD actions for Receipt model.
  */

@@ -2,7 +2,6 @@
 
 use app\commands\MainFunctions;
 use common\models\Equipment;
-use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;

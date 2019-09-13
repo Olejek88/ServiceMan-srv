@@ -1,14 +1,15 @@
 <?php
+
+use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\TaskTemplate;
+use common\models\TaskVerdict;
 use common\models\Users;
+use common\models\WorkStatus;
 use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use app\commands\MainFunctions;
-use common\models\TaskVerdict;
-use common\models\WorkStatus;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Task */

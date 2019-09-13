@@ -1,10 +1,9 @@
 <?php
 
+use backend\models\UserArm;
 use common\models\User;
 use common\models\Users;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use backend\models\UserArm;
 
 /* @var $model Users */
 /* @var $userArm UserArm */

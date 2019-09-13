@@ -6,6 +6,7 @@ use backend\models\DocumentationSearchType;
 use common\models\DocumentationType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * DocumentationTypeController implements the CRUD actions for DocumentationType model.
  */

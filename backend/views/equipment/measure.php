@@ -3,7 +3,6 @@
 
 use common\models\EquipmentType;
 use common\models\Measure;
-use common\models\MeasureType;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;

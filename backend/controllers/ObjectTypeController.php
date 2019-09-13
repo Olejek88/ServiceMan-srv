@@ -6,6 +6,7 @@ use backend\models\ObjectSearchType;
 use common\models\ObjectType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * ObjectTypeController implements the CRUD actions for ObjectType model.
  */

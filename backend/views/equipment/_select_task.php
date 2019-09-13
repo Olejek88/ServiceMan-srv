@@ -2,7 +2,6 @@
 
 use common\components\MainFunctions;
 use common\models\Equipment;
-use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
 use common\models\TaskVerdict;

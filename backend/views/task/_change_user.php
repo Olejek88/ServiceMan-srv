@@ -1,6 +1,5 @@
 <?php
 
-use common\models\EquipmentStatus;
 use common\models\Users;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;

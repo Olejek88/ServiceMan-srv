@@ -9,6 +9,7 @@ use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+
 /**
  * RequestTypeController implements the CRUD actions for RequestType model.
  */

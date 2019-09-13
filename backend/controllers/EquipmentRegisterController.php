@@ -6,12 +6,12 @@ use backend\models\EquipmentRegisterSearch;
 use common\components\MainFunctions;
 use common\models\EquipmentRegister;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
-use yii\db\Exception;
-use Throwable;
 
 /**
  * EquipmentRegisterController implements the CRUD actions for EquipmentRegister model.

@@ -7,6 +7,7 @@ use common\models\ObjectContragent;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+
 /**
  * ObjectContragentController implements the CRUD actions for ObjectContragent model.
  */

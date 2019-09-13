@@ -1,11 +1,10 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\OperationSearchTemplate;
+use common\models\OperationTemplate;
 use Yii;
 use yii\web\NotFoundHttpException;
-use common\models\OperationTemplate;
-
-use backend\models\OperationSearchTemplate;
 
 class OperationTemplateController extends ZhkhController
 {

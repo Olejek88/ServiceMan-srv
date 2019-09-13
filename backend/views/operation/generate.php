@@ -1,14 +1,14 @@
 <?php
 
-use common\models\Users;
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
-
-use common\models\WorkStatus;
 use common\models\OperationTemplate;
 use common\models\Task;
+use common\models\Users;
+use common\models\WorkStatus;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
 $this->title = Yii::t('app', 'Создание операции');
 ?>
 

@@ -1,9 +1,5 @@
 <?php
 
-use common\models\Equipment;
-use kartik\widgets\Select2;
-use yii\helpers\ArrayHelper;
-
 $this->title = 'Календарь задач по обслуживанию';
 
 /* @var $events

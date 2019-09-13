@@ -1,8 +1,5 @@
 <?php
 
-use yii\helpers\Html;
-use yii\web\JsExpression;
-
 $this->title = 'Календарь задач по обслуживанию';
 
 /* @var $events */

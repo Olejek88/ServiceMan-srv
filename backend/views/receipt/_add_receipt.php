@@ -4,13 +4,12 @@
 use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\ContragentType;
-use common\models\EquipmentType;
 use common\models\Users;
 use kartik\widgets\DateTimePicker;
 use kartik\widgets\Select2;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 
 ?>
 <?php $form = ActiveForm::begin([

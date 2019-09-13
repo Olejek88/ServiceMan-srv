@@ -2,6 +2,7 @@
 
 use common\components\ReferenceFunctions;
 use common\models\Organization;
+use yii\base\InvalidConfigException;
 use yii\db\Migration;
 
 /**
@@ -11,6 +12,8 @@ class m190730_121226_fix_request_type extends Migration
 {
     /**
      * {@inheritdoc}
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function safeUp()
     {

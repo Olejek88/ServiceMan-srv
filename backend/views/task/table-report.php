@@ -8,7 +8,6 @@
 
 use kartik\select2\Select2;
 use kartik\widgets\DatePicker;
-use kartik\widgets\DateTimePicker;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::Отчет по исполнителям');

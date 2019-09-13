@@ -4,10 +4,10 @@ namespace backend\controllers;
 
 use backend\models\AlarmSearchStatus;
 use common\models\AlarmStatus;
-use Yii;
-use yii\web\NotFoundHttpException;
 use Throwable;
+use Yii;
 use yii\db\StaleObjectException;
+use yii\web\NotFoundHttpException;
 
 /**
  * AlarmStatusController implements the CRUD actions for ActionType model.

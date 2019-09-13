@@ -6,6 +6,7 @@ use backend\models\EquipmentRegisterTypeSearch;
 use common\models\EquipmentRegisterType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * EquipmentRegisterTypeController implements the CRUD actions for EquipmentRegisterType model.
  */

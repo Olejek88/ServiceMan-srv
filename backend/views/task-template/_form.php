@@ -1,15 +1,13 @@
 <?php
 
+use app\commands\MainFunctions;
+use common\models\TaskType;
 use common\models\Users;
 use kartik\select2\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
-use common\models\TaskType;
 
-
-use kartik\file\FileInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\TaskTemplate */

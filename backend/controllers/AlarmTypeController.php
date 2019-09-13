@@ -6,6 +6,7 @@ use backend\models\AlarmSearchType;
 use common\models\AlarmType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * AlarmTypeController implements the CRUD actions for AlarmType model.
  */

@@ -8,6 +8,7 @@ use common\models\Equipment;
 use common\models\EquipmentRegisterType;
 use common\models\EquipmentType;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
@@ -16,7 +17,6 @@ use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
-use Throwable;
 
 /**
  * DocumentationController implements the CRUD actions for Documentation model.

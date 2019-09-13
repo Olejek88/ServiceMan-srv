@@ -3,6 +3,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+
 $this->title = $model->title;
 ?>
 <div class="order-status-view box-padding" style="width: 95%; min-height: 782px">

@@ -30,15 +30,15 @@ use common\models\TaskUser;
 use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\web\Controller;
-use Throwable;
-use yii\base\InvalidConfigException;
 
 /**
  * Site controller

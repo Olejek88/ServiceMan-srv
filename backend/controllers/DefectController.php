@@ -5,8 +5,6 @@ namespace backend\controllers;
 use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
-use common\models\Equipment;
-use common\models\EquipmentRegisterType;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;

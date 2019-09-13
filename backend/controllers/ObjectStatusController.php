@@ -6,6 +6,7 @@ use backend\models\ObjectSearchStatus;
 use common\models\ObjectStatus;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * ObjectStatusController implements the CRUD actions for ObjectStatus model.
  */

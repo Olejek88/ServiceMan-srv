@@ -143,8 +143,7 @@ if (isset($_GET["equipmentUuid"]))
                 else if ($defaultRequestType)
                     $value = $defaultRequestType['uuid'];
                 $type = RequestType::find()
-                    ->innerJoinWith('taskTemplate')
-                    ->where(['task_template.oid' => Users::getCurrentOid()])
+                    ->where(['oid' => Users::getCurrentOid()])
                     ->all();
                 $items = ArrayHelper::map($type, 'uuid', 'title');
                 echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,

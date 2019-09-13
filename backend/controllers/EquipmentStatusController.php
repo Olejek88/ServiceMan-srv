@@ -6,6 +6,7 @@ use backend\models\EquipmentSearchStatus;
 use common\models\EquipmentStatus;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * EquipmentStatusController implements the CRUD actions for EquipmentStatus model.
  */

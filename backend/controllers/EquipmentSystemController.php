@@ -6,6 +6,7 @@ use backend\models\EquipmentSystemSearch;
 use common\models\EquipmentSystem;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * EquipmentSystemController implements the CRUD actions for EquipmentSystem model.
  */

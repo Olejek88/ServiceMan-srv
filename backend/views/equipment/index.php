@@ -1,7 +1,14 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
-use common\models\EquipmentStatus;use common\models\EquipmentType;use common\models\UserSystem;use kartik\datecontrol\DateControl;use kartik\editable\Editable;use kartik\grid\GridView;use yii\helpers\ArrayHelper;use yii\helpers\Html;
+use common\models\EquipmentStatus;
+use common\models\EquipmentType;
+use common\models\UserSystem;
+use kartik\datecontrol\DateControl;
+use kartik\editable\Editable;
+use kartik\grid\GridView;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Элементы');
 

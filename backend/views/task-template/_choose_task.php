@@ -3,13 +3,12 @@
  * @var $equipment_id
  */
 
-use common\components\MainFunctions;
 use common\models\Equipment;
 use common\models\StageType;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
-use common\models\Users;use kartik\widgets\Select2;
+use kartik\widgets\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
