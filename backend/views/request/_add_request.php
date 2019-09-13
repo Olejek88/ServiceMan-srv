@@ -57,8 +57,10 @@ if (isset($_GET["equipmentUuid"]))
                         ->orderBy('title DESC')
                         ->all();
                     $items = ArrayHelper::map($users, 'uuid', 'title');
-                    echo $form->field($model, 'contragentUuid',
-                        ['template' => '{label}<div class="input-group">{input} <span class="input-group-btn">' .
+                    if ($model['uuid']) {
+                        $template = '{label}<div class="input-group">{input}</div>';
+                    } else {
+                        $template = '{label}<div class="input-group">{input} <span class="input-group-btn">' .
                             Html::a('<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>',
                                 ['../contragent/form'],
                                 [
@@ -67,9 +69,11 @@ if (isset($_GET["equipmentUuid"]))
                                     'data-toggle' => 'modal',
                                     'data-target' => '#modalContragent',
                                 ]) .
-                            '</span></div>'])->widget(Select2::class,
-                        [
-                            'data' => $items,
+                            '</span></div>';
+                    }
+                    echo $form->field($model, 'contragentUuid',
+                        ['template' => $template])->widget(Select2::class,
+                        ['data' => $items,
                             'language' => 'ru',
                             'options' => [
                                 'placeholder' => 'Заявитель'
@@ -79,29 +83,29 @@ if (isset($_GET["equipmentUuid"]))
                             ],
                             'pluginEvents' => [
                                 "select2:select" => "function(data) { 
-                        $.ajax({
-                                url: '../contragent/phone',
-                                type: 'post',
-                                data: {
-                                    id: data.params.data.id
-                                },
-                                success: function (data) {
-                                    console.log(data);
-                                    $('#phoneNumber').val(data);               
-                                }
-                            });
-                        $.ajax({
-                                url: '../contragent/address',
-                                type: 'post',
-                                data: {
-                                    id: data.params.data.id
-                                },
-                                success: function (data) {
-                                    console.log(data);
-                                    $('#request-objectuuid').val(data).trigger('change');
-                                }
-                            });
-                  }"]
+                                    $.ajax({
+                                        url: '../contragent/phone',
+                                        type: 'post',
+                                    data: {
+                                        id: data.params.data.id
+                                    },
+                                    success: function (data) {
+                                        console.log(data);
+                                        $('#phoneNumber').val(data);               
+                                        }
+                                    });
+                                    $.ajax({
+                                        url: '../contragent/address',
+                                        type: 'post',
+                                        data: {
+                                            id: data.params.data.id
+                                        },
+                                        success: function (data) {
+                                            console.log(data);
+                                            $('#request-objectuuid').val(data).trigger('change');
+                                        }
+                                    });
+                            }"]
                         ]);
                     echo '<label>Номер телефона заявителя</label></br>';
                     echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
@@ -133,6 +137,11 @@ if (isset($_GET["equipmentUuid"]))
             <td style="width: 48%; vertical-align: top">
                 <?php
                 echo $form->field($model, 'comment')->textInput();
+                $defaultRequestType = RequestType::find()->where(['title' => 'Другой характер обращения'])->one();
+                if ($model['requestTypeUuid'])
+                    $value = $model['requestTypeUuid'];
+                else if ($defaultRequestType)
+                    $value = $defaultRequestType['uuid'];
                 $type = RequestType::find()
                     ->innerJoinWith('taskTemplate')
                     ->where(['task_template.oid' => Users::getCurrentOid()])
@@ -144,7 +153,7 @@ if (isset($_GET["equipmentUuid"]))
                         'language' => 'ru',
                         'options' => [
                             'placeholder' => 'Выберите тип..',
-                            'value' => RequestType::GENERAL
+                            'value' => $value
                         ],
                         'pluginOptions' => [
                             'allowClear' => true
@@ -154,26 +163,22 @@ if (isset($_GET["equipmentUuid"]))
 
                 <?php
                 if ($source == 'table') {
-                    echo $this->render('../object/_select_equipment_subform');
-                    if (!$model->equipmentUuid) {
-                        $equipments = Equipment::find()->all();
-                        $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
-                            return $equipment->getFullTitle();
-                        });
-                        echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
-                            [
-                                'data' => $items,
-                                'language' => 'ru',
-                                'options' => [
-                                    'placeholder' => 'Выберите элементы..'
-                                ],
-                                'pluginOptions' => [
-                                    'allowClear' => true
-                                ],
-                            ]);
-                    }
-                } else {
-                    echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
+                    echo $this->render('../object/_select_equipment_subform', ['equipmentUuid' => $model['equipmentUuid']]);
+                    $equipments = Equipment::find()->all();
+                    $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                        return $equipment->getFullTitle();
+                    });
+                    echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
+                        [
+                            'data' => $items,
+                            'language' => 'ru',
+                            'options' => [
+                                'placeholder' => 'Выберите элементы..'
+                            ],
+                            'pluginOptions' => [
+                                'allowClear' => true
+                            ],
+                        ]);
                 }
                 ?>
 

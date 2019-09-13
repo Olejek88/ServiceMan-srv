@@ -8,7 +8,6 @@ use common\models\Equipment;
 use common\models\Journal;
 use common\models\Receipt;
 use common\models\Request;
-use common\models\TaskTemplate;
 use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -28,6 +27,7 @@ class RequestController extends ZhkhController
      */
     public function actionIndex()
     {
+        ini_set('memory_limit', '-1');
         //OrderFunctions::checkRequests();
         if (isset($_POST['editableAttribute'])) {
             $model = Request::find()
@@ -219,7 +219,7 @@ class RequestController extends ZhkhController
                 MainFunctions::register('request', 'Создана заявка #' . $model['_id'],
                     'Комментарий: заявитель ' . $model['contragent']['title'], $model->uuid);
 
-                if (!$model['requestType']['taskTemplateUuid']) {
+                if ($model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,

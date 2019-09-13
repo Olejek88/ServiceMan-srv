@@ -665,7 +665,25 @@ class ReferenceFunctions
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
         ])->execute();
+    }
 
+    /**
+     * @param $oid
+     * @param $db Connection
+     */
+    public static function loadReferences1($oid, $db)
+    {
+        if ($oid != Organization::ORG_SERVICE_UUID) {
+            $currentTime = date('Y-m-d\TH:i:s');
+            $db->createCommand()->insert('request_type', [
+                'uuid' => MainFunctions::GUID(),
+                'oid' => $oid,
+                'title' => 'Другой характер обращения',
+                'taskTemplateUuid' => null,
+                'createdAt' => $currentTime,
+                'changedAt' => $currentTime
+            ]);
+        }
     }
 
     /**

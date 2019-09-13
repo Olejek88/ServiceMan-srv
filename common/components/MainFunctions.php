@@ -262,7 +262,7 @@ class MainFunctions
             $task->deadlineDate = $model->deadlineDate;
         }
         if (!$task->save()) {
-            //MainFunctions::log("request.log", json_encode($task->errors));
+            MainFunctions::log("request.log", json_encode($task->errors));
             return null;
         } else {
             if ($userUuid) {
@@ -272,7 +272,7 @@ class MainFunctions
                 $taskUser->userUuid = $userUuid;
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
-                    //MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    MainFunctions::log("request.log", json_encode($taskUser->errors));
                     return null;
                 }
             }
@@ -284,7 +284,7 @@ class MainFunctions
             }
 
         }
-        //MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
+        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
         return $task;
     }
 

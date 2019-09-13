@@ -9,6 +9,7 @@ use common\components\ReferenceFunctions;
 use common\models\Alarm;
 use common\models\City;
 use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Documentation;
 use common\models\DocumentationType;
 use common\models\Equipment;
@@ -20,6 +21,7 @@ use common\models\Journal;
 use common\models\LoginForm;
 use common\models\Measure;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\Photo;
 use common\models\Settings;
 use common\models\Street;
@@ -293,19 +295,13 @@ class SiteController extends Controller
 
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
-        $flatCount = Objects::find()->count();
+        $houseCount = House::find()->count();
+        $objectsCount = Objects::find()->count();
+        $flatCount = Objects::find()->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])->count();
         $equipmentCount = Equipment::find()->count();
         $contragentCount = Contragent::find()->count();
         $equipmentTypeCount = EquipmentType::find()->count();
-//        $usersCount = Users::find()->count();
-
-        $last_measures = Measure::find()
-            ->where('createdAt > (NOW()-(4*24*3600000))')
-            ->orderBy('date DESC')
-            ->count();
-        $complete = 0;
-        if ($flatCount > 0)
-            $complete = number_format($last_measures * 100 / $flatCount, 2);
+        //        $usersCount = Users::find()->count();
 
         $measures = Measure::find()
             ->orderBy('date desc')
@@ -422,6 +418,10 @@ class SiteController extends Controller
             ->andWhere(['type' => Users::USERS_WORKER])
             ->all();
         $userList[] = $users;
+
+        $contragents = Contragent::find()
+            ->where(['contragentTypeUuid' => [ContragentType::WORKER, ContragentType::EMPLOYEE, ContragentType::CONTRACTOR]])
+            ->all();
 
         /**
          * [userList description]
@@ -558,17 +558,18 @@ class SiteController extends Controller
                 'cityCount' => $cityCount,
                 'streetCount' => $streetCount,
                 'usersCount' => $usersCount,
-                'activeUsersCount' => $activeUsersCount,
+                'objectsCount' => $objectsCount,
+                'houseCount' => $houseCount,
                 'flatCount' => $flatCount,
+                'activeUsersCount' => $activeUsersCount,
                 'measures' => $measures,
                 'equipments' => $equipments,
+                'contragents' => $contragents,
                 'users' => $users,
                 'categories' => $categories,
                 'bar' => $bar,
                 'usersGroup' => $usersGroup,
                 'usersList' => $usersList,
-                'last_measures' => $last_measures,
-                'complete' => $complete,
                 'equipmentCount' => $equipmentCount,
                 'equipmentTypeCount' => $equipmentTypeCount,
                 'contragentCount' => $contragentCount,

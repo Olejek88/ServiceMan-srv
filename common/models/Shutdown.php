@@ -7,6 +7,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\db\Exception;
 use yii\db\Expression;
 
 /**
@@ -69,8 +70,7 @@ class Shutdown extends ZhkhActiveRecord
                 [
                     'uuid',
                     'contragentUuid',
-                    'startDate',
-                    'endDate'
+                    'startDate'
                 ],
                 'required'
             ],
@@ -133,6 +133,7 @@ class Shutdown extends ZhkhActiveRecord
      *
      * @return ActiveRecord
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function getContragent()
     {

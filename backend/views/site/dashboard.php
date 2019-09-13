@@ -1,12 +1,13 @@
 <?php
 /* @var $cityCount
  * @var $streetCount
- * @var $flatCount
  * @var $equipmentCount
+ * @var $houseCount
  * @var $equipmentTypeCount
  * @var $contragentCount
  * @var $measures
  * @var $equipments
+ * @var $contragents
  * @var $sumStageStatusCompleteCount
  * @var $sumOperationStatusCount
  * @var $sumOperationStatusCompleteCount
@@ -19,6 +20,7 @@
  * @var $activeUsersCount
  * @var $currentUser
  * @var $objectsCount
+ * @var $flatCount
  * @var $objectsTypeCount
  * @var $events
  * @var $services
@@ -30,8 +32,6 @@
  * @var $objectsList
  * @var $objectsGroup
  * @var $usersList
- * @var $last_measures
- * @var $complete
  * @var $usersGroup
  * @var $defectsByType
  * @var $usersList
@@ -45,6 +45,7 @@
 */
 
 use common\models\Equipment;
+use common\models\UserContragent;
 use common\models\Users;
 use yii\helpers\Html;
 
@@ -59,9 +60,9 @@ $this->title = Yii::t('app', 'Сводная');
             <a href="/city"><span class="info-box-icon bg-aqua"><i class="fa fa-calendar"></i></span></a>
 
             <div class="info-box-content">
-                <span>Городов <?= $cityCount; ?> / Улиц <?= $streetCount; ?></span><br/>
-                <span>Квартир <?= $flatCount; ?> / Абонентов <?= $contragentCount; ?></span><br/>
-                <span>Выполнено <?= $last_measures; ?> [<?= $complete; ?> %]</span><br/>
+                <span>Городов <?= $cityCount; ?></span><br/>
+                <span>Улиц <?= $streetCount; ?></span> / <span>Домов <?= $houseCount; ?></span><br/>
+                <span>Квартир <?= $flatCount; ?></span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -91,8 +92,8 @@ $this->title = Yii::t('app', 'Сводная');
             <a href="/object/tree"><span class="info-box-icon bg-green"><i class="fa fa-map-marker"></i></span></a>
 
             <div class="info-box-content">
-                <span class="info-box-text">Субъекты</span>
-                <span>Организации <?= $contragentCount; ?></span><br/>
+                <span class="info-box-text">Объекты</span>
+                <span>Объектов системы <?= $objectsCount; ?></span><br/>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -130,7 +131,7 @@ $this->title = Yii::t('app', 'Сводная');
                         <button type="button" class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-wrench"></i></button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="/measure">Измерения</a></li>
+                            <li><a href="/task/report">Отчет по задачам</a></li>
                             <li class="divider"></li>
                         </ul>
                     </div>
@@ -305,10 +306,10 @@ $this->title = Yii::t('app', 'Сводная');
                 <!-- USERS LIST -->
                 <div class="box box-danger">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Операторы</h3>
+                        <h3 class="box-title">Исполнители</h3>
 
                         <div class="box-tools pull-right">
-                            <span class="label label-info">Операторов: <?= count($users) ?></span>
+                            <span class="label label-info">Исполнителей: <?= count($users) ?></span>
                             <button type="button" class="btn btn-box-tool" data-widget="collapse">
                                 <i class="fa fa-minus"></i>
                             </button>
@@ -322,15 +323,26 @@ $this->title = Yii::t('app', 'Сводная');
                         <ul class="users-list clearfix">
                             <?php
                             $count = 0;
-                            foreach ($users as $user) {
-                                $path = $user->getPhotoUrl();
-                                if (!$path || !$user['image']) {
-                                    $path = '/images/unknown.png';
+                            foreach ($contragents as $contragent) {
+                                $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
+                                if ($userContragent) {
+                                    $path = $userContragent['user']->getPhotoUrl();
+                                    if (!$path || !$userContragent['user']['image']) {
+                                        $path = '/images/unknown.png';
+                                    }
+                                    print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
+                                    echo Html::a(Html::encode($userContragent['user']['name']),
+                                        ['/users/view', '_id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
+                                    echo '<span class="users-list-date">' . $userContragent['user']['createdAt'] . '</span></li>';
                                 }
-                                print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
-                                echo Html::a(Html::encode($user['name']),
-                                    ['/users/view', '_id' => Html::encode($user['_id'])], ['class' => 'users-list-name']);
-                                echo '<span class="users-list-date">' . $user['createdAt'] . '</span></li>';
+                                /*                                $path = $user->getPhotoUrl();
+                            if (!$path || !$user['image']) {
+                                $path = '/images/unknown.png';
+                            }
+                            print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
+                            echo Html::a(Html::encode($user['name']),
+                                ['/users/view', '_id' => Html::encode($user['_id'])], ['class' => 'users-list-name']);
+                            echo '<span class="users-list-date">' . $user['createdAt'] . '</span></li>';*/
                             }
                             ?>
                         </ul>

@@ -83,7 +83,7 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_HVS_MAIN,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
             'Водомерный узел ХВС');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_TYPE_BALCONY,EquipmentSystem::EQUIPMENT_SYSTEM_BUILD,
-            'Балконные конструкции');
+            'Инженерные системы дома');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_ELECTRICITY,EquipmentSystem::EQUIPMENT_SYSTEM_ELECTRO,
             'Электроплита');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_HVS_COUNTER,EquipmentSystem::EQUIPMENT_SYSTEM_SANTECH,
