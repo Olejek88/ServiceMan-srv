@@ -2,13 +2,11 @@
 
 namespace backend\controllers;
 
-use backend\models\TaskSearchVerdict;
+use backend\models\WorkSearchStatus;
+use common\models\WorkStatus;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
-use common\models\WorkStatus;
-
-use backend\models\WorkSearchStatus;
 
 /**
  * WorkStatusController implements the CRUD actions for WorkStatus model.

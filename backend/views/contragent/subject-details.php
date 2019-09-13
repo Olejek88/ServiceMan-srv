@@ -1,12 +1,8 @@
 <?php
 
 use common\models\ObjectContragent;
-use common\models\ObjectStatus;
-use common\models\ObjectType;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\data\ActiveDataProvider;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 /* @var $model */

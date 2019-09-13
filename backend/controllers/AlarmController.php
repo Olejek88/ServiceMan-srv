@@ -5,11 +5,11 @@ namespace backend\controllers;
 use backend\models\AlarmSearch;
 use common\components\MainFunctions;
 use common\models\Alarm;
-use Yii;
-use yii\web\NotFoundHttpException;
-use yii\base\InvalidConfigException;
 use Throwable;
+use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
+use yii\web\NotFoundHttpException;
 
 /**
  * AlarmController implements the CRUD actions for Alarm model.

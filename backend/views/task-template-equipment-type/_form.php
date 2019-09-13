@@ -1,15 +1,12 @@
 <?php
 
 use common\components\MainFunctions;
-use common\models\Equipment;
 use common\models\EquipmentType;
-use common\models\Users;
-use dosamigos\datetimepicker\DateTimePicker;
+use common\models\TaskTemplate;
 use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use common\models\TaskTemplate;
-use yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\TaskTemplateEquipmentType */

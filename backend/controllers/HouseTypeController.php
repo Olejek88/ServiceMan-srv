@@ -6,6 +6,7 @@ use backend\models\HouseSearchType;
 use common\models\HouseType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * HouseTypeController implements the CRUD actions for HouseType model.
  */

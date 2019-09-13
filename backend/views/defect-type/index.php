@@ -1,8 +1,8 @@
 <?php
 /* @var $searchModel backend\models\DefectSearchType */
 
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'Типы дефектов');
 ?>

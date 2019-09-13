@@ -25,6 +25,7 @@ use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
+use Throwable;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
@@ -34,7 +35,6 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
-use Throwable;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.

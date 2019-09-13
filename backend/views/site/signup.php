@@ -5,8 +5,8 @@
 
 /* @var $model backend\models\SignupForm */
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Html;
 
 $this->title = 'Sign In';
 

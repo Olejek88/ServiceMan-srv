@@ -2,13 +2,12 @@
 
 namespace backend\controllers;
 
+use backend\models\DefectSearchType;
+use common\models\DefectType;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\db\StaleObjectException;
-use yii\web\NotFoundHttpException;
-use common\models\DefectType;
 use yii\web\Controller;
-use backend\models\DefectSearchType;
+use yii\web\NotFoundHttpException;
 
 /**
  * DefectTypeController implements the CRUD actions for DefectType model.

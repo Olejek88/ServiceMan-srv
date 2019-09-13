@@ -1,12 +1,11 @@
 <?php
 
-use common\models\Users;
+use app\commands\MainFunctions;
+use common\models\OperationTemplate;
+use common\models\TaskTemplate;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use common\models\OperationTemplate;
-use yii\helpers\ArrayHelper;
-use common\models\TaskTemplate;
-use app\commands\MainFunctions;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\TaskOperation */

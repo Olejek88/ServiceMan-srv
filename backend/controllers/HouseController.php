@@ -9,6 +9,7 @@ use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+
 /**
  * HouseController implements the CRUD actions for House model.
  */

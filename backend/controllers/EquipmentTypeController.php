@@ -6,6 +6,7 @@ use backend\models\EquipmentSearchType;
 use common\models\EquipmentType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * EquipmentTypeController implements the CRUD actions for EquipmentType model.
  */

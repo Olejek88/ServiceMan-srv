@@ -4,12 +4,12 @@ namespace backend\controllers;
 
 use backend\models\MeasureSearch;
 use common\models\Measure;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
-use yii\base\InvalidConfigException;
-use Throwable;
 
 /**
  * MeasureController implements the CRUD actions for Measure model.

@@ -14,6 +14,7 @@ class m190913_042018_some_logic_change extends Migration
     /**
      * {@inheritdoc}
      * @throws InvalidConfigException
+     * @throws \yii\db\Exception
      */
     public function safeUp()
     {
@@ -32,7 +33,7 @@ class m190913_042018_some_logic_change extends Migration
     {
         echo "m190913_042018_some_logic_change cannot be reverted.\n";
 
-        return false;
+        return true;
     }
 
     /*

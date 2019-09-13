@@ -6,6 +6,7 @@ use backend\models\ContragentSearchType;
 use common\models\ContragentType;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * ContragentTypeController implements the CRUD actions for ContragentType model.
  */

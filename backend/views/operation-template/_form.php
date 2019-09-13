@@ -1,14 +1,11 @@
 <?php
 
+use app\commands\MainFunctions;
+use common\models\OperationType;
 use common\models\Users;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\commands\MainFunctions;
-use yii\helpers\ArrayHelper;
-use common\models\OperationType;
 
-
-use kartik\file\FileInput;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\OperationTemplate */

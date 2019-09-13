@@ -6,6 +6,7 @@ use backend\models\PhotoSearch;
 use common\models\Photo;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * Photo implements the CRUD actions for Photo model.
  */

@@ -3,6 +3,7 @@
 
 use common\models\ContragentRegister;
 use yii\helpers\Html;
+
 $this->title = Yii::t('app', 'Обновить журнал элементов');
 ?>
 <div class="Contragent-update box-padding">

@@ -6,6 +6,7 @@ use backend\models\RequestStatusSearch;
 use common\models\RequestStatus;
 use Yii;
 use yii\web\NotFoundHttpException;
+
 /**
  * RequestStatusController implements the CRUD actions for RequestStatus model.
  */

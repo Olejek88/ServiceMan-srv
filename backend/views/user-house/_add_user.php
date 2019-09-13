@@ -1,6 +1,5 @@
 <?php
 
-use common\models\TaskUser;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;

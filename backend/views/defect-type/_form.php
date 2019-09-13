@@ -1,10 +1,8 @@
 <?php
 
+use app\commands\MainFunctions;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use app\commands\MainFunctions;
-use common\models\EquipmentType;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\DefectType */

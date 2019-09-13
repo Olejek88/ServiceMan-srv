@@ -2,7 +2,6 @@
 /* @var $searchModel backend\models\RequestSearch */
 
 use common\models\Contragent;
-use common\models\Objects;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;

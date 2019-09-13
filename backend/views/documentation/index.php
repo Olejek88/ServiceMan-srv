@@ -2,8 +2,6 @@
 
 use common\models\Documentation;
 use common\models\DocumentationType;
-use common\models\Equipment;
-use common\models\EquipmentType;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;

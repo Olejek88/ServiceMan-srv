@@ -13,22 +13,22 @@ use common\models\Journal;
 use common\models\Measure;
 use common\models\Message;
 use common\models\Photo;
-use common\models\User;
 use common\models\TaskUser;
+use common\models\User;
 use common\models\UserContragent;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
+use Exception;
+use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\HttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\UploadedFile;
-use Throwable;
-use yii\base\InvalidConfigException;
-use Exception;
 
 /**
  * UsersController implements the CRUD actions for Users model.

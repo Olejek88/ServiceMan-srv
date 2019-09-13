@@ -2,7 +2,6 @@
 /* @var $task */
 
 use common\components\MainFunctions;
-use common\models\Request;
 use kartik\detail\DetailView;
 use yii\helpers\Html;
 

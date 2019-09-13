@@ -1,13 +1,13 @@
 <?php
 namespace backend\controllers;
 
+use backend\models\TaskSearchType;
+use common\models\TaskType;
 use Exception;
+use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
-use common\models\TaskType;
-use backend\models\TaskSearchType;
-use Throwable;
 
 /**
  * TaskTypeController implements the CRUD actions for TaskType model.

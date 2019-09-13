@@ -8,13 +8,13 @@ use common\models\Message;
 use common\models\Users;
 use Exception;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
-use yii\base\InvalidConfigException;
 
 /**
  * MessageController implements the CRUD actions for Message model.

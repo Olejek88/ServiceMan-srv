@@ -1,7 +1,10 @@
 <?php
 
 use common\components\MainFunctions;
-use common\models\TaskTemplate;use common\models\Users;use kartik\widgets\Select2;use yii\helpers\ArrayHelper;use yii\helpers\Html;
+use common\models\TaskTemplate;
+use kartik\widgets\Select2;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */

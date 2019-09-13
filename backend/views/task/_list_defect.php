@@ -1,11 +1,6 @@
 <?php
 /* @var $defects */
 
-use common\components\MainFunctions;
-use common\models\Request;
-use common\models\WorkStatus;
-use yii\helpers\Html;
-
 ?>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

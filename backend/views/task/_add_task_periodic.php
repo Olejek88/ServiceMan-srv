@@ -5,14 +5,9 @@
 /* @var $requestUuid */
 
 use common\components\MainFunctions;
-use common\models\Task;
-use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
-use common\models\TaskVerdict;
 use common\models\Users;
-use common\models\WorkStatus;
-use dosamigos\datetimepicker\DateTimePicker;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
 use yii\bootstrap\ActiveForm;

@@ -3,12 +3,11 @@
 /* @var $equipmentUuid */
 
 use common\components\MainFunctions;
-use common\models\Equipment;
 use common\models\EquipmentRegisterType;
 use common\models\Users;
+use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
 
 ?>
 <?php $form = ActiveForm::begin([

@@ -670,6 +670,7 @@ class ReferenceFunctions
     /**
      * @param $oid
      * @param $db Connection
+     * @throws Exception
      */
     public static function loadReferences1($oid, $db)
     {
@@ -682,7 +683,7 @@ class ReferenceFunctions
                 'taskTemplateUuid' => null,
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
-            ]);
+            ])->execute();
         }
     }
 

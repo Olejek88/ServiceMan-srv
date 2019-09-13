@@ -1,12 +1,8 @@
 <?php
 /* @var $searchModel backend\models\ObjectsSearch */
 
-use common\models\EquipmentType;
-use common\models\ObjectStatus;
 use common\models\ObjectType;
-use kartik\editable\Editable;
 use kartik\grid\GridView;
-use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
