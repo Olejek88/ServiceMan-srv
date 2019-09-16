@@ -64,7 +64,7 @@ echo FancytreeWidget::widget([
         'source' => $contragents,
         'extensions' => ['dnd', "glyph", "table", 'contextMenu'],
         'checkbox' => true,
-        'selectMode' => 3,
+        'selectMode' => 2,
         'glyph' => 'glyph_opts',
         'edit' => [
             'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],

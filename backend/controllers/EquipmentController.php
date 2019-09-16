@@ -34,7 +34,6 @@ use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
-use yii\web\UploadedFile;
 
 /**
  * EquipmentController implements the CRUD actions for Equipment model.
@@ -956,32 +955,6 @@ class EquipmentController extends ZhkhController
     }
 
     /**
-     * Сохраняем файл согласно нашим правилам.
-     *
-     * @param Equipment $model Шаблон задачи
-     * @param UploadedFile $file Файл
-     *
-     * @return string | null
-     */
-    private static function _saveFile($model, $file)
-    {
-        $dir = '/storage/main/';
-        if (!is_dir($dir)) {
-            if (!mkdir($dir, 0755, true)) {
-                return null;
-            }
-        }
-
-        $targetDir = Yii::getAlias($dir);
-        $fileName = $model->uuid . '.' . $file->extension;
-        if ($file->saveAs($targetDir . $fileName)) {
-            return $fileName;
-        } else {
-            return null;
-        }
-    }
-
-    /**
      * @return bool|string
      * @throws Exception
      * @throws InvalidConfigException
@@ -1412,20 +1385,21 @@ class EquipmentController extends ZhkhController
     }
 
     /**
-     * @param $equipment
+     * @param Equipment $equipment
      * @param $documentations
      * @param $userSystems
      * @param $tasks
      * @param $source
      * @return array
-     * @throws Exception
-     * @throws InvalidConfigException
      */
     public function addEquipment($equipment, &$documentations, &$userSystems, &$tasks, $source)
     {
         $count = 0;
+        $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystem']['uuid'];
+        $equipmentUuid = $equipment->uuid;
+        $equipmentTypeUuid = $equipment['equipmentTypeUuid'];
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
+            ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
             [
                 'title' => 'Добавить заявку',
                 'data-toggle' => 'modal',
@@ -1433,7 +1407,7 @@ class EquipmentController extends ZhkhController
             ]
         );
         foreach ($userSystems as $userSystem) {
-            if ($userSystem['equipmentSystemUuid'] == $equipment['equipmentType']['equipmentSystem']['uuid']) {
+            if ($userSystem['equipmentSystemUuid'] == $equipmentSystemUuid) {
                 if ($count > 0) $userEquipmentName .= ', ';
                 $userEquipmentName .= $userSystem['user']['name'];
                 $count++;
@@ -1443,7 +1417,7 @@ class EquipmentController extends ZhkhController
 
         $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
         foreach ($tasks as $task) {
-            if ($task['equipmentUuid'] == $equipment['uuid']) {
+            if ($task['equipmentUuid'] == $equipmentUuid) {
                 if (strlen($task['taskTemplate']->title) > 50)
                     $title = substr($task['taskTemplate']->title, 0, 50);
                 else
@@ -1453,10 +1427,11 @@ class EquipmentController extends ZhkhController
                     $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
                 else
                     $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
+                break;
             }
         }
         $task = Html::a($task_text,
-            ['select-task', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
+            ['select-task', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
             [
                 'title' => 'Создать задачу обслуживания',
                 'data-toggle' => 'modal',
@@ -1465,7 +1440,7 @@ class EquipmentController extends ZhkhController
         );
         $status = MainFunctions::getColorLabelByStatus($equipment['equipmentStatus'], "equipment");
         $status = Html::a($status,
-            ['/equipment/status', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
+            ['/equipment/status', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
             [
                 'title' => 'Сменить статус',
                 'data-toggle' => 'modal',
@@ -1475,14 +1450,14 @@ class EquipmentController extends ZhkhController
 
         $docs = '';
         foreach ($documentations as $documentation) {
-            if ($documentation['equipmentUuid'] == $equipment['uuid']) {
+            if ($documentation['equipmentUuid'] == $equipmentUuid) {
                 $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
                     [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
                 );
             }
         }
         $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
-            ['/defect/list', 'equipmentUuid' => $equipment['uuid']],
+            ['/defect/list', 'equipmentUuid' => $equipmentUuid],
             [
                 'title' => 'Дефекты',
                 'data-toggle' => 'modal',
@@ -1498,11 +1473,11 @@ class EquipmentController extends ZhkhController
                         'data-target' => '#modalChange',
                     ]
                 );*/
-        if ($equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER ||
-            $equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_HVS_COUNTER ||
-            $equipment['equipmentTypeUuid']==EquipmentType::EQUIPMENT_HEAT_COUNTER) {
+        if ($equipmentTypeUuid == EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER ||
+            $equipmentTypeUuid == EquipmentType::EQUIPMENT_HVS_COUNTER ||
+            $equipmentTypeUuid == EquipmentType::EQUIPMENT_HEAT_COUNTER) {
             $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
-                ['/equipment/measures', 'equipmentUuid' => $equipment['uuid']],
+                ['/equipment/measures', 'equipmentUuid' => $equipmentUuid],
                 [
                     'title' => 'Измерения',
                     'data-toggle' => 'modal',
@@ -1510,7 +1485,7 @@ class EquipmentController extends ZhkhController
                 ]
             );
             $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-                ['/measure/add', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
+                ['/measure/add', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
                 [
                     'title' => 'Добавить измерение',
                     'data-toggle' => 'modal',
@@ -1519,7 +1494,7 @@ class EquipmentController extends ZhkhController
             );
         }
         $links .= Html::a('<span class="fa fa-book"></span>&nbsp',
-            ['/equipment-register/list', 'equipmentUuid' => $equipment['uuid']],
+            ['/equipment-register/list', 'equipmentUuid' => $equipmentUuid],
             [
                 'title' => 'Журнал событий',
                 'data-toggle' => 'modal',
@@ -1527,7 +1502,7 @@ class EquipmentController extends ZhkhController
             ]
         );
         $links .= Html::a('<span class="fa fa-list"></span>&nbsp',
-            ['/equipment/operations', 'equipmentUuid' => $equipment['uuid']],
+            ['/equipment/operations', 'equipmentUuid' => $equipmentUuid],
             [
                 'title' => 'История работ',
                 'data-toggle' => 'modal',
@@ -1541,7 +1516,7 @@ class EquipmentController extends ZhkhController
             $serial = 'отсутствует';
         }
         $serial = Html::a($serial,
-            ['/equipment/serial', 'equipmentUuid' => $equipment['uuid']],
+            ['/equipment/serial', 'equipmentUuid' => $equipmentUuid],
             [
                 'title' => 'Сменить серийный номер',
                 'data-toggle' => 'modal',
@@ -1554,7 +1529,7 @@ class EquipmentController extends ZhkhController
             'title' => $equipment["title"],
             'tag' => $equipment['tag'],
             'type' => 'equipment',
-            'uuid' => $equipment['uuid'],
+            'uuid' => $equipmentUuid,
             'type_uuid' => $equipment['equipmentType']['uuid'],
             'docs' => $docs,
             'start' => "" . date_format(date_create($equipment['inputDate']), "d-m-Y"),
