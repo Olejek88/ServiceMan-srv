@@ -142,6 +142,6 @@ class Objects extends ZhkhActiveRecord
 
     public function getFullTitle()
     {
-        return 'ул.' . $this->house['street']['title'] . ', д.' . $this->house['number'] . ' - ' . $this->title;
+        return 'ул.' . $this->house->street->title . ', д.' . $this->house->number . ' - ' . $this->title;
     }
 }

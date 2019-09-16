@@ -116,6 +116,11 @@ class EquipmentController extends ZhkhController
         );
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionMeasure()
     {
         $searchModel = new EquipmentSearch();
@@ -365,6 +370,10 @@ class EquipmentController extends ZhkhController
     public function actionTree()
     {
         $fullTree = array();
+        $documentations = Documentation::find()->all();
+        $userSystems = UserSystem::find()->all();
+        $tasks = Task::find()->orderBy('changedAt DESC')->all();
+
         $types = EquipmentType::find()
             ->select('*')
             ->orderBy('title')
@@ -385,7 +394,7 @@ class EquipmentController extends ZhkhController
                 ->all();
             foreach ($equipments as $equipment) {
                 $fullTree['children'][$childIdx]['children'][] =
-                    self::addEquipment($equipment, "../equipment/tree");
+                    self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
             }
         }
         $users = Users::find()->all();
@@ -542,9 +551,13 @@ class EquipmentController extends ZhkhController
     public function actionTreeUser()
     {
         ini_set('memory_limit', '-1');
+        $documentations = Documentation::find()->all();
+        $userSystems = UserSystem::find()->all();
+        $tasks = Task::find()->orderBy('changedAt DESC')->all();
+
         $fullTree = array();
         $users = Users::find()
-            ->select('*')
+            ->select('_id,uuid,name')
             ->where('name != "sUser"')
             ->andWhere('name != "Иванов О.А."')
             ->orderBy('_id')
@@ -577,7 +590,7 @@ class EquipmentController extends ZhkhController
                         $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                         foreach ($equipments as $equipment) {
                             $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                                self::addEquipment($equipment, "../equipment/tree-street");
+                                self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
                         }
                     }
                 }
@@ -606,6 +619,10 @@ class EquipmentController extends ZhkhController
     public function actionTreeStreet()
     {
         ini_set('memory_limit', '-1');
+        $documentations = Documentation::find()->all();
+        $userSystems = UserSystem::find()->all();
+        $tasks = Task::find()->orderBy('changedAt DESC')->all();
+
         $fullTree = array();
         $streets = Street::find()
             ->select('*')
@@ -623,7 +640,7 @@ class EquipmentController extends ZhkhController
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $houses = House::find()->select('uuid,number')->where(['streetUuid' => $street['uuid']])
+            $houses = House::find()->select('_id,uuid,number')->where(['streetUuid' => $street['uuid']])
                 ->andWhere(['deleted' => false])
                 ->orderBy('number')->all();
             foreach ($houses as $house) {
@@ -672,7 +689,7 @@ class EquipmentController extends ZhkhController
                         ->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            self::addEquipment($equipment, "../equipment/tree-street");
+                            self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree-street");
                     }
                 }
             }
@@ -747,6 +764,10 @@ class EquipmentController extends ZhkhController
         }
     }
 
+    /**
+     * @param $documentation
+     * @return string
+     */
     static function getDocDir($documentation)
     {
         $dir = 'storage/doc/';
@@ -772,6 +793,11 @@ class EquipmentController extends ZhkhController
         return 0;
     }
 
+    /**
+     * @return int
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionDeleted()
     {
         if (isset($_POST["type"]))
@@ -1049,6 +1075,11 @@ class EquipmentController extends ZhkhController
         return false;
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionSelectTask()
     {
         if (isset($_GET["equipmentUuid"])) {
@@ -1082,9 +1113,6 @@ class EquipmentController extends ZhkhController
     {
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
-            if (isset($_POST["uuid"]))
-                $uuid = $_POST["uuid"];
-            else $uuid = 0;
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
@@ -1385,17 +1413,16 @@ class EquipmentController extends ZhkhController
 
     /**
      * @param $equipment
+     * @param $documentations
+     * @param $userSystems
+     * @param $tasks
      * @param $source
      * @return array
      * @throws Exception
      * @throws InvalidConfigException
-     * @throws Exception
      */
-    public function addEquipment($equipment, $source)
+    public function addEquipment($equipment, &$documentations, &$userSystems, &$tasks, $source)
     {
-        $userSystems = UserSystem::find()
-            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystem']['uuid']])
-            ->all();
         $count = 0;
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
             ['/request/form', 'equipmentUuid' => $equipment['uuid'], 'source' => 'tree'],
@@ -1406,28 +1433,27 @@ class EquipmentController extends ZhkhController
             ]
         );
         foreach ($userSystems as $userSystem) {
-            if ($count > 0) $userEquipmentName .= ', ';
-            $userEquipmentName .= $userSystem['user']['name'];
-            $count++;
+            if ($userSystem['equipmentSystemUuid'] == $equipment['equipmentType']['equipmentSystem']['uuid']) {
+                if ($count > 0) $userEquipmentName .= ', ';
+                $userEquipmentName .= $userSystem['user']['name'];
+                $count++;
+            }
         }
         if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
 
-        $tasks = Task::find()
-            ->select('*')
-            ->where(['equipmentUuid' => $equipment['uuid']])
-            ->orderBy('changedAt DESC')
-            ->one();
         $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
-        if ($tasks) {
-            if (strlen($tasks['taskTemplate']->title) > 50)
-                $title = substr($tasks['taskTemplate']->title, 0, 50);
-            else
-                $title = $tasks['taskTemplate']->title;
-            $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
-            if ($tasks['workStatusUuid'] == WorkStatus::COMPLETE)
-                $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
-            else
-                $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
+        foreach ($tasks as $task) {
+            if ($task['equipmentUuid'] == $equipment['uuid']) {
+                if (strlen($task['taskTemplate']->title) > 50)
+                    $title = substr($task['taskTemplate']->title, 0, 50);
+                else
+                    $title = $task['taskTemplate']->title;
+                $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
+                if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                    $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
+                else
+                    $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
+            }
         }
         $task = Html::a($task_text,
             ['select-task', 'equipmentUuid' => $equipment['uuid'], 'source' => $source],
@@ -1447,12 +1473,13 @@ class EquipmentController extends ZhkhController
             ]
         );
 
-        $documentations = Documentation::find()->where(['equipmentUuid' => $equipment['uuid']])->all();
         $docs = '';
         foreach ($documentations as $documentation) {
-            $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
-            );
+            if ($documentation['equipmentUuid'] == $equipment['uuid']) {
+                $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                    [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
+                );
+            }
         }
         $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipment['uuid']],

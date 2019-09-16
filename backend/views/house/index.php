@@ -20,7 +20,6 @@ $this->title = Yii::t('app', 'Дом');
                 <li class=""><a href="/city">Города</a></li>
                 <li class=""><a href="/street">Улицы</a></li>
                 <li class="active"><a href="/house">Дома</a></li>
-                <li class=""><a href="/object">Объекты</a></li>
             </ul>
         </div>
         <div class="panel-body">

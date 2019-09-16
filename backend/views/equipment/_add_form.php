@@ -79,8 +79,8 @@ $this->registerJs('
     echo Html::hiddenInput("source", $source);
     echo Html::hiddenInput("type", "equipment");
 
-    if (isset($objectUuid)) {
-        echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
+    if ($equipment['uuid']) {
+        echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $equipment['objectUuid']])->label(false);
     } else {
         echo $this->render('../object/_select_object_subform', ['form' => $form]);
         echo $form->field($equipment, 'objectUuid')->widget(\kartik\widgets\Select2::class,
@@ -96,8 +96,8 @@ $this->registerJs('
             ]);
     }
 
-    if (isset($equipmentTypeUuid)) {
-        echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
+    if ($equipment['equipmentTypeUuid']) {
+        echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipment['equipmentTypeUuid']])->label(false);
     } else {
         $equipmentType = EquipmentType::find()->all();
         $items = ArrayHelper::map($equipmentType, 'uuid', 'title');
