@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\UserArm;
 use backend\models\UsersSearch;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Alarm;
 use common\models\Contragent;
 use common\models\ContragentType;
@@ -71,8 +72,9 @@ class UsersController extends ZhkhController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        if ($model->user_id != Yii::$app->user->id ||
-            !Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        if ($model->user_id == Yii::$app->user->id ||
+            Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        } else {
             $this->redirect('index');
         }
 
@@ -111,10 +113,13 @@ class UsersController extends ZhkhController
         $userArm->scenario = UserArm::SCENARIO_UPDATE;
         $userArm->load($model->user->attributes, '');
         $userArm->load($model->attributes, '');
-        if ($model->type == Users::USERS_WORKER) {
+        try {
             list($tagType, $pin) = explode(':', $userArm->pin);
             $userArm->tagType = $tagType;
             $userArm->pin = $pin;
+        } catch (Exception $e) {
+            $userArm->tagType = Tag::TAG_TYPE_PIN;
+            $userArm->pin = '';
         }
 
         $am = Yii::$app->getAuthManager();
@@ -165,12 +170,18 @@ class UsersController extends ZhkhController
             $user->auth_key = Yii::$app->security->generateRandomString();
             $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
             $user->email = $model->email;
+            $user->status = $model->status;
             if ($user->save()) {
                 $users = new Users();
                 $users->uuid = MainFunctions::GUID();
                 $users->name = $model->name;
                 $users->type = $model->type;
-                $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
+                if (in_array($users->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
+                    $users->pin = $model->tagType . ':' . $model->pin;
+                } else {
+                    $users->pin = Tag::TAG_TYPE_PIN . ':';
+                }
+
                 $users->active = 1;
                 $users->whoIs = $model->whoIs;
                 $users->contact = $model->contact;
@@ -362,7 +373,7 @@ class UsersController extends ZhkhController
             }
 
             $users->load($model->attributes, '');
-            if ($users->type == Users::USERS_WORKER) {
+            if (in_array($users->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
                 $users->pin = $model->tagType . ':' . $model->pin;
             }
 
@@ -396,10 +407,13 @@ class UsersController extends ZhkhController
             }
         }
 
-        if ($model->type == Users::USERS_WORKER) {
+        try {
             list($tagType, $pin) = explode(':', $model->pin);
             $model->tagType = $tagType;
             $model->pin = $pin;
+        } catch (Exception $e) {
+            $model->tagType = Tag::TAG_TYPE_PIN;
+            $model->pin = '';
         }
 
         // текущая роль пользователя
