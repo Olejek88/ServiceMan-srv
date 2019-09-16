@@ -10,6 +10,8 @@
 /* @var $wayUsers */
 
 $this->title = Yii::t('app', 'Карта');
+$this->registerJs('$(window).on("resize", function () { $("#mapid").height($(window).height()-40); map.invalidateSize(); }).trigger("resize");');
+
 ?>
 
 <div id="page-preloader">

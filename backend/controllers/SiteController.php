@@ -28,6 +28,7 @@ use common\models\Street;
 use common\models\Task;
 use common\models\TaskUser;
 use common\models\User;
+use common\models\UserContragent;
 use common\models\Users;
 use common\models\WorkStatus;
 use Throwable;
@@ -422,7 +423,15 @@ class SiteController extends Controller
         $contragents = Contragent::find()
             ->where(['contragentTypeUuid' => [ContragentType::WORKER, ContragentType::EMPLOYEE, ContragentType::CONTRACTOR]])
             ->all();
-
+        $workersCount = 0;
+        foreach ($contragents as $contragent) {
+            $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
+            if ($userContragent) {
+                if ($userContragent['user']['type'] == Users::USERS_WORKER) {
+                    $workersCount++;
+                }
+            }
+        }
         /**
          * [userList description]
          *
@@ -582,6 +591,7 @@ class SiteController extends Controller
                 'ways' => $ways,
                 'coordinates' => $coordinates,
                 'wayUsers' => $wayUsers,
+                'workersCount' => $workersCount,
                 'lats' => $lats,
                 'gps' => $gps,
                 'gps2' => $gps2

@@ -5,6 +5,7 @@
  * @var $houseCount
  * @var $equipmentTypeCount
  * @var $contragentCount
+ * @var $workersCount
  * @var $measures
  * @var $equipments
  * @var $contragents
@@ -247,7 +248,7 @@ $this->title = Yii::t('app', 'Сводная');
                             var houseIcon = L.icon({
                                 iconUrl: '/images/marker_house.png',
                                 iconSize: [32, 51],
-                                iconAnchor: [22, 94],
+                                iconAnchor: [14, 51],
                                 popupAnchor: [-3, -76]
                             });
 
@@ -309,7 +310,7 @@ $this->title = Yii::t('app', 'Сводная');
                         <h3 class="box-title">Исполнители</h3>
 
                         <div class="box-tools pull-right">
-                            <span class="label label-info">Исполнителей: <?= count($users) ?></span>
+                            <span class="label label-info">Исполнителей: <?= $workersCount ?></span>
                             <button type="button" class="btn btn-box-tool" data-widget="collapse">
                                 <i class="fa fa-minus"></i>
                             </button>
@@ -326,14 +327,16 @@ $this->title = Yii::t('app', 'Сводная');
                             foreach ($contragents as $contragent) {
                                 $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
                                 if ($userContragent) {
-                                    $path = $userContragent['user']->getPhotoUrl();
-                                    if (!$path || !$userContragent['user']['image']) {
-                                        $path = '/images/unknown.png';
+                                    if ($userContragent['user']['type'] == Users::USERS_WORKER) {
+                                        $path = $userContragent['user']->getPhotoUrl();
+                                        if (!$path || !$userContragent['user']['image']) {
+                                            $path = '/images/unknown.png';
+                                        }
+                                        print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
+                                        echo Html::a(Html::encode($userContragent['user']['name']),
+                                            ['/users/view', '_id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
+                                        echo '<span class="users-list-date">' . $userContragent['user']['createdAt'] . '</span></li>';
                                     }
-                                    print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
-                                    echo Html::a(Html::encode($userContragent['user']['name']),
-                                        ['/users/view', '_id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
-                                    echo '<span class="users-list-date">' . $userContragent['user']['createdAt'] . '</span></li>';
                                 }
                                 /*                                $path = $user->getPhotoUrl();
                             if (!$path || !$user['image']) {

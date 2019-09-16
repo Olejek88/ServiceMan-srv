@@ -44,6 +44,14 @@ class RequestController extends ZhkhController
                 MainFunctions::register('request', 'Изменен статус заявки',
                     'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'], $model['uuid']);
             }
+            if ($_POST['editableAttribute'] == 'type') {
+                $model['type'] = $_POST['Request'][$_POST['editableIndex']]['type'];
+                if ($model['type'] == 0)
+                    $type = "Бесплатная заявка";
+                else $type = "Платная заявка";
+                MainFunctions::register('request', 'Изменен тип заявки',
+                    'Комментарий: изменен тип заявки №' . $model['_id'] . ' на ' . $type, $model['uuid']);
+            }
             if ($_POST['editableAttribute'] == 'comment') {
                 $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
                 MainFunctions::register('request', 'Изменен комментарий заявки',
