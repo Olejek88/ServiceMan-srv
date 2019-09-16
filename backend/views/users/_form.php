@@ -31,6 +31,13 @@ use common\components\Tag;
             $(".field-userarm-pin").show();
             $("#userarm-password").trigger("change");
             $(".field-userarm-password").hide();
+        } else if($(this).val() == ' . Users::USERS_ARM_WORKER . ') {
+            console.log("type both");
+            $(".field-userarm-password").show();
+            $("#userarm-password").trigger("change");
+            $(".field-userarm-tagtype").show();
+            $(".field-userarm-pin").show();
+            $("#userarm-pin").trigger("change");
         }
     });
     $("#userarm-type").trigger("change");', View::POS_READY);
@@ -47,6 +54,7 @@ use common\components\Tag;
     $typeList = [
         Users::USERS_ARM => 'Оператор',
         Users::USERS_WORKER => 'Исполнитель',
+        Users::USERS_ARM_WORKER => 'Оператор/Исполнитель',
     ];
     echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
         ->dropDownList($typeList);

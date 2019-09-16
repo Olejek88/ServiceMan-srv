@@ -41,6 +41,7 @@ class Users extends ZhkhActiveRecord
 
     public const USERS_ARM = 1;
     public const USERS_WORKER = 2;
+    public const USERS_ARM_WORKER = 3;
 
     /**
      * Behaviors.
@@ -229,21 +230,25 @@ class Users extends ZhkhActiveRecord
      */
     public function checkLimit($attr, $param)
     {
-        if ($this->type == Users::USERS_WORKER) {
+        if (in_array($this->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
             $limit = (new Query())
                 ->select('*')
                 ->from('{{%system_settings}}')
                 ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
                 ->one();
             if ($limit == null) {
-                $this->addError('type', 'Создание мобильных пользователей ограничено.');
+                $this->addError($attr, 'Создание мобильных пользователей ограничено.');
             }
 
-            $users = Users::find()->where(['type' => Users::USERS_WORKER, 'user.status' => User::STATUS_ACTIVE])
+            $users = Users::find()->where([
+                'type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER],
+                'user.status' => User::STATUS_ACTIVE,])
+                ->where(['!=', 'users._id', $this->_id])
                 ->leftJoin('user', 'users.user_id = user._id')
                 ->all();
-            if (count($users) >= $limit['value'] && $this->user->status == User::STATUS_ACTIVE) {
-                $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+
+            if (count($users) + 1 > $limit['value'] && $this->user->status == User::STATUS_ACTIVE) {
+                $this->addError($attr, 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
             }
         }
     }

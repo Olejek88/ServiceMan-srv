@@ -63,7 +63,7 @@ class LoginForm extends Model
     {
         if ($this->user === null) {
             $this->user = User::findByUuid($this->login);
-            if ($this->user->users->type != Users::USERS_WORKER) {
+            if (!in_array($this->user->users->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
                 return null;
             }
         }
