@@ -276,7 +276,7 @@ class TaskTemplateEquipmentController extends ZhkhController
      */
     public function actionCalendarGantt()
     {
-        MainFunctions::checkTasks(Users::getCurrentOid());
+        MainFunctions::checkTasks();
         $events = [];
         $categories = [];
         $all_task_equipment_count = 0;

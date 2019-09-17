@@ -19,7 +19,9 @@ use common\models\UserHouse;
 use common\models\Users;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\console\Controller;
+use yii\db\Exception;
 
 class ExportController extends Controller
 {
@@ -482,6 +484,16 @@ class ExportController extends Controller
                 $subject->save();
             }
         }
+    }
+
+    /**
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionCheck()
+    {
+        echo ('[' . self::LOG_ID . '] start') . PHP_EOL;
+        MainFunctions::checkTasks();
     }
 
     private function Store2House($type, $title, $streetValue, $houseValue, $cityFirst, $flatValue, $houseStatus,

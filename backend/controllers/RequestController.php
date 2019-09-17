@@ -232,10 +232,10 @@ class RequestController extends ZhkhController
                     $user = $model['equipment']->getUser();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, $user['uuid'],null);
+                            $model->comment, $model->oid, $user['uuid'], null, time());
                     else
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, null,null);
+                            $model->comment, $model->oid, null, null, time());
                     if ($task) {
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .

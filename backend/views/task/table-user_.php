@@ -92,9 +92,9 @@ $gridColumns = [
                     $stat['uuid']==WorkStatus::NEW)
                     $color='background-color: gray';
                 if ($stat['uuid']==WorkStatus::IN_WORK)
-                    $color='background-color: yellow';
+                    $color = 'background-color: gray';
                 if ($stat['uuid']==WorkStatus::UN_COMPLETE)
-                    $color='background-color: lightred';
+                    $color = 'background-color: orange';
                 if ($stat['uuid']==WorkStatus::COMPLETE)
                     $color='background-color: green';
                 $list[$stat['uuid']] = $stat['title'];
@@ -143,7 +143,7 @@ $gridColumns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->taskDate))
-                return date("d-m-Y h:m", strtotime($data->taskDate));
+                return date("d-m-Y H:i", strtotime($data->taskDate));
             else
                 return 'не назначена';
         },
@@ -173,7 +173,7 @@ $gridColumns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->startDate))
-                return date("d-m-Y h:m", strtotime($data->startDate));
+                return date("d-m-Y H:i", strtotime($data->startDate));
             else
                 return 'не начата';
         }
@@ -190,7 +190,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate))
-                return date("d-m-Y h:m", strtotime($data->endDate));
+                return date("d-m-Y H:i", strtotime($data->endDate));
             else
                 return 'не закрыта';
         }

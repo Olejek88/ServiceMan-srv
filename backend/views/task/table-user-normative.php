@@ -99,7 +99,7 @@ $gridColumns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->startDate))
-                return date("d-m-Y h:m", strtotime($data->startDate));
+                return date("d-m-Y H:i", strtotime($data->startDate));
             else
                 return 'не начата';
         }
@@ -116,7 +116,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate))
-                return date("d-m-Y h:m", strtotime($data->endDate));
+                return date("d-m-Y H:i", strtotime($data->endDate));
             else
                 return 'не закрыта';
         }

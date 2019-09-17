@@ -99,12 +99,12 @@ if (isset($_GET['system_select']))
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $data['taskVerdict']['title'] . '</td>';
                 if (strtotime($data->taskDate))
-                    $value = date("d-m-Y h:m", strtotime($data->taskDate));
+                    $value = date("d-m-Y H:i", strtotime($data->taskDate));
                 else
                     $value = 'не назначена';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
                 if (strtotime($data->endDate))
-                    $value = date("d-m-Y h:m", strtotime($data->endDate));
+                    $value = date("d-m-Y H:i", strtotime($data->endDate));
                 else
                     $value = 'не закрыта';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
@@ -158,12 +158,12 @@ if (isset($_GET['system_select']))
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $data['taskVerdict']['title'] . '</td>';
                 if (strtotime($data->taskDate))
-                    $value = date("d-m-Y h:m", strtotime($data->taskDate));
+                    $value = date("d-m-Y H:i", strtotime($data->taskDate));
                 else
                     $value = 'не назначена';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
                 if (strtotime($data->endDate))
-                    $value = date("d-m-Y h:m", strtotime($data->endDate));
+                    $value = date("d-m-Y H:i", strtotime($data->endDate));
                 else
                     $value = 'не закрыта';
                 echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';

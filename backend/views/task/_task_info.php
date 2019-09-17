@@ -39,11 +39,11 @@ $title = 'Задача №' . $task['_id'];
                 [
                     'label' => 'Дата назначения',
                     'attribute' => 'taskDate',
-                    'value' => date("d-m-Y H:m", strtotime($task->taskDate))
+                    'value' => date("d-m-Y H:i", strtotime($task->taskDate))
                 ],
                 [
                     'label' => 'Срок',
-                    'value' => date("d-m-Y H:m", strtotime($task->deadlineDate))
+                    'value' => date("d-m-Y H:i", strtotime($task->deadlineDate))
                 ],
                 [
                     'label' => 'Статус',
@@ -78,11 +78,11 @@ $title = 'Задача №' . $task['_id'];
                 ],
                 [
                     'label' => 'Дата начала',
-                    'value' => date("d-m-Y H:m", strtotime($task->startDate))
+                    'value' => date("d-m-Y H:i", strtotime($task->startDate))
                 ],
                 [
                     'label' => 'Дата завершения',
-                    'value' => date("d-m-Y H:m", strtotime($task->endDate))
+                    'value' => date("d-m-Y H:i", strtotime($task->endDate))
                 ]
             ],
         ]
