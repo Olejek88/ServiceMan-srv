@@ -233,11 +233,12 @@ class MainFunctions
      * @param $oid
      * @param $userUuid
      * @param $model
+     * @param $start
      * @return Task|null
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model)
+    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model, $start)
     {
         date_default_timezone_set('Asia/Yekaterinburg');
         $task = new Task();
@@ -247,13 +248,16 @@ class MainFunctions
         $task->equipmentUuid = $equipmentUuid;
         $task->workStatusUuid = WorkStatus::NEW;
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
-        $task->taskDate = date('Y-m-d H:i:s',time());
+        $task->taskDate = date('Y-m-d H:i:s', $start);
         if ($taskTemplate['normative'] == 0)
             $task->deadlineDate = date('Y-m-d H:i:s', time() + 1800);
         else
             $task->deadlineDate = date('Y-m-d H:i:s', time() + $taskTemplate['normative'] * 3600);
-        $accountUser = Yii::$app->user->identity;
-        $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
+
+        $currentUser = Users::find()
+            ->where(['oid' => $oid])
+            ->orderBy('_id DESC')
+            ->one();
         $task->authorUuid = $currentUser['uuid'];
         $task->comment = $comment;
         if ($model) {
@@ -311,7 +315,7 @@ class MainFunctions
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function checkTasks($oid)
+    public static function checkTasks()
     {
         $today = time();
         $equipments = Equipment::find()->all();
@@ -332,7 +336,7 @@ class MainFunctions
                             //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
                             MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
                                 $equipment['uuid'], 'Задача создана по план-графику',
-                                $oid, $user, null);
+                                $equipment['oid'], $user, null, $start);
                             $taskTemplateEquipment->last_date = $dates[$count];
                             $taskTemplateEquipment->save();
                             $taskTemplateEquipment->popDate();

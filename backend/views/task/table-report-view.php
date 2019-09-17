@@ -57,7 +57,7 @@ $gridColumns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->taskDate) > 0)
-                return date("d-m-Y H:m", strtotime($data->taskDate));
+                return date("d-m-Y H:i", strtotime($data->taskDate));
             else
                 return 'не назначен';
         },
@@ -232,7 +232,7 @@ $gridColumns = [
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->deadlineDate) > 0)
-                return date("d-m-Y H:m", strtotime($data->deadlineDate));
+                return date("d-m-Y H:i", strtotime($data->deadlineDate));
             else
                 return 'не задан';
         },
@@ -369,7 +369,8 @@ $gridColumns = [
             foreach ($images as $image) {
                 if ($cnt == 0)
                     $status .= '<br/>Изображения: ';
-                $path = 'storage/' . Users::getCurrentOid() . '/photo/' . $image['objectUuid'] . '/' . $image['uuid'];
+                $path = $image->getImageUrl();
+                //'storage/' . Users::getCurrentOid() . '/photo/' . $image['objectUuid'] . '/' . $image['uuid'];
                 $status .= Html::a('<span class="fa fa-photo"></span>', $path);
                 $cnt++;
             }
@@ -425,7 +426,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->startDate) > 0)
-                return date("d-m-Y H:m", strtotime($data->startDate));
+                return date("d-m-Y H:i", strtotime($data->startDate));
             else
                 return 'не начата';
         }
@@ -441,7 +442,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate) > 0)
-                return date("d-m-Y H:m", strtotime($data->endDate));
+                return date("d-m-Y H:i", strtotime($data->endDate));
             else
                 return 'не закончена';
         }

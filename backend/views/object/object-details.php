@@ -120,7 +120,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data['contragent']['changedAt']) > 0)
-                return date("d-m-Y h:m", strtotime($data['contragent']['changedAt']));
+                return date("d-m-Y H:i", strtotime($data['contragent']['changedAt']));
             else
                 return 'не открыт';
         }

@@ -34,12 +34,14 @@ class  TaskService extends Worker
      */
     public function run()
     {
+        date_default_timezone_set('Asia/Yekaterinburg');
         $this->log('run');
-        $organisations = Organization::find()->all();
-        foreach ($organisations as $organisation) {
-            $this->checkNewTask($organisation);
-            Yii::$app->db->close();
-        }
+        MainFunctions::checkTasks();
+        /*        $organisations = Organization::find()->all();
+                foreach ($organisations as $organisation) {
+                    $this->checkNewTask($organisation);
+                    Yii::$app->db->close();
+                }*/
     }
 
     /**

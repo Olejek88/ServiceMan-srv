@@ -46,7 +46,7 @@ $gridColumns = [
         'mergeHeader' => true,
         'content' => function ($data) {
             if (strtotime($data->createdAt)>0)
-                return date("d-m-Y H:m", strtotime($data->createdAt));
+                return date("d-m-Y H:i", strtotime($data->createdAt));
             else
                 return 'не открыт';
         },

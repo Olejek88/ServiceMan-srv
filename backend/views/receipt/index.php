@@ -44,7 +44,7 @@ $gridColumns = [
         'mergeHeader' => true,
         'value' => function ($model) {
             return "<span class='badge' style='background-color: gray; height: 22px'>".
-                date('d-m-Y H:m', strtotime($model->createdAt))."</span>";
+                date('d-m-Y H:i', strtotime($model->createdAt)) . "</span>";
 //            return $model->date;
         },
         'contentOptions' => [
@@ -194,7 +194,7 @@ $gridColumns = [
         ],
         'content' => function ($data) {
             if (strtotime($data->date))
-                return date("d-m-Y h:m", strtotime($data->date));
+                return date("d-m-Y H:i", strtotime($data->date));
             else
                 return 'не назначен';
         },

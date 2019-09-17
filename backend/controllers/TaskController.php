@@ -740,7 +740,7 @@ class TaskController extends ZhkhController
                 }
             }
             $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
-                $model->comment, $model->oid, $_POST['userUuid'], $model);
+                $model->comment, $model->oid, $_POST['userUuid'], $model, time());
             if (isset($_POST["defectUuid"]) && $task) {
                 $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
                 if ($defect) {
@@ -1023,7 +1023,7 @@ class TaskController extends ZhkhController
                     $user = $selected_user['name'];
                 else
                     $user = 'Не назначен';
-                $taskTemplateEquipment->formDates();
+                //$taskTemplateEquipment->formDates();
                 $dates = $taskTemplateEquipment->getDates();
                 if ($dates) {
                     $count = 0;
@@ -1221,7 +1221,7 @@ class TaskController extends ZhkhController
                 ->one();
             if ($taskUser) {
                 $task = MainFunctions::createTask($task['taskTemplate'], $task['equipmentUuid'],
-                    $task['comment'], $task['oid'], $taskUser['userUuid'], null);
+                    $task['comment'], $task['oid'], $taskUser['userUuid'], null, time());
                 MainFunctions::register('task', 'Создана задача',
                     '<a class="btn btn-default btn-xs">' . $task['taskTemplate']['taskType']['title'] . '</a> ' .
                     $task['taskTemplate']['title'] . '<br/>' .

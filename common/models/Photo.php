@@ -163,7 +163,7 @@ class Photo extends ActiveRecord implements IPhoto
 
         $localPath = $org->_id . '/' . self::$_IMAGE_ROOT . '/' . $this->objectUuid . '/' . $this->uuid . '.jpg';
         if (file_exists(Yii::getAlias('@storage/' . $localPath))) {
-            $url = $localPath;
+            $url = '/storage/' . $localPath;
         } else {
             $url = null;
         }

@@ -33,7 +33,7 @@ foreach ($equipment_registers as $register) {
     $event = '<li>';
     $event .= '<i class="fa fa-calendar bg-green"></i>';
     $event .= '<div class="timeline-item">';
-    $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:m", strtotime($register['date'])) . '</span>';
+    $event .= '<span class="time"><i class="fa fa-clock-o"></i> ' . date("M j, Y h:i", strtotime($register['date'])) . '</span>';
     $event .= '<h3 class="timeline-header"><a href="#">'.$register['description'].'</a></h3>';
     $event .= '<div class="timeline-body">' . $text . '</div>';
     $event .= '</div></li>';

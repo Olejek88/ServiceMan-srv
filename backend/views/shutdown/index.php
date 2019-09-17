@@ -65,7 +65,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->startDate)>0)
-                return date("d-m-Y h:m", strtotime($data->startDate));
+                return date("d-m-Y H:i", strtotime($data->startDate));
             else
                 return 'нет даты начала';
         },
@@ -77,7 +77,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy hh:mm',
-                'saveFormat' => 'php:Y-m-d h:m',
+                'saveFormat' => 'php:Y-m-d H:i',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -98,7 +98,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             if (strtotime($data->endDate)>0)
-                return date("d-m-Y h:m", strtotime($data->endDate));
+                return date("d-m-Y H:i", strtotime($data->endDate));
             else
                 return 'нет даты окончания';
         },
@@ -110,7 +110,7 @@ $gridColumns = [
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy hh:mm',
-                'saveFormat' => 'php:Y-m-d h:m',
+                'saveFormat' => 'php:Y-m-d H:i',
                 'options' => [
                     'pluginOptions' => [
                         'autoclose' => true
@@ -141,7 +141,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'content' => function ($data) {
-            return date("d-m-Y h:m", strtotime($data->changedAt));
+            return date("d-m-Y H:i", strtotime($data->changedAt));
         },
         'contentOptions' => [
             'class' => 'table_class'
