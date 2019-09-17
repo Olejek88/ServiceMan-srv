@@ -64,7 +64,7 @@ class UserArm extends Model
             [['username'], 'string', 'min' => 2, 'max' => 255, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['password'], 'required', 'on' => self::SCENARIO_DEFAULT, 'when' => function ($model) {
-                return $model->type == Users::USERS_ARM;
+                return $model->type == Users::USERS_ARM || $model->type == Users::USERS_ARM_WORKER;
             }, 'whenClient' => 'function(attribute, value){
               console.log("arm");
               return $("#userarm-type").val() == ' . Users::USERS_ARM . ';
@@ -74,7 +74,7 @@ class UserArm extends Model
 
             [['pin'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['pin'], 'required', 'on' => self::SCENARIO_DEFAULT, 'when' => function ($model) {
-                return $model->type == Users::USERS_WORKER;
+                return $model->type == Users::USERS_WORKER || $model->type == Users::USERS_ARM_WORKER;
             }, 'whenClient' => 'function(attribute, value){
               console.log("worker");
               return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
@@ -85,7 +85,7 @@ class UserArm extends Model
             [['name'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['type'], 'integer', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
-            [['type'], 'in', 'range' => [Users::USERS_ARM, Users::USERS_WORKER],
+            [['type'], 'in', 'range' => [Users::USERS_ARM, Users::USERS_WORKER, Users::USERS_ARM_WORKER],
                 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['type'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['type'], 'checkLimit', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
@@ -98,6 +98,7 @@ class UserArm extends Model
 
             [['status'], 'default', 'value' => User::STATUS_ACTIVE, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['status'], 'in', 'range' => [User::STATUS_ACTIVE, User::STATUS_DELETED], 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
+            [['status'], 'checkLimit', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['role'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['role'], 'string', 'max' => 128, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
@@ -113,7 +114,7 @@ class UserArm extends Model
                 Tag::TAG_TYPE_PIN, Tag::TAG_TYPE_GRAPHIC_CODE, Tag::TAG_TYPE_NFC, Tag::TAG_TYPE_UHF
             ], 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['tagType'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE], 'when' => function ($model) {
-                return $model->type == Users::USERS_WORKER;
+                return $model->type == Users::USERS_WORKER || $model->type == Users::USERS_ARM_WORKER;
             }, 'whenClient' => 'function(attribute, value){
               console.log("tagType");
               return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
@@ -152,21 +153,23 @@ class UserArm extends Model
      */
     public function checkLimit($attr, $param)
     {
-        if ($this->type == Users::USERS_WORKER) {
+        if (in_array($this->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
             $limit = (new Query())
                 ->select('*')
                 ->from('{{%system_settings}}')
                 ->where(['oid' => Users::getCurrentOid(), 'parameter' => 'workers_limit'])
                 ->one();
             if ($limit == null) {
-                $this->addError('type', 'Создание мобильных пользователей ограничено.');
+                $this->addError($attr, 'Создание мобильных пользователей ограничено.');
             }
 
-            $users = Users::find()->where(['type' => Users::USERS_WORKER, 'user.status' => User::STATUS_ACTIVE])
+            $users = Users::find()->where([
+                'type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER],
+                'user.status' => User::STATUS_ACTIVE,])
                 ->leftJoin('user', 'users.user_id = user._id')
                 ->all();
-            if (count($users) >= $limit['value']) {
-                $this->addError('type', 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
+            if (count($users) >= $limit['value'] && $this->status == User::STATUS_ACTIVE) {
+                $this->addError($attr, 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
             }
         }
     }
