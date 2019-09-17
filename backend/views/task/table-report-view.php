@@ -8,6 +8,7 @@ use common\components\MainFunctions;
 use common\models\Defect;
 use common\models\Measure;
 use common\models\Objects;
+use common\models\ObjectType;
 use common\models\Photo;
 use common\models\Request;
 use common\models\Settings;
@@ -212,7 +213,14 @@ $gridColumns = [
         'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['equipment']['object']->getFullTitle();
+            $house = $data['equipment']['object']['house'];
+            //$object->title
+            if ($data['equipment']['object'] != ObjectType::OBJECT_TYPE_FLAT)
+                return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' . $data['equipment']['title'];
+            else
+                return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' .
+                    $data['equipment']['object']['title'] . ' - ' .
+                    $data['equipment']['title'];
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(Objects::find()->orderBy('title')->all(),
@@ -317,14 +325,14 @@ $gridColumns = [
             $list = [];
             $statuses = WorkStatus::find()->orderBy('title')->all();
             foreach ($statuses as $stat) {
-                $color = 'background-color: white';
+                $color = 'background-color: gray';
                 if ($stat['uuid'] == WorkStatus::CANCELED ||
                     $stat['uuid'] == WorkStatus::NEW)
                     $color = 'background-color: gray';
                 if ($stat['uuid'] == WorkStatus::IN_WORK)
-                    $color = 'background-color: yellow';
+                    $color = 'background-color: gray';
                 if ($stat['uuid'] == WorkStatus::UN_COMPLETE)
-                    $color = 'background-color: lightred';
+                    $color = 'background-color: orange';
                 if ($stat['uuid'] == WorkStatus::COMPLETE)
                     $color = 'background-color: green';
                 $list[$stat['uuid']] = $stat['title'];

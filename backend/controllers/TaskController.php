@@ -507,12 +507,10 @@ class TaskController extends ZhkhController
                 ->where(['userUuid' => $current_user['uuid']])
                 ->all();
             foreach ($taskUsers as $taskUser) {
-                $taskComplete += Task::find()
-                    ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['>', 'taskdate', $start_date])
-                    ->andWhere(['<', 'taskdate', $end_date])
-                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                    ->count();
+                if ($taskUser['task']['taskDate'] > $start_date && $taskUser['task']['taskDate'] < $end_date &&
+                    $taskUser['task']['workStatusUuid'] == WorkStatus::COMPLETE) {
+                    $taskComplete++;
+                }
             }
             $bar .= $taskComplete;
             $count++;
@@ -568,24 +566,23 @@ class TaskController extends ZhkhController
                             $taskGood++;
                     }
 
-                    $tasks = Task::find()
-                        ->where(['uuid' => $taskUser['taskUuid']])
-                        ->andWhere(['>', 'taskdate', $start_date])
-                        ->andWhere(['<', 'taskdate', $end_date])
-                        ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                        ->all();
+                    $tasks = Task::find()->where(['workStatusUuid' => WorkStatus::COMPLETE])->all();
                     foreach ($tasks as $task) {
-                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
-                            $taskComplete++;
+                        if ($task['uuid'] == $taskUser['taskUuid'] && $task['taskDate'] > $start_date && $task['taskDate'] < $end_date) {
+                            if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                                $taskComplete++;
+                        }
                     }
 
-                    $tasks = Task::find()
-                        ->where(['AND', ['=', 'uuid', $taskUser['taskUuid']], ['>', 'taskdate', $start_date], ['<', 'taskdate', $end_date], ['>', 'deadlineDate', 'NOW()'], ['!=', 'workStatusUuid', WorkStatus::COMPLETE]])
-                        ->orWhere(['AND', ['=', 'uuid', $taskUser['taskUuid']], ['>', 'taskdate', $start_date], ['<', 'taskdate', $end_date], ['>', 'deadlineDate', 'endDate'], ['=', 'workStatusUuid', WorkStatus::COMPLETE]])
-                        ->all();
+                    $tasks = Task::find()->all();
                     foreach ($tasks as $task) {
-                        if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
-                            $taskBad++;
+                        if ($task['uuid'] == $taskUser['taskUuid'] && $task['taskDate'] > $start_date && $task['taskDate'] < $end_date) {
+                            if ((($task['deadlineDate'] > date("Y-m-d H:i:s") && $task['workStatusUuid'] != WorkStatus::COMPLETE)) ||
+                                (($task['deadlineDate'] < $task['endDate'] && $task['workStatusUuid'] == WorkStatus::COMPLETE))) {
+                                if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid'])
+                                    $taskBad++;
+                            }
+                        }
                     }
                 }
                 $user_array[$t_count]['complete_good'] = $taskGood;
@@ -625,15 +622,12 @@ class TaskController extends ZhkhController
                 ->where(['userUuid' => $current_user['uuid']])
                 ->all();
             foreach ($taskUsers as $taskUser) {
-                $taskBad += Task::find()
-                    ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['>', 'taskdate', $start_date])
-                    ->andWhere(['<', 'taskdate', $end_date])
-                    ->andWhere('deadlineDate > NOW()')
-                    ->andWhere(['IN', 'workStatusUuid', [
-                        WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::COMPLETE
-                    ]])
-                    ->count();
+                if ($taskUser['task']['taskDate'] > $start_date && $taskUser['task']['taskDate'] < $end_date) {
+                    if ((($taskUser['task']['deadlineDate'] > date("Y-m-d H:i:s") && $taskUser['task']['workStatusUuid'] != WorkStatus::COMPLETE)) ||
+                        (($taskUser['task']['deadlineDate'] < $taskUser['task']['endDate'] && $taskUser['task']['workStatusUuid'] == WorkStatus::COMPLETE))) {
+                        $taskBad++;
+                    }
+                }
             }
             $bar .= $taskBad;
             $count++;

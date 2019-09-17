@@ -92,9 +92,9 @@ $gridColumns = [
                     $stat['uuid']==WorkStatus::NEW)
                     $color='background-color: gray';
                 if ($stat['uuid']==WorkStatus::IN_WORK)
-                    $color='background-color: yellow';
+                    $color = 'background-color: gray';
                 if ($stat['uuid']==WorkStatus::UN_COMPLETE)
-                    $color='background-color: lightred';
+                    $color = 'background-color: orange';
                 if ($stat['uuid']==WorkStatus::COMPLETE)
                     $color='background-color: green';
                 $list[$stat['uuid']] = $stat['title'];

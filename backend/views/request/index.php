@@ -273,8 +273,12 @@ $gridColumns = [
                     $order.=' ';
                     if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
                         $order .= "<span class='badge' style='background-color: green; height: 22px'>Выполнена</span>";
-                    else
-                        $order .= "<span class='badge' style='background-color: sandybrown; height: 22px'>" . $task['workStatus']->title . "</span>";
+                    if ($task['workStatusUuid'] == WorkStatus::NEW)
+                        $order .= "<span class='badge' style='background-color: gray; height: 22px'>Новая</span>";
+                    if ($task['workStatusUuid'] == WorkStatus::CANCELED)
+                        $order .= "<span class='badge' style='background-color: lightskyblue; height: 22px'>Отменена</span>";
+                    if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                        $order .= "<span class='badge' style='background-color: orangered; height: 22px'>Не завершена</span>";
                     $order .= '<br/>' . $task['taskTemplate']['title'];
                     return $order;
                 }
