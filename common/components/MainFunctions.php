@@ -188,13 +188,11 @@ class MainFunctions
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
         if ($type == 'work_status_edit') {
-            if ($status["uuid"] == WorkStatus::NEW ||
-                $status["uuid"] == WorkStatus::IN_WORK)
-                $label = "<span class='badge' style='gray; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            $label = "<span class='badge' style='background-color: gray; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
+            if ($status["uuid"] == WorkStatus::COMPLETE)
+                $label = "<span class='badge' style='background-color: green; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
             else if ($status["uuid"] == WorkStatus::CANCELED)
-                $label = "<span class='badge' style='orange; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
-            else
-                $label = "<span class='badge' style='green; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+                $label = "<span class='badge' style='background-color: orange; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
         }
         if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)

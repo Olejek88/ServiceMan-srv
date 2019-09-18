@@ -122,7 +122,7 @@ class SiteController extends Controller
 
         $users = Users::find()
             ->where('name!="sUser"')
-            ->andWhere(['type' => Users::USERS_WORKER])
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         $userList[] = $users;
 
@@ -290,7 +290,7 @@ class SiteController extends Controller
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
             ->where(['user_id' => $accountUser['id']])
-            ->andWhere(['type' => Users::USERS_WORKER])
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->asArray()
             ->one();
 
@@ -416,7 +416,7 @@ class SiteController extends Controller
 
         $users = Users::find()
             ->where('name!="sUser"')
-            ->andWhere(['type' => Users::USERS_WORKER])
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         $userList[] = $users;
 
@@ -427,7 +427,7 @@ class SiteController extends Controller
         foreach ($contragents as $contragent) {
             $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
             if ($userContragent) {
-                if ($userContragent['user']['type'] == Users::USERS_WORKER) {
+                if ($userContragent['user']['type'] == Users::USERS_WORKER || $userContragent['user']['type'] == Users::USERS_ARM_WORKER) {
                     $workersCount++;
                 }
             }
@@ -871,7 +871,8 @@ class SiteController extends Controller
 
             $sum_size = 0;
             foreach ($documentations as $documentation) {
-                $fileName = EquipmentController::getDocDir($documentation) . $documentation['path'];
+                $fileName = $documentation->getDocFullPath();
+                //$fileName = EquipmentController::getDocDir($documentation) . $documentation['path'];
                 if (is_file($fileName)) {
                     $size = number_format(filesize($fileName) / 1024, 2) . 'Кб';
                     $real_size = filesize($fileName) / 1024;
@@ -890,6 +891,8 @@ class SiteController extends Controller
                     $title = $documentation['equipment']['title'];
                 if ($documentation['equipmentType'])
                     $title = 'Тип: ' . $documentation['equipmentType']['title'];
+                if ($documentation['house'])
+                    $title = $documentation['house']['street']['title'] . ', д.' . $documentation['house']['number'];
 
                 $tree['children'][0]['children'][$documentationCount]['children'][] =
                     [

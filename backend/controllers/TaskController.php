@@ -92,23 +92,23 @@ class TaskController extends ZhkhController
             if (isset($_GET['start_time'])) {
                 $task_complete = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE]])
+                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE]])
                     ->andWhere('taskDate > ' . date("YmdHis", strtotime($_GET['start_time'])))
                     ->andWhere('taskDate < ' . date("YmdHis", strtotime($_GET['end_time'])))
                     ->one();
                 $task = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::NEW, WorkStatus::IN_WORK]])
+                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::UN_COMPLETE]])
                     ->andWhere('taskDate > ' . date("Ymdhis", strtotime($_GET['start_time'])))
                     ->andWhere('taskDate < ' . date("Ymdhis", strtotime($_GET['end_time'])))
                     ->one();
             } else {
                 $task_complete = Task::find()
                     ->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE, WorkStatus::UN_COMPLETE]])
+                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::COMPLETE]])
                     ->one();
                 $task = Task::find()->where(['uuid' => $taskUser['taskUuid']])
-                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::NEW, WorkStatus::IN_WORK]])
+                    ->andWhere(['IN', 'workStatusUuid', [WorkStatus::NEW, WorkStatus::IN_WORK, WorkStatus::UN_COMPLETE]])
                     ->one();
             }
             if ($task)

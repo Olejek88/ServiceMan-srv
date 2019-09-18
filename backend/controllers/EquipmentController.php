@@ -651,6 +651,15 @@ class EquipmentController extends ZhkhController
                     $user_name = $user['name'];
                 else
                     $user_name = "";
+                $docs = '';
+
+                foreach ($documentations as $documentation) {
+                    if ($documentation['houseUuid'] == $house['uuid']) {
+                        $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                            [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
+                        );
+                    }
+                }
                 $fullTree['children'][$childIdx]['children'][] =
                     [
                         'title' => $house['number'],
@@ -658,6 +667,7 @@ class EquipmentController extends ZhkhController
                         'type' => 'house',
                         'expanded' => false,
                         'user' => $user_name,
+                        'docs' => $docs,
                         'uuid' => $house['uuid'],
                         'key' => $house['_id'],
                         'folder' => true
@@ -761,16 +771,6 @@ class EquipmentController extends ZhkhController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    /**
-     * @param $documentation
-     * @return string
-     */
-    static function getDocDir($documentation)
-    {
-        $dir = 'storage/doc/';
-        return $dir;
     }
 
     /**

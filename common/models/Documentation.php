@@ -22,6 +22,7 @@ use yii\web\UploadedFile;
  * @property string $changedAt
  * @property string $path
  * @property string $equipmentTypeUuid
+ * @property string $houseUuid
  *
  * @property Equipment $equipment
  * @property string $docDir
@@ -95,6 +96,7 @@ class Documentation extends ZhkhActiveRecord
                     'equipmentUuid',
                     'documentationTypeUuid',
                     'equipmentTypeUuid',
+                    'houseUuid',
                     'entityType'
                 ],
                 'string', 'max' => 45
@@ -147,6 +149,8 @@ class Documentation extends ZhkhActiveRecord
             'equipmentType' => Yii::t('app', 'Тип оборудования'),
             'documentationTypeUuid' => Yii::t('app', 'Тип документации'),
             'documentationType' => Yii::t('app', 'Тип документации'),
+            'houseUuid' => Yii::t('app', 'Дом'),
+            'house' => Yii::t('app', 'Дом'),
             'title' => Yii::t('app', 'Название'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
@@ -186,6 +190,16 @@ class Documentation extends ZhkhActiveRecord
     public function getEquipment()
     {
         return $this->hasOne(Equipment::class, ['uuid' => 'equipmentUuid']);
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return ActiveQuery
+     */
+    public function getHouse()
+    {
+        return $this->hasOne(House::class, ['uuid' => 'houseUuid']);
     }
 
     /**

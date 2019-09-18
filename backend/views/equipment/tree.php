@@ -176,6 +176,7 @@ try {
                         'icon' => 'add',
                         'callback' => new JsExpression('function(key, opt) {
                             var node = $.ui.fancytree.getNode(opt.$trigger);
+                            console.log(node);
                             $.ajax({
                                 url: "../documentation/add",
                                 type: "post",
@@ -183,6 +184,7 @@ try {
                                     selected_node: node.key,
                                     folder: node.folder,
                                     uuid: node.data.uuid,
+                                    type: node.data.type,
                                     model_uuid: node.data.model_uuid,
                                     source: "../equipment/tree"                                                                        
                                 },

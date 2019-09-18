@@ -72,7 +72,7 @@ if (isset($_GET['system_select']))
         <tr class="kartik-sheet-style" style="height: 20px; background-color: green; color: white">
             <th colspan="10">Выполненные задачи</th>
         </tr>
-        <tr class="kartik-sheet-style" style="height: 20px">
+        <tr class="kartik-sheet-style" style="height: 20px; background-color: #e0e0e0">
             <th class="text-center kv-align-middle" data-col-seq="0" style="width: 3%;"></th>
             <th class="text-center kv-align-middle" data-col-seq="1" style="width: 20%;">Задача</th>
             <th class="text-center kv-align-center kv-align-middle" data-col-seq="2" style="width: 25%;">Элемент</th>
@@ -92,33 +92,33 @@ if (isset($_GET['system_select']))
         foreach ($tasks_completed as $data)
             if ($data) {
                 echo '<tr data-key="1">';
-                echo '<td class="table_class kv-align-middle" style="width: 40px; text-align: center;" data-col-seq="0">' . $count . '</td>';
+                echo '<td class="table_class kv-align-middle" style="width: 30px; text-align: center;" data-col-seq="0">' . $count . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="1">' . $data['taskTemplate']->title . '</td>';
                 echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['title'] . '</td>';
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $data['equipment']['object']->getFullTitle() . '</td>';
-                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
-                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $data['taskVerdict']['title'] . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="3">' . $data['equipment']['object']->getFullTitle() . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="4">' . MainFunctions::getColorLabelByStatus($data['workStatus'], 'work_status_edit') . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="5">' . $data['taskVerdict']['title'] . '</td>';
                 if (strtotime($data->taskDate))
                     $value = date("d-m-Y H:i", strtotime($data->taskDate));
                 else
                     $value = 'не назначена';
-                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="6">' . $value . '</td>';
                 if (strtotime($data->endDate))
                     $value = date("d-m-Y H:i", strtotime($data->endDate));
                 else
                     $value = 'не закрыта';
-                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="7">' . $value . '</td>';
                 if ($data['author'])
                     $value = $data['author']->name;
                 else
                     $value = 'отсутствует';
-                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="2">' . $value . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" style="text-align: center" data-col-seq="8">' . $value . '</td>';
                 if (isset($data['comment'])) {
                     $value = $data['comment'];
                 } else {
                     $value = 'неизвестно';
                 }
-                echo '<td class="kv-align-center kv-align-middle" data-col-seq="2">' . $value . '</td>';
+                echo '<td class="kv-align-center kv-align-middle" data-col-seq="9">' . $value . '</td>';
                 echo '</tr>';
                 $count++;
             }
@@ -131,7 +131,7 @@ if (isset($_GET['system_select']))
         <tr class="kartik-sheet-style" style="height: 20px; background-color: grey; color: white">
             <th colspan="10">Не выполненные задачи</th>
         </tr>
-        <tr class="kartik-sheet-style" style="height: 20px">
+        <tr class="kartik-sheet-style" style="height: 20px; background-color: #e0e0e0">
             <th class="text-center kv-align-middle" data-col-seq="0" style="width: 3%;"></th>
             <th class="text-center kv-align-middle" data-col-seq="1" style="width: 20%;">Задача</th>
             <th class="text-center kv-align-center kv-align-middle" data-col-seq="2" style="width: 25%;">Элемент</th>
