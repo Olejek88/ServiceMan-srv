@@ -56,8 +56,11 @@ use common\components\Tag;
         Users::USERS_WORKER => 'Исполнитель',
         Users::USERS_ARM_WORKER => 'Оператор/Исполнитель',
     ];
-    echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
-        ->dropDownList($typeList);
+
+    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
+            ->dropDownList($typeList);
+    }
     ?>
 
     <?php
@@ -81,9 +84,12 @@ use common\components\Tag;
 
     <?php echo $form->field($userArm, 'contact')->textInput([]) ?>
 
-    <?php echo $form->field($userArm, 'role')
-        ->label(Yii::t('app', 'Права пользователя в системе'))
-        ->dropDownList($roleList);
+    <?php
+    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        echo $form->field($userArm, 'role')
+            ->label(Yii::t('app', 'Права пользователя в системе'))
+            ->dropDownList($roleList);
+    }
     ?>
 
     <?php
@@ -91,9 +97,11 @@ use common\components\Tag;
         User::STATUS_DELETED => 'Заблокирован',
         User::STATUS_ACTIVE => 'Активен',
     ];
-    echo $form->field($userArm, 'status')
-        ->label(Yii::t('app', 'Состояние пользователя'))
-        ->dropDownList($statusList);
+    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        echo $form->field($userArm, 'status')
+            ->label(Yii::t('app', 'Состояние пользователя'))
+            ->dropDownList($statusList);
+    }
     ?>
 
     <div class="form-group text-center">
