@@ -13,6 +13,7 @@ use yii\web\Application;
 
 class ZhkhActiveRecord extends ActiveRecord
 {
+    const SCENARIO_UPDATE = 'update';
 
     /**
      * @return object|ActiveQuery

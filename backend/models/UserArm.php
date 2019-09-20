@@ -73,13 +73,15 @@ class UserArm extends Model
             [['password'], 'string', 'min' => 6, 'on' => self::SCENARIO_UPDATE, 'skipOnEmpty' => true],
 
             [['pin'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
-            [['pin'], 'required', 'on' => self::SCENARIO_DEFAULT, 'when' => function ($model) {
+            [['pin'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE], 'when' => function ($model) {
                 return $model->type == Users::USERS_WORKER || $model->type == Users::USERS_ARM_WORKER;
             }, 'whenClient' => 'function(attribute, value){
               console.log("worker");
-              return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
+              res = val == "' . Users::USERS_WORKER . '" || val == "' . Users::USERS_ARM_WORKER . '";
+              console.log("res " + res);
+              return res; 
             }'],
-            [['pin'], 'required', 'on' => self::SCENARIO_UPDATE, 'skipOnEmpty' => true],
+//            [['pin'], 'required', 'on' => self::SCENARIO_UPDATE, 'skipOnEmpty' => true],
 
             [['name'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
             [['name'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
@@ -117,7 +119,10 @@ class UserArm extends Model
                 return $model->type == Users::USERS_WORKER || $model->type == Users::USERS_ARM_WORKER;
             }, 'whenClient' => 'function(attribute, value){
               console.log("tagType");
-              return $("#userarm-type").val() == ' . Users::USERS_WORKER . ';
+              val = $("#userarm-type").val();
+              res = val == "' . Users::USERS_WORKER . '" || val == "' . Users::USERS_ARM_WORKER . '";
+              console.log("res " + res);
+              return res; 
             }'],
         ];
     }
