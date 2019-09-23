@@ -84,11 +84,19 @@ class Users extends ZhkhActiveRecord
                     'name',
                     'type',
                     'active',
-                    'pin',
+//                    'pin',
                     'contact'
                 ],
                 'required', 'on' => ['default', 'signup'],
             ],
+            [['pin'], 'required', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE], 'when' => function ($model) {
+                return $model->type == Users::USERS_WORKER || $model->type == Users::USERS_ARM_WORKER;
+            }, 'whenClient' => 'function(attribute, value){
+              console.log("worker");
+              res = val == "' . Users::USERS_WORKER . '" || val == "' . Users::USERS_ARM_WORKER . '";
+              console.log("res " + res);
+              return res; 
+            }'],
             [['image'], 'file', 'on' => ['default', 'signup'],],
             [['user_id', 'type', 'active'], 'integer', 'on' => ['default', 'signup'],],
             [['createdAt', 'changedAt'], 'safe', 'on' => ['default', 'signup'],],
