@@ -212,8 +212,8 @@ if (isset($_GET["equipmentUuid"]))
                 } else {
                     echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
                 }
-
                 echo Html::hiddenInput("receiptUuid", $receiptUuid);
+                echo Html::textInput("errors", "", ['readonly' => 'readonly', 'style' => 'width:100%', 'id' => 'errors', 'name' => 'errors'])
                 ?>
             </td>
         </tr>
@@ -233,11 +233,13 @@ if (isset($_GET["equipmentUuid"]))
             url: "../request/new",
             type: "post",
             data: $('form').serialize(),
-            success: function () {
-                $('#modalRequest').modal('hide');
-                window.location.reload();
-            },
-            error: function () {
+            success: function (ret) {
+                if (ret.length > 5) {
+                    $('#errors').val(ret);
+                } else {
+                    $('#modalRequest').modal('hide');
+                    window.location.reload();
+                }
             }
         })
     });

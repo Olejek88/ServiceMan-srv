@@ -16,6 +16,7 @@ use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 
 class MainFunctions
 {
@@ -232,7 +233,7 @@ class MainFunctions
      * @param $userUuid
      * @param $model
      * @param $start
-     * @return Task|null
+     * @return array []
      * @throws Exception
      * @throws InvalidConfigException
      */
@@ -265,7 +266,7 @@ class MainFunctions
         }
         if (!$task->save()) {
             MainFunctions::log("request.log", json_encode($task->errors));
-            return null;
+            return ['result' => null, 'task' => null, 'message' => 'Не верное оборудование'];
         } else {
             if ($userUuid) {
                 $taskUser = new TaskUser();
@@ -275,7 +276,7 @@ class MainFunctions
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
                     MainFunctions::log("request.log", json_encode($taskUser->errors));
-                    return null;
+                    return ['result' => null, 'task' => $task, 'message' => 'Задача создана, но не назначена'];
                 }
             }
             $operationTemplates = OperationTemplate::find()
@@ -284,10 +285,9 @@ class MainFunctions
             foreach ($operationTemplates as $operationTemplate) {
                 self::createOperation($operationTemplate['operationTemplate']['uuid'], $task['uuid'], $oid);
             }
-
         }
         MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
-        return $task;
+        return ['result' => 1, 'task' => $task, 'message' => 'Задача создана успешно'];
     }
 
     private

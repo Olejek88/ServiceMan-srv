@@ -735,34 +735,38 @@ class TaskController extends ZhkhController
             }
             $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
                 $model->comment, $model->oid, $_POST['userUuid'], $model, time());
-            if (isset($_POST["defectUuid"]) && $task) {
-                $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
-                if ($defect) {
-                    $defect['taskUuid'] = $task['uuid'];
-                    $defect['defectStatus'] = 1;
-                    $defect->save();
+            if ($task['result']) {
+                if (isset($_POST["defectUuid"])) {
+                    $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
+                    if ($defect) {
+                        $defect['taskUuid'] = $task['task']['uuid'];
+                        $defect['defectStatus'] = 1;
+                        $defect->save();
+                    }
                 }
-            }
-            if (isset($_POST["requestUuid"]) && $task) {
-                $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
-                if ($request) {
-                    $request['taskUuid'] = $task['uuid'];
-                    $request->save();
+                if (isset($_POST["requestUuid"])) {
+                    $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
+                    if ($request) {
+                        $request['taskUuid'] = $task['task']['uuid'];
+                        $request->save();
+                    }
                 }
+                MainFunctions::register('task', 'Создана задача',
+                    '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
+                    '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
+                    $task['task']['uuid']);
+                return self::actionIndex();
+            } else {
+                return $task['message'];
             }
-            MainFunctions::register('task', 'Создана задача',
-                '<a class="btn btn-default btn-xs">' . $model['taskTemplate']['taskType']['title'] . '</a> ' . $model['taskTemplate']['title'] . '<br/>' .
-                '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
-                $task->uuid);
-
-            return self::actionIndex();
         } else {
-            return $this->render(
-                'create',
-                [
-                    'model' => $model,
-                ]
-            );
+            return "Ошибка создания задачи";
+            /*            return $this->render(
+                            'create',
+                            [
+                                'model' => $model,
+                            ]
+                        );*/
         }
     }
 
@@ -1216,13 +1220,18 @@ class TaskController extends ZhkhController
             if ($taskUser) {
                 $task = MainFunctions::createTask($task['taskTemplate'], $task['equipmentUuid'],
                     $task['comment'], $task['oid'], $taskUser['userUuid'], null, time());
-                MainFunctions::register('task', 'Создана задача',
-                    '<a class="btn btn-default btn-xs">' . $task['taskTemplate']['taskType']['title'] . '</a> ' .
-                    $task['taskTemplate']['title'] . '<br/>' .
-                    '<a class="btn btn-default btn-xs">' . $task['equipment']['title'] . '</a> ' . $task['comment'],
-                    $task->uuid);
+                if ($task['result']) {
+                    MainFunctions::register('task', 'Создана задача',
+                        '<a class="btn btn-default btn-xs">' . $task['task']['taskTemplate']['taskType']['title'] . '</a> ' .
+                        $task['task']['taskTemplate']['title'] . '<br/>' .
+                        '<a class="btn btn-default btn-xs">' . $task['task']['equipment']['title'] . '</a> ' . $task['task']['comment'],
+                        $task['task']['uuid']);
+                    return "";
+                }
+                return $task['message'];
             }
+            return "У элемента нет исполнителя";
         }
-        return "";
+        return "Задача не найдена!";
     }
 }

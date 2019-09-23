@@ -353,7 +353,7 @@ $this->title = Yii::t('app', 'Сводная');
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer text-center">
-                        <?php echo Html::a('Все операторы', ['/users/dashboard'],
+                        <?php echo Html::a('Все пользователи', ['/users/dashboard'],
                             ['class' => 'btn btn-sm btn-info btn-flat pull-left']); ?>
                     </div>
                     <!-- /.box-footer -->
@@ -411,7 +411,7 @@ $this->title = Yii::t('app', 'Сводная');
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix">
-                <a href="/measure/table" class="btn btn-sm btn-default btn-flat pull-right">Посмотреть все измерения</a>
+                <a href="/measure" class="btn btn-sm btn-default btn-flat pull-right">Посмотреть все измерения</a>
             </div>
             <!-- /.box-footer -->
         </div>
@@ -470,7 +470,7 @@ $this->title = Yii::t('app', 'Сводная');
         <b>Version</b> 0.0.2
     </div>
     <?php echo Html::a('<img src="images/toir-logo_4x_m.png">', 'http://toirus.ru'); ?>
-    <strong>Copyright &copy; 2014-2018 <a href="http://toirus.ru">ТОиРУС</a>.</strong> Все права на
+    <strong>Copyright &copy; 2014-2019 <a href="http://toirus.ru">ТОиРУС-ЖКХ</a>.</strong> Все права на
     программный продукт защищены.
 </footer>
 

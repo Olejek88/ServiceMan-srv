@@ -206,7 +206,7 @@ class ObjectController extends ZhkhController
                 'address' => $street['city']['title'] . ', ул.' . $street['title'],
                 'type' => 'street',
                 'source' => '../object/tree',
-                'expanded' => false,
+                'expanded' => true,
                 'uuid' => $street['uuid'],
                 'folder' => true
             ];
@@ -254,9 +254,13 @@ class ObjectController extends ZhkhController
                             foreach ($objectContragents as $objectContragent) {
                                 if (!$objectContragent['contragent']['deleted']) {
                                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                                    if ($objectContragent['contragent']['address'])
+                                        $address = $objectContragent['contragent']['address'];
+                                    else
+                                        $address = $objectContragent['object']->getFullTile();
                                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
                                         'title' => $objectContragent['contragent']['title'],
-                                        'address' => $objectContragent['contragent']['address'],
+                                        'address' => $address,
                                         'inn' => $objectContragent['contragent']['inn'],
                                         'phone' => $objectContragent['contragent']['phone'],
                                         'email' => $objectContragent['contragent']['email'],
@@ -358,6 +362,9 @@ class ObjectController extends ZhkhController
             if (isset($_POST["source"]))
                 $source = $_POST["source"];
             else $source = 0;
+            if (isset($_POST["address"]))
+                $address = $_POST["address"];
+            else $address = "";
             if (isset($_POST["type"]))
                 $type = $_POST["type"];
             else $type = 0;
@@ -399,7 +406,8 @@ class ObjectController extends ZhkhController
                     return $this->renderAjax('_add_contragent_form', [
                         'contragentUuid' => $uuid,
                         'contragent' => $contragent,
-                        'source' => $source
+                        'source' => $source,
+                        'address' => $address
                     ]);
                 }
             }
@@ -774,6 +782,7 @@ class ObjectController extends ZhkhController
                 }
             }
         }
+        return $this->redirect(['/object/tree']);
         /*        if ($source)
                     return $this->redirect([$source]);
                 return $this->redirect(['/object/tree']);*/
