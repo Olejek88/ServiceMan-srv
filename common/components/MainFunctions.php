@@ -16,6 +16,7 @@ use common\models\WorkStatus;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
+use yii\helpers\ArrayHelper;
 
 class MainFunctions
 {
@@ -188,13 +189,11 @@ class MainFunctions
                 $label = '<div class="progress"><div class="critical1">' . $status['title'] . '</div></div>';
         }
         if ($type == 'work_status_edit') {
-            if ($status["uuid"] == WorkStatus::NEW ||
-                $status["uuid"] == WorkStatus::IN_WORK)
-                $label = "<span class='badge' style='gray; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+            $label = "<span class='badge' style='background-color: gray; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
+            if ($status["uuid"] == WorkStatus::COMPLETE)
+                $label = "<span class='badge' style='background-color: green; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
             else if ($status["uuid"] == WorkStatus::CANCELED)
-                $label = "<span class='badge' style='orange; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
-            else
-                $label = "<span class='badge' style='green; height: 12px; margin-top: -3px'> </span>&nbsp;". $status['title'];
+                $label = "<span class='badge' style='background-color: orange; height: 12px; margin-top: -3px'> </span>&nbsp;" . $status['title'];
         }
         if ($type == "task_verdict") {
             if ($status["uuid"] == TaskVerdict::NOT_DEFINED)
@@ -234,7 +233,7 @@ class MainFunctions
      * @param $userUuid
      * @param $model
      * @param $start
-     * @return Task|null
+     * @return array []
      * @throws Exception
      * @throws InvalidConfigException
      */
@@ -267,7 +266,7 @@ class MainFunctions
         }
         if (!$task->save()) {
             MainFunctions::log("request.log", json_encode($task->errors));
-            return null;
+            return ['result' => null, 'task' => null, 'message' => 'Не верное оборудование'];
         } else {
             if ($userUuid) {
                 $taskUser = new TaskUser();
@@ -277,7 +276,7 @@ class MainFunctions
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
                     MainFunctions::log("request.log", json_encode($taskUser->errors));
-                    return null;
+                    return ['result' => null, 'task' => $task, 'message' => 'Задача создана, но не назначена'];
                 }
             }
             $operationTemplates = OperationTemplate::find()
@@ -286,10 +285,9 @@ class MainFunctions
             foreach ($operationTemplates as $operationTemplate) {
                 self::createOperation($operationTemplate['operationTemplate']['uuid'], $task['uuid'], $oid);
             }
-
         }
         MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
-        return $task;
+        return ['result' => 1, 'task' => $task, 'message' => 'Задача создана успешно'];
     }
 
     private

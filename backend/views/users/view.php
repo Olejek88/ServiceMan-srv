@@ -20,10 +20,6 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
         <h1>
             Профиль пользователя
         </h1>
-        <ol class="breadcrumb">
-            <li><?php echo Html::a('Главная', '/') ?></li>
-            <li><?php echo Html::a('Пользователи', '/users/dashboard') ?></li>
-        </ol>
     </section>
 
     <!-- Main content -->
@@ -84,11 +80,27 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
 
                         <strong><i class="fa fa-check-circle margin-r-5"></i> Статус</strong>
                         <?php
-                        echo '<span class="label label-success">Активен</span>';
+                        if ($model['active'])
+                            echo '<span class="label label-success">Активен</span>';
+                        else
+                            echo '<span class="label label-warning">Не активен</span>';
                         ?>
 
                         <hr>
-                        <strong><i class="fa fa-pencil margin-r-5"></i> Специализация</strong>
+                        <strong><i class="fa fa-check-circle margin-r-5"></i> Тип</strong>
+                        <?php
+                        if ($model['type'] == Users::USERS_ARM)
+                            echo '<span class="label label-info">Оператор</span>';
+                        if ($model['type'] == Users::USERS_WORKER)
+                            echo '<span class="label label-info">Исполнитель</span>';
+                        if ($model['type'] == Users::USERS_ARM_WORKER) {
+                            echo '<span class="label label-info">Оператор</span>&nbsp;';
+                            echo '<span class="label label-info">Исполнитель</span>';
+                        }
+                        ?>
+
+                        <hr>
+                        <strong><i class="fa fa-pencil margin-r-5"></i> Права</strong>
                         <p>
                             <?php
                             $assignments = Yii::$app->getAuthManager()->getAssignments($model['user_id']);
@@ -117,7 +129,6 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                     <ul class="nav nav-tabs">
                         <li class="active" style="margin-right: 0"><a href="#timeline" data-toggle="tab">Журнал</a>
                         </li>
-                        <li style="margin-right: 0"><a href="#activity" data-toggle="tab">Активность</a></li>
                         <li style="margin-right: 0"><a href="#settings" data-toggle="tab">Настройки</a></li>
                     </ul>
                     <div class="tab-content">

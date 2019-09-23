@@ -236,14 +236,16 @@ class RequestController extends ZhkhController
                     else
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
                             $model->comment, $model->oid, null, null, time());
-                    if ($task) {
+                    if ($task['result']) {
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .
                             $model['requestType']['taskTemplate']['title'] . '<br/>' .
                             '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
-                            $task->uuid);
-                        $model['taskUuid'] = $task['uuid'];
+                            $task['task']['uuid']);
+                        $model['taskUuid'] = $task['task']['uuid'];
                         $model->save();
+                    } else {
+                        return "";
                     }
                 }
                 return true;

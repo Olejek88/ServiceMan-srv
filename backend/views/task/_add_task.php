@@ -162,7 +162,9 @@ use yii\helpers\Html;
         ]);
         ?>
     </div>
-
+    <?php
+    echo Html::textInput("errors", "", ['readonly' => 'readonly', 'style' => 'width:100%', 'id' => 'errors', 'name' => 'errors'])
+    ?>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
@@ -175,8 +177,10 @@ use yii\helpers\Html;
             type: "post",
             data: $('form').serialize(),
             success: function () {
-                console.log("success?!");
-                $('#modalTask').modal('hide');
+                if (ret.length > 5) {
+                    $('#errors').val(ret);
+                } else
+                    $('#modalTask').modal('hide');
             },
             error: function () {
             }

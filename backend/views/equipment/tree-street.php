@@ -145,7 +145,7 @@ try {
                                     }                                    
                                  });
                             });
-                    }')
+                        }')
                     ],
                     'edit' => [
                         'name' => 'Редактировать',
@@ -183,6 +183,7 @@ try {
                                 data: {
                                     selected_node: node.key,
                                     folder: node.folder,
+                                    type: node.type,
                                     uuid: node.data.uuid,
                                     model_uuid: node.data.model_uuid,
                                     source: "../equipment/tree-street"                                                                        
@@ -190,9 +191,9 @@ try {
                                 success: function (data) { 
                                     $(\'#modalAddDocumentation\').modal(\'show\');
                                     $(\'#modalContentDoc\').html(data);
-                                }
+                                },
                             });
-                    }')
+                        }')
                     ],
                     'defect' => [
                         'name' => 'Добавить дефект',

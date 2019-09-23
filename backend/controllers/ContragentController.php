@@ -213,7 +213,7 @@ class ContragentController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
+        //parent::actionUpdate($id);
 
         $model = $this->findModel($id);
 
@@ -246,7 +246,7 @@ class ContragentController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
+        //parent::actionDelete($id);
 
         $contragent = $this->findModel($id);
         $contragent['deleted'] = true;

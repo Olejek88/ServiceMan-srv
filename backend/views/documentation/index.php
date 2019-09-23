@@ -77,9 +77,10 @@ $gridColumns = [
         'mergeHeader' => true,
         'content' => function ($data) {
             if ($data && $data['equipment'])
-              return $data->equipment['object']->getFullTitle();
-            else
-                return "";
+                return $data->equipment['object']->getFullTitle();
+            if ($data && $data['house'])
+                return $data['house']->getFullTitle();
+            return "";
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => function() {
@@ -146,7 +147,6 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новая', ['/documentation/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],

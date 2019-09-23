@@ -7,6 +7,7 @@ use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentRegisterType;
 use common\models\EquipmentType;
+use common\models\House;
 use common\models\Users;
 use Throwable;
 use Yii;
@@ -359,6 +360,11 @@ class DocumentationController extends ZhkhController
             $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
             if (!$equipment)
                 $uuid = 0;
+            $house = House::find()->where(['uuid' => $uuid])->one();
+            if (!$house)
+                $houseUuid = 0;
+            else
+                $houseUuid = $house['uuid'];
 
             $documentation = new Documentation();
 
@@ -366,6 +372,7 @@ class DocumentationController extends ZhkhController
                 'documentation' => $documentation,
                 'source' => $source,
                 'equipmentUuid' => $uuid,
+                'houseUuid' => $houseUuid,
                 'equipmentTypeUuid' => $model_uuid,
                 'equipmentType' => null,
             ]);

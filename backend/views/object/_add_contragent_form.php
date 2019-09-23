@@ -43,7 +43,6 @@ use yii\helpers\Html;
     }
     echo $form->field($contragent, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false);
     echo $form->field($contragent, 'title')->textInput(['maxlength' => true]);
-
     echo $form->field($contragent, 'address')->textInput(['maxlength' => true, 'value' => $address]);
     echo $form->field($contragent, 'phone')->textInput(['maxlength' => true]);
     echo $form->field($contragent, 'inn')->textInput(['maxlength' => true]);
@@ -79,7 +78,7 @@ use yii\helpers\Html;
         e.preventDefault();
         $.ajax({
             type: "post",
-            data: new FormData(this),
+            data: new FormData(),
             processData: false,
             contentType: false
             url: "../object/save",

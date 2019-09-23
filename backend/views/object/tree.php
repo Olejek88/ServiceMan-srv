@@ -130,6 +130,7 @@ echo FancytreeWidget::widget([
                                     folder: node.folder,
                                     uuid: node.data.uuid,
                                     type: node.type,
+                                    address: node.data.address,
                                     source: "../object/tree"                                    
                                 },
                                 success: function (data) { 

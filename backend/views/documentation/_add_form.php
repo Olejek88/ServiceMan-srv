@@ -1,6 +1,7 @@
 <?php
 /* @var $documentation */
 /* @var $equipmentUuid */
+/* @var $houseUuid */
 /* @var $equipmentTypeUuid */
 
 /* @var $source */
@@ -9,6 +10,7 @@
 use common\components\MainFunctions;
 use common\models\DocumentationType;
 use common\models\Equipment;
+use common\models\House;
 use common\models\Users;
 use kartik\select2\Select2;
 use kartik\widgets\FileInput;
@@ -39,14 +41,19 @@ use yii\helpers\Html;
     echo $form->field($documentation, 'title')->textInput(['maxlength' => true]);
 
     if (isset($equipmentType)) {
-        $documentationType_selected = DocumentationType::find()->where(['_id' => $equipmentType])->one();
+        $documentationType_selected = DocumentationType::find()
+            ->where(['_id' => $equipmentType])
+            ->orderBy('title')
+            ->one();
         if ($documentationType_selected) {
             echo $form->field($documentation, 'documentationTypeUuid')->
             hiddenInput(['value' => $documentationType_selected['uuid']])->label(false);
         }
     }
     if (!isset($documentationType_selected)) {
-        $documentationTypes = DocumentationType::find()->all();
+        $documentationTypes = DocumentationType::find()
+            ->orderBy('title')
+            ->all();
         $items = ArrayHelper::map($documentationTypes, 'uuid', 'title');
         echo $form->field($documentation, 'documentationTypeUuid')->widget(Select2::class,
             [
@@ -73,16 +80,45 @@ use yii\helpers\Html;
     if (!$equipmentTypeUuid && $equipmentUuid) {
         echo $form->field($documentation, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false);
     }
-    if (!$equipmentTypeUuid && !$equipmentUuid) {
+    if (!$equipmentTypeUuid && !$equipmentUuid && !$houseUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => null])->label(false);
-        $equipment = Equipment::find()->all();
-        $items = ArrayHelper::map($equipment, 'uuid', 'title');
+        $equipment = Equipment::find()
+            ->orderBy('objectUuid')
+            ->all();
+        $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
+            return $model['equipmentType']['title'] . ' (' . $model['object']['house']['street']['title'] . ', ' .
+                $model['object']['house']['number'] . ', ' .
+                $model['object']['title'] . ')';
+        });
         echo $form->field($documentation, 'equipmentUuid')->widget(Select2::class,
             [
                 'name' => 'kv_type',
                 'language' => 'ru',
                 'data' => $items,
                 'options' => ['placeholder' => 'Выберите элемент ...'],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ])->label(false);
+    }
+    if ($houseUuid) {
+        echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => null])->label(false);
+        echo $form->field($documentation, 'equipmentUuid')->hiddenInput(['value' => null])->label(false);
+        $houses = House::find()
+            ->orderBy('streetUuid')
+            ->all();
+        $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+            return $model['street']['title'] . ', д.' . $model['number'];
+        });
+        echo $form->field($documentation, 'houseUuid')->widget(Select2::class,
+            [
+                'name' => 'kv_type',
+                'language' => 'ru',
+                'data' => $items,
+                'options' => [
+                    'placeholder' => 'Выберите дом ...',
+                    'value' => $houseUuid
+                ],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
