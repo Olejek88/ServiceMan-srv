@@ -137,8 +137,8 @@ echo Select2::widget([
                              for(index in objects) {
                                   select.options[select.options.length] = new Option(objects[index], index);
                              }
-                           }
                         }
-                   });
-            }"]
+                   }
+        });
+    }"]
 ]);

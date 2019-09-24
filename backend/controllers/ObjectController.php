@@ -254,9 +254,10 @@ class ObjectController extends ZhkhController
                             foreach ($objectContragents as $objectContragent) {
                                 if (!$objectContragent['contragent']['deleted']) {
                                     $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                                    $address = "";
                                     if ($objectContragent['contragent']['address'])
                                         $address = $objectContragent['contragent']['address'];
-                                    else
+                                    else if ($objectContragent['object'])
                                         $address = $objectContragent['object']->getFullTile();
                                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
                                         'title' => $objectContragent['contragent']['title'],

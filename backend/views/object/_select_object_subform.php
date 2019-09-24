@@ -150,7 +150,19 @@ $this->registerJs('function refreshObjects(house) {
                     select.options[select.options.length] = new Option(objects[index], index);
                 }
             }
-            select = document.getElementById("object2");
+        }
+    });
+    
+    $.ajax({
+        url: \'../city/objects\',
+        type: \'post\',
+        data: {
+            id: house
+        },
+        success: function (data) {
+            var objects = JSON.parse(data);
+            var select = document.getElementById("request-objectuuid");
+            var select = document.getElementById("object2");
             if (select) {
                 select.options.length = 0;
                 for(index in objects) {
