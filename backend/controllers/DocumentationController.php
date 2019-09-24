@@ -337,33 +337,36 @@ class DocumentationController extends ZhkhController
         }
     }
 
+    /**
+     * @return int|string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionAdd()
     {
         if (isset($_POST["selected_node"])) {
+            $houseUuid = 0;
+            $equipmentUuid = 0;
             if (isset($_POST["uuid"]))
                 $uuid = $_POST["uuid"];
             else $uuid = 0;
             if (isset($_POST["source"]))
                 $source = $_POST["source"];
             else $source = 0;
-            if (isset($_POST["folder"]) && $_POST["folder"] == 'true') {
-                $model_uuid = $_POST["uuid"];
-                $uuid = 0;
-            }
-            else $model_uuid = 0;
-            if (isset($_POST["model_uuid"]))
-                $model_uuid = $_POST["model_uuid"];
 
-            $equipmentType = EquipmentType::find()->where(['uuid' => $model_uuid])->one();
+            $equipmentType = EquipmentType::find()->where(['uuid' => $uuid])->one();
             if (!$equipmentType)
                 $model_uuid = 0;
-            $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
-            if (!$equipment)
-                $uuid = 0;
-            $house = House::find()->where(['uuid' => $uuid])->one();
-            if (!$house)
-                $houseUuid = 0;
             else
+                $model_uuid = $equipmentType['uuid'];
+
+            if (isset($_POST["model_uuid"]))
+                $model_uuid = $_POST["model_uuid"];
+            $equipment = Equipment::find()->where(['uuid' => $uuid])->one();
+            if ($equipment)
+                $equipmentUuid = $equipment['uuid'];
+            $house = House::find()->where(['uuid' => $uuid])->one();
+            if ($house)
                 $houseUuid = $house['uuid'];
 
             $documentation = new Documentation();
@@ -371,7 +374,7 @@ class DocumentationController extends ZhkhController
             return $this->renderAjax('../documentation/_add_form', [
                 'documentation' => $documentation,
                 'source' => $source,
-                'equipmentUuid' => $uuid,
+                'equipmentUuid' => $equipmentUuid,
                 'houseUuid' => $houseUuid,
                 'equipmentTypeUuid' => $model_uuid,
                 'equipmentType' => null,
@@ -390,14 +393,17 @@ class DocumentationController extends ZhkhController
         $model = new Documentation();
         $model->equipmentTypeUuid = null;
         $model->equipmentUuid = null;
+        $model->houseUuid = null;
 
         if ($model->load(Yii::$app->request->post())) {
             if ($model->equipmentTypeUuid == '')
                 $model->equipmentTypeUuid = null;
             if ($model->equipmentUuid == '')
                 $model->equipmentUuid = null;
+            if ($model->houseUuid == '')
+                $model->houseUuid = null;
             if (!$model->validate()) {
-                return false;
+                return "error";
             }
 
             // получаем изображение для последующего сохранения
@@ -424,10 +430,11 @@ class DocumentationController extends ZhkhController
             }
 
             if ($model->save(false)) {
-                EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
-                    EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
-                    "Добавлена документация " . $model['documentationType']['title'] . ' ' . $model['title']);
-
+                if (!$model->houseUuid) {
+                    EquipmentRegisterController::addEquipmentRegister($model['equipment']['uuid'],
+                        EquipmentRegisterType::REGISTER_TYPE_CHANGE_PROPERTIES,
+                        "Добавлена документация " . $model['documentationType']['title'] . ' ' . $model['title']);
+                }
                 if (isset($_POST['source']))
                     return $this->redirect($_POST['source']);
                 else

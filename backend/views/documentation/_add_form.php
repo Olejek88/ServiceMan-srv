@@ -34,7 +34,6 @@ use yii\helpers\Html;
 </div>
 <div class="modal-body">
     <?php
-
     echo $form->field($documentation, 'uuid')
         ->hiddenInput(['value' => MainFunctions::GUID()])
         ->label(false);
@@ -104,25 +103,26 @@ use yii\helpers\Html;
     if ($houseUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => null])->label(false);
         echo $form->field($documentation, 'equipmentUuid')->hiddenInput(['value' => null])->label(false);
-        $houses = House::find()
-            ->orderBy('streetUuid')
-            ->all();
-        $items = ArrayHelper::map($houses, 'uuid', function ($model) {
-            return $model['street']['title'] . ', д.' . $model['number'];
-        });
-        echo $form->field($documentation, 'houseUuid')->widget(Select2::class,
-            [
-                'name' => 'kv_type',
-                'language' => 'ru',
-                'data' => $items,
-                'options' => [
-                    'placeholder' => 'Выберите дом ...',
-                    'value' => $houseUuid
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ])->label(false);
+        echo $form->field($documentation, 'houseUuid')->hiddenInput(['value' => $houseUuid])->label(false);
+        /*        $houses = House::find()
+                    ->orderBy('streetUuid')
+                    ->all();
+                $items = ArrayHelper::map($houses, 'uuid', function ($model) {
+                    return $model['street']['title'] . ', д.' . $model['number'];
+                });
+                echo $form->field($documentation, 'houseUuid')->widget(Select2::class,
+                    [
+                        'name' => 'kv_type',
+                        'language' => 'ru',
+                        'data' => $items,
+                        'options' => [
+                            'placeholder' => 'Выберите дом ...',
+                            'value' => $houseUuid
+                        ],
+                        'pluginOptions' => [
+                            'allowClear' => true
+                        ],
+                    ])->label(false);*/
     }
 
     if (isset($source)) {
@@ -139,17 +139,17 @@ use yii\helpers\Html;
 </div>
 <script>
     $(document).on("beforeSubmit", "#form", function (e) {
-        e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
         $.ajax({
             type: "post",
-            data: new FormData(this),
+            data: $('form').serialize(),
             processData: false,
             contentType: false
             url: "../documentation/save",
             success: function () {
                 $('#modalAddDocumentation').modal('hide');
+                window.location.reload();
             },
             error: function () {
             }
