@@ -7,6 +7,7 @@ use common\components\MainFunctions;
 use common\models\Message;
 use common\models\Users;
 use Exception;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
@@ -171,8 +172,6 @@ class MessageController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Message();
         $searchModel = new MessageSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -233,8 +232,6 @@ class MessageController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -253,13 +250,11 @@ class MessageController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }
@@ -268,7 +263,7 @@ class MessageController extends ZhkhController
      * @return Response
      * @throws NotFoundHttpException
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDeleteOne()
     {

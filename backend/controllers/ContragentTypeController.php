@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\ContragentSearchType;
 use common\models\ContragentType;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -48,8 +50,6 @@ class ContragentTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new ContragentType();
         $searchModel = new ContragentSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -76,8 +76,6 @@ class ContragentTypeController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -95,13 +93,11 @@ class ContragentTypeController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

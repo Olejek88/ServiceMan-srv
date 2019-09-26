@@ -3,8 +3,11 @@ namespace backend\controllers;
 
 use backend\models\OperationSearch;
 use common\models\Operation;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 class OperationController extends ZhkhController
 {
@@ -34,6 +37,7 @@ class OperationController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -52,6 +56,7 @@ class OperationController extends ZhkhController
      * @param integer $id Id
      *
      * @return string
+     * @throws NotFoundHttpException
      */
     public function actionInfo($id)
     {
@@ -76,7 +81,7 @@ class OperationController extends ZhkhController
     /**
      * Action generate.
      *
-     * @return string|\yii\web\Response
+     * @return string|Response
      */
     public function actionGenerate()
     {
@@ -99,8 +104,6 @@ class OperationController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Operation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -117,11 +120,10 @@ class OperationController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -138,11 +140,12 @@ class OperationController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

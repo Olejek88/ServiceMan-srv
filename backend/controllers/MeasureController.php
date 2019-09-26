@@ -58,8 +58,6 @@ class MeasureController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Measure();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return self::actionIndex();
@@ -103,8 +101,6 @@ class MeasureController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -126,8 +122,6 @@ class MeasureController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

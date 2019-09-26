@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\WorkSearchStatus;
 use common\models\WorkStatus;
+use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
@@ -49,8 +50,6 @@ class WorkStatusController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new WorkStatus();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -75,8 +74,6 @@ class WorkStatusController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -94,13 +91,11 @@ class WorkStatusController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

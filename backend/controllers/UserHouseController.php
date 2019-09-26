@@ -59,8 +59,6 @@ class UserHouseController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new UserHouse();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -127,8 +125,6 @@ class UserHouseController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -151,8 +147,6 @@ class UserHouseController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

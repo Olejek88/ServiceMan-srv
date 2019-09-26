@@ -43,8 +43,6 @@ class RequestTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new RequestType();
         $searchModel = new RequestTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -70,8 +68,6 @@ class RequestTypeController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -96,8 +92,6 @@ class RequestTypeController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

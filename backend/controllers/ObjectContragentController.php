@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\ObjectContragentSearch;
 use common\models\ObjectContragent;
+use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
@@ -49,8 +50,6 @@ class ObjectContragentController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new ObjectContragent();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -73,11 +72,10 @@ class ObjectContragentController extends ZhkhController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -95,13 +93,11 @@ class ObjectContragentController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

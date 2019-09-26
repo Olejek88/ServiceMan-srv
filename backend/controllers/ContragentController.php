@@ -106,9 +106,8 @@ class ContragentController extends ZhkhController
      */
     public function actionCreate()
     {
-        //parent::actionCreate();
-        if (!Yii::$app->user->can(User::PERMISSION_ADMIN) &&
-            !Yii::$app->user->can(User::PERMISSION_OPERATOR)) {
+        if (!Yii::$app->user->can(User::ROLE_ADMIN) &&
+            !Yii::$app->user->can(User::ROLE_OPERATOR)) {
             $this->redirect('index');
         }
 
@@ -213,8 +212,6 @@ class ContragentController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        //parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -246,8 +243,6 @@ class ContragentController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        //parent::actionDelete($id);
-
         $contragent = $this->findModel($id);
         $contragent['deleted'] = true;
         $contragent->save();

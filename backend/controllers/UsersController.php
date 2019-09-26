@@ -73,7 +73,7 @@ class UsersController extends ZhkhController
     {
         $model = $this->findModel($id);
         if ($model->user_id == Yii::$app->user->id ||
-            Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+            Yii::$app->user->can(User::ROLE_ADMIN)) {
         } else {
             $this->redirect('index');
         }
@@ -156,8 +156,6 @@ class UsersController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new UserArm();
         $am = Yii::$app->getAuthManager();
         $existUser = User::find()->all();
@@ -347,7 +345,8 @@ class UsersController extends ZhkhController
     {
         $users = $this->findModel($id);
         if ($users->user_id != Yii::$app->user->id) {
-            parent::actionUpdate($id);
+            Yii::$app->session->setFlash('error', '<h3>Не достаточно прав доступа.</h3>');
+            $this->redirect('/');
         }
 
         $am = Yii::$app->getAuthManager();
@@ -442,8 +441,6 @@ class UsersController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -6,6 +6,7 @@ use backend\models\TaskTemplateEquipmentTypeSearch;
 use common\components\Errors;
 use common\models\TaskTemplateEquipmentType;
 use Exception;
+use Throwable;
 use Yii;
 use yii\db\StaleObjectException;
 use yii\web\BadRequestHttpException;
@@ -81,8 +82,6 @@ class TaskTemplateEquipmentTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskTemplateEquipmentType();
         $searchModel = new TaskTemplateEquipmentTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -112,8 +111,6 @@ class TaskTemplateEquipmentTypeController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -137,13 +134,11 @@ class TaskTemplateEquipmentTypeController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -198,7 +193,7 @@ class TaskTemplateEquipmentTypeController extends ZhkhController
      * POST string $uuid - задачи
      * @return mixed
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDeleteTask()

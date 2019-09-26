@@ -126,7 +126,7 @@ $userImage = Yii::$app->view->params['userImage'];
                     </ul>
                 </li>
                 <?php
-                if (Yii::$app->user->can(User::PERMISSION_ADMIN))
+                if (Yii::$app->user->can(User::ROLE_ADMIN))
                     echo $this->render('header_control');
                 ?>
             </ul>

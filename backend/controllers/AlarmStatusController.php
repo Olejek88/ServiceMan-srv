@@ -50,8 +50,6 @@ class AlarmStatusController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new AlarmStatus();
         $searchModel = new AlarmSearchStatus();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -80,8 +78,6 @@ class AlarmStatusController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -104,8 +100,6 @@ class AlarmStatusController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

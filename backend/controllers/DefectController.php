@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\DefectSearch;
 use common\components\MainFunctions;
 use common\models\Defect;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -93,8 +94,6 @@ class DefectController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Defect();
         $defect = Defect::find()
             ->select('_id')
@@ -129,8 +128,6 @@ class DefectController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -150,12 +147,10 @@ class DefectController extends ZhkhController
      * @throws NotFoundHttpException
      * @throws \Exception
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

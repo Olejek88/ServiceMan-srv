@@ -55,8 +55,6 @@ class OperationTemplateController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new OperationTemplate();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -77,8 +75,6 @@ class OperationTemplateController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             // сохраняем модель
@@ -112,8 +108,6 @@ class OperationTemplateController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

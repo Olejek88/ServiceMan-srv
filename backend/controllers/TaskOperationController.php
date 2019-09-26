@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\TaskOperationSearch;
 use common\models\TaskOperation;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 
 /**
  * TaskOperationController implements the CRUD actions for TaskOperation model.
@@ -49,8 +51,6 @@ class TaskOperationController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskOperation();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -70,8 +70,6 @@ class TaskOperationController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = TaskOPeration::find()->where(['_id' => $id])->one();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -88,11 +86,11 @@ class TaskOperationController extends ZhkhController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = TaskOperation::find()->where(['_id' => $id])->one();
 
         $model->delete();

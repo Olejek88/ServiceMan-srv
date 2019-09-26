@@ -9,6 +9,7 @@ use common\models\Journal;
 use common\models\Receipt;
 use common\models\Request;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -142,8 +143,6 @@ class RequestController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Request();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->equipmentUuid)
@@ -264,8 +263,6 @@ class RequestController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -283,13 +280,11 @@ class RequestController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = $this->findModel($id);
         if ($model) {
             $model->delete();

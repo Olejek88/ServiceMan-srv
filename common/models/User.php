@@ -34,13 +34,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     const ROLE_ADMIN = 'admin';
     const ROLE_OPERATOR = 'operator';
-    const ROLE_ANALYST = 'analyst';
-    const ROLE_USER = 'user';
-
-    const PERMISSION_ADMIN = 'permissionAdmin';
-    const PERMISSION_OPERATOR = 'permissionOperator';
-    const PERMISSION_ANALYST = 'permissionAnalyst';
-    const PERMISSION_USER = 'permissionUser';
+    const ROLE_DISPATCH = 'dispatch';
+    const ROLE_DIRECTOR = 'director';
 
     /**
      * Table name.

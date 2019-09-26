@@ -17,6 +17,7 @@ use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\Street;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -100,8 +101,6 @@ class ObjectController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Objects();
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -137,8 +136,6 @@ class ObjectController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -159,8 +156,6 @@ class ObjectController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = $this->findModel($id);
         if ($model) {
             $model->deleted = true;
@@ -421,7 +416,7 @@ class ObjectController extends ZhkhController
      *
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemove()
     {
@@ -481,7 +476,7 @@ class ObjectController extends ZhkhController
      *
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemoveLink()
     {

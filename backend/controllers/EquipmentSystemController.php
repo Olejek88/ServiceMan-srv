@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\EquipmentSystemSearch;
 use common\models\EquipmentSystem;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -38,6 +40,7 @@ class EquipmentSystemController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -57,8 +60,6 @@ class EquipmentSystemController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new EquipmentSystem();
         $searchModel = new EquipmentSystemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -85,10 +86,10 @@ class EquipmentSystemController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
 
         $model = $this->findModel($id);
         if (Yii::$app->request->isPost) {
@@ -113,11 +114,12 @@ class EquipmentSystemController extends ZhkhController
      * @param integer $id Id
      *
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

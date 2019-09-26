@@ -5,8 +5,10 @@ namespace backend\controllers;
 use backend\models\UserSystemSearch;
 use common\components\MainFunctions;
 use common\models\UserSystem;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -49,12 +51,10 @@ class UserSystemController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      * @throws InvalidConfigException
-     * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new UserSystem();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -83,12 +83,10 @@ class UserSystemController extends ZhkhController
      * @return mixed
      * @throws InvalidConfigException
      * @throws NotFoundHttpException
-     * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -110,13 +108,11 @@ class UserSystemController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

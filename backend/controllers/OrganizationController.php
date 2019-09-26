@@ -20,7 +20,7 @@ class OrganizationController extends ZhkhController
      */
     public function actionIndex()
     {
-        if (!Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $this->goHome();
         }
 
@@ -41,7 +41,7 @@ class OrganizationController extends ZhkhController
      */
     public function actionView($id)
     {
-        if (!Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+        if (!Yii::$app->user->can(User::ROLE_ADMIN)) {
             $this->goHome();
         }
 
@@ -85,8 +85,6 @@ class OrganizationController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
