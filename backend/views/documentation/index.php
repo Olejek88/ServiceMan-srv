@@ -129,8 +129,6 @@ $gridColumns = [
             }
         ],
         'template'=>'{link} {edit} {delete}'
-
-
     ]
 ];
 

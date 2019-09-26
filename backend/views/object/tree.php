@@ -207,7 +207,7 @@ echo FancytreeWidget::widget([
             $tdList.eq(3).html(node.data.phone);
             $tdList.eq(4).text(node.data.email);
             $tdList.eq(5).html(node.data.contragentType);
-            $tdList.eq(6).html(node.data.director);
+            $tdList.eq(6).html(node.data.comment);
         }')
     ]
 ]);

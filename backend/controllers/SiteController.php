@@ -197,7 +197,7 @@ class SiteController extends Controller
                     . '= L.marker([' . $photoHouse["latitude"]
                     . ',' . $photoHouse["longitude"]
                     . '], {icon: houseIcon}).bindPopup("<b>'
-                    . $photoHouse["street"]->title . ', ' . $photoHouse["number"] . '</b><br/>").openPopup();';
+                    . $photoHouse["street"]->title . ', ' . $photoHouse["number"] . '</b><br/>").openPopup();' . PHP_EOL;
                 if ($cnt > 0) {
                     $photosGroup .= ',';
                 }
@@ -219,8 +219,8 @@ class SiteController extends Controller
                 . '= L.marker([' . $user["latitude"]
                 . ',' . $user["longitude"]
                 . '], {icon: userIcon}).bindPopup("<b>'
-                . $user["name"] . '</b><br/>'
-                . $user["contact"] . '").openPopup();';
+                . htmlspecialchars($user["name"]) . '</b><br/>'
+                . $user["contact"] . '").openPopup();' . PHP_EOL;
             if ($cnt > 0) {
                 $usersGroup .= ',';
             }
