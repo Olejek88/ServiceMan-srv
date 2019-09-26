@@ -12,6 +12,7 @@ use common\models\Documentation;
 use common\models\Equipment;
 use common\models\EquipmentRegister;
 use common\models\EquipmentRegisterType;
+use common\models\EquipmentSystem;
 use common\models\EquipmentType;
 use common\models\House;
 use common\models\Measure;
@@ -373,27 +374,42 @@ class EquipmentController extends ZhkhController
         $userSystems = UserSystem::find()->all();
         $tasks = Task::find()->orderBy('changedAt DESC')->all();
 
-        $types = EquipmentType::find()
-            ->select('*')
+        $systems = EquipmentSystem::find()
             ->orderBy('title')
             ->all();
-        foreach ($types as $type) {
+        foreach ($systems as $system) {
             $fullTree['children'][] = [
-                'title' => $type['title'],
+                'title' => $system['title'],
                 'address' => '',
-                'uuid' => $type['uuid'],
-                'type' => 'type',
-                'key' => $type['_id'],
+                'uuid' => $system['uuid'],
+                'type' => 'system',
+                'key' => $system['_id'],
                 'folder' => true,
                 'expanded' => false
             ];
             $childIdx = count($fullTree['children']) - 1;
-            $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])
-                ->andWhere(['deleted' => false])
+            $types = EquipmentType::find()
+                ->where(['equipmentSystemUuid' => $system['uuid']])
+                ->orderBy('title')
                 ->all();
-            foreach ($equipments as $equipment) {
-                $fullTree['children'][$childIdx]['children'][] =
-                    self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+            foreach ($types as $type) {
+                $fullTree['children'][$childIdx]['children'][] = [
+                    'title' => $type['title'],
+                    'address' => '',
+                    'uuid' => $type['uuid'],
+                    'type' => 'type',
+                    'key' => $type['_id'],
+                    'folder' => true,
+                    'expanded' => false
+                ];
+                $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+                $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])
+                    ->andWhere(['deleted' => false])
+                    ->all();
+                foreach ($equipments as $equipment) {
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
+                        self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                }
             }
         }
         $users = Users::find()->all();

@@ -264,7 +264,7 @@ $gridColumns = [
                 $task = Task::find()->where(['uuid' => $model['taskUuid']])->one();
                 if ($task) {
                     $order = Html::a('Задача №' . $task['_id'],
-                        ['../task/info', 'task' => $task['uuid']],
+                        ['../task/info', 'task' => $model['taskUuid']],
                         [
                             'title' => 'Просмотреть задачу',
                             'data-toggle' => 'modal',
@@ -496,7 +496,7 @@ function () {
 </div>
 
 <div class="modal remote fade" id="modalTaskInfo">
-    <div class="modal-dialog">
+    <div class="modal-dialog" id="modalTaskContent">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>

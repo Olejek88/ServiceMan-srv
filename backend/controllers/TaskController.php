@@ -960,8 +960,12 @@ class TaskController extends ZhkhController
     {
         if (isset($_GET["task"])) {
             $task = Task::find()
+                ->where(['uuid' => $_GET["task"]])
+                ->one();
+            if ($task)
+                return $this->renderAjax('_task_info', ['task' => $task]);
+            $task = Task::find()
                 ->where(['_id' => $_GET["task"]])
-                ->orWhere(['uuid' => $_GET["task"]])
                 ->one();
             if ($task)
                 return $this->renderAjax('_task_info', ['task' => $task]);
