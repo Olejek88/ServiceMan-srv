@@ -32,6 +32,8 @@ use yii2fullcalendar\models\Event;
 
 class TaskController extends ZhkhController
 {
+    protected $modelClass = Task::class;
+
     /**
      * Lists all Task models.
      *

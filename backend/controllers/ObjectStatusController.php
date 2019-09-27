@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class ObjectStatusController extends ZhkhController
 {
+    protected $modelClass = ObjectStatus::class;
+
     /**
      * Lists all ObjectStatus models.
      * @return mixed

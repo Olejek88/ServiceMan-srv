@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class DocumentationTypeController extends ZhkhController
 {
+    protected $modelClass = DocumentationType::class;
+
     /**
      * Lists all DocumentationType models.
      * @return mixed

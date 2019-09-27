@@ -11,6 +11,8 @@ use yii\web\Response;
 
 class OperationController extends ZhkhController
 {
+    protected $modelClass = Operation::class;
+
     /**
      * Lists all Operation models.
      *

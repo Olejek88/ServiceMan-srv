@@ -7,6 +7,7 @@ namespace backend\controllers;
 use common\components\ZhkhActiveRecord;
 use common\models\IPermission;
 use common\models\User;
+use stdClass;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -20,7 +21,7 @@ use yii\web\Controller;
  */
 class ZhkhController extends Controller
 {
-    protected $modelClass;
+    protected $modelClass = stdClass::class;
 
     /**
      * @inheritdoc
@@ -57,10 +58,14 @@ class ZhkhController extends Controller
             /** @var IPermission $model */
             $model = new $this->modelClass;
             if (!($model instanceof ZhkhActiveRecord)) {
-                // если это "общая" для всех модель, значит доступа нет ни у кого.
-                Yii::$app->session->setFlash('error', '<h3>Не достаточно прав доступа.</h3>');
-                $this->redirect('/');
-                return false;
+                // если это "общая" для всех модель, разрешаем только GET запросы
+                if (Yii::$app->request->isGet) {
+                    return true;
+                } else {
+                    Yii::$app->session->setFlash('error', '<h3>Не достаточно прав доступа.</h3>');
+                    $this->redirect('/');
+                    return false;
+                }
             }
 
             $currentUser = Yii::$app->user;

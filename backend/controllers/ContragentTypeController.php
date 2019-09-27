@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class ContragentTypeController extends ZhkhController
 {
+    protected $modelClass = ContragentType::class;
+
     /**
      * Lists all ContragentType models.
      * @return mixed

@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class PhotoController extends ZhkhController
 {
+    protected $modelClass = Photo::class;
+
     /**
      * Lists all Photo models.
      * @return mixed

@@ -17,6 +17,8 @@ use yii\web\NotFoundHttpException;
  */
 class UserSystemController extends ZhkhController
 {
+    protected $modelClass = UserSystem::class;
+
     /**
      * Lists all UserSystem models.
      * @return mixed

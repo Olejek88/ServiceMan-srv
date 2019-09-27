@@ -13,6 +13,8 @@ use yii\db\StaleObjectException;
  */
 class TaskOperationController extends ZhkhController
 {
+    protected $modelClass = TaskOperation::class;
+
     /**
      * Lists all TaskOperation models.
      * @return mixed

@@ -15,6 +15,8 @@ use yii\web\NotFoundHttpException;
  */
 class ReceiptController extends ZhkhController
 {
+    protected $modelClass = Receipt::class;
+
     /**
      * Lists all Receipt models.
      *

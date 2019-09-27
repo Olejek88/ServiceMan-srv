@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class RequestStatusController extends ZhkhController
 {
+    protected $modelClass = RequestStatus::class;
+
     /**
      * Lists all Group models.
      *

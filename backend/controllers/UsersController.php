@@ -36,6 +36,8 @@ use yii\web\UploadedFile;
  */
 class UsersController extends ZhkhController
 {
+    protected $modelClass = Users::class;
+
     /**
      * Lists all Users models.
      *

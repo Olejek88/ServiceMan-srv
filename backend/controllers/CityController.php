@@ -22,6 +22,8 @@ use yii\web\NotFoundHttpException;
  */
 class CityController extends ZhkhController
 {
+    protected $modelClass = City::class;
+
     /**
      * Lists all City models.
      * @return mixed

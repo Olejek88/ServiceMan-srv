@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class AlarmStatusController extends ZhkhController
 {
+    protected $modelClass = AlarmStatus::class;
+
     /**
      * Lists all AlarmStatus models.
      * @return mixed

@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentRegisterTypeController extends ZhkhController
 {
+    protected $modelClass = EquipmentRegisterType::class;
+
     /**
      * Lists all EquipmentRegisterType models.
      * @return mixed

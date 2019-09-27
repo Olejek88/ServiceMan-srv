@@ -16,6 +16,8 @@ use yii\web\NotFoundHttpException;
  */
 class MeasureController extends ZhkhController
 {
+    protected $modelClass = Measure::class;
+
     /**
      * Lists all Measure models.
      * @return mixed

@@ -13,6 +13,8 @@ use yii\web\NotFoundHttpException;
  */
 class TaskUserController extends ZhkhController
 {
+    protected $modelClass = TaskUser::class;
+
     /**
      * Displays a single TaskUser model.
      * @param integer $id

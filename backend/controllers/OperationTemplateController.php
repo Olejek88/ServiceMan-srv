@@ -8,6 +8,8 @@ use yii\web\NotFoundHttpException;
 
 class OperationTemplateController extends ZhkhController
 {
+    protected $modelClass = OperationTemplate::class;
+
     /**
      * Lists all OperationTemplate models.
      *

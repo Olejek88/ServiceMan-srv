@@ -15,6 +15,8 @@ use yii\web\NotFoundHttpException;
  */
 class ShutdownController extends ZhkhController
 {
+    protected $modelClass = Shutdown::class;
+
     /**
      * Lists all Shutdown models.
      * @return mixed

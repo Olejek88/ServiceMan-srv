@@ -21,6 +21,8 @@ use yii\web\NotFoundHttpException;
  */
 class RequestController extends ZhkhController
 {
+    protected $modelClass = Request::class;
+
     /**
      * Lists all Request models.
      * @return mixed

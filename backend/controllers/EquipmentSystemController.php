@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentSystemController extends ZhkhController
 {
+    protected $modelClass = EquipmentSystem::class;
+
     /**
      * Lists all StageTemplate models.
      *

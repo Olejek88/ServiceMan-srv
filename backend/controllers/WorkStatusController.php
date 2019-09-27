@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class WorkStatusController extends ZhkhController
 {
+    protected $modelClass = WorkStatus::class;
+
     /**
      * Lists all WorkStatus models.
      * @return mixed

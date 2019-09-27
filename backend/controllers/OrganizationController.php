@@ -14,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class OrganizationController extends ZhkhController
 {
+    protected $modelClass = Organization::class;
+
     /**
      * Lists all Organization models.
      * @return mixed

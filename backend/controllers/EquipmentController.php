@@ -40,6 +40,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentController extends ZhkhController
 {
+    protected $modelClass = Equipment::class;
+
     /**
      * Lists all Equipment models.
      *

@@ -30,6 +30,8 @@ use yii\web\NotFoundHttpException;
  */
 class ObjectController extends ZhkhController
 {
+    protected $modelClass = Objects::class;
+
     /**
      * Lists all Object models.
      * @return mixed

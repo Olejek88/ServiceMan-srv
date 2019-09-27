@@ -23,6 +23,8 @@ use yii\web\NotFoundHttpException;
  */
 class UserHouseController extends ZhkhController
 {
+    protected $modelClass = UserHouse::class;
+
     /**
      * Lists all House models.
      * @return mixed

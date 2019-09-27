@@ -16,6 +16,8 @@ use yii\web\NotFoundHttpException;
  */
 class StreetController extends ZhkhController
 {
+    protected $modelClass = Street::class;
+
     /**
      * Lists all Street models.
      * @return mixed
