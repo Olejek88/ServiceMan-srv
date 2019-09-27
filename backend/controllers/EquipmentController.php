@@ -956,8 +956,7 @@ class EquipmentController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionOperations()
+    public function actionOperations()
     {
         if (isset($_GET["equipmentUuid"])) {
             $tasks = Task::find()->where(['equipmentUuid' => $_GET["equipmentUuid"]])

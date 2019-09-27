@@ -199,4 +199,34 @@ class Task extends ZhkhActiveRecord
         } else
             return "без заявки";
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'table-user',
+                'table-user-normative',
+                'table-report-view',
+                'table',
+                'search',
+                'report',
+                'tree',
+                'form',
+                'add-periodic',
+                'user',
+                'info',
+                'calendar',
+                'defects',
+                'measures',
+                'photos',
+                'refresh',
+            ],
+            'edit' => [
+                'add-task',
+                'new',
+                'name',
+                'new-periodic',
+                'remove',
+            ]]);
+    }
 }

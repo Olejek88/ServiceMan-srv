@@ -198,8 +198,7 @@ class RequestController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['requestUuid']))
             $model = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
@@ -309,8 +308,7 @@ class RequestController extends ZhkhController
      * @return Request the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Request::findOne($id)) !== null) {
             return $model;

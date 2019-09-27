@@ -273,8 +273,7 @@ class UserHouseController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Throwable
      */
-    public
-    function actionName()
+    public function actionName()
     {
         if (isset($_POST['userAdd']) && isset($_POST['houseUuid'])) {
             $user = Users::find()->where(['uuid' => $_POST['userAdd']])->one();

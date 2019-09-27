@@ -122,4 +122,16 @@ class EquipmentRegister extends ZhkhActiveRecord
 //            }, 'date', 'description', 'createdAt', 'changedAt'
 //        ];
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'form',
+            ],
+            'edit' => [
+                'new',
+            ]]);
+    }
 }

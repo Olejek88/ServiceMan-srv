@@ -295,8 +295,7 @@ class MessageController extends ZhkhController
      * @throws InvalidConfigException
      * @throws \yii\db\Exception
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (!isset($_GET['id']))
             $message = new Message();
@@ -311,8 +310,7 @@ class MessageController extends ZhkhController
      * Creates a new Equipment model.
      * @return mixed
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         $model = new Message();
         if ($model->load(Yii::$app->request->post())) {
@@ -341,8 +339,7 @@ class MessageController extends ZhkhController
 
     /**
      */
-    public
-    function actionDeletes()
+    public function actionDeletes()
     {
         foreach ($_POST as $key => $value) {
             if ($value == "on") {

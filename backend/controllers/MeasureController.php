@@ -148,8 +148,7 @@ class MeasureController extends ZhkhController
     /**
      * @return bool|string
      */
-    public
-    function actionAdd()
+    public function actionAdd()
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Measure();
@@ -169,8 +168,7 @@ class MeasureController extends ZhkhController
      * Creates a new Measure model.
      * @return mixed
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         if (isset($_POST["source"]))
             $source = $_POST["source"];

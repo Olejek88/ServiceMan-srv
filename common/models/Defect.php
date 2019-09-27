@@ -145,4 +145,18 @@ class Defect extends ZhkhActiveRecord
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'pie',
+                'bargraph',
+                'add',
+                'add-table',
+            ],
+            'edit' => [
+                'save',
+            ]]);
+    }
 }

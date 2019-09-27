@@ -315,4 +315,15 @@ class Documentation extends ZhkhActiveRecord
         // the uploaded image instance
         return $uploadFile;
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'add',
+            ],
+            'edit' => [
+                'save',
+            ]]);
+    }
 }

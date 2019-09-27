@@ -260,4 +260,17 @@ class Users extends ZhkhActiveRecord
             }
         }
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'dashboard',
+                'table',
+                'timeline',
+            ],
+            'edit' => [
+                'add-system',
+            ]]);
+    }
 }

@@ -108,4 +108,16 @@ class Receipt extends ZhkhActiveRecord
             Request::class, ['uuid' => 'requestUuid']
         );
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'form',
+                'new',
+            ],
+            'edit' => [
+            ]]);
+    }
 }

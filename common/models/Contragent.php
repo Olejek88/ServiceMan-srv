@@ -145,4 +145,16 @@ class Contragent extends ZhkhActiveRecord
     {
         return static::findOne(['_id' => $id, 'deleted' => Status::STATUS_DEFAULT]);
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'phone',
+                'address',
+                'name',
+                'form',
+                'list',
+            ]]);
+    }
 }

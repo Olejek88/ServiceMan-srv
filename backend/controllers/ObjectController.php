@@ -290,8 +290,7 @@ class ObjectController extends ZhkhController
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
@@ -510,8 +509,7 @@ class ObjectController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         if (isset($_POST["type"]))
             $type = $_POST["type"];

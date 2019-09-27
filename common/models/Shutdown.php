@@ -143,4 +143,15 @@ class Shutdown extends ZhkhActiveRecord
             ->one();
         return $contragent;
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'form',
+            ],
+            'edit' => [
+                'new',
+            ]]);
+    }
 }

@@ -153,8 +153,7 @@ class ShutdownController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['shutdownUuid']))
             $model = Shutdown::find()->where(['uuid' => $_POST['shutdownUuid']])->one();

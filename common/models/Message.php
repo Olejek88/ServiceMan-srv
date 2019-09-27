@@ -158,4 +158,20 @@ class Message extends ZhkhActiveRecord
             Users::class, ['uuid' => 'toUserUuid']
         );
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'search',
+                'new',
+            ],
+            'edit' => [
+                'send',
+                'delete-one',
+                'save',
+                'deletes',
+            ]]);
+    }
 }

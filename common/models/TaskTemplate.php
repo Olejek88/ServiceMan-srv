@@ -136,4 +136,24 @@ class TaskTemplate extends ZhkhActiveRecord
         return $this->hasOne(TaskType::class, ['uuid' => 'taskTypeUuid']);
     }
 
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'tree',
+                'tree-type',
+                'operation',
+                'choose',
+            ],
+            'edit' => [
+                'add',
+                'remove',
+                'remove-template',
+                'new',
+                'edit',
+                'edit-template',
+                'add-template',
+                'new-template',
+            ]]);
+    }
 }

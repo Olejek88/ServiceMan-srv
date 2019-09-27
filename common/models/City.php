@@ -67,4 +67,15 @@ class City extends ZhkhActiveRecord
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'streets',
+                'houses',
+                'objects',
+                'equipments',
+            ]]);
+    }
 }

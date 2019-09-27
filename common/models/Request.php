@@ -275,4 +275,18 @@ class Request extends ZhkhActiveRecord
             Task::class, ['uuid' => 'taskUuid']
         );
     }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'info',
+                'search',
+                'form',
+                'history',
+            ],
+            'edit' => [
+                'new',
+            ]]);
+    }
 }

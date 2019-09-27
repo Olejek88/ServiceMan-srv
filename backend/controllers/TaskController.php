@@ -803,8 +803,7 @@ class TaskController extends ZhkhController
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['taskUuid']))
             $model = Task::find()->where(['uuid' => $_POST['taskUuid']])->one();
@@ -829,8 +828,7 @@ class TaskController extends ZhkhController
      * @throws StaleObjectException
      * @throws Throwable
      */
-    public
-    function actionName()
+    public function actionName()
     {
         if (isset($_POST['userAdd']) && isset($_POST['taskUuid'])) {
             $user = Users::find()->where(['uuid' => $_POST['userAdd']])->one();
@@ -865,8 +863,7 @@ class TaskController extends ZhkhController
      * Creates a new Task model.
      * @return mixed
      */
-    public
-    function actionNewPeriodic()
+    public function actionNewPeriodic()
     {
         $model = new TaskTemplateEquipment();
         if ($model->load(Yii::$app->request->post())) {
