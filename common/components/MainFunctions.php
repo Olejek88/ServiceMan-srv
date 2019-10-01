@@ -233,11 +233,12 @@ class MainFunctions
      * @param $userUuid
      * @param $model
      * @param $start
+     * @param $authorUuid
      * @return array []
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model, $start)
+    public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model, $start, $authorUuid)
     {
         date_default_timezone_set('Asia/Yekaterinburg');
         $task = new Task();
@@ -253,11 +254,14 @@ class MainFunctions
         else
             $task->deadlineDate = date('Y-m-d H:i:s', time() + $taskTemplate['normative'] * 3600);
 
-        $currentUser = Users::find()
-            ->where(['oid' => $oid])
-            ->orderBy('_id DESC')
-            ->one();
-        $task->authorUuid = $currentUser['uuid'];
+        if (!$authorUuid) {
+            $currentUser = Users::find()
+                ->where(['oid' => $oid])
+                ->orderBy('_id DESC')
+                ->one();
+            $authorUuid = $currentUser['uuid'];
+        }
+        $task->authorUuid = $authorUuid;
         $task->comment = $comment;
         if ($model) {
             $task->authorUuid = $model->authorUuid;
@@ -334,7 +338,7 @@ class MainFunctions
                             //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
                             MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
                                 $equipment['uuid'], 'Задача создана по план-графику',
-                                $equipment['oid'], $user, null, $start);
+                                $equipment['oid'], $user, null, $start, null);
                             $taskTemplateEquipment->last_date = $dates[$count];
                             $taskTemplateEquipment->save();
                             $taskTemplateEquipment->popDate();

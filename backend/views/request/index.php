@@ -367,7 +367,7 @@ $gridColumns = [
                 );
             }
         ],
-        'template' => ' {edit} {history} {delete}',
+        'template' => ' {history} {delete}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];

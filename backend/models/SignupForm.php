@@ -103,7 +103,7 @@ class SignupForm extends Model
                     ReferenceFunctions::loadReferencesAll2($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::loadRequestTypes($organization->uuid, Yii::$app->db);
 
-                    ReferenceFunctions::loadReferences1($organization->uuid, Yii::$app->db);
+                    //ReferenceFunctions::loadReferences1($organization->uuid, Yii::$app->db);
                     return $user;
                 } else {
                     $user->delete();
