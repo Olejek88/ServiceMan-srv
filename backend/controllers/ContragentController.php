@@ -117,79 +117,81 @@ class ContragentController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
-        if ($contragent->load(Yii::$app->request->post()) && $contragent->save()) {
-            if (isset ($_POST['objectUuid'])) {
-                $objectContragent = new ObjectContragent();
-                $objectContragent->contragentUuid = $contragent['uuid'];
-                $objectContragent->uuid = MainFunctions::GUID();
-                $objectContragent->oid = Users::getCurrentOid();
-                $objectContragent->objectUuid = $_POST['objectUuid'];
-                $objectContragent->save();
-            }
-            $contractorTypes = [ContragentType::CONTRACTOR];
-            if (in_array($contragent->contragentTypeUuid, $contractorTypes)) {
-                $model = new UserArm();
-                $am = Yii::$app->getAuthManager();
-                $existUser = User::find()->all();
-                $login = 'user' . (count($existUser) + 1);
-                if (!$contragent->email)
-                    $model->email = $login . '@' . time() . '.ru';
-                else
-                    $model->email = $contragent->email;
-                $model->username = $model->email;
-
-                $model->type = Users::USERS_WORKER;
-                $model->password = SignupForm::randomString();
-                $model->tagType = Tag::TAG_TYPE_UHF;
-                $model->pin = '1234';
-                $model->name = $contragent->title;
-                // очевидно из за условия выше данная проверка линяя
-                if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR) {
-                    $model->whoIs = 'Подрядная огранизация';
+        if ($contragent->load(Yii::$app->request->post())) {
+            $contragent->title = htmlspecialchars($contragent->title);
+            if ($contragent->save()) {
+                if (isset ($_POST['objectUuid'])) {
+                    $objectContragent = new ObjectContragent();
+                    $objectContragent->contragentUuid = $contragent['uuid'];
+                    $objectContragent->uuid = MainFunctions::GUID();
+                    $objectContragent->oid = Users::getCurrentOid();
+                    $objectContragent->objectUuid = $_POST['objectUuid'];
+                    $objectContragent->save();
                 }
+                $contractorTypes = [ContragentType::CONTRACTOR];
+                if (in_array($contragent->contragentTypeUuid, $contractorTypes)) {
+                    $model = new UserArm();
+                    $am = Yii::$app->getAuthManager();
+                    $existUser = User::find()->all();
+                    $login = 'user' . (count($existUser) + 1);
+                    if (!$contragent->email)
+                        $model->email = $login . '@' . time() . '.ru';
+                    else
+                        $model->email = $contragent->email;
+                    $model->username = $model->email;
 
-                $model->contact = $contragent->phone;
-                $model->role = User::ROLE_OPERATOR;
-                $model->status = User::STATUS_ACTIVE;
-
-                if ($model->validate()) {
-                    $user = new User();
-                    $user->username = $model->username;
-                    $user->auth_key = Yii::$app->security->generateRandomString();
-                    $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
-                    $user->email = $model->email;
-                    if ($user->save()) {
-                        $users = new Users();
-                        $users->uuid = MainFunctions::GUID();
-                        $users->name = $model->name;
-                        $users->type = $model->type;
-                        $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
-                        $users->active = 1;
-                        $users->whoIs = $model->whoIs;
-                        $users->contact = $model->contact;
-                        $users->user_id = $user->id;
-                        $users->image = '';
-                        $users->oid = Users::getCurrentOid();
-                        if ($users->validate() && $users->save()) {
-                            $newRole = $am->getRole($model->role);
-                            $am->assign($newRole, $users->user_id);
-                            MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact, $users->uuid);
-                            $userContragent = new UserContragent();
-                            $userContragent->uuid = MainFunctions::GUID();
-                            $userContragent->userUuid = $users->uuid;
-                            $userContragent->contragentUuid = $contragent->uuid;
-                            $userContragent->oid = Users::getCurrentOid();
-                            if (!$userContragent->save())
-                                echo json_encode($userContragent->errors);
-                        } else {
-                            echo json_encode($users->errors);
-                            $user->delete();
-                        }
-                    } else {
-                        echo json_encode($user->errors);
+                    $model->type = Users::USERS_WORKER;
+                    $model->password = SignupForm::randomString();
+                    $model->tagType = Tag::TAG_TYPE_UHF;
+                    $model->pin = '1234';
+                    $model->name = $contragent->title;
+                    // очевидно из за условия выше данная проверка линяя
+                    if ($contragent->contragentTypeUuid == ContragentType::CONTRACTOR) {
+                        $model->whoIs = 'Подрядная огранизация';
                     }
-                } else {
-                    echo json_encode($model->errors);
+
+                    $model->contact = $contragent->phone;
+                    $model->role = User::ROLE_OPERATOR;
+                    $model->status = User::STATUS_ACTIVE;
+
+                    if ($model->validate()) {
+                        $user = new User();
+                        $user->username = $model->username;
+                        $user->auth_key = Yii::$app->security->generateRandomString();
+                        $user->password_hash = Yii::$app->security->generatePasswordHash($model->password);
+                        $user->email = $model->email;
+                        if ($user->save()) {
+                            $users = new Users();
+                            $users->uuid = MainFunctions::GUID();
+                            $users->name = htmlspecialchars($model->name);
+                            $users->type = $model->type;
+                            $users->pin = $users->type == Users::USERS_WORKER ? $model->tagType . ':' . $model->pin : '-';
+                            $users->active = 1;
+                            $users->whoIs = $model->whoIs;
+                            $users->contact = $model->contact;
+                            $users->user_id = $user->id;
+                            $users->image = '';
+                            $users->oid = Users::getCurrentOid();
+                            if ($users->validate() && $users->save()) {
+                                $newRole = $am->getRole($model->role);
+                                $am->assign($newRole, $users->user_id);
+                                MainFunctions::register('user', 'Добавлен пользователь ' . $model->name, $model->contact, $users->uuid);
+                                $userContragent = new UserContragent();
+                                $userContragent->uuid = MainFunctions::GUID();
+                                $userContragent->userUuid = $users->uuid;
+                                $userContragent->contragentUuid = $contragent->uuid;
+                                $userContragent->oid = Users::getCurrentOid();
+                                if (!$userContragent->save())
+                                    echo "";
+                                //echo "uc ".json_encode($userContragent->errors);
+                            } else {
+                                //echo "us ".json_encode($users->errors);
+                                $user->delete();
+                            }
+                        } else {
+                            //echo "u ".json_encode($user->errors);
+                        }
+                    }
                 }
             }
             return $this->render('table', [
@@ -279,9 +281,9 @@ class ContragentController extends ZhkhController
     public function actionPhone()
     {
         if (isset($_POST['id']))
-        if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
-            return $model['phone'];
-        } else return '';
+            if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
+                return $model['phone'];
+            } else return '';
         return '';
     }
 

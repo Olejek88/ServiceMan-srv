@@ -372,6 +372,7 @@ class EquipmentController extends ZhkhController
         $fullTree = array();
         $documentations = Documentation::find()->all();
         $userSystems = UserSystem::find()->all();
+        $userHouses = UserHouse::find()->all();
         $tasks = Task::find()->orderBy('changedAt DESC')->all();
 
         $systems = EquipmentSystem::find()
@@ -408,7 +409,7 @@ class EquipmentController extends ZhkhController
                     ->all();
                 foreach ($equipments as $equipment) {
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                        self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                        self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree");
                 }
             }
         }
@@ -568,6 +569,7 @@ class EquipmentController extends ZhkhController
         ini_set('memory_limit', '-1');
         $documentations = Documentation::find()->all();
         $userSystems = UserSystem::find()->all();
+        $userHouses = UserHouse::find()->all();
         $tasks = Task::find()->orderBy('changedAt DESC')->all();
 
         $fullTree = array();
@@ -605,7 +607,7 @@ class EquipmentController extends ZhkhController
                         $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
                         foreach ($equipments as $equipment) {
                             $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                                self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                                self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree");
                         }
                     }
                 }
@@ -637,6 +639,7 @@ class EquipmentController extends ZhkhController
         $documentations = Documentation::find()->all();
         $userSystems = UserSystem::find()->all();
         $tasks = Task::find()->orderBy('changedAt DESC')->all();
+        $userHouses = UserHouse::find()->all();
 
         $fullTree = array();
         $streets = Street::find()
@@ -714,7 +717,7 @@ class EquipmentController extends ZhkhController
                         ->all();
                     foreach ($equipments as $equipment) {
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree-street");
+                            self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree-street");
                     }
                 }
             }
@@ -1404,11 +1407,12 @@ class EquipmentController extends ZhkhController
      * @param Equipment $equipment
      * @param $documentations
      * @param $userSystems
+     * @param $userHouses
      * @param $tasks
      * @param $source
      * @return array
      */
-    public function addEquipment($equipment, &$documentations, &$userSystems, &$tasks, $source)
+    public function addEquipment($equipment, &$documentations, &$userSystems, &$userHouses, &$tasks, $source)
     {
         $count = 0;
         $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystem']['uuid'];
@@ -1424,9 +1428,14 @@ class EquipmentController extends ZhkhController
         );
         foreach ($userSystems as $userSystem) {
             if ($userSystem['equipmentSystemUuid'] == $equipmentSystemUuid) {
-                if ($count > 0) $userEquipmentName .= ', ';
-                $userEquipmentName .= $userSystem['user']['name'];
-                $count++;
+                foreach ($userHouses as $userHouse) {
+                    if ($equipment['object']['houseUuid'] == $userHouse['houseUuid'] &&
+                        $userSystem['userUuid'] == $userHouse['userUuid']) {
+                        if ($count > 0) $userEquipmentName .= ', ';
+                        $userEquipmentName .= $userSystem['user']['name'];
+                        $count++;
+                    }
+                }
             }
         }
         if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';

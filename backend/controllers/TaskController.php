@@ -733,8 +733,13 @@ class TaskController extends ZhkhController
                     $model->comment = $request['comment'];
                 }
             }
+            $accountUser = Yii::$app->user->identity;
+            $currentUser = Users::find()
+                ->where(['user_id' => $accountUser['id']])
+                ->asArray()
+                ->one();
             $task = MainFunctions::createTask($model['taskTemplate'], $model->equipmentUuid,
-                $model->comment, $model->oid, $_POST['userUuid'], $model, time());
+                $model->comment, $model->oid, $_POST['userUuid'], $model, time(), $currentUser['uuid']);
             if ($task['result']) {
                 if (isset($_POST["defectUuid"])) {
                     $defect = Defect::find()->where(['uuid' => $_POST["defectUuid"]])->one();
@@ -1222,8 +1227,13 @@ class TaskController extends ZhkhController
                 ->where(['taskUuid' => $task['uuid']])
                 ->one();
             if ($taskUser) {
+                $accountUser = Yii::$app->user->identity;
+                $currentUser = Users::find()
+                    ->where(['user_id' => $accountUser['id']])
+                    ->asArray()
+                    ->one();
                 $task = MainFunctions::createTask($task['taskTemplate'], $task['equipmentUuid'],
-                    $task['comment'], $task['oid'], $taskUser['userUuid'], null, time());
+                    $task['comment'], $task['oid'], $taskUser['userUuid'], null, time(), $currentUser['uuid']);
                 if ($task['result']) {
                     MainFunctions::register('task', 'Создана задача',
                         '<a class="btn btn-default btn-xs">' . $task['task']['taskTemplate']['taskType']['title'] . '</a> ' .
