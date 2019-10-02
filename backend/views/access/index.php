@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $data array */
 /* @var $searchModel AccessSearch */
 ?>
-    <h1>Настройка прав доступа к разделам</h1>
+    <h3>Настройка прав доступа к разделам</h3>
 
 <?php
 $this->title = Yii::t('app', 'Настройка прав доступа');
@@ -22,6 +22,17 @@ $form = ActiveForm::begin(
         ],
     ]
 );
+
+$this->registerCss('
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+    border: 1px solid black;
+}
+');
 ?>
 
 <?php
@@ -30,6 +41,7 @@ try {
             'dataProvider' => $dataProvider,
 //            'pjax' => true,
             'filterModel' => $searchModel,
+            'tableOptions' => ['style' => 'font-size: 20px;'],
             'columns' => [
                 [
                     'attribute' => 'id',
