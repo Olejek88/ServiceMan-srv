@@ -83,6 +83,7 @@ class ZhkhController extends Controller
                     $reqPermission = $permission . end($tmpArray);
                     if ($currentUser->can($reqPermission)) {
                         $access = true;
+                        break;
                     }
                 }
             }

@@ -150,7 +150,7 @@ class Objects extends ZhkhActiveRecord
 
     function getActionPermissions()
     {
-        return array_merge(parent::getActionPermissions(), [
+        return array_merge_recursive(parent::getActionPermissions(), [
             'read' => [
                 'table',
                 'tree',
