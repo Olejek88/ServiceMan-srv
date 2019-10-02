@@ -346,7 +346,8 @@ class UsersController extends ZhkhController
     public function actionUpdate($id)
     {
         $users = $this->findModel($id);
-        if ($users->user_id != Yii::$app->user->id) {
+        if ($users->user_id == Yii::$app->user->id || Yii::$app->user->can(User::ROLE_ADMIN)) {
+        } else {
             Yii::$app->session->setFlash('error', '<h3>Не достаточно прав доступа.</h3>');
             $this->redirect('/');
         }
