@@ -27,6 +27,8 @@ use yii\db\Expression;
  */
 class Shutdown extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Планируемые отключения';
+
     /**
      * Behaviors
      *

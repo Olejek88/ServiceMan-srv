@@ -79,7 +79,8 @@ class AccessSearch extends AccessModel
             foreach ($permission as $shortName => $value) {
                 $accessModel = new AccessModel();
                 $accessModel->id = $idx++;
-                $accessModel->model = $model;
+                $className = 'common\\models\\' . $model;
+                $accessModel->model = $className::DESCRIPTION . ' (' . $model . ')';
                 $accessModel->permission = $shortName;
                 foreach ($permsByRole as $name => $role) {
                     if (isset($role[$value])) {

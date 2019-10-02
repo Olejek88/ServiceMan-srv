@@ -29,6 +29,8 @@ use yii\db\Expression;
  */
 class Operation extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Операции';
+
     /**
      * Behaviors
      *

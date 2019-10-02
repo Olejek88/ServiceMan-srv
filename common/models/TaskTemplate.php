@@ -25,6 +25,8 @@ use yii\db\Expression;
  */
 class TaskTemplate extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Шаблоны задач';
+
     const DEFAULT_TASK = "138C39D3-F0F0-443C-95E7-698A5CAC6E74";
 
     /**

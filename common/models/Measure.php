@@ -30,6 +30,7 @@ use yii\db\Expression;
  */
 class Measure extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Измерения';
 
     /**
      * Behaviors

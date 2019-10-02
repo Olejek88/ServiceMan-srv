@@ -27,6 +27,8 @@ use yii\db\Expression;
  */
 class Message extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Сообщения';
+
     const MESSAGE_NEW = 0;
     const MESSAGE_READ = 1;
     const MESSAGE_DELETED = 2;

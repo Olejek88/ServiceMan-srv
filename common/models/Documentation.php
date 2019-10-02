@@ -37,6 +37,8 @@ use yii\web\UploadedFile;
  */
 class Documentation extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Документация';
+
     private static $_FILE_ROOT_DIR = 'doc';
     public $docFile;
     public $entityType;

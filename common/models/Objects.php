@@ -32,6 +32,8 @@ use yii\db\Expression;
  */
 class Objects extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Объекты';
+
     public function behaviors()
     {
         return [

@@ -26,6 +26,8 @@ use yii\db\ActiveQuery;
  */
 class EquipmentRegister extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Лог оборудования';
+
     /**
      * @inheritdoc
      */

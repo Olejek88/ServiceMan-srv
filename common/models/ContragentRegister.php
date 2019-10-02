@@ -22,6 +22,8 @@ use yii\db\ActiveQuery;
  */
 class ContragentRegister extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Лог контрагентов';
+
     /**
      * @inheritdoc
      */

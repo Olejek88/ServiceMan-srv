@@ -20,6 +20,8 @@ use yii\db\Expression;
  */
 class City extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Города';
+
     public function behaviors()
     {
         return [

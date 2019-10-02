@@ -32,6 +32,8 @@ use yii\db\Expression;
  */
 class Defect extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Дефекты';
+
     public function behaviors()
     {
         return [

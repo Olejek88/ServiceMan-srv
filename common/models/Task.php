@@ -41,6 +41,8 @@ use yii\helpers\Html;
  */
 class Task extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Задачи';
+
     public function behaviors()
     {
         return [

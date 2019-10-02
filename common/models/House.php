@@ -33,6 +33,8 @@ use yii\db\Expression;
  */
 class House extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Дома';
+
     public function behaviors()
     {
         return [

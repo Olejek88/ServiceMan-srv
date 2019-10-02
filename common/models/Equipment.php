@@ -41,6 +41,7 @@ use yii\db\Expression;
  */
 class Equipment extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Оборудование';
 
     /**
      * Behaviors.

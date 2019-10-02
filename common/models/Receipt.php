@@ -30,6 +30,8 @@ use yii\db\ActiveQuery;
  */
 class Receipt extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Приёмы граждан';
+
     /**
      * @inheritdoc
      */

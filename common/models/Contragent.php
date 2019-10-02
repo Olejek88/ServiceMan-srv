@@ -31,6 +31,7 @@ use yii\db\Expression;
 class Contragent extends ZhkhActiveRecord
 {
     const DEFAULT_CONTRAGENT = "89B906FB-0559-4DD3-A632-BAEE215FA387";
+    public const DESCRIPTION = 'Контрагенты';
 
     /**
      * Table name.
