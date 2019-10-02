@@ -37,10 +37,14 @@ try {
                 ],
                 [
                     'class' => 'kartik\grid\DataColumn',
-                    'attribute' => 'description',
+                    'attribute' => 'model',
                     'header' => 'Раздел',
                     'group' => true,
                     'contentOptions' => ['style' => 'text-align: center'],
+                    'content' => function($model) {
+                        /** @var AccessModel $model */
+                        return $model->description;
+                    }
                 ],
                 [
                     'class' => 'kartik\grid\DataColumn',
@@ -140,7 +144,6 @@ try {
 
 $js = <<< SCRIPT
 $("#form-input-access").attr("action", "/access/update");
-$(this).submit();
 SCRIPT;
 
 echo Html::submitButton('Сохранить', [
