@@ -37,7 +37,7 @@ try {
                 ],
                 [
                     'class' => 'kartik\grid\DataColumn',
-                    'attribute' => 'model',
+                    'attribute' => 'description',
                     'header' => 'Раздел',
                     'group' => true,
                     'contentOptions' => ['style' => 'text-align: center'],
