@@ -71,7 +71,7 @@ $this->registerJs('$(window).on("resize", function () { $("#mapid").height($(win
             <?php
             $cnt = 0;
             foreach ($users as $user) {
-                echo ',' . PHP_EOL . '"' . $user['name'] . '": wayUser' . $user["_id"];
+                echo ',' . PHP_EOL . '"' . htmlspecialchars($user["name"]) . '": wayUser' . $user["_id"];
                 $cnt++;
             }
             ?>

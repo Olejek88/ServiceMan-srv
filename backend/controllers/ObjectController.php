@@ -255,9 +255,10 @@ class ObjectController extends ZhkhController
                                     if ($objectContragent['contragent']['address'])
                                         $address = $objectContragent['contragent']['address'];
                                     else if ($objectContragent['object'])
-                                        $address = $objectContragent['object']->getFullTile();
+                                        $address = $objectContragent['object']->getFullTitle();
                                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] = [
                                         'title' => $objectContragent['contragent']['title'],
+                                        'comment' => $objectContragent['contragent']['director'],
                                         'address' => $address,
                                         'inn' => $objectContragent['contragent']['inn'],
                                         'phone' => $objectContragent['contragent']['phone'],

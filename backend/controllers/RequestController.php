@@ -230,12 +230,17 @@ class RequestController extends ZhkhController
 
                 if ($model['requestType']['taskTemplateUuid']) {
                     $user = $model['equipment']->getUser();
+                    $accountUser = Yii::$app->user->identity;
+                    $currentUser = Users::find()
+                        ->where(['user_id' => $accountUser['id']])
+                        ->asArray()
+                        ->one();
                     if ($user)
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, $user['uuid'], null, time());
+                            $model->comment, $model->oid, $user['uuid'], null, time(), $currentUser['uuid']);
                     else
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, null, null, time());
+                            $model->comment, $model->oid, null, null, time(), $currentUser['uuid']);
                     if ($task['result']) {
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .

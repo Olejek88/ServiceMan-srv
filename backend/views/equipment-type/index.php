@@ -67,6 +67,16 @@ $this->title = Yii::t('app', 'Типы элементов');
                                         }
                                     ],
                                     [
+                                        'attribute' => 'equipmentSystem.title',
+                                        'contentOptions' => [
+                                            'class' => 'table_class'
+                                        ],
+                                        'headerOptions' => [
+                                            'class' => 'text-center'
+                                        ],
+                                        'header' => 'Инженерная система'
+                                    ],
+                                    [
                                         'class' => 'yii\grid\ActionColumn',
                                         'header' => 'Действия',
                                         'headerOptions' => [

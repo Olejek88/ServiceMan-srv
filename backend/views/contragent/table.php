@@ -164,6 +164,7 @@ $gridColumns = [
         'class' => 'kartik\grid\ActionColumn',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'header' => 'Действия',
+        'template' => '{update} {delete}'
     ]
 ];
 
