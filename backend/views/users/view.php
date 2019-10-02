@@ -109,10 +109,10 @@ $this->title = 'Профиль пользователя :: ' . $model->name;
                                     echo '<span class="label label-danger">Администратор</span>';
                                 if ($value->roleName==User::ROLE_OPERATOR)
                                     echo '<span class="label label-success">Оператор</span>';
-                                if ($value->roleName==User::ROLE_USER)
-                                    echo '<span class="label label-info">Пользователь</span>';
-                                if ($value->roleName==User::ROLE_ANALYST)
-                                    echo '<span class="label label-info">Аналитик</span>';
+                                if ($value->roleName==User::ROLE_DISPATCH)
+                                    echo '<span class="label label-info">Диспетчер</span>';
+                                if ($value->roleName==User::ROLE_DIRECTOR)
+                                    echo '<span class="label label-info">Директор</span>';
                                 break;
                             }
                             ?>

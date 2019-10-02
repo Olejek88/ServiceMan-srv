@@ -107,8 +107,8 @@ class UserArm extends Model
             [['role'], 'in', 'range' => [
                 User::ROLE_ADMIN,
                 User::ROLE_OPERATOR,
-                User::ROLE_ANALYST,
-                User::ROLE_USER,
+                User::ROLE_DISPATCH,
+                User::ROLE_DIRECTOR,
             ], 'strict' => true, 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],
 
             [['tagType'], 'string', 'on' => [self::SCENARIO_DEFAULT, self::SCENARIO_UPDATE]],

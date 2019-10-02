@@ -62,10 +62,10 @@ $gridColumns = [
                     return '<span class="label label-danger">Администратор</span>';
                 if ($value->roleName==User::ROLE_OPERATOR)
                     return '<span class="label label-success">Оператор</span>';
-                if ($value->roleName==User::ROLE_USER)
-                    return '<span class="label label-info">Пользователь</span>';
-                if ($value->roleName==User::ROLE_ANALYST)
-                    return '<span class="label label-info">Аналитик</span>';
+                if ($value->roleName==User::ROLE_DISPATCH)
+                    return '<span class="label label-info">Диспетчер</span>';
+                if ($value->roleName==User::ROLE_DIRECTOR)
+                    return '<span class="label label-info">Директор</span>';
             }
             return '';
         },
@@ -78,8 +78,9 @@ $gridColumns = [
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'data' => [
                     User::ROLE_ADMIN =>'Администратор',
-                    User::ROLE_USER =>'Пользователь',
-                    User::ROLE_OPERATOR =>'Оператор'
+                    User::ROLE_OPERATOR =>'Оператор',
+                    User::ROLE_DISPATCH =>'Диспетчер',
+                    User::ROLE_DIRECTOR =>'Директор',
                 ]
             ];
         },
