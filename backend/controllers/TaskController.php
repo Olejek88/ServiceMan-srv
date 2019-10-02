@@ -32,6 +32,8 @@ use yii2fullcalendar\models\Event;
 
 class TaskController extends ZhkhController
 {
+    protected $modelClass = Task::class;
+
     /**
      * Lists all Task models.
      *
@@ -366,8 +368,6 @@ class TaskController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Task();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -410,8 +410,6 @@ class TaskController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -439,8 +437,6 @@ class TaskController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -812,8 +808,7 @@ class TaskController extends ZhkhController
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['taskUuid']))
             $model = Task::find()->where(['uuid' => $_POST['taskUuid']])->one();
@@ -838,8 +833,7 @@ class TaskController extends ZhkhController
      * @throws StaleObjectException
      * @throws Throwable
      */
-    public
-    function actionName()
+    public function actionName()
     {
         if (isset($_POST['userAdd']) && isset($_POST['taskUuid'])) {
             $user = Users::find()->where(['uuid' => $_POST['userAdd']])->one();
@@ -874,8 +868,7 @@ class TaskController extends ZhkhController
      * Creates a new Task model.
      * @return mixed
      */
-    public
-    function actionNewPeriodic()
+    public function actionNewPeriodic()
     {
         $model = new TaskTemplateEquipment();
         if ($model->load(Yii::$app->request->post())) {

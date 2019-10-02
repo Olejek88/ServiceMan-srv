@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\HouseSearch;
 use common\models\House;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -15,6 +16,8 @@ use yii\web\NotFoundHttpException;
  */
 class HouseController extends ZhkhController
 {
+    protected $modelClass = House::class;
+
     /**
      * Lists all House models.
      * @return mixed
@@ -55,8 +58,6 @@ class HouseController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new House();
         $searchModel = new HouseSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -86,8 +87,6 @@ class HouseController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -105,13 +104,11 @@ class HouseController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

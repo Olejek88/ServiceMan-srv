@@ -22,6 +22,8 @@ use yii\db\ActiveQuery;
  */
 class ObjectContragent extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Связь объектов с контрагентами';
+
     /**
      * Название таблицы.
      * @return string

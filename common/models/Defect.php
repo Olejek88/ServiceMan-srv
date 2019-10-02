@@ -32,6 +32,8 @@ use yii\db\Expression;
  */
 class Defect extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Дефекты';
+
     public function behaviors()
     {
         return [
@@ -145,4 +147,18 @@ class Defect extends ZhkhActiveRecord
         return $this->hasMany(Photo::class, ['objectUuid' => 'uuid']);
     }
 
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'pie',
+                'bargraph',
+                'add',
+                'add-table',
+            ],
+            'edit' => [
+                'save',
+            ]]);
+    }
 }

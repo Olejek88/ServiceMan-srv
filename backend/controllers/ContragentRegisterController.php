@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\ContragentRegisterSearch;
 use common\models\ContragentRegister;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -12,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class ContragentRegisterController extends ZhkhController
 {
+    protected $modelClass = ContragentRegister::class;
+
     /**
      * Lists all ContragentRegister models.
      * @return mixed
@@ -32,6 +36,7 @@ class ContragentRegisterController extends ZhkhController
      * Displays a single ContragentRegister model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -47,8 +52,6 @@ class ContragentRegisterController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new ContragentRegister();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -71,11 +74,10 @@ class ContragentRegisterController extends ZhkhController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -92,11 +94,12 @@ class ContragentRegisterController extends ZhkhController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

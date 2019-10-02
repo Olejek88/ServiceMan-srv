@@ -41,6 +41,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentController extends ZhkhController
 {
+    protected $modelClass = Equipment::class;
+
     /**
      * Lists all Equipment models.
      *
@@ -232,8 +234,6 @@ class EquipmentController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Equipment();
         $tagTypeList = [
             Tag::TAG_TYPE_DUMMY => 'Пустая',
@@ -335,8 +335,6 @@ class EquipmentController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -748,8 +746,6 @@ class EquipmentController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $equipment = $this->findModel($id);
         $photos = Photo::find()
             ->select('*')
@@ -979,8 +975,7 @@ class EquipmentController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionOperations()
+    public function actionOperations()
     {
         if (isset($_GET["equipmentUuid"])) {
             $tasks = Task::find()->where(['equipmentUuid' => $_GET["equipmentUuid"]])

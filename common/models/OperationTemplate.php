@@ -20,6 +20,8 @@ use yii\db\Expression;
  */
 class OperationTemplate extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Шаблноны операций';
+
     /**
      * Behaviors
      *

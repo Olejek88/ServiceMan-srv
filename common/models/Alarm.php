@@ -30,6 +30,8 @@ use yii\db\Expression;
  */
 class Alarm extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Предупреждения';
+
     public function behaviors()
     {
         return [

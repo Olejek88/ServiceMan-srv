@@ -6,6 +6,7 @@ use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 
 /**
  * This is the model class for table "user_house".
@@ -23,6 +24,8 @@ use yii\db\ActiveQuery;
  */
 class UserHouse extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Связь пользователей с домами';
+
     /**
      * Название таблицы.
      * @return string
@@ -96,6 +99,7 @@ class UserHouse extends ZhkhActiveRecord
      * @param $houseUuid
      * @return UserHouse|null
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public static function getUserName($houseUuid)
     {
@@ -104,5 +108,18 @@ class UserHouse extends ZhkhActiveRecord
             return $model['user']->name;
         }
         return null;
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'tree',
+                'change',
+            ],
+            'edit' => [
+                'create-default',
+                'name',
+            ]]);
     }
 }

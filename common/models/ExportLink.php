@@ -21,6 +21,8 @@ use yii\db\Expression;
  */
 class ExportLink extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Ссылки для экспорта';
+
     /**
      * Behaviors.
      *

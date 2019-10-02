@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\TaskSearchVerdict;
 use common\models\TaskVerdict;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -56,8 +58,6 @@ class TaskVerdictController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskVerdict();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -82,8 +82,6 @@ class TaskVerdictController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -101,13 +99,11 @@ class TaskVerdictController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Exception
-     * @throws \yii\db\StaleObjectException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

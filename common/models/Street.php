@@ -25,6 +25,8 @@ use yii\db\Expression;
  */
 class Street extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Улицы';
+
     public function behaviors()
     {
         return [

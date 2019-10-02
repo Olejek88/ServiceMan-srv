@@ -30,6 +30,8 @@ use yii\db\ActiveQuery;
  */
 class Receipt extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Приёмы граждан';
+
     /**
      * @inheritdoc
      */
@@ -107,5 +109,17 @@ class Receipt extends ZhkhActiveRecord
         return $this->hasOne(
             Request::class, ['uuid' => 'requestUuid']
         );
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'form',
+                'new',
+            ],
+            'edit' => [
+            ]]);
     }
 }

@@ -32,6 +32,8 @@ use yii\db\Expression;
  */
 class Objects extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Объекты';
+
     public function behaviors()
     {
         return [
@@ -144,5 +146,22 @@ class Objects extends ZhkhActiveRecord
     {
         $house = $this->house;
         return 'ул.' . $house->street->title . ', д.' . $house->number . ' - ' . $this->title;
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'table',
+                'tree',
+                'new',
+                'house',
+            ],
+            'edit' => [
+                'save',
+                'edit',
+                'remove',
+                'remove-link',
+            ]]);
     }
 }

@@ -41,6 +41,7 @@ use yii\db\Expression;
  */
 class Equipment extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Оборудование';
 
     /**
      * Behaviors.
@@ -250,4 +251,34 @@ class Equipment extends ZhkhActiveRecord
         return null;
     }
 
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'measure',
+                'index-check',
+                'tree',
+                'table',
+                'tree-user',
+                'tree-street',
+                'operations',
+                'measures',
+                'status',
+                'serial',
+                'select-task',
+                'timeline-all',
+                'timeline',
+                'move',
+                'remove',
+                'edit',
+                'edit-table',
+            ],
+            'edit' => [
+                'deleted',
+                'rename',
+                'save',
+                'add',
+                'new',
+            ]]);
+    }
 }

@@ -25,6 +25,8 @@ use yii\db\Expression;
  */
 class TaskTemplate extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Шаблоны задач';
+
     const DEFAULT_TASK = "138C39D3-F0F0-443C-95E7-698A5CAC6E74";
 
     /**
@@ -136,4 +138,24 @@ class TaskTemplate extends ZhkhActiveRecord
         return $this->hasOne(TaskType::class, ['uuid' => 'taskTypeUuid']);
     }
 
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'tree',
+                'tree-type',
+                'operation',
+                'choose',
+            ],
+            'edit' => [
+                'add',
+                'remove',
+                'remove-template',
+                'new',
+                'edit',
+                'edit-template',
+                'add-template',
+                'new-template',
+            ]]);
+    }
 }

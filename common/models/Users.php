@@ -36,6 +36,8 @@ use yii\db\Query;
  */
 class Users extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Пользователи';
+
     private static $_IMAGE_ROOT = 'users';
     public const USER_SERVICE_UUID = '00000000-9BF0-4542-B127-F4ECEFCE49DA';
 
@@ -259,5 +261,18 @@ class Users extends ZhkhActiveRecord
                 $this->addError($attr, 'Создание мобильных пользователей ограничено значением ' . $limit['value']);
             }
         }
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge(parent::getActionPermissions(), [
+            'read' => [
+                'dashboard',
+                'table',
+                'timeline',
+            ],
+            'edit' => [
+                'add-system',
+            ]]);
     }
 }
