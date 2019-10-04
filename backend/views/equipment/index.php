@@ -55,8 +55,15 @@ $gridColumns = [
         'mergeHeader' => true,
         'vAlign' => 'middle',
         'width' => '280px',
-        'header' => 'Адрес' . '<table><tr><td><form action="">' . Html::textInput('address', '', ['style' => 'width:100%']) . '</form></td>
-        <td>' . Html::a('<span class="fa fa-times"></span>', '/equipment/index') . '</td></tr></table>',
+        'header' => 'Адрес ' . Html::a('<span class="fa fa-search"></span>&nbsp',
+                ['../request/search-form'],
+                [
+                    'title' => 'Фильтрация по адресу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalFilter',
+                ]
+            ) . '&nbsp' . Html::a('<span class="fa fa-close"></span>&nbsp',
+                ['../equipment']),
         'format' => 'raw',
     ],
     [
@@ -431,5 +438,11 @@ function () {
     <div class="modal-dialog">
         <div class="modal-content loader-lg" id="modalContentEquipment">
         </div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalFilter">
+    <div class="modal-dialog" style="width: 400px; height: 500px">
+        <div class="modal-content loader-lg"></div>
     </div>
 </div>

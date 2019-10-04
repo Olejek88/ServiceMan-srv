@@ -61,18 +61,19 @@ if (isset($_GET['system_select']))
                             'allowClear' => true
                         ],
                     ]) .'</td><td>&nbsp;</td>
-                    <td style="width: 300px">'.
-                        Select2::widget([
-                        'id' => 'system_select',
-                        'name' => 'system_select',
-                        'value' => $system,
-                        'language' => 'ru',
-                        'data' => $systemAll,
-                        'options' => ['placeholder' => 'Выберите систему...'],
-                        'pluginOptions' => [
-                            'allowClear' => true
-                        ],
-                        ]) .'</td><td>&nbsp;</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                    ';
+                    /*                        Select2::widget([
+                                            'id' => 'system_select',
+                                            'name' => 'system_select',
+                                            'value' => $system,
+                                            'language' => 'ru',
+                                            'data' => $systemAll,
+                                            'options' => ['placeholder' => 'Выберите систему...'],
+                                            'pluginOptions' => [
+                                                'allowClear' => true
+                                            ],
+                                            ]) .'</td>*/
+                    echo '<td>&nbsp;</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                             'class' => 'btn btn-success']) . '';
                     ?>
                 </td>

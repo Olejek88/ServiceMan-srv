@@ -75,7 +75,6 @@ $userImage = Yii::$app->view->params['userImage'];
                     <ul class="dropdown-menu">
                         <li><?= Html::a("<i class=\"fa fa-home\"></i> Города", ['../city']); ?></li>
                         <li><?= Html::a("<i class=\"fa fa-street-view\"></i> Улицы", ['../street']); ?> </li>
-                        <li><?= Html::a("<i class=\"fa fa-home\"></i> Дома", ['../equipment/tree-street']); ?> </li>
                     </ul>
                 </li>
 

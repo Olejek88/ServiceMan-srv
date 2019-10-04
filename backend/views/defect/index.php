@@ -173,7 +173,6 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('Новый', ['/defect/create'], ['class' => 'btn btn-success']),
             Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
                 ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
         ],

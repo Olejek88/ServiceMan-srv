@@ -106,7 +106,12 @@ class EquipmentController extends ZhkhController
                     ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
             );
         }
-
+        if (isset($_GET['objectUuid'])) {
+            $dataProvider->query->andWhere(['=', 'equipment.objectUuid', $_GET['objectUuid']]);
+        }
+        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
+            return $this->redirect('../equipment/index?objectUuid=' . $_POST['objectUuid']);
+        }
         return $this->render(
             'index',
             [

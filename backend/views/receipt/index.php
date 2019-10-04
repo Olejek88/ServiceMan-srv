@@ -143,19 +143,15 @@ $gridColumns = [
                     else
                         $request_title .= "<span class='badge' style='background-color: grey; height: 22px'>" . $request['requestStatus']->title . "</span>";
                     $request_title .= '<br/>' . $request['requestType']['title'];
-                    return Html::a($request_title,
-                        ['../request/form', 'uuid' => $model['requestUuid']],
-                        [
-                            'title' => 'Редактировать заявку',
-                            'data-toggle' => 'modal',
-                            'data-target' => '#modalRequest',
-                        ]
-                    );
+                    if ($request['taskUuid'])
+                        return Html::a($request_title, ['../task/index', 'uuid' => $request['taskUuid']]);
+                    else
+                        return $request_title;
                 }
             }
             $request_title = "<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>";
             return Html::a($request_title,
-                ['../request/form', 'receiptUuid' => $model['uuid']],
+                ['../request/form', 'receiptUuid' => $model['uuid'], 'user' => $model['contragentUuid'], 'phone' => $model['contragent']['phone']],
                 [
                     'title' => 'Добавить заявку',
                     'data-toggle' => 'modal',

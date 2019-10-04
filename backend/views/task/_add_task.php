@@ -38,7 +38,6 @@ use yii\helpers\Html;
         echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
     }*/
     ?>
-
     <?php echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false); ?>
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
     <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
@@ -84,6 +83,8 @@ use yii\helpers\Html;
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
@@ -128,7 +129,8 @@ use yii\helpers\Html;
     <?php
     if (!isset($requestUuid))
         echo $form->field($model, 'comment')
-            ->textarea(['rows' => 4, 'style' => 'resize: none;'])
+            ->textarea(['rows' => 4, 'style' => 'resize: none;']);
+    $value = date("Y-m-d H:i:s", time());
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
@@ -138,6 +140,7 @@ use yii\helpers\Html;
             'attribute' => 'taskDate',
             'language' => 'ru',
             'size' => 'ms',
+            'value' => $value,
             'clientOptions' => [
                 'autoclose' => true,
                 'linkFormat' => 'yyyy-mm-dd H:ii:ss',
@@ -176,7 +179,7 @@ use yii\helpers\Html;
             url: "../task/add-task",
             type: "post",
             data: $('form').serialize(),
-            success: function () {
+            success: function (ret) {
                 if (ret.length > 5) {
                     $('#errors').val(ret);
                 } else

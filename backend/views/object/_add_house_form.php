@@ -1,6 +1,6 @@
 <?php
 
-/* @var $house
+/* @var $house common\models\House
  * @var $source
  * @var $streetUuid
  */
@@ -188,7 +188,7 @@ use yii\helpers\Html;
     echo '</br>';
     //echo Html::checkbox('water_counter',true,['label' => 'Квартирные счетчики воды']);
     //echo '</br>';
-    echo Html::checkbox('balcony',true,['label' => 'Балконы']);
+    echo Html::checkbox('balcony', true, ['label' => 'Инженерные системы квартиры']);
     echo '</br>';
     echo Html::checkbox('trash_pipe', true, ['label' => 'Мусоропровод']);
     echo '</br>';

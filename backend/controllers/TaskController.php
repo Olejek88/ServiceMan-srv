@@ -119,6 +119,7 @@ class TaskController extends ZhkhController
         }
         $users = Users::find()
             ->where('name != "sUser"')
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -259,19 +260,17 @@ class TaskController extends ZhkhController
         }
         if (isset($_GET['type'])) {
             if ($_GET['type'] == '0') {
-                $dataProvider->query
-                    ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                    ->andWhere(['<=', 'deadlineDate', 'endDate']);
+                $dataProvider->query->andWhere(['workStatusUuid' => WorkStatus::COMPLETE]);
+                $dataProvider->query->andWhere(['and', 'deadlineDate> endDate', ['IS NOT', 'endDate', null]]);
             }
             if ($_GET['type'] == '1') {
                 $dataProvider->query
-                    ->andWhere(['!=', 'workStatusUuid', WorkStatus::COMPLETE])
-                    ->andWhere(['and', ['<=', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
+                    ->andWhere(['and', 'deadlineDate<CAST(CURRENT_TIMESTAMP AS DATE)', ['!=', 'workStatusUuid', WorkStatus::COMPLETE]]);
             }
             if ($_GET['type'] == '2') {
                 $dataProvider->query
                     ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
-                    ->andWhere(['and', ['<', 'deadlineDate', 'endDate'], ['IS NOT', 'endDate', null]]);
+                    ->andWhere(['and', 'deadlineDate<endDate', ['IS NOT', 'endDate', null]]);
             }
             if ($_GET['type'] == '3') {
                 $dataProvider->query
@@ -282,6 +281,12 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
         $dataProvider->query->orderBy('_id DESC');
+        if (isset($_GET['objectUuid'])) {
+            $dataProvider->query->andWhere(['=', 'objectUuid', $_GET['objectUuid']]);
+        }
+        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
+            return $this->redirect('../task/index?objectUuid=' . $_POST['objectUuid']);
+        }
 
         $warnings[] = NULL;
         /*
@@ -780,8 +785,10 @@ class TaskController extends ZhkhController
      */
     public function actionForm()
     {
+        date_default_timezone_set("Asia/Yekaterinburg");
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
+            $model->taskDate = date("Y-m-d H:i:s", time());
             if (isset($_GET["requestUuid"]))
                 return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
                     'requestUuid' => $_GET["requestUuid"], 'type_uuid' => $_GET["type_uuid"]]);

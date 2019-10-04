@@ -164,7 +164,7 @@ class SiteController extends Controller
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
-                ->limit(5000)
+                ->limit(1000)
                 ->all();
             if ($gps) {
                 $lats[$count] = $gps;

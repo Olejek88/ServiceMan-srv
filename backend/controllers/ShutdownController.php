@@ -6,6 +6,7 @@ use backend\models\ShutdownSearch;
 use common\models\Shutdown;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -18,6 +19,7 @@ class ShutdownController extends ZhkhController
      * Lists all Shutdown models.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {

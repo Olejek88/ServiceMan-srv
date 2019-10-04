@@ -411,7 +411,7 @@ $this->title = Yii::t('app', 'Сводная');
             </div>
             <!-- /.box-body -->
             <div class="box-footer clearfix">
-                <a href="/measure" class="btn btn-sm btn-default btn-flat pull-right">Посмотреть все измерения</a>
+                <a href="/measure" class="btn btn-sm btn-default btn-flat pull-right">Отчет о показаниях</a>
             </div>
             <!-- /.box-footer -->
         </div>

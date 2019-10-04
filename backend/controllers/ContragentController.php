@@ -78,6 +78,20 @@ class ContragentController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
+        if (isset($_GET['objectUuid'])) {
+            $objectContragents = ObjectContragent::find()
+                ->where(['objectUuid' => $_GET['objectUuid']])
+                ->all();
+            $contragents = [];
+            foreach ($objectContragents as $objectContragent) {
+                $contragents[] = $objectContragent['contragentUuid'];
+            }
+            $dataProvider->query->andWhere(['IN', 'uuid', $contragents]);
+        }
+        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
+            return $this->redirect('../contragent/index?objectUuid=' . $_POST['objectUuid']);
+        }
+
         return $this->render('table', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\SubjectSearch */
 
 use common\models\ContragentType;
+use common\models\ObjectContragent;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -58,6 +59,31 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             return $data->address;
+        }
+    ],
+    [
+        'header' => 'Адрес объекта ' . Html::a('<span class="fa fa-search"></span>&nbsp',
+                ['../request/search-form'],
+                [
+                    'title' => 'Фильтрация по адресу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalFilter',
+                ]
+            ) . '&nbsp' . Html::a('<span class="fa fa-close"></span>&nbsp',
+                ['../contragent']),
+        'mergeHeader' => true,
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            $objectContragent = ObjectContragent::find()->where(['contragentUuid' => $data['uuid']])->one();
+            if ($objectContragent) {
+                return $objectContragent['object']->getFullTitle();
+            }
+            return "";
         }
     ],
     [
@@ -146,21 +172,6 @@ $gridColumns = [
         }
     ],
     [
-        'attribute' => 'changedAt',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if (strtotime($data->changedAt) > 0)
-                return date("d-m-Y H:i", strtotime($data->changedAt));
-            else
-                return 'не открыт';
-        }
-    ],
-    [
         'class' => 'kartik\grid\ActionColumn',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'header' => 'Действия',
@@ -206,3 +217,12 @@ echo GridView::widget([
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
 ]);
+
+?>
+
+<div class="modal remote fade" id="modalFilter">
+    <div class="modal-dialog" style="width: 400px; height: 500px">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
