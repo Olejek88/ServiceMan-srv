@@ -250,9 +250,9 @@ class MainFunctions
         $task->taskVerdictUuid = TaskVerdict::NOT_DEFINED;
         $task->taskDate = date('Y-m-d H:i:s', $start);
         if ($taskTemplate['normative'] == 0)
-            $task->deadlineDate = date('Y-m-d H:i:s', time() + 1800);
+            $task->deadlineDate = date('Y-m-d H:i:s', $start + 1800);
         else
-            $task->deadlineDate = date('Y-m-d H:i:s', time() + $taskTemplate['normative'] * 3600);
+            $task->deadlineDate = date('Y-m-d H:i:s', $start + $taskTemplate['normative'] * 3600);
 
         if (!$authorUuid) {
             $currentUser = Users::find()

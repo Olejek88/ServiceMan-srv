@@ -166,6 +166,7 @@ use yii\widgets\ActiveForm;
             'model' => $model,
             'attribute' => 'taskDate',
             'language' => 'ru',
+            'value' => date("Y-m-d", time()),
             'size' => 'ms',
             'clientOptions' => [
                 'autoclose' => true,

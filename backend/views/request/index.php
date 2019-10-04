@@ -178,7 +178,15 @@ $gridColumns = [
         'attribute' => 'objectUuid',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Адрес',
+        'header' => 'Адрес ' . Html::a('<span class="fa fa-search"></span>&nbsp',
+                ['../request/search-form'],
+                [
+                    'title' => 'Фильтрация по адресу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalFilter',
+                ]
+            ) . '&nbsp' . Html::a('<span class="fa fa-close"></span>&nbsp',
+                ['../request']),
         'mergeHeader' => true,
         'format' => 'raw',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
@@ -201,18 +209,6 @@ $gridColumns = [
                 return "<span style='display: inline-block !important; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
             else
                 return "<span style='height: 22px; display: inline-block !important'>нет</span>";
-
-    /*            if ($model->equipmentUuid) {
-                if ($model['equipment']['equipmentStatusUuid'] == EquipmentStatus::WORK)
-                    return "<span class='badge' style='background-color: green; height: 22px'>" . $model['equipment']['object']->getFullTitle() . "</span>";
-                else
-                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['equipment']['object']->getFullTitle() . "</span>";
-            } else {
-                if ($model->objectUuid)
-                    return "<span class='badge' style='background-color: lightgrey; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
-                else
-                    return "<span class='badge' style='background-color: grey; height: 22px; width: 100px'>нет</span>";
-            }*/
         },
         'contentOptions' => [
             'class' => 'table_class'
@@ -457,6 +453,7 @@ echo GridView::widget([
     }
 ]);
 
+/*
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      $(this).removeData();
@@ -474,7 +471,7 @@ function () {
 $this->registerJs('$("#modalTaskInfo").on("hidden.bs.modal",
 function () {
      $(this).removeData();
-})');
+})'); */
 
 ?>
 <style>
@@ -505,5 +502,11 @@ function () {
     <div class="modal-dialog" style="width: 800px; height: 400px">
         <div class="modal-content loader-lg" id="modalContentHistory">
         </div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalFilter">
+    <div class="modal-dialog" style="width: 400px; height: 500px">
+        <div class="modal-content loader-lg"></div>
     </div>
 </div>

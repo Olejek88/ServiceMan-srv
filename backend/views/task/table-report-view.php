@@ -171,7 +171,10 @@ $gridColumns = [
                 'pluginEvents' => [
                     "select2:select" => "function() {
                         window.location.replace('table?type='+document.getElementById('type').value); 
-                        }"
+                        }",
+                    "select2:unselecting" => "function() {
+                        window.location.replace('table');
+                    }"
                 ],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -210,17 +213,24 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
-        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
+        'header' => 'Адрес ' . Html::a('<span class="fa fa-search"></span>&nbsp',
+                ['../request/search-form'],
+                [
+                    'title' => 'Фильтрация по адресу',
+                    'data-toggle' => 'modal',
+                    'data-target' => '#modalFilter',
+                ]
+            ) . '&nbsp' . Html::a('<span class="fa fa-close"></span>&nbsp',
+                ['../task']),
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
             $house = $data['equipment']['object']['house'];
-            //$object->title
             if ($data['equipment']['object'] != ObjectType::OBJECT_TYPE_FLAT)
-                return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' . $data['equipment']['title'];
+                return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' .
+                    $data['equipment']['equipmentType']['equipmentSystem']['title'];
             else
                 return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' .
-                    $data['equipment']['object']['title'] . ' - ' .
-                    $data['equipment']['title'];
+                    $data['equipment']['equipmentType']['equipmentSystem']['title'];
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(Objects::find()->orderBy('title')->all(),
@@ -229,6 +239,19 @@ $gridColumns = [
             'pluginOptions' => ['allowClear' => true],
         ],
         'filterInputOptions' => ['placeholder' => 'Любой']
+    ],
+    [
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'mergeHeader' => true,
+        'contentOptions' => [
+            'class' => 'table_class'
+        ],
+        'header' => 'Элемент',
+        'headerOptions' => ['class' => 'text-center'],
+        'content' => function ($data) {
+            return $data['equipment']['title'];
+        },
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -652,5 +675,11 @@ function () {
     <div class="modal-dialog" style="width: 800px; height: 400px">
         <div class="modal-content loader-lg" id="modalContentPhoto">
         </div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalFilter">
+    <div class="modal-dialog" style="width: 400px; height: 500px">
+        <div class="modal-content loader-lg"></div>
     </div>
 </div>

@@ -83,6 +83,12 @@ class RequestController extends ZhkhController
             $dataProvider->query->andWhere(['<', 'createdAt', $_GET['end_time']]);
         }
         $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
+        if (isset($_GET['objectUuid'])) {
+            $dataProvider->query->andWhere(['=', 'request.objectUuid', $_GET['objectUuid']]);
+        }
+        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
+            return $this->redirect('../request/index?objectUuid=' . $_POST['objectUuid']);
+        }
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
@@ -169,6 +175,7 @@ class RequestController extends ZhkhController
     public function actionForm()
     {
         $receiptUuid = "";
+        $phone = "";
         $source = 'table';
         if (isset($_GET["uuid"])) {
             $model = Request::find()->where(['uuid' => $_GET["uuid"]])->one();
@@ -178,6 +185,8 @@ class RequestController extends ZhkhController
                 $model->objectUuid = $_GET["objectUuid"];
             if (isset($_GET["user"]))
                 $model->contragentUuid = $_GET["user"];
+            if (isset($_GET["phone"]))
+                $phone = $_GET["phone"];
             if (isset($_GET["receiptUuid"]))
                 $receiptUuid = $_GET["receiptUuid"];
             if (isset($_GET["source"]))
@@ -189,7 +198,7 @@ class RequestController extends ZhkhController
             }
         }
         return $this->renderAjax('_add_request', ['model' => $model, 'receiptUuid' => $receiptUuid,
-            'source' => $source]);
+            'source' => $source, 'phone' => $phone]);
     }
 
     /**
@@ -332,5 +341,13 @@ class RequestController extends ZhkhController
             $registers = Journal::find()->where(['referenceUuid' => $_GET["uuid"]])->all();
         }
         return $this->renderAjax('_history', ['registers' => $registers]);
+    }
+
+    /**
+     * @return string
+     */
+    public function actionSearchForm()
+    {
+        return $this->renderAjax('_search_filter');
     }
 }

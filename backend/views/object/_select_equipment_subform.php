@@ -15,7 +15,7 @@ $city = '';
 $street = '';
 $house = '';
 
-echo '<label>Адрес</label></br>';
+echo '<label>Местоположение объекта</label></br>';
 echo '<label>Город</label></br>';
 echo Select2::widget(
     ['id' => 'city2',

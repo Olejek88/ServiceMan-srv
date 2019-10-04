@@ -30,7 +30,7 @@ $gridColumns = [
         'attribute' => 'contragentUuid',
         'vAlign' => 'middle',
         'hAlign' => 'center',
-        'header' => 'Исполнитель',
+        'header' => 'Контрагент',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -171,7 +171,7 @@ echo GridView::widget([
             Html::a('Новое отключение',
                 ['/shutdown/form'],
                 [
-                    'title' => 'Добавить заявку',
+                    'title' => 'Добавить отключение',
                     'class' => 'btn btn-success',
                     'data-toggle' => 'modal',
                     'data-target' => '#modal_shutdown',

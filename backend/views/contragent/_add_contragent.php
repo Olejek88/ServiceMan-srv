@@ -22,8 +22,8 @@ use yii\helpers\Html;
     ]]);
 ?>
 <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal">&times;</button>
     <h4 class="modal-title">Добавить/редактировать контрагента</h4>
+    <button type="button" class="close" data-dismiss="modal2">&times;</button>
 </div>
 <div class="modal-body">
     <?php
@@ -66,10 +66,15 @@ use yii\helpers\Html;
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
-    <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+    <button type="button" class="btn btn-default" id="modal2">Закрыть</button>
 </div>
 
 <script>
+    $("#modal2").click(function () {
+            $('#modalContragent').modal('hide');
+        }
+    );
+
     $(document).on("beforeSubmit", "#form", function () {
     }).on('submit', function (e) {
         e.preventDefault();
@@ -99,5 +104,7 @@ use yii\helpers\Html;
             }
         })
     });
+
 </script>
 <?php ActiveForm::end(); ?>
+

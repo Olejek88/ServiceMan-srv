@@ -11,7 +11,7 @@ $city = '';
 $street = '';
 $house = '';
 
-echo '<label>Адрес</label></br>';
+echo '<label>Адрес заявителя</label></br>';
 echo '<label>Город</label></br>';
 echo Select2::widget(
     ['id' => 'city',

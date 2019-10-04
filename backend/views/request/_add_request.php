@@ -3,6 +3,7 @@
  * @var $receiptUuid string
  * @var $source string
  * @var $equipmentUuid string
+ * @var $phone string
  * @var $path string
  */
 
@@ -108,7 +109,7 @@ if (isset($_GET["equipmentUuid"]))
                             }"]
                         ]);
                     echo '<label>Номер телефона заявителя</label></br>';
-                    echo Html::textInput("phoneNumber", '', ['id' => 'phoneNumber']);
+                    echo Html::textInput("phoneNumber", $phone, ['id' => 'phoneNumber']);
                 } else {
                     echo $form->field($model, 'contragentUuid')->hiddenInput(['value' => Contragent::DEFAULT_CONTRAGENT])->label(false);
                 }
@@ -126,7 +127,7 @@ if (isset($_GET["equipmentUuid"]))
                             'pluginOptions' => [
                                 'allowClear' => true
                             ],
-                        ]);
+                        ])->label("Квартира/помещение");
                 } else {
                     echo $form->field($model, 'objectUuid')->hiddenInput(['value' => $model['objectUuid']])->label(false);
                 }
@@ -226,7 +227,8 @@ if (isset($_GET["equipmentUuid"]))
 </div>
 
 <script>
-    $(document).on("beforeSubmit", "#form", function () {
+    $(document).on("beforeSubmit", "#form", function (e) {
+        e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
         $.ajax({

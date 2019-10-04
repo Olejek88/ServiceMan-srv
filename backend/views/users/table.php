@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\UsersSearch */
 
 use common\models\User;
+use common\models\Users;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 
@@ -52,7 +53,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'width' => '180px',
-        'header' => 'Тип пользователя',
+        'header' => 'Роль пользователя',
         'mergeHeader' => true,
         'format' => 'raw',
         'value' => function ($model, $key, $index, $widget) {
@@ -84,6 +85,23 @@ $gridColumns = [
                 ]
             ];
         },
+    ],
+    [
+        'vAlign' => 'middle',
+        'hAlign' => 'center',
+        'width' => '180px',
+        'header' => 'Тип пользователя',
+        'mergeHeader' => true,
+        'format' => 'raw',
+        'value' => function ($model) {
+            if ($model['type'] == Users::USERS_ARM)
+                return '<span class="label label-info">Оператор</span>';
+            if ($model['type'] == Users::USERS_WORKER)
+                return '<span class="label label-info">Исполнитель</span>';
+            if ($model['type'] == Users::USERS_ARM_WORKER)
+                return '<span class="label label-info">Оператор</span>&nbsp;<span class="label label-info">Исполнитель</span>';
+            return '';
+        }
     ],
     [
         'attribute' => 'whoIs',

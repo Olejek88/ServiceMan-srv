@@ -51,7 +51,7 @@ use yii\helpers\Html;
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);
+            ])->label("Посетитель");
         ?>
 
         <?= $form->field($model, 'description')->textInput() ?>
