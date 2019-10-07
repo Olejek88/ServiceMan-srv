@@ -5,6 +5,7 @@ namespace backend\controllers;
 use backend\models\AccessModel;
 use backend\models\AccessSearch;
 use common\models\User;
+use common\models\Users;
 use Yii;
 use yii\base\Exception;
 use yii\base\InvalidConfigException;
@@ -59,7 +60,7 @@ class AccessController extends ZhkhController
     {
         foreach ($items as $pName => $values) {
             if ($values['ch'] == 1) {
-                $pObj = $am->getPermission($pName);
+                $pObj = $am->getPermission($pName . '-' . Users::getCurrentOid());
                 if ($values['value'] == 1) {
                     $am->addChild($role, $pObj);
                 } else {

@@ -65,25 +65,25 @@ try {
                     'group' => true,
                     'contentOptions' => ['style' => 'text-align: center'],
                 ],
-                [
-                    'header' => 'Администратор',
-                    'content' => function ($model) {
-                        /** @var AccessModel $model */
-                        $aa = $model->permission . $model->model . 'Admin';
-                        $idx = $model->permission . $model->model;
-                        $oldValue = $model->admin === true ? 1 : 0;
-                        $outHtml = Html::checkbox('adminCb[]', $oldValue === 1, [
-                            'value' => $idx,
-                            'data-store' => $aa,
-                            'data-old' => $oldValue,
-                            'class' => ['work-cb'],
-                        ]);
-                        $outHtml .= Html::hiddenInput('admin[' . $idx . '][value]', $oldValue, ['id' => $aa,]);
-                        $outHtml .= Html::hiddenInput('admin[' . $idx . '][ch]', 0, ['id' => $aa . 'Ch',]);
-                        return $outHtml;
-                    },
-                    'contentOptions' => ['style' => 'text-align: center'],
-                ],
+//                [
+//                    'header' => 'Администратор',
+//                    'content' => function ($model) {
+//                        /** @var AccessModel $model */
+//                        $aa = $model->permission . $model->model . 'Admin';
+//                        $idx = $model->permission . $model->model;
+//                        $oldValue = $model->admin === true ? 1 : 0;
+//                        $outHtml = Html::checkbox('adminCb[]', $oldValue === 1, [
+//                            'value' => $idx,
+//                            'data-store' => $aa,
+//                            'data-old' => $oldValue,
+//                            'class' => ['work-cb'],
+//                        ]);
+//                        $outHtml .= Html::hiddenInput('admin[' . $idx . '][value]', $oldValue, ['id' => $aa,]);
+//                        $outHtml .= Html::hiddenInput('admin[' . $idx . '][ch]', 0, ['id' => $aa . 'Ch',]);
+//                        return $outHtml;
+//                    },
+//                    'contentOptions' => ['style' => 'text-align: center'],
+//                ],
                 [
                     'class' => 'yii\grid\CheckboxColumn',
                     'header' => 'Оператор',

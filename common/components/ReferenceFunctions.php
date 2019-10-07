@@ -4,8 +4,10 @@ namespace common\components;
 
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\IPermission;
 use common\models\Organization;
 use common\models\TaskType;
+use Yii;
 use yii\db\Connection;
 use yii\db\Exception;
 
@@ -881,5 +883,60 @@ class ReferenceFunctions
         ])->execute();
     }
 
+    public static function addOrgPermission($oid, $db)
+    {
+        $am = Yii::$app->authManager;
+        $models = [
+            'common\models\Alarm',
+            'common\models\City',
+            'common\models\Contragent',
+//            'common\models\ContragentRegister',
+            'common\models\Defect',
+            'common\models\Documentation',
+            'common\models\Equipment',
+//            'common\models\EquipmentRegister',
+//            'common\models\ExportLink',
+            'common\models\House',
+            'common\models\Measure',
+            'common\models\Message',
+//            'common\models\ObjectContragent',
+            'common\models\Objects',
+            'common\models\Operation',
+            'common\models\OperationTemplate',
+            'common\models\Receipt',
+            'common\models\Request',
+            'common\models\RequestType',
+            'common\models\Shutdown',
+            'common\models\Street',
+            'common\models\Task',
+            'common\models\TaskTemplate',
+//            'common\models\TaskUser',
+//            'common\models\UserContragent',
+//            'common\models\UserHouse',
+            'common\models\Users',
+//            'common\models\UserSystem',
+        ];
+
+        foreach ($models as $modelClass) {
+            /** @var IPermission $model */
+            $model = new $modelClass;
+            $permissions = [];
+            try {
+                $permissions = $model->getPermissions();
+            } catch (\Exception $e) {
+            }
+
+            foreach ($permissions as $permissionName => $description) {
+                $modelName = explode('\\', $modelClass);
+                $permissionName .= end($modelName) . '-' . $oid;
+                $permission = $am->createPermission($permissionName);
+                $permission->description = $description;
+                try {
+                    $am->add($permission);
+                } catch (\Exception $e) {
+                }
+            }
+        }
+    }
 }
 
