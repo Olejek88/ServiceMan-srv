@@ -31,6 +31,7 @@ use yii\db\Expression;
 class Contragent extends ZhkhActiveRecord
 {
     const DEFAULT_CONTRAGENT = "89B906FB-0559-4DD3-A632-BAEE215FA387";
+    public const DESCRIPTION = 'Контрагенты';
 
     /**
      * Table name.
@@ -144,5 +145,17 @@ class Contragent extends ZhkhActiveRecord
     public static function findIdentity($id)
     {
         return static::findOne(['_id' => $id, 'deleted' => Status::STATUS_DEFAULT]);
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'phone',
+                'address',
+                'name',
+                'form',
+                'list',
+            ]]);
     }
 }

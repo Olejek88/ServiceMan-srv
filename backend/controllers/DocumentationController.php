@@ -104,8 +104,6 @@ class DocumentationController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Documentation();
         $model->entityType = 'm';
         $model->oid = Users::getCurrentOid();
@@ -153,8 +151,6 @@ class DocumentationController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         $entityType = new DynamicModel(['entityType']);
         $entityType->addRule(['entityType'], 'string', ['max' => 45]);
@@ -281,8 +277,6 @@ class DocumentationController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = $this->findModel($id);
         $this->findModel($id)->delete();
         if ($model) {

@@ -15,6 +15,8 @@ use yii\web\NotFoundHttpException;
  */
 class ShutdownController extends ZhkhController
 {
+    protected $modelClass = Shutdown::class;
+
     /**
      * Lists all Shutdown models.
      * @return mixed
@@ -66,11 +68,10 @@ class ShutdownController extends ZhkhController
      * Creates a new Shutdown model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Shutdown();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -97,8 +98,6 @@ class ShutdownController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -121,8 +120,6 @@ class ShutdownController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -154,9 +151,9 @@ class ShutdownController extends ZhkhController
      * Creates a new Shutdown model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['shutdownUuid']))
             $model = Shutdown::find()->where(['uuid' => $_POST['shutdownUuid']])->one();

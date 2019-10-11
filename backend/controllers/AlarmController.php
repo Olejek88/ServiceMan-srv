@@ -8,6 +8,7 @@ use common\models\Alarm;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
@@ -16,6 +17,8 @@ use yii\web\NotFoundHttpException;
  */
 class AlarmController extends ZhkhController
 {
+    protected $modelClass = Alarm::class;
+
     /**
      * Lists all Alarm models.
      * @return mixed
@@ -50,11 +53,10 @@ class AlarmController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Alarm();
         $searchModel = new AlarmSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -81,8 +83,6 @@ class AlarmController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -105,8 +105,6 @@ class AlarmController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

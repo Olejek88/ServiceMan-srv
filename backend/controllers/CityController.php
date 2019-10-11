@@ -9,6 +9,7 @@ use common\models\House;
 use common\models\Objects;
 use common\models\ObjectType;
 use common\models\Street;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -21,6 +22,8 @@ use yii\web\NotFoundHttpException;
  */
 class CityController extends ZhkhController
 {
+    protected $modelClass = City::class;
+
     /**
      * Lists all City models.
      * @return mixed
@@ -57,8 +60,6 @@ class CityController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new City();
         $searchModel = new CitySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -88,8 +89,6 @@ class CityController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -107,13 +106,11 @@ class CityController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -16,6 +16,8 @@ use yii\web\NotFoundHttpException;
  */
 class MeasureController extends ZhkhController
 {
+    protected $modelClass = Measure::class;
+
     /**
      * Lists all Measure models.
      * @return mixed
@@ -58,8 +60,6 @@ class MeasureController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Measure();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return self::actionIndex();
@@ -103,8 +103,6 @@ class MeasureController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -126,8 +124,6 @@ class MeasureController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -152,8 +148,7 @@ class MeasureController extends ZhkhController
     /**
      * @return bool|string
      */
-    public
-    function actionAdd()
+    public function actionAdd()
     {
         if (isset($_GET["equipmentUuid"])) {
             $model = new Measure();
@@ -173,8 +168,7 @@ class MeasureController extends ZhkhController
      * Creates a new Measure model.
      * @return mixed
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         if (isset($_POST["source"]))
             $source = $_POST["source"];

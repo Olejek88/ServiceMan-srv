@@ -10,9 +10,9 @@ use common\models\Task;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskType;
-use common\models\Users;
 use Cron\CronExpression;
 use Exception;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
@@ -89,8 +89,6 @@ class TaskTemplateEquipmentController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskTemplateEquipment();
         $searchModel = new TaskTemplateEquipmentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -120,8 +118,6 @@ class TaskTemplateEquipmentController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -145,13 +141,11 @@ class TaskTemplateEquipmentController extends ZhkhController
      * @return mixed
      * @throws NotFoundHttpException
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -205,7 +199,7 @@ class TaskTemplateEquipmentController extends ZhkhController
      * POST string $uuid - задачи
      * @return mixed
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDeleteTask()
@@ -253,7 +247,7 @@ class TaskTemplateEquipmentController extends ZhkhController
      * POST string $uuid
      * @return mixed
      * @throws Exception
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDeleteStage()

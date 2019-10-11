@@ -22,6 +22,8 @@ use yii\db\ActiveQuery;
  */
 class TaskUser extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Связь пользователей с задачами';
+
     /**
      * Название таблицы.
      * @return string

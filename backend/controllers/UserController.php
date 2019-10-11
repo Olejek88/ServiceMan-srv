@@ -2,11 +2,15 @@
 
 namespace backend\controllers;
 
+use common\models\User;
+
 /**
  * UsersController implements the CRUD actions for Users model.
  */
 class UserController extends ZhkhController
 {
+    protected $modelClass = User::class;
+
     /**
      * Lists all Users models.
      * @return mixed

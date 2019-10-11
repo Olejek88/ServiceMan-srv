@@ -9,6 +9,7 @@ use common\models\Journal;
 use common\models\Receipt;
 use common\models\Request;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -20,6 +21,8 @@ use yii\web\NotFoundHttpException;
  */
 class RequestController extends ZhkhController
 {
+    protected $modelClass = Request::class;
+
     /**
      * Lists all Request models.
      * @return mixed
@@ -148,8 +151,6 @@ class RequestController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Request();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             if ($model->equipmentUuid)
@@ -206,8 +207,7 @@ class RequestController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST['requestUuid']))
             $model = Request::find()->where(['uuid' => $_POST['requestUuid']])->one();
@@ -278,8 +278,6 @@ class RequestController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -297,13 +295,11 @@ class RequestController extends ZhkhController
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = $this->findModel($id);
         if ($model) {
             $model->delete();
@@ -326,8 +322,7 @@ class RequestController extends ZhkhController
      * @return Request the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected
-    function findModel($id)
+    protected function findModel($id)
     {
         if (($model = Request::findOne($id)) !== null) {
             return $model;

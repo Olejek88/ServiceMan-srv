@@ -20,6 +20,8 @@ use yii\db\Expression;
  */
 class City extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Города';
+
     public function behaviors()
     {
         return [
@@ -66,5 +68,16 @@ class City extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'streets',
+                'houses',
+                'objects',
+                'equipments',
+            ]]);
     }
 }

@@ -24,6 +24,8 @@ use yii\db\ActiveQuery;
  */
 class UserSystem extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Связь пользователя с системами';
+
     /**
      * Название таблицы.
      * @return string

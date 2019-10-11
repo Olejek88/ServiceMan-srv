@@ -3,6 +3,7 @@ namespace backend\controllers;
 
 use backend\models\ReceiptSearch;
 use common\models\Receipt;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -14,6 +15,8 @@ use yii\web\NotFoundHttpException;
  */
 class ReceiptController extends ZhkhController
 {
+    protected $modelClass = Receipt::class;
+
     /**
      * Lists all Receipt models.
      *
@@ -110,11 +113,11 @@ class ReceiptController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Receipt();
         $searchModel = new ReceiptSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -148,8 +151,6 @@ class ReceiptController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post())) {
             // сохраняем модель
@@ -181,13 +182,11 @@ class ReceiptController extends ZhkhController
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -223,6 +222,7 @@ class ReceiptController extends ZhkhController
      * Creates a new Receipt model.
      * @return mixed
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public
     function actionNew()

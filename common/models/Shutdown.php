@@ -27,6 +27,8 @@ use yii\db\Expression;
  */
 class Shutdown extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Планируемые отключения';
+
     /**
      * Behaviors
      *
@@ -142,5 +144,16 @@ class Shutdown extends ZhkhActiveRecord
             ->where(['uuid' => $this->contragentUuid])
             ->one();
         return $contragent;
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'form',
+            ],
+            'edit' => [
+                'new',
+            ]]);
     }
 }

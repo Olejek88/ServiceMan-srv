@@ -27,6 +27,8 @@ use yii\db\Expression;
  */
 class Message extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Сообщения';
+
     const MESSAGE_NEW = 0;
     const MESSAGE_READ = 1;
     const MESSAGE_DELETED = 2;
@@ -157,5 +159,21 @@ class Message extends ZhkhActiveRecord
         return $this->hasOne(
             Users::class, ['uuid' => 'toUserUuid']
         );
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'search',
+                'new',
+            ],
+            'edit' => [
+                'send',
+                'delete-one',
+                'save',
+                'deletes',
+            ]]);
     }
 }

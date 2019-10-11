@@ -26,6 +26,8 @@ use yii\db\ActiveQuery;
  */
 class EquipmentRegister extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Лог оборудования';
+
     /**
      * @inheritdoc
      */
@@ -121,5 +123,17 @@ class EquipmentRegister extends ZhkhActiveRecord
 //                return $model->registerType;
 //            }, 'date', 'description', 'createdAt', 'changedAt'
 //        ];
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'list',
+                'form',
+            ],
+            'edit' => [
+                'new',
+            ]]);
     }
 }

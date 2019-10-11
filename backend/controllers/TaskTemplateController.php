@@ -13,6 +13,7 @@ use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveRecord;
@@ -77,8 +78,6 @@ class TaskTemplateController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskTemplate();
         $searchModel = new TaskSearchTemplate();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -108,8 +107,6 @@ class TaskTemplateController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -132,13 +129,11 @@ class TaskTemplateController extends ZhkhController
      *
      * @return mixed
      * @throws NotFoundHttpException
-     * @throws \Throwable
+     * @throws Throwable
      * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
@@ -432,7 +427,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет удаление выбранного шаблона и всех операций
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public
     function actionRemove()
@@ -485,7 +480,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет удаление выбранного шаблона и всех операций
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public
     function actionRemoveTemplate()
@@ -676,7 +671,7 @@ class TaskTemplateController extends ZhkhController
      * @param $task_operation_id String Идентификатор этапа операции
      * @return int
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public
     function removeTaskOperation($task_operation_id)
@@ -700,7 +695,7 @@ class TaskTemplateController extends ZhkhController
      * @param $task_template_equipment String Идентификатор этапа операции
      * @return int
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public
     function removeTaskTemplate($task_template_equipment)

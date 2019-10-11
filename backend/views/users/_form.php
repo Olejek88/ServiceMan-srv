@@ -57,7 +57,7 @@ use yii\widgets\ActiveForm;
         Users::USERS_ARM_WORKER => 'Оператор/Исполнитель',
     ];
 
-    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+    if (Yii::$app->user->can(User::ROLE_ADMIN)) {
         echo $form->field($userArm, 'type')->label(Yii::t('app', 'Тип пользователя'))
             ->dropDownList($typeList);
     }
@@ -85,7 +85,7 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($userArm, 'contact')->textInput([]) ?>
 
     <?php
-    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+    if (Yii::$app->user->can(User::ROLE_ADMIN)) {
         echo $form->field($userArm, 'role')
             ->label(Yii::t('app', 'Права пользователя в системе'))
             ->dropDownList($roleList);
@@ -97,7 +97,7 @@ use yii\widgets\ActiveForm;
         User::STATUS_DELETED => 'Заблокирован',
         User::STATUS_ACTIVE => 'Активен',
     ];
-    if (Yii::$app->user->can(User::PERMISSION_ADMIN)) {
+    if (Yii::$app->user->can(User::ROLE_ADMIN)) {
         echo $form->field($userArm, 'status')
             ->label(Yii::t('app', 'Состояние пользователя'))
             ->dropDownList($statusList);

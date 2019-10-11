@@ -2,6 +2,7 @@
 
 namespace common\components;
 
+use common\models\IPermission;
 use common\models\User;
 use common\models\Users;
 use Yii;
@@ -11,7 +12,12 @@ use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\web\Application;
 
-class ZhkhActiveRecord extends ActiveRecord
+/**
+ *
+ * @property array $actionPermissions
+ * @property array $permissions
+ */
+class ZhkhActiveRecord extends ActiveRecord implements IPermission
 {
     const SCENARIO_UPDATE = 'update';
 
@@ -55,5 +61,28 @@ class ZhkhActiveRecord extends ActiveRecord
                 $this->addError($attr, 'Не верный идентификатор организации.');
             }
         }
+    }
+
+    function getPermissions()
+    {
+        return [
+            'read' => 'Чтение',
+            'edit' => 'Редактирование',
+        ];
+    }
+
+    function getActionPermissions()
+    {
+        return [
+            'read' => [
+                'index',
+                'view',
+            ],
+            'edit' => [
+                'create',
+                'update',
+                'delete',
+            ],
+        ];
     }
 }

@@ -37,6 +37,8 @@ use yii\web\UploadedFile;
  */
 class Documentation extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Документация';
+
     private static $_FILE_ROOT_DIR = 'doc';
     public $docFile;
     public $entityType;
@@ -314,5 +316,16 @@ class Documentation extends ZhkhActiveRecord
 
         // the uploaded image instance
         return $uploadFile;
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'add',
+            ],
+            'edit' => [
+                'save',
+            ]]);
     }
 }

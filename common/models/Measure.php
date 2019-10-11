@@ -7,6 +7,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 use yii\db\Expression;
 
 /**
@@ -29,6 +30,7 @@ use yii\db\Expression;
  */
 class Measure extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Измерения';
 
     /**
      * Behaviors
@@ -177,6 +179,7 @@ class Measure extends ZhkhActiveRecord
      * @param $endDate
      * @return Measure|null
      * @throws InvalidConfigException
+     * @throws Exception
      */
     public static function getLastMeasureBetweenDates($equipmentUuid, $startDate, $endDate)
     {
@@ -188,4 +191,15 @@ class Measure extends ZhkhActiveRecord
         return $model;
     }
 
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'trend',
+                'add',
+            ],
+            'edit' => [
+                'save',
+            ]]);
+    }
 }

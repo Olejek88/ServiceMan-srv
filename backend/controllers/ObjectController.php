@@ -17,6 +17,7 @@ use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\Street;
 use common\models\Users;
+use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
@@ -29,6 +30,8 @@ use yii\web\NotFoundHttpException;
  */
 class ObjectController extends ZhkhController
 {
+    protected $modelClass = Objects::class;
+
     /**
      * Lists all Object models.
      * @return mixed
@@ -100,8 +103,6 @@ class ObjectController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new Objects();
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -137,8 +138,6 @@ class ObjectController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -159,8 +158,6 @@ class ObjectController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $model = $this->findModel($id);
         if ($model) {
             $model->deleted = true;
@@ -294,8 +291,7 @@ class ObjectController extends ZhkhController
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public
-    function actionNew()
+    public function actionNew()
     {
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
@@ -422,7 +418,7 @@ class ObjectController extends ZhkhController
      *
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemove()
     {
@@ -482,7 +478,7 @@ class ObjectController extends ZhkhController
      *
      * @return mixed
      * @throws StaleObjectException
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function actionRemoveLink()
     {
@@ -514,8 +510,7 @@ class ObjectController extends ZhkhController
      * @throws InvalidConfigException
      * @throws Exception
      */
-    public
-    function actionSave()
+    public function actionSave()
     {
         if (isset($_POST["type"]))
             $type = $_POST["type"];

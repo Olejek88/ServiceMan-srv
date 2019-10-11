@@ -10,6 +10,7 @@ use yii\db\ActiveQuery;
  * This is the model class for table "request_type".
  *
  * @property integer $_id
+ * @property string $oid
  * @property string $uuid
  * @property string $title
  * @property string $taskTemplateUuid
@@ -20,6 +21,8 @@ use yii\db\ActiveQuery;
  */
 class RequestType extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Типы обращений';
+
     const GENERAL = "E49AE9AD-3C31-42F8-A751-AAEB890C2190";
     const REQUEST_PAY = 1;
     const REQUEST_FREE = 0;

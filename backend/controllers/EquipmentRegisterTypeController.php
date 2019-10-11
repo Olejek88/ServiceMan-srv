@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\EquipmentRegisterTypeSearch;
 use common\models\EquipmentRegisterType;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -12,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentRegisterTypeController extends ZhkhController
 {
+    protected $modelClass = EquipmentRegisterType::class;
+
     /**
      * Lists all EquipmentRegisterType models.
      * @return mixed
@@ -32,6 +36,7 @@ class EquipmentRegisterTypeController extends ZhkhController
      * Displays a single EquipmentRegisterType model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -47,8 +52,6 @@ class EquipmentRegisterTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new EquipmentRegisterType();
         $searchModel = new EquipmentRegisterTypeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -68,11 +71,10 @@ class EquipmentRegisterTypeController extends ZhkhController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -89,11 +91,12 @@ class EquipmentRegisterTypeController extends ZhkhController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

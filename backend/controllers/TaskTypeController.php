@@ -62,8 +62,6 @@ class TaskTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new TaskType();
         $searchModel = new TaskSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -90,8 +88,6 @@ class TaskTypeController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -117,8 +113,6 @@ class TaskTypeController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
         return $this->redirect(['index']);
     }

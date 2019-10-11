@@ -29,7 +29,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property Contragent $user
+ * @property Contragent $contragent
  * @property Contragent $author
  * @property RequestStatus $requestStatus
  * @property RequestType $requestType
@@ -39,6 +39,8 @@ use yii\db\Expression;
  */
 class Request extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'Обращения';
+
     /**
      * Behaviors
      *
@@ -274,5 +276,19 @@ class Request extends ZhkhActiveRecord
         return $this->hasOne(
             Task::class, ['uuid' => 'taskUuid']
         );
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'read' => [
+                'info',
+                'search',
+                'form',
+                'history',
+            ],
+            'edit' => [
+                'new',
+            ]]);
     }
 }

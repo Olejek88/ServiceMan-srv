@@ -4,7 +4,9 @@ namespace backend\controllers;
 
 use backend\models\MeasureSearchType;
 use common\models\MeasureType;
+use Throwable;
 use Yii;
+use yii\db\StaleObjectException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -12,6 +14,8 @@ use yii\web\NotFoundHttpException;
  */
 class MeasureTypeController extends ZhkhController
 {
+    protected $modelClass = MeasureType::class;
+
     /**
      * Lists all MeasureType models.
      * @return mixed
@@ -32,6 +36,7 @@ class MeasureTypeController extends ZhkhController
      * Displays a single MeasureType model.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionView($id)
     {
@@ -47,8 +52,6 @@ class MeasureTypeController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new MeasureType();
         $searchModel = new MeasureSearchType();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -69,11 +72,10 @@ class MeasureTypeController extends ZhkhController
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id]);
@@ -89,11 +91,12 @@ class MeasureTypeController extends ZhkhController
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
+     * @throws NotFoundHttpException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -18,6 +18,8 @@ use yii\web\NotFoundHttpException;
  */
 class EquipmentRegisterController extends ZhkhController
 {
+    protected $modelClass = EquipmentRegister::class;
+
     /**
      * Lists all EquipmentRegister models.
      * @return mixed
@@ -54,8 +56,6 @@ class EquipmentRegisterController extends ZhkhController
      */
     public function actionCreate()
     {
-        parent::actionCreate();
-
         $model = new EquipmentRegister();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['index']);
@@ -75,8 +75,6 @@ class EquipmentRegisterController extends ZhkhController
      */
     public function actionUpdate($id)
     {
-        parent::actionUpdate($id);
-
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -99,8 +97,6 @@ class EquipmentRegisterController extends ZhkhController
      */
     public function actionDelete($id)
     {
-        parent::actionDelete($id);
-
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use common\models\OrderStatus;
 use common\models\Users;
 use Yii;
 
