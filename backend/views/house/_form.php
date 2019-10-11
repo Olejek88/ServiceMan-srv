@@ -10,6 +10,7 @@ use dosamigos\leaflet\layers\TileLayer;
 use dosamigos\leaflet\LeafLet;
 use dosamigos\leaflet\plugins\geocoder\GeoCoder;
 use dosamigos\leaflet\plugins\geocoder\ServiceNominatim;
+use dosamigos\leaflet\types\Icon;
 use dosamigos\leaflet\types\LatLng;
 use dosamigos\leaflet\widgets\Map;
 use kartik\widgets\Select2;
@@ -62,10 +63,13 @@ use yii\widgets\ActiveForm;
     // first lets setup the center of our map
     $center = new LatLng(['lat' => $latDefault, 'lng' => $lngDefault]);
 
+    $icon = new Icon(['iconUrl' => '/images/marker-icon.png', 'shadowUrl' => '/images/marker-shadow.png']);
+
     // now lets create a marker that we are going to place on our map
     $marker = new Marker([
         'latLng' => $center,
 //        'popupContent' => 'Hi!',
+        'icon' => $icon,
         'name' => 'geoMarker',
         'clientOptions' => ['draggable' => true],
         'clientEvents' => [

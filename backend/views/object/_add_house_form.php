@@ -14,6 +14,7 @@ use dosamigos\leaflet\layers\TileLayer;
 use dosamigos\leaflet\LeafLet;
 use dosamigos\leaflet\plugins\geocoder\GeoCoder;
 use dosamigos\leaflet\plugins\geocoder\ServiceNominatim;
+use dosamigos\leaflet\types\Icon;
 use dosamigos\leaflet\types\LatLng;
 use dosamigos\leaflet\widgets\Map;
 use kartik\select2\Select2;
@@ -99,11 +100,13 @@ use yii\helpers\Html;
     // first lets setup the center of our map
     $center = new LatLng(['lat' => $latDefault, 'lng' => $lngDefault]);
 
+    $icon = new Icon(['iconUrl' => '/images/marker-icon.png', 'shadowUrl' => '/images/marker-shadow.png']);
     // now lets create a marker that we are going to place on our map
     $marker = new Marker([
         'latLng' => $center,
 //        'popupContent' => 'Hi!',
         'name' => 'geoMarker',
+        'icon' => $icon,
         'clientOptions' => ['draggable' => true],
         'clientEvents' => [
             'dragend' => 'function(e){
@@ -212,9 +215,7 @@ use yii\helpers\Html;
         e.preventDefault();
         $.ajax({
             type: "post",
-            data: new FormData(this),
-            processData: false,
-            contentType: false
+            data: $('form').serialize(),
             url: "../object/save",
             success: function () {
                 $('#modalAdd').modal('hide');
