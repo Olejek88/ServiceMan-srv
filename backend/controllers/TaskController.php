@@ -282,7 +282,7 @@ class TaskController extends ZhkhController
         if (isset($_GET['uuid'])) {
             $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
-        $dataProvider->query->orderBy('_id DESC');
+        //$dataProvider->query->orderBy('_id DESC');
         if (isset($_GET['objectUuid'])) {
             $dataProvider->query->andWhere(['=', 'objectUuid', $_GET['objectUuid']]);
         }
@@ -483,6 +483,7 @@ class TaskController extends ZhkhController
 
         $users = Users::find()
             ->where('name != "sUser"')
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         if (isset($_GET['user_select']) && $_GET['user_select'] != '') {
             $users = Users::find()
@@ -1240,12 +1241,13 @@ class TaskController extends ZhkhController
                         $task['task']['taskTemplate']['title'] . '<br/>' .
                         '<a class="btn btn-default btn-xs">' . $task['task']['equipment']['title'] . '</a> ' . $task['task']['comment'],
                         $task['task']['uuid']);
-                    return "";
+                    //return "";
                 }
-                return $task['message'];
+                //return $task['message'];
             }
-            return "У элемента нет исполнителя";
+            //return "У элемента нет исполнителя";
         }
-        return "Задача не найдена!";
+        return Yii::$app->response->redirect(['task/table']);
+        //return "Задача не найдена!";
     }
 }

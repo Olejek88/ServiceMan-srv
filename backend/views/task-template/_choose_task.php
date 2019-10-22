@@ -8,6 +8,7 @@ use common\models\StageType;
 use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
+use kartik\date\DatePicker;
 use kartik\widgets\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
@@ -63,11 +64,23 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
-    echo '<label class="control-label">Период</label><br/>';
+    echo '<label class="control-label">Период (дн.)</label><br/>';
     echo Html::textInput("period");
-
     echo Html::hiddenInput("equipment_uuid", $equipment['uuid']);
     ?>
+    <label>Дата отсчета</label>
+    <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
+        <?= DatePicker::widget([
+            'id' => 'last_date',
+            'name' => 'last_date',
+            'removeButton' => false,
+            'pluginOptions' => [
+                'autoclose' => true,
+                'format' => 'yyyy-mm-dd',
+            ]
+        ])
+        ?>
+    </div>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>

@@ -15,7 +15,7 @@ class m190529_123303_fix_sUser extends Migration
      */
     public function safeUp()
     {
-        $users = Users::findOne(['name' => 'sUser']);
+        $users = Users::findOne(['uuid' => Users::USER_SERVICE_UUID]);
         if ($users != null) {
             $user = User::findOne(['username' => 'sUser']);
             if ($user != null) {

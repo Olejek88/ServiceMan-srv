@@ -230,7 +230,7 @@ $this->registerJs('$("#collapseButton").on("click",function() {
 
 ?>
 
-<div class="modal remote fade" id="modalAdd">
+<div class="modal remote" id="modalAdd">
     <div class="modal-dialog">
         <div class="modal-content loader-lg" id="modalContent">
         </div>

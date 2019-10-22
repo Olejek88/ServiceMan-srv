@@ -19,7 +19,6 @@ $this->title = Yii::t('app', 'Дом');
             <ul class="nav nav-tabs" style="width: 305px; margin: 0 auto;">
                 <li class=""><a href="/city">Города</a></li>
                 <li class=""><a href="/street">Улицы</a></li>
-                <li class="active"><a href="/house">Дома</a></li>
             </ul>
         </div>
         <div class="panel-body">

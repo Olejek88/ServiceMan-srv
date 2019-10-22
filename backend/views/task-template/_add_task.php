@@ -70,7 +70,7 @@ use yii\helpers\Html;
     echo $form->field($taskTemplate, 'description')->textArea(['rows' => '6']);
     echo $form->field($taskTemplate, 'normative')->textInput();
 
-    echo '<label class="control-label">Период</label>';
+    echo '<label class="control-label">Период (дн.)</label>';
     echo $form->field($taskTemplateEquipment, 'period')->textInput();
 
     echo Html::hiddenInput("equipment_id", $equipment_id);

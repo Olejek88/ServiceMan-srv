@@ -56,7 +56,7 @@ if (isset($_GET['system_select']))
                         'value' => $user,
                         'language' => 'ru',
                         'data' => $usersAll,
-                        'options' => ['placeholder' => 'Выберите пользователя...'],
+                            'options' => ['placeholder' => 'Выберите исполнителя...'],
                         'pluginOptions' => [
                             'allowClear' => true
                         ],
@@ -159,7 +159,7 @@ if (isset($_GET['system_select']))
         yAxis: {
             min: 0,
             title: {
-                text: 'Количество задач по пользователям'
+                text: 'Количество задач по исполнителям'
             }
         },
         series: [

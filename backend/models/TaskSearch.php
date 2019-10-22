@@ -20,7 +20,7 @@ class TaskSearch extends Task
     {
         return [
             [['_id'], 'integer'],
-            [['uuid', 'comment', 'workStatusUuid', 'authorUuid', 'taskTemplateUuid',
+            [['uuid', 'comment', 'workStatusUuid', 'authorUuid', 'taskTemplateUuid', 'taskDate', 'deadlineDate',
                 'taskVerdictUuid','startDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
         ];
     }
@@ -52,9 +52,26 @@ class TaskSearch extends Task
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
+            'query' => $query
         ]);
 
+        $dataProvider->setSort([
+            'attributes' => [
+                'deadlineDate' => [
+                    'asc' => ['deadlineDate' => SORT_ASC],
+                    'desc' => ['deadlineDate' => SORT_DESC],
+                    'default' => SORT_DESC
+                ],
+                'taskDate' => [
+                    'asc' => ['taskDate' => SORT_ASC],
+                    'desc' => ['taskDate' => SORT_DESC],
+                    'default' => SORT_DESC
+                ],
+            ],
+            'defaultOrder' => [
+                '_id' => SORT_DESC
+            ]
+        ]);
         $this->load($params);
 
         if (!$this->validate()) {

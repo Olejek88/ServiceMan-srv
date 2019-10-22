@@ -3,6 +3,7 @@
 
 use common\models\DefectType;
 use common\models\Users;
+use kartik\date\DatePicker;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -163,6 +164,13 @@ $gridColumns = [
     ]
 ];
 
+$start_date = '2018-12-31';
+$end_date = '2021-12-31';
+if (isset($_GET['end_time']))
+    $end_date = $_GET['end_time'];
+if (isset($_GET['start_time']))
+    $start_date = $_GET['start_time'];
+
 echo GridView::widget([
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
@@ -173,10 +181,28 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
-                ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
+            '<form action=""><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
+            DatePicker::widget([
+                'name' => 'start_time',
+                'value' => $start_date,
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd 00:00:00'
+                ]
+            ]) . '</td><td style="width: 300px">' .
+            DatePicker::widget([
+                'name' => 'end_time',
+                'value' => $end_date,
+                'removeButton' => false,
+                'pluginOptions' => [
+                    'autoclose' => true,
+                    'format' => 'yyyy-mm-dd 00:00:00'
+                ]
+            ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-success']) . '</td><td style="width: 100px">{export}</td></tr></table></form>',
+            'options' => ['style' => 'width:100%']
         ],
-        '{export}',
     ],
     'export' => [
         'target' => GridView::TARGET_BLANK,

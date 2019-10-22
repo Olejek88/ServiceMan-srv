@@ -75,11 +75,12 @@ use yii\helpers\Html;
                 'allowClear' => true
             ],
         ]);
-
+    echo '<br/>';
     echo $form->field($model, 'period')->textInput(['maxlength' => true]);
     ?>
-
+    <br/>
     <label>Дата отсчета</label>
+    <br/>
     <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
         <?= DatePicker::widget([
             'attribute' => 'last_date',

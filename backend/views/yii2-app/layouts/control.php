@@ -11,11 +11,14 @@ $journals = Journal::find()->select('*')->orderBy('date DESC')->limit(8)->all();
 $settings = Settings::find()->all();
 $period = "0";
 $move = 0;
+$gps = 0;
 foreach ($settings as $setting) {
     if ($setting['uuid'] == Settings::SETTING_TASK_PAUSE_BEFORE_WARNING)
         $period = $setting['parameter'];
     if ($setting['uuid'] == Settings::SETTING_SHOW_WARNINGS)
         $warnings = $setting['parameter'];
+    if ($setting['uuid'] == Settings::SETTING_GPS_DEEP)
+        $gps = $setting['parameter'];
 }
 
 ?>
@@ -88,6 +91,16 @@ foreach ($settings as $setting) {
                 </p>
             </div>
             <br/>
+            <div class="form-group">
+                <label class="control-sidebar-subheading">
+                    Глубина трека (дн.)<br/>
+                </label>
+                <input type="text" id="gps"
+                       name="gps" value="<?= $gps; ?>"/>
+                <p>
+                    Время за которое показываются перемещения исполнителей
+                </p>
+            </div>
             <br/>
             <button type="submit" class="btn btn-info btn-sm">сохранить настройки</button>
             <?php
