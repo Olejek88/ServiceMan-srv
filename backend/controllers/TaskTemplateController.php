@@ -291,71 +291,77 @@ class TaskTemplateController extends ZhkhController
     public function actionTreeType()
     {
         $tree = array();
-        $fullTree2 = self::addEquipmentTypeStageToTree($tree);
-        return $this->render('tree-type', [
-            'equipment' => $fullTree2
-        ]);
-    }
-
-    /**
-     *
-     * @param array $tree Массив в котором нужно изменить индексы
-     *
-     * @return mixed
-     */
-    public
-    static function addEquipmentTypeStageToTree($tree)
-    {
-        $types = EquipmentType::find()->orderBy('title')->all();
-        foreach ($types as $type) {
-            $expanded = false;
-            $tree['children'][] = ['title' => $type['title'], 'key' => $type['_id'] . "",
-                'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['uuid'] . "",
-                'operation' => false];
+        $systems = EquipmentSystem::find()
+            ->orderBy('title')
+            ->all();
+        foreach ($systems as $system) {
+            $tree['children'][] = [
+                'title' => $system['title'],
+                'address' => '',
+                'uuid' => $system['uuid'],
+                'type' => 'system',
+                'key' => $system['_id'],
+                'folder' => true,
+                'expanded' => false
+            ];
             $childIdx = count($tree['children']) - 1;
-            $taskTemplateTypes = TaskType::find()
+            $types = EquipmentType::find()
+                ->where(['equipmentSystemUuid' => $system['uuid']])
+                ->orderBy('title')
                 ->all();
-            foreach ($taskTemplateTypes as $taskTemplateType) {
-                $taskTemplateEquipmentTypes = TaskTemplateEquipmentType::find()
-                    ->innerJoinWith('taskTemplate')
-                    ->where(['task_template.taskTypeUuid' => $taskTemplateType['uuid']])
-                    ->andWhere(['equipmentTypeUuid' => $type['uuid']])
-                    ->all();
-                if (count($taskTemplateEquipmentTypes)) {
-                    $tree['children'][$childIdx]['children'][] =
-                        ['key' => $taskTemplateType["_id"] . "",
-                            'folder' => true,
-                            'type_id' => $type["uuid"],
-                            'types_id' => $taskTemplateType["uuid"],
-                            'uuid' => $taskTemplateType["uuid"],
-                            'created' => $taskTemplateType["changedAt"],
-                            'expanded' => true,
-                            'types' => $taskTemplateType['title'],
-                            'title' => mb_convert_encoding($taskTemplateType["title"], 'UTF-8', 'UTF-8'),
-                        ];
-                    $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
-
-                    foreach ($taskTemplateEquipmentTypes as $taskTemplateEquipmentType) {
-                        $typew = '<div class="progress"><div class="critical3">' .
-                            $taskTemplateEquipmentType["taskTemplate"]["taskType"]["title"] . '</div></div>';
+            foreach ($types as $type) {
+                $expanded = false;
+                $tree['children'][$childIdx]['children'][] = [
+                    'title' => $type['title'], 'key' => $type['_id'] . "",
+                    'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['uuid'] . "",
+                    'operation' => false];
+                $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
+                $taskTemplateTypes = TaskType::find()->all();
+                foreach ($taskTemplateTypes as $taskTemplateType) {
+                    $taskTemplateEquipmentTypes = TaskTemplateEquipmentType::find()
+                        ->innerJoinWith('taskTemplate')
+                        ->where(['task_template.taskTypeUuid' => $taskTemplateType['uuid']])
+                        ->andWhere(['equipmentTypeUuid' => $type['uuid']])
+                        ->all();
+                    if (count($taskTemplateEquipmentTypes)) {
                         $tree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                            ['key' => $taskTemplateEquipmentType["taskTemplate"]["_id"] . "",
-                                'folder' => false,
-                                'type_id' => $taskTemplateEquipmentType["equipmentType"]["uuid"],
-                                'task_id' => $taskTemplateEquipmentType["taskTemplate"]["uuid"],
-                                'uuid' => $taskTemplateEquipmentType["uuid"],
-                                'created' => $taskTemplateEquipmentType["taskTemplate"]["changedAt"],
-                                'description' => $taskTemplateEquipmentType["taskTemplate"]["description"],
-                                'expanded' => false,
-                                'types' => $typew,
-                                'normative' => $taskTemplateEquipmentType["taskTemplate"]["normative"],
-                                'title' => mb_convert_encoding($taskTemplateEquipmentType["taskTemplate"]["title"], 'UTF-8', 'UTF-8'),
+                            ['key' => $taskTemplateType["_id"] . "",
+                                'folder' => true,
+                                'type' => 'template-type',
+                                'type_id' => $type["uuid"],
+                                'types_id' => $taskTemplateType["uuid"],
+                                'uuid' => $taskTemplateType["uuid"],
+                                'created' => $taskTemplateType["changedAt"],
+                                'expanded' => true,
+                                'types' => $taskTemplateType['title'],
+                                'title' => mb_convert_encoding($taskTemplateType["title"], 'UTF-8', 'UTF-8'),
                             ];
+                        $childIdx3 = count($tree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
+                        foreach ($taskTemplateEquipmentTypes as $taskTemplateEquipmentType) {
+                            $typew = '<div class="progress"><div class="critical3">' .
+                                $taskTemplateEquipmentType["taskTemplate"]["taskType"]["title"] . '</div></div>';
+                            $tree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
+                                ['key' => $taskTemplateEquipmentType["taskTemplate"]["_id"] . "",
+                                    'folder' => false,
+                                    'type' => 'template',
+                                    'type_id' => $taskTemplateEquipmentType["equipmentType"]["uuid"],
+                                    'task_id' => $taskTemplateEquipmentType["taskTemplate"]["uuid"],
+                                    'uuid' => $taskTemplateEquipmentType["uuid"],
+                                    'created' => $taskTemplateEquipmentType["taskTemplate"]["changedAt"],
+                                    'description' => $taskTemplateEquipmentType["taskTemplate"]["description"],
+                                    'expanded' => false,
+                                    'types' => $typew,
+                                    'normative' => $taskTemplateEquipmentType["taskTemplate"]["normative"],
+                                    'title' => mb_convert_encoding($taskTemplateEquipmentType["taskTemplate"]["title"], 'UTF-8', 'UTF-8'),
+                                ];
+                        }
                     }
                 }
             }
         }
-        return ($tree);
+        return $this->render('tree-type', [
+            'equipment' => $tree
+        ]);
     }
 
     /**

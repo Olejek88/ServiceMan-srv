@@ -136,6 +136,11 @@ class SiteController extends Controller
         $today = time();
         $threshold = $today - 300000000;
         $count = 0;
+        $deep = Settings::getSettings(Settings::SETTING_GPS_DEEP);
+        if ($deep == 0)
+            $deep = 300;
+        $date_from = date("Y-m-d H:i:s", time() - $deep * 24 * 3600);
+
         foreach ($users as $current_user) {
             if (strtotime($current_user['changedAt']) >= $threshold) {
                 $online[count($online)] = $current_user['uuid'];
@@ -147,6 +152,7 @@ class SiteController extends Controller
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
+                ->andWhere('date>"' . $date_from . '"')
                 ->one();
             if ($gps) {
                 $userData[$count]['latitude'] = $gps['latitude'];
@@ -164,6 +170,7 @@ class SiteController extends Controller
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
+                ->andWhere('date>"' . $date_from . '"')
                 ->limit(1000)
                 ->all();
             if ($gps) {
@@ -313,9 +320,9 @@ class SiteController extends Controller
             ->limit(15)
             ->all();
 
-        $userData = array();
         $users = Users::find()
             ->where('name != "sUser"')
+            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->select('*')
             ->all();
         $userList[] = $users;
@@ -449,10 +456,15 @@ class SiteController extends Controller
                 $offline[count($offline)] = $current_user['uuid'];
             }
 
+            $deep = Settings::getSettings(Settings::SETTING_GPS_DEEP);
+            if ($deep == 0)
+                $deep = 300;
+            $date_from = date("Y-m-d H:i:s", time() - $deep * 24 * 3600);
             $gps = Gpstrack::find()
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
+                ->andWhere('date>"' . $date_from . '"')
                 ->one();
             if ($gps) {
                 $userData[$count]['latitude'] = $gps['latitude'];
@@ -470,6 +482,7 @@ class SiteController extends Controller
                 ->select('latitude, longitude, date')
                 ->orderBy('date DESC')
                 ->where(['userUuid' => $current_user['uuid']])
+                ->andWhere('date>"' . $date_from . '"')
                 ->limit(5000)
                 ->all();
             if ($gps) {
@@ -877,7 +890,7 @@ class SiteController extends Controller
                     $size = number_format(filesize($fileName) / 1024, 2) . 'Кб';
                     $real_size = filesize($fileName) / 1024;
                     $links = Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                        [EquipmentController::getDocDir($documentation) . $documentation['path']], ['title' => $documentation['title']]
+                        [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
                     );
                     $ext = pathinfo($fileName, PATHINFO_EXTENSION);
                 } else {
@@ -996,6 +1009,10 @@ class SiteController extends Controller
             Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "1");
         } else {
             Settings::storeSetting(Settings::SETTING_SHOW_WARNINGS, "0");
+        }
+        if (isset($_POST["gps"])) {
+            if ($_POST["gps"] > 0 && $_POST["gps"] < 1000)
+                Settings::storeSetting(Settings::SETTING_GPS_DEEP, $_POST["gps"]);
         }
         return $this->actionIndex();
     }

@@ -172,11 +172,7 @@ echo GridView::widget([
         '{toggleData}'
     ],
     'toolbar' => [
-        ['content' =>
-            Html::a('<i class="glyphicon glyphicon-repeat"></i>', ['grid-demo'],
-                ['data-pjax' => 0, 'class' => 'btn btn-default', 'title' => Yii::t('app', 'Reset Grid')])
-        ],
-        '{export}',
+        '{export}'
     ],
     'export' => [
         'target' => GridView::TARGET_BLANK,

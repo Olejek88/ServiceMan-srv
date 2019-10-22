@@ -66,6 +66,7 @@ $this->title = 'Дерево технологических карт';
                     'icon' => "add",
                     'callback' => new JsExpression('function(key, opt) {
                             var node = $.ui.fancytree.getNode(opt.$trigger);
+                            if (node.type == "template-type")
                             $.ajax({
                                 url: "add-template",
                                 type: "post",
@@ -113,6 +114,7 @@ $this->title = 'Дерево технологических карт';
                     'icon' => 'edit',
                     'callback' => new JsExpression('function(key, opt) {
                         var node = $.ui.fancytree.getNode(opt.$trigger);
+                        if (node.type == "template")
                         $.ajax({
                             url: "edit-template",
                             type: "post",

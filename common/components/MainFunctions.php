@@ -256,8 +256,7 @@ class MainFunctions
 
         if (!$authorUuid) {
             $currentUser = Users::find()
-                ->where(['oid' => $oid])
-                ->orderBy('_id DESC')
+                ->where(['uuid' => Users::USER_SERVICE_UUID])
                 ->one();
             $authorUuid = $currentUser['uuid'];
         }
