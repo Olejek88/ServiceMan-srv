@@ -42,7 +42,7 @@ use yii\widgets\ActiveForm;
 
     echo '</br>';
     echo '<label class="control-label">Добавить исполнителя</label>';
-    $users = Users::find()->where(['!=','name','sUser'])->all();
+    $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     try {
         echo Select2::widget(

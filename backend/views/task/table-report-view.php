@@ -54,8 +54,8 @@ $gridColumns = [
         'attribute' => 'taskDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Дата назначения',
+        'enableSorting' => TRUE,
+        //'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->taskDate) > 0)
@@ -96,7 +96,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->where(['!=','name','sUser'])->orderBy('name')->all(),
+        'filter' => ArrayHelper::map(Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->orderBy('name')->all(),
             'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
@@ -260,7 +260,6 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Срок',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->deadlineDate) > 0)
@@ -462,27 +461,27 @@ $gridColumns = [
                 return $operation_list;
             }
         ],*/
+    /*    [
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'header' => 'Дата начала',
+            'mergeHeader' => true,
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+            'headerOptions' => ['class' => 'text-center'],
+            'content' => function ($data) {
+                if (strtotime($data->startDate) > 0)
+                    return date("d-m-Y H:i", strtotime($data->startDate));
+                else
+                    return 'не начата';
+            }
+        ],*/
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Дата начала',
         'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if (strtotime($data->startDate) > 0)
-                return date("d-m-Y H:i", strtotime($data->startDate));
-            else
-                return 'не начата';
-        }
-    ],
-    [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Дата завершения',
+        'header' => 'Дата выполнения',
         'contentOptions' => [
             'class' => 'table_class'
         ],

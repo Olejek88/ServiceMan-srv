@@ -170,7 +170,7 @@ $gridColumns = [
     ]
 ];
 
-$users = Users::find()->where(['!=','name','sUser'])->all();
+$users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
 $items = ArrayHelper::map($users, 'uuid', 'name');
 $start_date = '2018-12-31';
 $end_date = '2021-12-31';

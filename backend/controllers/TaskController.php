@@ -282,7 +282,7 @@ class TaskController extends ZhkhController
         if (isset($_GET['uuid'])) {
             $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
-        $dataProvider->query->orderBy('_id DESC');
+        //$dataProvider->query->orderBy('_id DESC');
         if (isset($_GET['objectUuid'])) {
             $dataProvider->query->andWhere(['=', 'objectUuid', $_GET['objectUuid']]);
         }

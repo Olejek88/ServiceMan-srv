@@ -16,7 +16,6 @@ use common\models\TaskType;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
@@ -620,10 +619,13 @@ class TaskTemplateController extends ZhkhController
      */
     public function actionChoose()
     {
+        $last_date = time();
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
             $equipment_id = 0;
             $task_id = 0;
+            if (isset($_POST["last_date"]))
+                $last_date = $_POST["last_date"];
             if (isset($_POST["equipment_id"]))
                 $equipment_id = $_POST["equipment_id"];
             if (isset($_POST["task_id"]))
@@ -655,7 +657,7 @@ class TaskTemplateController extends ZhkhController
                 $taskTemplateEquipment->period = $_POST["period"];
             }
             $taskTemplateEquipment->next_dates = "";
-            $taskTemplateEquipment->last_date = date('Y-m-d H:i:s');
+            $taskTemplateEquipment->last_date = date('Y-m-d H:i:s', $last_date);
             $taskTemplateEquipment->uuid = MainFunctions::GUID();
             $taskTemplateEquipment->save();
         }

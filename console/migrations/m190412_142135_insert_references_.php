@@ -112,12 +112,12 @@ class m190412_142135_insert_references_ extends Migration
             'changedAt' => $currentTime
         ]);
 
-        $user = User::find()->where(['username' => 'sUser'])->one();
+        $user = User::find()->where(['user' => 'sUser'])->one();
         if ($user) {
             $this->insert('{{%users}}', [
                 'uuid' => Users::USER_SERVICE_UUID,
                 'user_id' => 2,
-                'name' => 'sUser',
+                'name' => 'Система',
                 'pin' => self::USERS_PIN_MD5,
                 'contact' => 'none',
                 'type' => 2,

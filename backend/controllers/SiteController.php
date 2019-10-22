@@ -121,7 +121,7 @@ class SiteController extends Controller
         $gpsStatus = false;
 
         $users = Users::find()
-            ->where('name!="sUser"')
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
             ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         $userList[] = $users;
@@ -321,7 +321,7 @@ class SiteController extends Controller
             ->all();
 
         $users = Users::find()
-            ->where('name != "sUser"')
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
             ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->select('*')
             ->all();
@@ -422,7 +422,7 @@ class SiteController extends Controller
         $gpsStatus = false;
 
         $users = Users::find()
-            ->where('name!="sUser"')
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
             ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
             ->all();
         $userList[] = $users;
