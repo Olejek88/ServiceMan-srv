@@ -283,11 +283,11 @@ class TaskController extends ZhkhController
             $dataProvider->query->andWhere(['task.uuid' => $_GET['uuid']]);
         }
         //$dataProvider->query->orderBy('_id DESC');
-        if (isset($_GET['objectUuid'])) {
-            $dataProvider->query->andWhere(['=', 'objectUuid', $_GET['objectUuid']]);
+        if (isset($_GET['house'])) {
+            $dataProvider->query->andWhere(['=', 'object.houseUuid', $_GET['house']]);
         }
-        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
-            return $this->redirect('../task/index?objectUuid=' . $_POST['objectUuid']);
+        if (Yii::$app->request->isAjax && isset($_POST['house'])) {
+            return $this->redirect('../task/index?house=' . $_POST['house']);
         }
 
         $warnings[] = NULL;

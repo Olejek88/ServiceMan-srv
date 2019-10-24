@@ -26,7 +26,7 @@ use yii\helpers\Html;
     <button type="button" class="close" data-dismiss="modal">&times;</button>
     <h4 class="modal-title">Выбрать шаблон задачи</h4>
 </div>
-<div class="modal-body">
+<br class="modal-body">
     <?php
     if ($_POST["equipment_id"])
         $equipment_id = $_POST["equipment_id"];
@@ -36,14 +36,11 @@ use yii\helpers\Html;
             ->joinWith('taskTemplate')
             ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
             ->andWhere(['or',
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_TO],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
                 ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA]])
             ->orderBy('task_template.taskTypeUuid')
             ->all();
         $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
@@ -68,6 +65,8 @@ use yii\helpers\Html;
     echo Html::textInput("period");
     echo Html::hiddenInput("equipment_uuid", $equipment['uuid']);
     ?>
+    
+<br/><br/>
     <label>Дата отсчета</label>
     <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
         <?= DatePicker::widget([

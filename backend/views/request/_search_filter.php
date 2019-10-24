@@ -86,21 +86,23 @@ use yii\helpers\Html;
                     ],
                     'pluginEvents' => [
                         "select2:select" => "function(data) { 
-                            refreshObjects(data.params.data.id);
                     }"]
                 ]);
-                echo '<label>Квартира/помещение</label></br>';
-                echo Select2::widget([
-                    'id' => 'objectUuid',
-                    'name' => 'objectUuid',
-                    'language' => 'ru',
-                    'options' => [
-                        'placeholder' => 'Выберите объект..'
-                    ],
-                    'pluginOptions' => [
-                        'allowClear' => true
-                    ],
-                ]);
+                /*
+                                refreshObjects(data.params.data.id);
+
+                                echo '<label>Квартира/помещение</label></br>';
+                                echo Select2::widget([
+                                    'id' => 'objectUuid',
+                                    'name' => 'objectUuid',
+                                    'language' => 'ru',
+                                    'options' => [
+                                        'placeholder' => 'Выберите объект..'
+                                    ],
+                                    'pluginOptions' => [
+                                        'allowClear' => true
+                                    ],
+                                ]);*/
 
                 $this->registerJs('function refreshHouse(street) {
                     $.ajax({
@@ -177,7 +179,7 @@ use yii\helpers\Html;
             //url: "/request/index?objectUuid="+$('#objectUuid').val(),
             type: "post",
             data: {
-                objectUuid: $('#objectUuid').val()
+                house: $('#houses').val()
             },
             success: function () {
                 $('#modalFilter').modal('hide');

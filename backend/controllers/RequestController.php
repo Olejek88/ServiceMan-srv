@@ -82,13 +82,15 @@ class RequestController extends ZhkhController
             $dataProvider->query->andWhere(['>=', 'createdAt', $_GET['start_time']]);
             $dataProvider->query->andWhere(['<', 'createdAt', $_GET['end_time']]);
         }
-        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
-        if (isset($_GET['objectUuid'])) {
-            $dataProvider->query->andWhere(['=', 'request.objectUuid', $_GET['objectUuid']]);
+        //$dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
+
+        if (isset($_GET['house'])) {
+            $dataProvider->query->andWhere(['=', 'object.houseUuid', $_GET['house']]);
         }
-        if (Yii::$app->request->isAjax && isset($_POST['objectUuid'])) {
-            return $this->redirect('../request/index?objectUuid=' . $_POST['objectUuid']);
+        if (Yii::$app->request->isAjax && isset($_POST['house'])) {
+            return $this->redirect('../request/index?house=' . $_POST['house']);
         }
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,

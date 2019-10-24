@@ -66,12 +66,10 @@ class TaskSearch extends Task
                     'asc' => ['taskDate' => SORT_ASC],
                     'desc' => ['taskDate' => SORT_DESC],
                     'default' => SORT_DESC
-                ],
+                ]
             ],
-            'defaultOrder' => [
-                '_id' => SORT_DESC
-            ]
         ]);
+        $dataProvider->sort->defaultOrder = ['taskDate' => SORT_DESC];
         $this->load($params);
 
         if (!$this->validate()) {
