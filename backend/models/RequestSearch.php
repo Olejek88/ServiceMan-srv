@@ -46,7 +46,7 @@ class RequestSearch extends Request
     public function search($params)
     {
         $query = Request::find();
-        //$query->joinWith('equipment');
+        $query->joinWith('object.house');
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([

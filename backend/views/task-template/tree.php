@@ -92,29 +92,29 @@ $this->title = 'Дерево задач';
         ],
         'contextMenu' => [
             'menu' => [
-                'add' => [
-                    'name' => "Добавить",
-                    'icon' => "add",
-                    'callback' => new JsExpression('function(key, opt) {
-                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
-                            var node = $.ui.fancytree.getNode(opt.$trigger);
-                            $.ajax({
-                                url: "add",
-                                type: "post",
-                                data: {
-                                    selected_node: node.key,
-                                    folder: node.folder,
-                                    type_id: node.data.type_id,
-                                    equipment_id: node.data.equipment_id,
-                                    task_id: node.data.task_id                                    
-                                },
-                                success: function (data) { 
-                                    $(\'#modalAddOperation\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
-                                }
-                            });
-                    }')
-                ],
+                /*                'add' => [
+                                    'name' => "Добавить",
+                                    'icon' => "add",
+                                    'callback' => new JsExpression('function(key, opt) {
+                                            var sel = $.ui.fancytree.getTree().getSelectedNodes();
+                                            var node = $.ui.fancytree.getNode(opt.$trigger);
+                                            $.ajax({
+                                                url: "add",
+                                                type: "post",
+                                                data: {
+                                                    selected_node: node.key,
+                                                    folder: node.folder,
+                                                    type_id: node.data.type_id,
+                                                    equipment_id: node.data.equipment_id,
+                                                    task_id: node.data.task_id
+                                                },
+                                                success: function (data) {
+                                                    $(\'#modalAddOperation\').modal(\'show\');
+                                                    $(\'#modalContent\').html(data);
+                                                }
+                                            });
+                                    }')
+                                ],*/
                 'choose' => [
                     'name' => "Назначить",
                     'icon' => "add",

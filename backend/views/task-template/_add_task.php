@@ -22,7 +22,7 @@ use yii\helpers\Html;
 ?>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">&times;</button>
-    <h4 class="modal-title">Добавить шаблон задачи</h4>
+    <h4 class="modal-title">Шаблон задачи</h4>
 </div>
 <div class="modal-body">
     <?php
@@ -53,7 +53,14 @@ use yii\helpers\Html;
             ->label(false);
     }
 
-    $taskTypes = TaskType::find()->all();
+    $taskTypes = TaskType::find()
+        ->where(['or',
+            ['uuid' => TaskType::TASK_TYPE_PLAN_TO],
+            ['uuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
+            ['uuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
+            ['uuid' => TaskType::TASK_TYPE_MEASURE],
+            ['uuid' => TaskType::TASK_TYPE_POVERKA]])
+        ->all();
     $items = ArrayHelper::map($taskTypes, 'uuid', 'title');
     echo $form->field($taskTemplate, 'taskTypeUuid')->widget(Select2::class,
         [
@@ -70,7 +77,6 @@ use yii\helpers\Html;
     echo $form->field($taskTemplate, 'description')->textArea(['rows' => '6']);
     echo $form->field($taskTemplate, 'normative')->textInput();
 
-    echo '<label class="control-label">Период (дн.)</label>';
     echo $form->field($taskTemplateEquipment, 'period')->textInput();
 
     echo Html::hiddenInput("equipment_id", $equipment_id);
