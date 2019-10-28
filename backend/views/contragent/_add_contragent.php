@@ -78,10 +78,11 @@ use yii\helpers\Html;
     $(document).on("beforeSubmit", "#form", function () {
     }).on('submit', function (e) {
         e.preventDefault();
+        var form = $('#form');
         $.ajax({
             url: "../contragent/create",
             type: "post",
-            data: $('form').serialize(),
+            data: form.serialize(),
             success: function () {
                 $('#modalContragent').modal('hide');
                 $.ajax({

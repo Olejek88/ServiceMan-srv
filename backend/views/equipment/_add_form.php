@@ -162,9 +162,10 @@ $this->registerJs('
         e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
+        var form = $('#form');
         $.ajax({
             type: "post",
-            data: $('form').serialize(),
+            data: form.serialize(),
             url: "../equipment/save",
             success: function () {
                 $('#modalAddEquipment').modal('hide');

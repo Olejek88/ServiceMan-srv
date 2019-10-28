@@ -65,7 +65,7 @@ use yii\helpers\Html;
     echo Html::textInput("period");
     echo Html::hiddenInput("equipment_uuid", $equipment['uuid']);
     ?>
-    
+
 <br/><br/>
     <label>Дата отсчета</label>
     <div class="pole-mg" style="margin: 2px 2px 2px 5px;">

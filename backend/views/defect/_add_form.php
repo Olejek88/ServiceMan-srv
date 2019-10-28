@@ -86,9 +86,10 @@ use yii\helpers\Html;
         e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
+        var form = $('#form');
         $.ajax({
             type: "post",
-            data: $('form').serialize(),
+            data: form.serialize(),
             url: "../defect/save",
             success: function () {
                 $('#modal_new').modal('hide');

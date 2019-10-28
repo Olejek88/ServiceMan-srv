@@ -231,10 +231,11 @@ if (isset($_GET["equipmentUuid"]))
         e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
+        var form = $('#form');
         $.ajax({
             url: "../request/new",
             type: "post",
-            data: $('form').serialize(),
+            data: form.serialize(),
             success: function (ret) {
                 if (ret.length > 5) {
                     $('#errors').val(ret);
