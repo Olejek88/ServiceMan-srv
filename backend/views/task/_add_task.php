@@ -175,10 +175,11 @@ use yii\helpers\Html;
 </div>
 <script>
     $(document).on("beforeSubmit", "#form", function () {
+        var form = $('#form');
         $.ajax({
             url: "../task/add-task",
             type: "post",
-            data: $('form').serialize(),
+            data: form.serialize(),
             success: function (ret) {
                 if (ret.length > 5) {
                     $('#errors').val(ret);
