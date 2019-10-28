@@ -32,7 +32,7 @@ $this->title = 'Дерево задач';
                 <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
             </button>
         </th>
-        <th>Тип</th>
+        <th>Наименование</th>
         <th>Норматив</th>
         <th>Период</th>
         <th>Создан</th>
@@ -62,7 +62,7 @@ $this->title = 'Дерево задач';
         'id' => 'tree',
         'source' => $equipment,
         'checkbox' => true,
-        'selectMode' => 3,
+        'selectMode' => 1,
         'extensions' => ['table', 'contextMenu'],
         'edit' => [
             'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],

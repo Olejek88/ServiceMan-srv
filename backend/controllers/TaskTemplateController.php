@@ -469,7 +469,10 @@ class TaskTemplateController extends ZhkhController
 
             // задача
             if ($folder == "false" && $task_template_equipment > 0) {
-                self::removeTaskTemplate($task_template_equipment);
+                //self::removeTaskTemplate($task_template_equipment);
+                $taskTemplateEquipment = TaskTemplateEquipment::find()->where(['_id' => $task_template_equipment])->one();
+                if ($taskTemplateEquipment)
+                    $taskTemplateEquipment->delete();
             }
 
             // операция
