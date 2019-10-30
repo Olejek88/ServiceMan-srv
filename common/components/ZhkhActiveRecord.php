@@ -16,10 +16,43 @@ use yii\web\Application;
  *
  * @property array $actionPermissions
  * @property array $permissions
+ * @property string oid
  */
 class ZhkhActiveRecord extends ActiveRecord implements IPermission
 {
     const SCENARIO_UPDATE = 'update';
+
+    /**
+     * ZhkhActiveRecord constructor.
+     * @throws Exception
+     */
+    function __construct()
+    {
+        parent::__construct();
+        if (Yii::$app instanceof Application) {
+            $this->oid = self::getOid();
+        }
+    }
+
+    /**
+     * @return string|null
+     * @throws Exception
+     */
+    public static function getOid()
+    {
+        if (!Yii::$app->user->isGuest) {
+            /** @var User $identity */
+            $identity = Yii::$app->user->identity;
+            $oid = Yii::$app->db
+                ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
+                ->query()
+                ->read();
+            return $oid['oid'];
+        } else {
+            return null;
+        }
+
+    }
 
     /**
      * @return object|ActiveQuery
@@ -37,11 +70,8 @@ class ZhkhActiveRecord extends ActiveRecord implements IPermission
                 $identity = Yii::$app->user->identity;
                 if ($identity->username != 'sUser') {
                     // обычный пользователь
-                    $oid = Yii::$app->db
-                        ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
-                        ->query()
-                        ->read();
-                    $aq->andWhere([$calledClass::tablename() . '.oid' => $oid['oid']]);
+                    $oid = self::getOid();
+                    $aq->andWhere([$calledClass::tablename() . '.oid' => $oid]);
                 }
             }
         }

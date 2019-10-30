@@ -3,6 +3,7 @@
 namespace common\models;
 
 use common\components\MainFunctions;
+use common\components\ZhkhActiveRecord;
 use Cron\CronExpression;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -24,13 +25,15 @@ use yii\db\Expression;
  * @property string $next_dates
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $oid
  *
  * @property Equipment $equipment
  * @property TaskTemplate $taskTemplate
  * @property Users $user
+ * @property Organization $organization
  * @property string[] $dates
  */
-class TaskTemplateEquipment extends ActiveRecord
+class TaskTemplateEquipment extends ZhkhActiveRecord
 {
     const TASK_DEEP = 20;
 
@@ -106,6 +109,8 @@ class TaskTemplateEquipment extends ActiveRecord
                 'targetClass' => TaskTemplate::class,
                 'targetAttribute' => ['taskTemplateUuid' => 'uuid']
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -128,6 +133,7 @@ class TaskTemplateEquipment extends ActiveRecord
             'period' => Yii::t('app', 'Периодичность (дн.)'),
             'last_date' => Yii::t('app', 'Дата последнего запуска'),
             'next_dates' => Yii::t('app', 'Даты следующих запусков'),
+            'oid' => Yii::t('app', 'Организация'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -334,5 +340,27 @@ class TaskTemplateEquipment extends ActiveRecord
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'edit' => [
+                'edit-task',
+                'delete-task',
+                'add-task',
+                'delete-stage',
+                'calendar-gantt',
+                'period',
+                'move',
+            ]]);
     }
 }

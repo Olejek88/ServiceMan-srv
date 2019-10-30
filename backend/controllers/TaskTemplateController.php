@@ -16,7 +16,6 @@ use common\models\TaskType;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\Html;
@@ -33,6 +32,7 @@ class TaskTemplateController extends ZhkhController
      * Lists all TaskTemplate models.
      *
      * @return mixed
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -75,6 +75,7 @@ class TaskTemplateController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -287,6 +288,8 @@ class TaskTemplateController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionTreeType()
     {
@@ -302,6 +305,8 @@ class TaskTemplateController extends ZhkhController
      * @param array $tree Массив в котором нужно изменить индексы
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public
     static function addEquipmentTypeStageToTree($tree)
@@ -825,6 +830,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
      *
      * @return mixed
+     * @throws Exception
      */
     public function actionAddTemplate()
     {

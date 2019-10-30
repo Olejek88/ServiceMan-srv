@@ -2,10 +2,10 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -17,11 +17,13 @@ use yii\db\Expression;
  * @property string $equipmentTypeUuid
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $oid
  *
  * @property EquipmentType $equipmentType
+ * @property Organization $organization
  * @property TaskTemplate $taskTemplate
  */
-class TaskTemplateEquipmentType extends ActiveRecord
+class TaskTemplateEquipmentType extends ZhkhActiveRecord
 {
     /**
      * Behaviors.
@@ -94,6 +96,8 @@ class TaskTemplateEquipmentType extends ActiveRecord
                 'targetClass' => TaskTemplate::class,
                 'targetAttribute' => ['taskTemplateUuid' => 'uuid']
             ],
+            [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
+            [['oid'], 'checkOrganizationOwn'],
         ];
     }
 
@@ -113,6 +117,7 @@ class TaskTemplateEquipmentType extends ActiveRecord
             'taskTemplate' => Yii::t('app', 'Шаблон задачи'),
             'equipmentTypeUuid' => Yii::t('app', 'Тип оборудования'),
             'equipmentType' => Yii::t('app', 'Тип оборудования'),
+            'oid' => Yii::t('app', 'Организация'),
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
@@ -140,5 +145,23 @@ class TaskTemplateEquipmentType extends ActiveRecord
         return $this->hasOne(
             TaskTemplate::class, ['uuid' => 'taskTemplateUuid']
         );
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getOrganization()
+    {
+        return $this->hasOne(Organization::class, ['uuid' => 'oid']);
+    }
+
+    function getActionPermissions()
+    {
+        return array_merge_recursive(parent::getActionPermissions(), [
+            'edit' => [
+                'form',
+                'new',
+                'delete-task',
+            ]]);
     }
 }
