@@ -2,9 +2,11 @@
 /* @var $searchModel backend\models\RequestSearch */
 
 use common\models\Contragent;
+use common\models\Request;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
+use common\models\Users;
 use common\models\WorkStatus;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -104,10 +106,16 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            if ($data['contragentUuid']!= Contragent::DEFAULT_CONTRAGENT)
-                return $data['contragent']->title . '<br/> [' . $data['contragent']->phone . ']';
-            else
-                return $data['author']->name;
+            /** @var Request $data */
+            if ($data->contragentUuid != null && $data->contragentUuid != Contragent::DEFAULT_CONTRAGENT) {
+                return $data->contragent->title . '<br/> [' . $data->contragent->phone . ']';
+            } else {
+                if ($data->authorUuid == Users::USER_SERVICE_UUID) {
+                    return Users::USER_SERVICE_TITLE;
+                } else {
+                    return $data->author->name;
+                }
+            }
         }
     ],
     [
@@ -121,7 +129,12 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
-            return $data['author']->name;
+            /** @var Request $data */
+            if ($data->authorUuid == Users::USER_SERVICE_UUID) {
+                return Users::USER_SERVICE_TITLE;
+            } else {
+                return $data->author->name;
+            }
         }
     ],
     [

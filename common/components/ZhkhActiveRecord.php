@@ -21,6 +21,7 @@ use yii\web\Application;
 class ZhkhActiveRecord extends ActiveRecord implements IPermission
 {
     const SCENARIO_UPDATE = 'update';
+    const SCENARIO_API = 'api';
 
     /**
      * ZhkhActiveRecord constructor.
@@ -87,8 +88,10 @@ class ZhkhActiveRecord extends ActiveRecord implements IPermission
     public function checkOrganizationOwn($attr, $param)
     {
         if (Yii::$app instanceof Application) {
-            if ($this->attributes[$attr] != Users::getCurrentOid()) {
-                $this->addError($attr, 'Не верный идентификатор организации.');
+            if (!Yii::$app->user->isGuest) {
+                if ($this->attributes[$attr] != Users::getCurrentOid()) {
+                    $this->addError($attr, 'Не верный идентификатор организации.');
+                }
             }
         }
     }

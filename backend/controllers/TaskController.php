@@ -323,7 +323,7 @@ class TaskController extends ZhkhController
                     || $task['workStatusUuid'] == WorkStatus::UN_COMPLETE || !$task['endDate']) &&
                 (time() > strtotime($task['deadlineDate']))) {
                 $request = Request::find()->where(['taskUuid' => $task->uuid])->one();
-                if ($request && $request['requestTypeUuid'] != RequestType::GENERAL) {
+                if ($request) {
                     $warnings[] = 'Задача #' . $task['_id'] . ' создана в связи с характером обращения ' .
                         $request['requestType']['title'] . ', но до сих пор не выполнена';
                 }

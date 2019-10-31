@@ -30,7 +30,7 @@ use yii\db\Expression;
  * @property string $changedAt
  *
  * @property Contragent $contragent
- * @property Contragent $author
+ * @property Users $author
  * @property RequestStatus $requestStatus
  * @property RequestType $requestType
  * @property Equipment $equipment
@@ -91,7 +91,14 @@ class Request extends ZhkhActiveRecord
                     'equipmentUuid',
                     'comment'
                 ],
-                'required'
+                'required', 'on' => self::SCENARIO_DEFAULT
+            ],
+            [
+                [
+                    'contragentUuid',
+                    'equipmentUuid',
+                ],
+                'safe', 'on' => ZhkhActiveRecord::SCENARIO_API,
             ],
             [['closeDate', 'type', 'createdAt', 'changedAt'], 'safe'],
             [

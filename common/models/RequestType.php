@@ -23,7 +23,6 @@ class RequestType extends ZhkhActiveRecord
 {
     public const DESCRIPTION = 'Типы обращений';
 
-    const GENERAL = "E49AE9AD-3C31-42F8-A751-AAEB890C2190";
     const REQUEST_PAY = 1;
     const REQUEST_FREE = 0;
 

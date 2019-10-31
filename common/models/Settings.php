@@ -21,6 +21,8 @@ class Settings extends ActiveRecord
 {
     const SETTING_TASK_PAUSE_BEFORE_WARNING = 'B8FB4706-E48F-422A-9B73-6750B7491BF0';
     const SETTING_SHOW_WARNINGS = 'EA1B3D23-CFE4-4EE0-8091-9EEC27E60E95';
+    // адрес с которого приходят уведомления от интерсвязи
+    const SETTING_IS_IP = '97F69939-B4C1-4CB0-9547-DFA88F2E39B9';
 
     /**
      * Table name.
