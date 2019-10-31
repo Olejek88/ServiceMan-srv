@@ -781,18 +781,15 @@ class TaskController extends ZhkhController
      */
     public function actionForm()
     {
-        date_default_timezone_set("Asia/Yekaterinburg");
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
             $model->taskDate = date("Y-m-d H:i:s", time());
-            if (isset($_GET["requestUuid"]))
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'requestUuid' => $_GET["requestUuid"], 'type_uuid' => $_GET["type_uuid"]]);
-            else
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'type_uuid' => $_GET["type_uuid"]]);
+            $requestUuid = Yii::$app->request->getQueryParam('requestUuid');
+            return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                'requestUuid' => $requestUuid, 'type_uuid' => $_GET["type_uuid"]]);
+        } else {
+            return '<h3 style="color: red">Не указанно оборудование.</h3>';
         }
-        return "";
     }
 
     /**

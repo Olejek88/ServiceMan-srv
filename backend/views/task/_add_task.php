@@ -47,7 +47,7 @@ use yii\helpers\Html;
         $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
         echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
         ?>
-    <?php if (isset($requestUuid)) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
+    <?php if ($requestUuid != null) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
 
     <?php
     if (isset($_GET["equipmentUuid"])) {

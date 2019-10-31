@@ -103,7 +103,7 @@ class IntegrationIsController extends Controller
             $request->authorUuid = Users::USER_SERVICE_UUID; // sUser
             $request->requestStatusUuid = RequestStatus::NEW_REQUEST; // Состояние (1 - новое, 2 - в работе, 3 - закрыто)
             $request->requestTypeUuid = RequestType::findOne(['title' => 'Другой характер обращения'])->uuid;
-            $request->comment = $incident['description'] . '(' . $incident['address']['text'] . ')'; // TODO: добавить адрес и категорию в виде текста
+            $request->comment = $data['category']['text'] . ': ' . $incident['description'] . '(' . $incident['address']['text'] . ')';
             $request->verdict = '';
             $request->result = '';
             $request->equipmentUuid = null;

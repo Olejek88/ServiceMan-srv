@@ -249,7 +249,8 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'value' => function ($model) {
-            return $model['requestType']['title'];
+            /** @var Request $model */
+            return $model->requestType->title;
         },
         'filterType' => GridView::FILTER_SELECT2,
         'filter' => ArrayHelper::map(RequestType::find()->orderBy('title')->all(),
