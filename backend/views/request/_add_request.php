@@ -102,8 +102,16 @@ if (isset($_GET["equipmentUuid"]))
                                             id: data.params.data.id
                                         },
                                         success: function (data) {
-                                            console.log(data);
-                                            $('#request-objectuuid').val(data).trigger('change');
+                                            var obj = JSON.parse(data);
+                                            console.log(obj.city);
+                                            $('#request-cityuuid').val(obj.city).trigger('change');
+                                            refreshStreets(obj.city);
+                                            console.log(obj.street);
+                                            $('#request-streetuuid').val(obj.street).trigger('change');
+                                            console.log(obj.house);
+                                            $('#request-houseuuid').val(obj.house).trigger('change');
+                                            console.log(obj.object);
+                                            $('#request-objectuuid').val(obj.object).trigger('change');
                                         }
                                     });
                             }"]
