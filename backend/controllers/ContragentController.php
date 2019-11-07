@@ -299,7 +299,7 @@ class ContragentController extends ZhkhController
     }
 
     /**
-     * @return string
+     * @return array
      * @throws Exception
      * @throws InvalidConfigException
      */
@@ -308,10 +308,16 @@ class ContragentController extends ZhkhController
         if (isset($_POST['id']))
             if (($model = Contragent::find()->where(['uuid' => $_POST['id']])->one()) !== null) {
                 $object = ObjectContragent::find()->where(['contragentUuid' => $model['uuid']])->one();
-                if ($object)
-                    return $object['objectUuid'];
+                $address = [];
+                if ($object) {
+                    $address['city'] = $object['object']['house']['street']['cityUuid'];
+                    $address['street'] = $object['object']['house']['streetUuid'];
+                    $address['house'] = $object['object']['houseUuid'];
+                    $address['object'] = $object['objectUuid'];
+                    return json_encode($address);
+                }
             }
-        return '';
+        return json_encode([]);
     }
 
     /**

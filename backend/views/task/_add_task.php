@@ -183,8 +183,10 @@ use yii\helpers\Html;
             success: function (ret) {
                 if (ret.length > 5) {
                     $('#errors').val(ret);
-                } else
+                } else {
                     $('#modalTask').modal('hide');
+                    window.location.reload();
+                }
             },
             error: function () {
             }
