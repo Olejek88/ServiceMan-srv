@@ -64,6 +64,7 @@ use yii\helpers\Html;
                 'language' => 'ru',
                 'size' => 'ms',
                 'pluginOptions' => [
+                    'autoclose' => true,
                     'format' => 'yyyy-mm-dd H:ii',
                     'todayHighlight' => true
                 ]

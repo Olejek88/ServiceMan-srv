@@ -243,7 +243,7 @@ class ContragentController extends ZhkhController
                 $objectContragent->save();
             }
 
-            return $this->redirect(['view', 'id' => $model->_id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
