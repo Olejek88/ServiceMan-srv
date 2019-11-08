@@ -176,6 +176,11 @@ class MainFunctions
         return $ret;
     }
 
+    public static function getColorLabelByStatusExt($statusUuid, $statusTitle, $type)
+    {
+        return self::getColorLabelByStatus(['uuid' => $statusUuid, 'title' => $statusTitle], $type);
+    }
+
     public static function getColorLabelByStatus($status, $type)
     {
         $label = '<div class="progress"><div class="critical3">' . $status['title'] . '</div></div>';
