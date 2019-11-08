@@ -773,29 +773,45 @@ class EquipmentController extends ZhkhController
                 $equipmentIdx++;
 
                 $location = 'ул.' . $item['street_title'] . ', д.' . $item['house_number'] . ' - ' . $item['object_title'];
-                $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = [
-                    'key' => $item['equipment__id'] . "",
-                    'folder' => false,
-                    'serial' => $item['equipment_serial'],
-                    'title' => $item['equipment_title'],
-                    'tag' => $item['equipment_tag'],
-                    'type' => 'equipment',
-                    'uuid' => $item['equipment_uuid'],
-                    'type_uuid' => $item['equipment_typeUuid'],
-                    'docs' => 'docs',
-                    'start' => "" . date_format(date_create($item['equipment_inputDate']), "d-m-Y"),
-                    'lacation' => $location,
-                    'tasks' => 'task',
-                    'user' => 'userEquipmentName',
-                    'links' => 'links',
-                    'status' => 'status',
-                ];
+//                $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = [
+//                    'key' => $item['equipment__id'] . "",
+//                    'folder' => false,
+//                    'serial' => $item['equipment_serial'],
+//                    'title' => $item['equipment_title'],
+//                    'tag' => $item['equipment_tag'],
+//                    'type' => 'equipment',
+//                    'uuid' => $item['equipment_uuid'],
+//                    'type_uuid' => $item['equipment_typeUuid'],
+//                    'docs' => 'docs',
+//                    'start' => "" . date_format(date_create($item['equipment_inputDate']), "d-m-Y"),
+//                    'location' => $location,
+//                    'tasks' => 'task',
+//                    'user' => 'userEquipmentName',
+//                    'links' => 'links',
+//                    'status' => 'status',
+//                ];
 
-                $element = self::addEquipmentExt($item['equipment_systemUuid'], $item['equipment_uuid'], $item['equipment_typeUuid'],
-                    $item['house_uuid'], $item['equipment_serial'], $item['equipment__id'], $item['equipment_tag'],
-                    $item['equipment_inputDate'], $item['equipment_title'], $location,
-                    $item['equipment_statusUuid'], $item['equipment_statusTitle'],
-                    $docs, $userSystems, $userHouses, $tasks, '../equipment/tree-street');
+                $equipment = [
+                    '_id' => $item['equipment__id'],
+                    'uuid' => $item['equipment_uuid'],
+                    'equipmentTypeUuid' => $item['equipment_typeUuid'],
+                    'serial' => $item['equipment_serial'],
+                    'tag' => $item['equipment_tag'],
+                    'inputDate' => $item['equipment_inputDate'],
+                    'title' => $item['equipment_title'],
+                    'equipmentStatus' => [
+                        'uuid' => $item['equipment_statusUuid'],
+                        'title' => $item['equipment_statusTitle']
+                    ],
+                    'equipmentType' => [
+                        'equipmentSystemUuid' => $item['equipment_systemUuid'],
+                    ],
+                    'object' => [
+                        'houseUuid' => $item['house_uuid'],
+                        'fullTitle' => $location,
+                    ],
+                ];
+                $element = self::addEquipment($equipment, $docs, $userSystems, $userHouses, $tasks, '../equipment/tree-street');
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = $element;
 
 
@@ -1480,182 +1496,7 @@ class EquipmentController extends ZhkhController
     }
 
     /**
-     * @param string $equipmentSystemUuid
-     * @param string $equipmentUuid
-     * @param string $equipmentTypeUuid
-     * @param string $objectHouseUuid
-     * @param string $equipmentSerial
-     * @param string $equipment_id
-     * @param string $equipment_tag
-     * @param string $equipmentInputDate
-     * @param string $equipmentTitle
-     * @param string $objectFullTitle
-     * @param string $statusUuid
-     * @param string $statusTitle
-     * @param Documentation[] $documentations
-     * @param UserSystem[] $userSystems
-     * @param UserHouse[] $userHouses
-     * @param Task[] $tasks
-     * @param string $source
-     * @return array
-     */
-    public function addEquipmentExt($equipmentSystemUuid, $equipmentUuid, $equipmentTypeUuid,
-                                    $objectHouseUuid, $equipmentSerial, $equipment_id, $equipment_tag,
-                                    $equipmentInputDate, $equipmentTitle, $objectFullTitle,
-                                    $statusUuid, $statusTitle,
-                                    &$documentations, &$userSystems, &$userHouses, &$tasks, $source)
-    {
-        $count = 0;
-        $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
-            [
-                'title' => 'Добавить заявку',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRequest',
-            ]
-        );
-
-        foreach ($userSystems as $userSystem) {
-            if ($userSystem['equipmentSystemUuid'] == $equipmentSystemUuid) {
-                foreach ($userHouses as $userHouse) {
-                    if ($objectHouseUuid == $userHouse['houseUuid'] &&
-                        $userSystem['userUuid'] == $userHouse['userUuid']) {
-                        if ($count > 0) $userEquipmentName .= ', ';
-                        $userEquipmentName .= $userSystem['user']['name'];
-                        $count++;
-                    }
-                }
-            }
-        }
-
-        if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
-
-        $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
-        foreach ($tasks as $task) {
-            if ($task['equipmentUuid'] == $equipmentUuid) {
-                if (strlen($task['taskTemplate']->title) > 50)
-                    $title = substr($task['taskTemplate']->title, 0, 50);
-                else
-                    $title = $task['taskTemplate']->title;
-                $title = mb_convert_encoding($title, "UTF-8", "UTF-8");
-                if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
-                    $task_text = '<div class="progress"><div class="critical3">' . $title . '</div></div>';
-                else
-                    $task_text = '<div class="progress"><div class="critical2">' . $title . '</div></div>';
-                break;
-            }
-        }
-
-        $task = Html::a($task_text,
-            ['select-task', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
-            [
-                'title' => 'Создать задачу обслуживания',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalAddTask',
-            ]
-        );
-
-        $status = MainFunctions::getColorLabelByStatusExt($statusUuid, $statusTitle, "equipment");
-        $status = Html::a($status,
-            ['/equipment/status', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
-            [
-                'title' => 'Сменить статус',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalStatus',
-            ]
-        );
-
-        $docs = '';
-        foreach ($documentations as $documentation) {
-            if ($documentation['equipmentUuid'] == $equipmentUuid) {
-                $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                    [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
-                );
-            }
-        }
-
-        $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
-            ['/defect/list', 'equipmentUuid' => $equipmentUuid],
-            [
-                'title' => 'Дефекты',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalDefects',
-            ]
-        );
-
-        if ($equipmentTypeUuid == EquipmentType::EQUIPMENT_ELECTRICITY_COUNTER ||
-            $equipmentTypeUuid == EquipmentType::EQUIPMENT_HVS_COUNTER ||
-            $equipmentTypeUuid == EquipmentType::EQUIPMENT_HEAT_COUNTER) {
-            $links .= Html::a('<span class="fa fa-line-chart"></span>&nbsp',
-                ['/equipment/measures', 'equipmentUuid' => $equipmentUuid],
-                [
-                    'title' => 'Измерения',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#modalMeasures',
-                ]
-            );
-            $links .= Html::a('<span class="fa fa-plus-circle"></span>&nbsp',
-                ['/measure/add', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
-                [
-                    'title' => 'Добавить измерение',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#modalMeasure',
-                ]
-            );
-        }
-
-        $links .= Html::a('<span class="fa fa-book"></span>&nbsp',
-            ['/equipment-register/list', 'equipmentUuid' => $equipmentUuid],
-            [
-                'title' => 'Журнал событий',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRegister',
-            ]
-        );
-
-        $links .= Html::a('<span class="fa fa-list"></span>&nbsp',
-            ['/equipment/operations', 'equipmentUuid' => $equipmentUuid],
-            [
-                'title' => 'История работ',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalTasks',
-            ]
-        );
-
-        if ($equipmentSerial) {
-            $serial = $equipmentSerial;
-        } else {
-            $serial = 'отсутствует';
-        }
-
-        $serial = Html::a($serial,
-            ['/equipment/serial', 'equipmentUuid' => $equipmentUuid],
-            [
-                'title' => 'Сменить серийный номер',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalSN',
-            ]
-        );
-
-        return ['key' => $equipment_id . "",
-            'folder' => false,
-            'serial' => $serial,
-            'title' => $equipmentTitle,
-            'tag' => $equipment_tag,
-            'type' => 'equipment',
-            'uuid' => $equipmentUuid,
-            'type_uuid' => $equipmentTypeUuid,
-            'docs' => $docs,
-            'start' => "" . date_format(date_create($equipmentInputDate), "d-m-Y"),
-            'location' => $objectFullTitle,
-            'tasks' => $task,
-            'user' => $userEquipmentName,
-            'links' => $links,
-            'status' => $status];
-    }
-
-    /**
-     * @param Equipment $equipment
+     * @param Equipment|array $equipment
      * @param $documentations
      * @param $userSystems
      * @param $userHouses
@@ -1666,8 +1507,8 @@ class EquipmentController extends ZhkhController
     public function addEquipment($equipment, &$documentations, &$userSystems, &$userHouses, &$tasks, $source)
     {
         $count = 0;
-        $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystem']['uuid'];
-        $equipmentUuid = $equipment->uuid;
+        $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
+        $equipmentUuid = $equipment['uuid'];
         $equipmentTypeUuid = $equipment['equipmentTypeUuid'];
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
             ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
@@ -1786,8 +1627,8 @@ class EquipmentController extends ZhkhController
             ]
         );
 
-        if ($equipment["serial"]) {
-            $serial = $equipment["serial"];
+        if ($equipment['serial']) {
+            $serial = $equipment['serial'];
         } else {
             $serial = 'отсутствует';
         }
@@ -1802,14 +1643,14 @@ class EquipmentController extends ZhkhController
         return ['key' => $equipment['_id'] . "",
             'folder' => false,
             'serial' => $serial,
-            'title' => $equipment["title"],
+            'title' => $equipment['title'],
             'tag' => $equipment['tag'],
             'type' => 'equipment',
             'uuid' => $equipmentUuid,
-            'type_uuid' => $equipment['equipmentType']['uuid'],
+            'type_uuid' => $equipment['equipmentTypeUuid'],
             'docs' => $docs,
             'start' => "" . date_format(date_create($equipment['inputDate']), "d-m-Y"),
-            'location' => $equipment->object->getFullTitle(),
+            'location' => $equipment['object']['fullTitle'],
             'tasks' => $task,
             'user' => $userEquipmentName,
             'links' => $links,
