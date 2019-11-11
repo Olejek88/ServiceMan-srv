@@ -181,12 +181,9 @@ use yii\helpers\Html;
             type: "post",
             data: form.serialize(),
             success: function (ret) {
-                if (ret.length > 5) {
-                    $('#errors').val(ret);
-                } else {
-                    $('#modalTask').modal('hide');
-                    window.location.reload();
-                }
+                //$('#errors').val(ret);
+                $('#modalTask').modal('hide');
+                window.location.reload();
             },
             error: function () {
             }

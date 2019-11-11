@@ -175,13 +175,13 @@ if (isset($_GET["equipmentUuid"]))
                 <?php
                 if ($source == 'table') {
                     echo $this->render('../object/_select_equipment_subform', ['equipmentUuid' => $model['equipmentUuid']]);
-                    $equipments = Equipment::find()->all();
-                    $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
-                        return $equipment->getFullTitle();
-                    });
+                    /*                    $equipments = Equipment::find()->all();
+                                        $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                                            return $equipment->getFullTitle();
+                                        });*/
                     echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
                         [
-                            'data' => $items,
+                            //'data' => $items,
                             'language' => 'ru',
                             'options' => [
                                 'placeholder' => 'Выберите элементы..'

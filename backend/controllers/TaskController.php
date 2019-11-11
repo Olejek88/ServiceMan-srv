@@ -242,6 +242,9 @@ class TaskController extends ZhkhController
             if ($_POST['editableAttribute'] == 'deadlineDate') {
                 $model['deadlineDate'] = $_POST['Task'][$_POST['editableIndex']]['deadlineDate'];
             }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Task'][$_POST['editableIndex']]['comment'];
+            }
 
             $model->save();
             return json_encode('');
@@ -785,7 +788,6 @@ class TaskController extends ZhkhController
      */
     public function actionForm()
     {
-        date_default_timezone_set("Asia/Yekaterinburg");
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
             $model->taskDate = date("Y-m-d H:i:s", time());
