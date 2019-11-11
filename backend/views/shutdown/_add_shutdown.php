@@ -37,6 +37,7 @@ use yii\helpers\Html;
                 ContragentType::CONTRACTOR,
                 ContragentType::ORGANIZATION
             ]])
+            ->andWhere(['deleted' => 0])
             ->all();
         $items = ArrayHelper::map($contragents, 'uuid', 'title');
         echo $form->field($model, 'contragentUuid',

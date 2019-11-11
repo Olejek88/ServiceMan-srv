@@ -547,7 +547,7 @@ class ObjectController extends ZhkhController
                                 for ($flat_num = 0; $flat_num < $_POST['flats']; $flat_num++) {
                                     $objectUuid = self::createFlat($model['uuid'], $flat_num + 1);
                                     if (isset($_POST['balcony']) && $_POST['balcony'] && $objectUuid) {
-                                        self::createEquipment($objectUuid, "Балкон",
+                                        self::createEquipment($objectUuid, "Инженерные системы квартиры",
                                             EquipmentType::EQUIPMENT_TYPE_BALCONY);
                                     }
                                 }
