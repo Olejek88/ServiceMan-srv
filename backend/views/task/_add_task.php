@@ -130,7 +130,6 @@ use yii\helpers\Html;
     if (!isset($requestUuid))
         echo $form->field($model, 'comment')
             ->textarea(['rows' => 4, 'style' => 'resize: none;']);
-    $value = date("Y-m-d H:i:s", time());
     ?>
 
     <div class="pole-mg" style="margin: 20px 20px 20px 15px;">
@@ -140,7 +139,7 @@ use yii\helpers\Html;
             'attribute' => 'taskDate',
             'language' => 'ru',
             'size' => 'ms',
-            'value' => $value,
+            'value' => date("Y-m-d H:i"),
             'clientOptions' => [
                 'autoclose' => true,
                 'linkFormat' => 'yyyy-mm-dd H:ii:ss',
