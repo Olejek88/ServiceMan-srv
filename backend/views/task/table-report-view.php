@@ -15,6 +15,7 @@ use common\models\Settings;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\WorkStatus;
+use kartik\date\DatePicker;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
@@ -53,8 +54,8 @@ $gridColumns = [
         'attribute' => 'taskDate',
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Дата назначения',
+        'enableSorting' => TRUE,
+        //'mergeHeader' => true,
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->taskDate) > 0)
@@ -95,7 +96,7 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->where(['!=','name','sUser'])->orderBy('name')->all(),
+        'filter' => ArrayHelper::map(Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->orderBy('name')->all(),
             'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
@@ -259,7 +260,6 @@ $gridColumns = [
         'hAlign' => 'center',
         'vAlign' => 'middle',
         'mergeHeader' => true,
-        'header' => 'Срок',
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             if (strtotime($data->deadlineDate) > 0)
@@ -269,10 +269,25 @@ $gridColumns = [
         },
         'editableOptions' => function ($data) {
             if ($data['workStatusUuid'] == WorkStatus::NEW)
-                return [];
+                return [
+                    'header' => 'Срок',
+                    'size' => 'md',
+                    'inputType' => Editable::INPUT_WIDGET,
+                    'widgetClass' => 'kartik\datecontrol\DateControl',
+                    'options' => [
+                        'type' => DateControl::FORMAT_DATETIME,
+                        'displayFormat' => 'dd-MM-yyyy HH:mm',
+                        'saveFormat' => 'php:Y-m-d H:i:s',
+                        'options' => [
+                            'pluginOptions' => [
+                                'autoclose' => true
+                            ]
+                        ]
+                    ]
+                ];
             else
                 return [
-                    'header' => ' срок нельзя после начала работ',
+                    'header' => 'Дату назначения нельзя после начала работ',
                     'readonly' => true
                 ];
         }
@@ -446,27 +461,27 @@ $gridColumns = [
                 return $operation_list;
             }
         ],*/
+    /*    [
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'header' => 'Дата начала',
+            'mergeHeader' => true,
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+            'headerOptions' => ['class' => 'text-center'],
+            'content' => function ($data) {
+                if (strtotime($data->startDate) > 0)
+                    return date("d-m-Y H:i", strtotime($data->startDate));
+                else
+                    return 'не начата';
+            }
+        ],*/
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'header' => 'Дата начала',
         'mergeHeader' => true,
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'content' => function ($data) {
-            if (strtotime($data->startDate) > 0)
-                return date("d-m-Y H:i", strtotime($data->startDate));
-            else
-                return 'не начата';
-        }
-    ],
-    [
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Дата завершения',
+        'header' => 'Дата выполнения',
         'contentOptions' => [
             'class' => 'table_class'
         ],
@@ -564,22 +579,22 @@ echo GridView::widget([
     'toolbar' => [
         ['content' =>
             '<form action=""><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
-            DateTimePicker::widget([
+            DatePicker::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd hh:ii:ss'
+                    'format' => 'yyyy-mm-dd 00:00:00'
                 ]
             ]) . '</td><td style="width: 300px">' .
-            DateTimePicker::widget([
+            DatePicker::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd hh:ii:ss'
+                    'format' => 'yyyy-mm-dd 00:00:00'
                 ]
             ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']) . '</td><td style="width: 100px">{export}</td></tr></table></form>',

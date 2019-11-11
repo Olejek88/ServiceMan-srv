@@ -63,7 +63,7 @@ class  TaskService extends Worker
                 ->all();
             foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
                 $selected_user = $taskTemplateEquipment->getUser();
-                $systemUser = Users::find()->where(['name' => 'sUser'])->one();
+                $systemUser = Users::find()->where(['uuid' => Users::USER_SERVICE_UUID])->one();
                 if ($selected_user)
                     $user = $selected_user;
                 else

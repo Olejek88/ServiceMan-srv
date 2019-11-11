@@ -139,7 +139,7 @@ use yii\widgets\ActiveForm;
             ->all();
         $items = ArrayHelper::map($users, 'userUuid', 'user.name');
     } else {
-        $users = Users::find()->where(['<>', 'name', 'sUser'])->all();
+        $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
     }
 

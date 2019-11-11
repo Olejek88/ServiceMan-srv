@@ -37,6 +37,10 @@ class DefectController extends ZhkhController
                     ['like', 'street.title', '%'.$_GET['address'].'%',false]]
             );
         }
+        if (isset($_GET['start_time'])) {
+            $dataProvider->query->andWhere(['>=', 'date', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'date', $_GET['end_time']]);
+        }
         if (isset($_POST['editableAttribute'])) {
             $model = Defect::find()
                 ->where(['_id' => $_POST['editableKey']])
