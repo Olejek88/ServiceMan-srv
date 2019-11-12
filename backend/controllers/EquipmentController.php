@@ -1164,8 +1164,9 @@ class EquipmentController extends ZhkhController
      */
     public function actionSelectTask()
     {
+        $model = new Task();
+        $model->taskDate = date('Y-m-d H:i');
         if (isset($_GET["equipmentUuid"])) {
-            $model = new Task();
             if (isset($_GET["defectUuid"])) {
                 $defectUuid = $_GET["defectUuid"];
                 $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
@@ -1180,7 +1181,7 @@ class EquipmentController extends ZhkhController
                 'defectUuid' => $defectUuid
             ]);
         }
-        $model = new Task();
+
         return $this->renderAjax('_select_task', [
             'model' => $model
         ]);

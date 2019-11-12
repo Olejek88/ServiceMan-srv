@@ -15,7 +15,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Equipment */
+/* @var $model common\models\Task */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -167,7 +167,6 @@ use yii\widgets\ActiveForm;
             'attribute' => 'taskDate',
             'language' => 'ru',
             'size' => 'ms',
-            'value' => date("Y-m-d H:i"),
             'clientOptions' => [
                 'autoclose' => true,
                 'linkFormat' => 'yyyy-mm-dd H:ii:ss',

@@ -1,5 +1,5 @@
 <?php
-/* @var $task common\models\Task  */
+/* @var $model common\models\Task */
 /* @var $equipmentUuid */
 /* @var $requestUuid */
 /* @var $type_uuid */
