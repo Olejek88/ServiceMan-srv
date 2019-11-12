@@ -99,16 +99,6 @@ class DefectController extends ZhkhController
     public function actionCreate()
     {
         $model = new Defect();
-        $defect = Defect::find()
-            ->select('_id')
-            ->orderBy('_id DESC')
-            ->one();
-        if ($defect)
-            $defect_id = $defect["_id"] + 1;
-        else
-            $defect_id = 1;
-        $model["_id"] = $defect_id;
-
         $searchModel = new DefectSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 10;
@@ -257,15 +247,6 @@ class DefectController extends ZhkhController
         $model = new Defect();
         $request = Yii::$app->getRequest();
         if ($request->isPost && $model->load($request->post())) {
-            $defect = Defect::find()
-                ->select('_id')
-                ->orderBy('_id DESC')
-                ->one();
-            if ($defect)
-                $defect_id = $defect["_id"] + 1;
-            else
-                $defect_id = 1;
-            $model->_id = $defect_id;
             if (isset($_POST["Defect"]["equipmentUuid"]))
                 $model->equipmentUuid = $_POST["Defect"]["equipmentUuid"];
             if (isset($_POST["Defect"]["userUuid"]))

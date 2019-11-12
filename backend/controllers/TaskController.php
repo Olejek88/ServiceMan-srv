@@ -242,6 +242,9 @@ class TaskController extends ZhkhController
             if ($_POST['editableAttribute'] == 'deadlineDate') {
                 $model['deadlineDate'] = $_POST['Task'][$_POST['editableIndex']]['deadlineDate'];
             }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Task'][$_POST['editableIndex']]['comment'];
+            }
 
             $model->save();
             return json_encode('');
@@ -549,6 +552,7 @@ class TaskController extends ZhkhController
                         ->where(['uuid' => $taskUser['taskUuid']])
                         ->andWhere(['>', 'taskdate', $start_date])
                         ->andWhere(['<', 'taskdate', $end_date])
+                        ->andWhere(['<>', 'workStatusUuid', WorkStatus::CANCELED])
                         ->all();
                     foreach ($tasks as $task) {
                         if ($task['equipment']['equipmentType']['equipmentSystemUuid'] == $userSystem['equipmentSystemUuid']) {
@@ -561,6 +565,7 @@ class TaskController extends ZhkhController
                         ->andWhere(['>', 'taskdate', $start_date])
                         ->andWhere(['<', 'taskdate', $end_date])
                         ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                        ->andWhere(['<>', 'workStatusUuid', WorkStatus::CANCELED])
                         ->andWhere('endDate <= deadlineDate')
                         ->all();
                     foreach ($tasks as $task) {
@@ -604,6 +609,7 @@ class TaskController extends ZhkhController
                     ->andWhere(['>', 'taskdate', $start_date])
                     ->andWhere(['<', 'taskdate', $end_date])
                     ->andWhere(['workStatusUuid' => WorkStatus::COMPLETE])
+                    ->andWhere(['<>', 'workStatusUuid', WorkStatus::CANCELED])
                     ->andWhere('endDate <= deadlineDate')
                     ->count();
             }

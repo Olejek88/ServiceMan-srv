@@ -102,8 +102,16 @@ if (isset($_GET["equipmentUuid"]))
                                             id: data.params.data.id
                                         },
                                         success: function (data) {
-                                            console.log(data);
-                                            $('#request-objectuuid').val(data).trigger('change');
+                                            var obj = JSON.parse(data);
+                                            console.log(obj.city);
+                                            $('#request-cityuuid').val(obj.city).trigger('change');
+                                            refreshStreets(obj.city);
+                                            console.log(obj.street);
+                                            $('#request-streetuuid').val(obj.street).trigger('change');
+                                            console.log(obj.house);
+                                            $('#request-houseuuid').val(obj.house).trigger('change');
+                                            console.log(obj.object);
+                                            $('#request-objectuuid').val(obj.object).trigger('change');
                                         }
                                     });
                             }"]
@@ -138,13 +146,16 @@ if (isset($_GET["equipmentUuid"]))
             <td style="width: 48%; vertical-align: top">
                 <?php
                 echo $form->field($model, 'comment')->textInput();
-                $defaultRequestType = RequestType::find()->where(['title' => 'Другой характер обращения'])->one();
+                $defaultRequestType = RequestType::find()
+                    ->where(['uuid' => RequestType::GENERAL])
+                    ->one();
                 if ($model['requestTypeUuid'])
                     $value = $model['requestTypeUuid'];
                 else if ($defaultRequestType)
                     $value = $defaultRequestType['uuid'];
                 $type = RequestType::find()
                     ->where(['oid' => Users::getCurrentOid()])
+                    ->orWhere(['uuid' => RequestType::GENERAL])
                     ->all();
                 $items = ArrayHelper::map($type, 'uuid', 'title');
                 echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,
@@ -164,13 +175,13 @@ if (isset($_GET["equipmentUuid"]))
                 <?php
                 if ($source == 'table') {
                     echo $this->render('../object/_select_equipment_subform', ['equipmentUuid' => $model['equipmentUuid']]);
-                    $equipments = Equipment::find()->all();
-                    $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
-                        return $equipment->getFullTitle();
-                    });
+                    /*                    $equipments = Equipment::find()->all();
+                                        $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
+                                            return $equipment->getFullTitle();
+                                        });*/
                     echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
                         [
-                            'data' => $items,
+                            //'data' => $items,
                             'language' => 'ru',
                             'options' => [
                                 'placeholder' => 'Выберите элементы..'

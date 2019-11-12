@@ -813,8 +813,6 @@ class EquipmentController extends ZhkhController
                 ];
                 $element = self::addEquipment($equipment, $docs, $userSystems, $userHouses, $tasks, '../equipment/tree-street');
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = $element;
-
-
             }
         }
 
