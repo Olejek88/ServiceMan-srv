@@ -37,7 +37,6 @@ class AccessController extends ZhkhController
 
     /**
      * @return string
-     * @throws InvalidConfigException
      * @throws Exception
      */
     public function actionUpdate()
@@ -47,7 +46,7 @@ class AccessController extends ZhkhController
         $this->updateAccess($am, Yii::$app->request->post('oper', []), $am->getRole(User::ROLE_OPERATOR));
         $this->updateAccess($am, Yii::$app->request->post('disp', []), $am->getRole(User::ROLE_DISPATCH));
         $this->updateAccess($am, Yii::$app->request->post('dir', []), $am->getRole(User::ROLE_DIRECTOR));
-        return $this->actionIndex();
+        return $this->redirect('/access');
     }
 
     /**

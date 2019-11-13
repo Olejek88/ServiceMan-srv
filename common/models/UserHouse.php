@@ -24,7 +24,7 @@ use yii\db\Exception;
  */
 class UserHouse extends ZhkhActiveRecord
 {
-    public const DESCRIPTION = 'Связь пользователей с домами';
+    public const DESCRIPTION = 'Распределение пользователей';
 
     /**
      * Название таблицы.

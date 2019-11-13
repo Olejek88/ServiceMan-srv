@@ -35,6 +35,8 @@ use yii\db\Expression;
  */
 class TaskTemplateEquipment extends ZhkhActiveRecord
 {
+    public const DESCRIPTION = 'План-график';
+
     const TASK_DEEP = 20;
 
     /**

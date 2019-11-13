@@ -16,24 +16,11 @@ use yii\web\Application;
  *
  * @property array $actionPermissions
  * @property array $permissions
- * @property string oid
  */
 class ZhkhActiveRecord extends ActiveRecord implements IPermission
 {
     const SCENARIO_UPDATE = 'update';
     const SCENARIO_API = 'api';
-
-    /**
-     * ZhkhActiveRecord constructor.
-     * @throws Exception
-     */
-    function __construct()
-    {
-        parent::__construct();
-        if (Yii::$app instanceof Application) {
-            $this->oid = self::getOid();
-        }
-    }
 
     /**
      * @return string|null

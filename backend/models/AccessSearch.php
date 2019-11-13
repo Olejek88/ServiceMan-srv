@@ -2,6 +2,7 @@
 
 namespace backend\models;
 
+use common\models\Users;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\data\ArrayDataProvider;
@@ -45,9 +46,14 @@ class AccessSearch extends AccessModel
         $permissions = $am->getPermissions();
 
         $grouped = [];
+        $oid = Users::getCurrentOid();
         foreach ($permissions as $permission) {
             if ($permission->type == 2) {
-                if (preg_match('/([a-z]*)([A-Z].*)/', $permission->name, $match)) {
+                if (preg_match('/([a-z]*)([A-Z].*)-(.*-.*-.*-.*-.*)/', $permission->name, $match)) {
+                    if ($oid != $match[3]) {
+                        continue;
+                    }
+
                     if ($this->filterModel && $this->filterPermission) {
                         if (preg_match('/' . $this->model . '/i', $match[2]) && preg_match('/' . $this->permission . '/i', $match[1])) {
                             $grouped[$match[2]][$match[1]] = $permission->name;

@@ -7,6 +7,7 @@ use common\models\EquipmentType;
 use common\models\IPermission;
 use common\models\Organization;
 use common\models\TaskType;
+use common\models\User;
 use Yii;
 use yii\db\Connection;
 use yii\db\Exception;
@@ -910,9 +911,10 @@ class ReferenceFunctions
             'common\models\Street',
             'common\models\Task',
             'common\models\TaskTemplate',
+            'common\models\TaskTemplateEquipment',
 //            'common\models\TaskUser',
 //            'common\models\UserContragent',
-//            'common\models\UserHouse',
+            'common\models\UserHouse',
             'common\models\Users',
 //            'common\models\UserSystem',
         ];
@@ -936,6 +938,151 @@ class ReferenceFunctions
                 } catch (\Exception $e) {
                 }
             }
+        }
+    }
+
+    /**
+     * @param $oid
+     * @param $db
+     */
+    public static function fixOrgPermission($oid, $db)
+    {
+        $am = Yii::$app->authManager;
+        $operatorRoleObj = $am->getRole(User::ROLE_OPERATOR);
+        $dispatchRoleObj = $am->getRole(User::ROLE_DISPATCH);
+        $directorRoleObj = $am->getRole(User::ROLE_DIRECTOR);
+
+        $addDirectorRights = [
+            'Alarm',
+            'City',
+            'Contragent',
+            'Documentation',
+            'Equipment',
+            'House',
+            'Measure',
+            'Message',
+            'Objects',
+            'Operation',
+            'OperationTemplate',
+            'Receipt',
+            'Request',
+            'RequestType',
+            'Street',
+            'Task',
+            'TaskTemplate',
+            'TaskTemplateEquipment',
+            'UserHouse',
+            'Message',
+        ];
+        $delDirectorRights = [
+            'Users',
+            'Shutdown',
+            'Defect',
+        ];
+
+        $addOperatorRights = [
+            'Task',
+            'Documentation',
+            'Contragent',
+            'Equipment',
+            'Shutdown',
+            'Receipt',
+            'Message',
+        ];
+        $delOperatorRights = [
+            'Alarm',
+            'City',
+            'Defect',
+            'House',
+            'Measure',
+            'Objects',
+            'Operation',
+            'OperationTemplate',
+            'Request',
+            'RequestType',
+            'Street',
+            'TaskTemplate',
+            'TaskTemplateEquipment',
+            'UserHouse',
+            'Users',
+        ];
+
+        $addDispatchRights = [
+            'Task',
+            'Defect',
+            'Documentation',
+            'Contragent',
+            'UserHouse',
+            'TaskTemplateEquipment',
+            'TaskTemplate',
+            'Equipment',
+            'Request',
+            'Shutdown',
+            'Receipt',
+            'Message',
+        ];
+        $delDispatchRights = [
+            'Alarm',
+            'City',
+            'House',
+            'Measure',
+            'Objects',
+            'Operation',
+            'OperationTemplate',
+            'RequestType',
+            'Street',
+            'Users',
+        ];
+
+        // устанавливаем необходимые права оператору
+        foreach ($addOperatorRights as $operatorRight) {
+            $permissionName = 'edit' . $operatorRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            try {
+                $am->addChild($operatorRoleObj, $permission);
+            } catch (\yii\base\Exception $e) {
+            }
+        }
+
+        // отключаем не нужные права оператору
+        foreach ($delOperatorRights as $operatorRight) {
+            $permissionName = 'edit' . $operatorRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            $am->removeChild($operatorRoleObj, $permission);
+        }
+
+        // устанавливаем необходимые права диспетчеру
+        foreach ($addDispatchRights as $dispatchRight) {
+            $permissionName = 'edit' . $dispatchRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            try {
+                $am->addChild($dispatchRoleObj, $permission);
+            } catch (\yii\base\Exception $e) {
+            }
+        }
+
+        // отключаем не нужные права диспетчеру
+        foreach ($delDispatchRights as $dispatchRight) {
+            $permissionName = 'edit' . $dispatchRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            $am->removeChild($dispatchRoleObj, $permission);
+        }
+
+        // устанавливаем необходимые права директору
+        foreach ($addDirectorRights as $directorRight) {
+            $permissionName = 'edit' . $directorRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            try {
+                $am->addChild($directorRoleObj, $permission);
+            } catch (\yii\base\Exception $e) {
+            }
+        }
+
+        // отключаем не нужные права директору
+        foreach ($delDirectorRights as $directorRight) {
+            $permissionName = 'edit' . $directorRight . '-' . $oid;
+            $permission = $am->getPermission($permissionName);
+            $am->removeChild($directorRoleObj, $permission);
         }
     }
 }
