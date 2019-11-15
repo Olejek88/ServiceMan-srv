@@ -69,9 +69,11 @@ use yii\widgets\ActiveForm;
     $marker = new Marker([
         'latLng' => $center,
 //        'popupContent' => 'Hi!',
-        'icon' => $icon,
         'name' => 'geoMarker',
-        'clientOptions' => ['draggable' => true],
+        'clientOptions' => [
+            'draggable' => true,
+            'icon' => $icon,
+        ],
         'clientEvents' => [
             'dragend' => 'function(e){
 //                console.log(e.target._latlng.lat, e.target._latlng.lng);
