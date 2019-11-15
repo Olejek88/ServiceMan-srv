@@ -13,6 +13,7 @@ use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
+use common\models\Users;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -32,7 +33,6 @@ class TaskTemplateController extends ZhkhController
      * Lists all TaskTemplate models.
      *
      * @return mixed
-     * @throws Exception
      */
     public function actionIndex()
     {
@@ -887,6 +887,7 @@ class TaskTemplateController extends ZhkhController
                 $taskTemplateEquipment->equipmentTypeUuid = $_POST['equipmentTypeUuid'];
                 $taskTemplateEquipment->taskTemplateUuid = $model->uuid;
                 $taskTemplateEquipment->uuid = MainFunctions::GUID();
+                $taskTemplateEquipment->oid = Users::getCurrentOid();
                 $taskTemplateEquipment->save();
                 MainFunctions::log("tree.log", "[new] new TaskTemplateEquipment " .
                     json_encode($taskTemplateEquipment->errors));

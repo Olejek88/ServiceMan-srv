@@ -152,10 +152,14 @@ class Contragent extends ZhkhActiveRecord
         return array_merge_recursive(parent::getActionPermissions(), [
             'read' => [
                 'phone',
-                'address',
-                'name',
                 'form',
                 'list',
-            ]]);
+            ],
+            'edit' => [
+                'table',
+                'address',
+                'name',
+            ],
+        ]);
     }
 }

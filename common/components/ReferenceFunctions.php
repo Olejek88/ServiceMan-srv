@@ -644,7 +644,7 @@ class ReferenceFunctions
         self::insertIntoRequestType($db, 'Локализация аварийных повреждений ХВС/ГВС',
             0.5, TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
         self::insertIntoRequestType($db, 'Локализация аварийных повреждений внутридомовых систем отопления',
-            0.5,TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
+            0.5, TaskType::TASK_TYPE_NOT_PLANNED_CHECK, $oid);
         self::insertIntoRequestType($db,
             'Ликвидация засоров внутридомовой инженерной системы водоотведения',
             2, TaskType::TASK_TYPE_REPAIR, $oid);
@@ -751,7 +751,8 @@ class ReferenceFunctions
      * @param $title
      * @throws Exception
      */
-    private static function insertIntoEquipmentType($db, $uuid, $equipmentSystemUuid, $title) {
+    private static function insertIntoEquipmentType($db, $uuid, $equipmentSystemUuid, $title)
+    {
         $currentTime = date('Y-m-d\TH:i:s');
         $db->createCommand()->insert('equipment_type', [
             'uuid' => $uuid,
@@ -860,7 +861,8 @@ class ReferenceFunctions
      * @param $organizationUuid
      * @throws Exception
      */
-    private static function insertIntoRequestType($db, $title, $normative, $taskTypeUuid, $organizationUuid) {
+    private static function insertIntoRequestType($db, $title, $normative, $taskTypeUuid, $organizationUuid)
+    {
         $currentTime = date('Y-m-d\TH:i:s');
         $uuid = MainFunctions::GUID();
         $db->createCommand()->insert('task_template', [
@@ -988,6 +990,7 @@ class ReferenceFunctions
             'Shutdown',
             'Receipt',
             'Message',
+            'Objects',
         ];
         $delOperatorRights = [
             'Alarm',
@@ -995,7 +998,6 @@ class ReferenceFunctions
             'Defect',
             'House',
             'Measure',
-            'Objects',
             'Operation',
             'OperationTemplate',
             'Request',
@@ -1020,13 +1022,13 @@ class ReferenceFunctions
             'Shutdown',
             'Receipt',
             'Message',
+            'Objects',
         ];
         $delDispatchRights = [
             'Alarm',
             'City',
             'House',
             'Measure',
-            'Objects',
             'Operation',
             'OperationTemplate',
             'RequestType',
