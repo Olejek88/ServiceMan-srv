@@ -149,6 +149,7 @@ if (isset($_GET["equipmentUuid"]))
                 $defaultRequestType = RequestType::find()
                     ->where(['uuid' => RequestType::GENERAL])
                     ->one();
+                $value = '';
                 if ($model['requestTypeUuid'])
                     $value = $model['requestTypeUuid'];
                 else if ($defaultRequestType)
