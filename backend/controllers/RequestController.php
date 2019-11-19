@@ -93,8 +93,8 @@ class RequestController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=', 'createdAt', $_GET['start_time']]);
-            $dataProvider->query->andWhere(['<', 'createdAt', $_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'request.createdAt', $_GET['start_time']]);
+            $dataProvider->query->andWhere(['<', 'request.createdAt', $_GET['end_time']]);
         }
         //$dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
 

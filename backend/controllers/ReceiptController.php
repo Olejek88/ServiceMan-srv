@@ -36,6 +36,11 @@ class ReceiptController extends ZhkhController
             if ($_POST['editableAttribute'] == 'userCheck') {
                 $model['userCheck'] = $_POST['Receipt'][$_POST['editableIndex']]['userCheck'];
             }
+            if ($_POST['editableAttribute'] == 'contragentUuid') {
+                if (!$model['requestUuid']) {
+                    $model['contragentUuid'] = $_POST['Receipt'][$_POST['editableIndex']]['contragentUuid'];
+                }
+            }
             if ($_POST['editableAttribute'] == 'closed') {
                 $model['closed'] = $_POST['Receipt'][$_POST['editableIndex']]['closed'];
             }

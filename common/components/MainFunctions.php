@@ -240,7 +240,6 @@ class MainFunctions
      */
     public static function createTask($taskTemplate, $equipmentUuid, $comment, $oid, $userUuid, $model, $start, $authorUuid)
     {
-        date_default_timezone_set('Asia/Yekaterinburg');
         $task = new Task();
         $task->uuid = MainFunctions::GUID();
         $task->taskTemplateUuid = $taskTemplate['uuid'];
@@ -311,7 +310,6 @@ class MainFunctions
     }
 
     /**
-     * @param $oid
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
@@ -333,6 +331,11 @@ class MainFunctions
                     $count = 0;
                     while ($count < count($dates)) {
                         $start = strtotime($dates[$count]);
+                        // что-то пошло не так, дата очень старая, нужно перенести на текущую
+                        if ($today - $start > 3600 * 24 * 31) {
+                            $start = $today - 1;
+                            $dates[$count] = date("Y-m-d H:i:s", $start);
+                        }
                         if ($start < $today) {
                             //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
                             MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],

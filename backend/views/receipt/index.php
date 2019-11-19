@@ -23,16 +23,16 @@ $gridColumns = [
         ],
         'headerOptions' => ['class' => 'text-center'],
         'mergeHeader' => true,
-/*        'content' => function ($data) {
-            return Html::a($data->_id,
-                ['../receipt/form', 'uuid' => $data['uuid']],
-                [
-                    'title' => 'Редактировать',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#modalAdd',
-                ]
-            );
-        }*/
+        /*        'content' => function ($data) {
+                    return Html::a($data->_id,
+                        ['../receipt/form', 'uuid' => $data['uuid']],
+                        [
+                            'title' => 'Редактировать',
+                            'data-toggle' => 'modal',
+                            'data-target' => '#modalAdd',
+                        ]
+                    );
+                }*/
     ],
     [
         'attribute' => 'createdAt',
@@ -43,7 +43,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'value' => function ($model) {
-            return "<span class='badge' style='background-color: gray; height: 22px'>".
+            return "<span class='badge' style='background-color: gray; height: 22px'>" .
                 date('d-m-Y H:i', strtotime($model->createdAt)) . "</span>";
 //            return $model->date;
         },
@@ -124,6 +124,7 @@ $gridColumns = [
                 'displayValueConfig' => $models,
                 'data' => $models
             ];
+
         },
     ],
     [
@@ -143,10 +144,7 @@ $gridColumns = [
                     else
                         $request_title .= "<span class='badge' style='background-color: grey; height: 22px'>" . $request['requestStatus']->title . "</span>";
                     $request_title .= '<br/>' . $request['requestType']['title'];
-                    if ($request['taskUuid'])
-                        return Html::a($request_title, ['../task/index', 'uuid' => $request['taskUuid']]);
-                    else
-                        return $request_title;
+                    return Html::a($request_title, ['../request/index', 'uuid' => $request['uuid']]);
                 }
             }
             $request_title = "<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>";
@@ -198,7 +196,7 @@ $gridColumns = [
             'header' => 'Дата назначения',
             'size' => 'md',
             'inputType' => Editable::INPUT_WIDGET,
-            'widgetClass' =>  'kartik\datecontrol\DateControl',
+            'widgetClass' => 'kartik\datecontrol\DateControl',
             'options' => [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy H:i',
@@ -224,35 +222,35 @@ $gridColumns = [
             'class' => 'table_class'
         ],
     ],
-/*    [
-        'class' => 'kartik\grid\EditableColumn',
-        'attribute' => 'closed',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Закрыта',
-        'format' => 'raw',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'mergeHeader' => true,
-        'value' => function ($model) {
-            if ($model['closed'])
-                return "<span class='badge' style='background-color: green; height: 22px'>Закрыта</span>";
-            else
-                return "<span class='badge' style='background-color: sandybrown; height: 22px'>Открыта</span>";
-        },
-        'editableOptions' => function () {
-            $status = [false => 'Открыта', true => 'Закрыта'];
-            return [
-                'header' => 'Статус',
-                'size' => 'md',
-                'inputType' => Editable::INPUT_DROPDOWN_LIST,
-                'displayValueConfig' => $status,
-                'data' => $status
-            ];
-        },
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-    ],*/
+    /*    [
+            'class' => 'kartik\grid\EditableColumn',
+            'attribute' => 'closed',
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'header' => 'Закрыта',
+            'format' => 'raw',
+            'headerOptions' => ['class' => 'kartik-sheet-style'],
+            'mergeHeader' => true,
+            'value' => function ($model) {
+                if ($model['closed'])
+                    return "<span class='badge' style='background-color: green; height: 22px'>Закрыта</span>";
+                else
+                    return "<span class='badge' style='background-color: sandybrown; height: 22px'>Открыта</span>";
+            },
+            'editableOptions' => function () {
+                $status = [false => 'Открыта', true => 'Закрыта'];
+                return [
+                    'header' => 'Статус',
+                    'size' => 'md',
+                    'inputType' => Editable::INPUT_DROPDOWN_LIST,
+                    'displayValueConfig' => $status,
+                    'data' => $status
+                ];
+            },
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+        ],*/
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',

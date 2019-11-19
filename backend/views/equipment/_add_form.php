@@ -80,7 +80,9 @@ $this->registerJs('
     echo Html::hiddenInput("source", $source);
     echo Html::hiddenInput("type", "equipment");
 
-    if ($equipment['uuid']) {
+    if (isset($objectUuid)) {
+        echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
+    } elseif ($equipment['objectUuid']) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $equipment['objectUuid']])->label(false);
     } else {
         echo $this->render('../object/_select_object_subform', ['form' => $form]);
@@ -97,7 +99,9 @@ $this->registerJs('
             ]);
     }
 
-    if ($equipment['equipmentTypeUuid']) {
+    if (isset($equipmentTypeUuid)) {
+        echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
+    } elseif ($equipment['equipmentTypeUuid']) {
         echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipment['equipmentTypeUuid']])->label(false);
     } else {
         $equipmentType = EquipmentType::find()->all();

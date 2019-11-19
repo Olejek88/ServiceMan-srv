@@ -78,11 +78,11 @@ $gridColumns = [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy hh:mm',
                 'saveFormat' => 'php:Y-m-d H:i',
-                'options' => [
+                'widgetOptions' => [
                     'pluginOptions' => [
                         'autoclose' => true
                     ]
-                ]
+                ],
             ]
         ]
     ],
@@ -111,7 +111,7 @@ $gridColumns = [
                 'type' => DateControl::FORMAT_DATETIME,
                 'displayFormat' => 'dd-MM-yyyy hh:mm',
                 'saveFormat' => 'php:Y-m-d H:i',
-                'options' => [
+                'widgetOptions' => [
                     'pluginOptions' => [
                         'autoclose' => true
                     ]

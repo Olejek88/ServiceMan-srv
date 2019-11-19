@@ -266,8 +266,10 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         xAxis: [{ // first x-axis
             currentDateIndicator: true,
             gridLineColor: '#3c8dbc',
-            min: today - 3 * day,
+            min: today - 28 * day,
             max: today + 28 * day,
+            softMin: today - 28 * day,
+            softMax: today + 100 * day,
             labels: {
                 format: '{value:%d}'
             },
