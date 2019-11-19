@@ -50,6 +50,7 @@ return [
 //                '/' => 'auth/request',
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'orders'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'gpstrack'],
+                '/integration-is/notify/<orgUuid>' => 'integration-is/notify',
             ],
         ],
 

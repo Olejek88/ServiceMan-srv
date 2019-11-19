@@ -242,6 +242,9 @@ class TaskController extends ZhkhController
             if ($_POST['editableAttribute'] == 'deadlineDate') {
                 $model['deadlineDate'] = $_POST['Task'][$_POST['editableIndex']]['deadlineDate'];
             }
+            if ($_POST['editableAttribute'] == 'comment') {
+                $model['comment'] = $_POST['Task'][$_POST['editableIndex']]['comment'];
+            }
 
             $model->save();
             return json_encode('');
@@ -323,7 +326,7 @@ class TaskController extends ZhkhController
                     || $task['workStatusUuid'] == WorkStatus::UN_COMPLETE || !$task['endDate']) &&
                 (time() > strtotime($task['deadlineDate']))) {
                 $request = Request::find()->where(['taskUuid' => $task->uuid])->one();
-                if ($request && $request['requestTypeUuid'] != RequestType::GENERAL) {
+                if ($request) {
                     $warnings[] = 'Задача #' . $task['_id'] . ' создана в связи с характером обращения ' .
                         $request['requestType']['title'] . ', но до сих пор не выполнена';
                 }
@@ -785,18 +788,15 @@ class TaskController extends ZhkhController
      */
     public function actionForm()
     {
-        date_default_timezone_set("Asia/Yekaterinburg");
         if (isset($_GET["equipmentUuid"])) {
             $model = new Task();
             $model->taskDate = date("Y-m-d H:i:s", time());
-            if (isset($_GET["requestUuid"]))
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'requestUuid' => $_GET["requestUuid"], 'type_uuid' => $_GET["type_uuid"]]);
-            else
-                return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                    'type_uuid' => $_GET["type_uuid"]]);
+            $requestUuid = Yii::$app->request->getQueryParam('requestUuid');
+            return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
+                'requestUuid' => $requestUuid, 'type_uuid' => $_GET["type_uuid"]]);
+        } else {
+            return '<h3 style="color: red">Не указанно оборудование.</h3>';
         }
-        return "";
     }
 
     /**

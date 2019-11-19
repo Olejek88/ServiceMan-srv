@@ -17,6 +17,7 @@ use common\models\Users;
 use common\models\WorkStatus;
 use kartik\date\DatePicker;
 use kartik\datecontrol\DateControl;
+use kartik\datecontrol\Module;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
 use kartik\select2\Select2;
@@ -74,7 +75,7 @@ $gridColumns = [
                         'type' => DateControl::FORMAT_DATETIME,
                         'displayFormat' => 'dd-MM-yyyy HH:mm',
                         'saveFormat' => 'php:Y-m-d H:i:s',
-                        'options' => [
+                        'widgetOptions' => [
                             'pluginOptions' => [
                                 'autoclose' => true
                             ]
@@ -275,14 +276,14 @@ $gridColumns = [
                     'inputType' => Editable::INPUT_WIDGET,
                     'widgetClass' => 'kartik\datecontrol\DateControl',
                     'options' => [
-                        'type' => DateControl::FORMAT_DATETIME,
-                        'displayFormat' => 'dd-MM-yyyy HH:mm',
-                        'saveFormat' => 'php:Y-m-d H:i:s',
-                        'options' => [
+                        'widgetOptions' => [
                             'pluginOptions' => [
                                 'autoclose' => true
                             ]
-                        ]
+                        ],
+                        'type' => DateControl::FORMAT_DATETIME,
+                        'displayFormat' => 'dd-MM-yyyy HH:mm',
+                        'saveFormat' => 'php:Y-m-d H:i:s'
                     ]
                 ];
             else

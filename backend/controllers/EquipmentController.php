@@ -31,6 +31,7 @@ use Yii;
 use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
+use yii\db\Query;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -639,101 +640,190 @@ class EquipmentController extends ZhkhController
     public function actionTreeStreet()
     {
         ini_set('memory_limit', '-1');
-        $documentations = Documentation::find()->all();
+        $docs = Documentation::find()->all();
         $userSystems = UserSystem::find()->all();
         $tasks = Task::find()->orderBy('changedAt DESC')->all();
         $userHouses = UserHouse::find()->all();
 
         $fullTree = array();
-        $streets = Street::find()
-            ->select('*')
-            ->andWhere(['deleted' => false])
-            ->orderBy('title')
-            ->all();
-        foreach ($streets as $street) {
-            $fullTree['children'][] = [
-                'title' => 'ул.' . $street['title'],
-                'address' => $street['city']['title'] . ', ул.' . $street['title'],
-                'uuid' => $street['uuid'],
-                'type' => 'street',
-                'key' => $street['_id'],
-                'folder' => true,
-                'expanded' => false
-            ];
-            $childIdx = count($fullTree['children']) - 1;
-            $houses = House::find()->select('_id,uuid,number')->where(['streetUuid' => $street['uuid']])
-                ->andWhere(['deleted' => false])
-                ->orderBy('number')->all();
-            foreach ($houses as $house) {
-                //$user_house = UserHouse::find()->select('_id')->where(['houseUuid' => $house['uuid']])->one();
-                $user = Users::find()->where(['uuid' =>
-                    UserHouse::find()->where(['houseUuid' => $house['uuid']])->one()
-                ])->one();
-                if (!$user)
-                    $user_name = $user['name'];
-                else
-                    $user_name = "";
-                $docs = '';
+        $q = new Query();
+        $q->from(['{{%street}}'])
+            ->select([
+                '{{%street}}.title street_title',
+                '{{%city}}.title city_title',
+                '{{%street}}.uuid street_uuid',
+                '{{%street}}._id street__id',
+                '{{%house}}._id house__id',
+                '{{%house}}.uuid house_uuid',
+                '{{%house}}.number house_number',
+                '{{%users}}.name users_name',
+                '{{%object}}._id object__id',
+                '{{%object}}.uuid object_uuid',
+                '{{%object}}.objectTypeUuid object_typeUuid',
+                '{{%object}}.title object_title',
+                '{{%object_type}}.title object_type_title',
+                '{{%equipment}}._id equipment__id',
+                '{{%equipment}}.serial equipment_serial',
+                '{{%equipment}}.uuid equipment_uuid',
+                '{{%equipment}}.title equipment_title',
+                '{{%equipment}}.tag equipment_tag',
+                '{{%equipment}}.equipmentTypeUuid equipment_typeUuid',
+                '{{%equipment}}.inputDate equipment_inputDate',
+                '{{%equipment_type}}.equipmentSystemUuid equipment_systemUuid',
+                '{{%equipment_status}}.title equipment_statusTitle',
+                '{{%equipment}}.equipmentStatusUuid equipment_statusUuid',
+            ])
+            ->leftJoin('{{%city}}', '{{%city}}.uuid = {{%street}}.cityUuid')
+            ->leftJoin('{{%house}}', '{{%house}}.streetUuid = {{%street}}.uuid')
+            ->leftJoin('{{%user_house}}', '{{%user_house}}.houseUuid = {{%house}}.uuid')
+            ->leftJoin('{{%users}}', '{{%users}}.uuid = {{%user_house}}.userUuid')
+            ->leftJoin('{{%object}}', '{{%object}}.houseUuid = {{%house}}.uuid')
+            ->leftJoin('{{%object_type}}', '{{%object_type}}.uuid = {{%object}}.objectTypeUuid')
+            ->leftJoin('{{%equipment}}', '{{%equipment}}.objectUuid = {{%object}}.uuid')
+            ->leftJoin('{{%equipment_type}}', '{{%equipment_type}}.uuid = {{%equipment}}.equipmentTypeUuid')
+            ->leftJoin('{{%equipment_status}}', '{{%equipment_status}}.uuid = {{%equipment}}.equipmentStatusUuid')
+            ->andWhere('{{%street}}.deleted = 0')
+            ->andWhere('{{%house}}.deleted = 0')
+            ->andWhere('{{%object}}.deleted = 0')
+            ->andWhere('{{%equipment}}.deleted = 0')
+            ->andWhere('{{%street}}.oid = "' . Users::getCurrentOid() . '"')
+            ->orderBy('{{%street}}.title, {{%house}}.number, {{%object}}._id');
+        $items = $q->all();
 
-                foreach ($documentations as $documentation) {
-                    if ($documentation['houseUuid'] == $house['uuid']) {
-                        $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                            [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
+        $streetId = -1;
+        $streetIdx = -1;
+        $houseId = -1;
+        $houseIdx = -1;
+        $objectId = -1;
+        $objectIdx = -1;
+        $equipmentId = -1;
+        $equipmentIdx = -1;
+        foreach ($items as $item) {
+            if ($streetId != $item['street__id']) {
+                $streetId = $item['street__id'];
+                $streetIdx++;
+                $houseId = -1;
+                $houseIdx = -1;
+
+                $fullTree['children'][$streetIdx] = [
+                    'title' => 'ул.' . $item['street_title'],
+                    'address' => $item['city_title'] . ', ул.' . $item['street_title'],
+                    'uuid' => $item['street_uuid'],
+                    'type' => 'street',
+                    'key' => $item['street__id'],
+                    'folder' => true,
+                    'expanded' => false,
+                ];
+            }
+
+            if ($houseId != $item['house__id']) {
+                $houseId = $item['house__id'];
+                $houseIdx++;
+                $objectId = -1;
+                $objectIdx = -1;
+
+                $docsLink = '';
+                foreach ($docs as $doc) {
+                    if ($doc->houseUuid == $item['house_uuid']) {
+                        $docsLink .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
+                            [$doc->getDocLocalPath()], ['title' => $doc->title]
                         );
                     }
                 }
-                $fullTree['children'][$childIdx]['children'][] =
-                    [
-                        'title' => $house['number'],
-                        'address' => $street['title'] . ', ' . $house['number'],
-                        'type' => 'house',
-                        'expanded' => false,
-                        'user' => $user_name,
-                        'docs' => $docs,
-                        'uuid' => $house['uuid'],
-                        'key' => $house['_id'],
-                        'folder' => true
-                    ];
-                $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                $objects = Objects::find()->where(['houseUuid' => $house['uuid']])
-                    ->andWhere(['deleted' => false])
-                    ->all();
-                foreach ($objects as $object) {
-                    if ($object['objectTypeUuid'] == ObjectType::OBJECT_TYPE_FLAT)
-                        $title = $object['objectType']['title'] . ' ' . $object['title'];
-                    else
-                        $title = $object['title'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                        [
-                            'title' => $title,
-                            'address' => $street['title'] . ', ' . $object['house']['number'] . ', ' . $object['title'],
-                            'type' => 'object',
-                            'uuid' => $object['uuid'],
-                            'user' => $user_name,
-                            'key' => $object['_id'] . "",
-                            'expanded' => false,
-                            'folder' => true
-                        ];
-                    $childIdx3 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children']) - 1;
-                    $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])
-                        ->andWhere(['deleted' => false])
-                        ->all();
-                    foreach ($equipments as $equipment) {
-                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children'][] =
-                            self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree-street");
-                    }
+
+                $fullTree['children'][$streetIdx]['children'][$houseIdx] = [
+                    'title' => $item['house_number'],
+                    'address' => $item['street_title'] . ', ' . $item['house_number'],
+                    'type' => 'house',
+                    'expanded' => false,
+                    'user' => $item['users_name'],
+                    'docs' => $docsLink,
+                    'uuid' => $item['house_uuid'],
+                    'key' => $item['house__id'],
+                    'folder' => true
+                ];
+            }
+
+            if ($objectId != $item['object__id']) {
+                $objectId = $item['object__id'];
+                $objectIdx++;
+                $equipmentId = -1;
+                $equipmentIdx = -1;
+
+                if ($item['object_typeUuid'] == ObjectType::OBJECT_TYPE_FLAT) {
+                    $title = $item['object_type_title'] . ' ' . $item['object_title'];
+                } else {
+                    $title = $item['object_title'];
                 }
+
+                $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx] = [
+                    'title' => $title,
+                    'address' => $item['street_title'] . ', ' . $item['house_number'] . ', ' . $item['object_title'],
+                    'type' => 'object',
+                    'uuid' => $item['object_uuid'],
+                    'user' => $item['users_name'],
+                    'key' => $item['object__id'] . "",
+                    'expanded' => false,
+                    'folder' => true
+                ];
+            }
+
+            if ($equipmentId != $item['equipment__id']) {
+                $equipmentId = $item['equipment__id'];
+                $equipmentIdx++;
+
+                $location = 'ул.' . $item['street_title'] . ', д.' . $item['house_number'] . ' - ' . $item['object_title'];
+//                $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = [
+//                    'key' => $item['equipment__id'] . "",
+//                    'folder' => false,
+//                    'serial' => $item['equipment_serial'],
+//                    'title' => $item['equipment_title'],
+//                    'tag' => $item['equipment_tag'],
+//                    'type' => 'equipment',
+//                    'uuid' => $item['equipment_uuid'],
+//                    'type_uuid' => $item['equipment_typeUuid'],
+//                    'docs' => 'docs',
+//                    'start' => "" . date_format(date_create($item['equipment_inputDate']), "d-m-Y"),
+//                    'location' => $location,
+//                    'tasks' => 'task',
+//                    'user' => 'userEquipmentName',
+//                    'links' => 'links',
+//                    'status' => 'status',
+//                ];
+
+                $equipment = [
+                    '_id' => $item['equipment__id'],
+                    'uuid' => $item['equipment_uuid'],
+                    'equipmentTypeUuid' => $item['equipment_typeUuid'],
+                    'serial' => $item['equipment_serial'],
+                    'tag' => $item['equipment_tag'],
+                    'inputDate' => $item['equipment_inputDate'],
+                    'title' => $item['equipment_title'],
+                    'equipmentStatus' => [
+                        'uuid' => $item['equipment_statusUuid'],
+                        'title' => $item['equipment_statusTitle']
+                    ],
+                    'equipmentType' => [
+                        'equipmentSystemUuid' => $item['equipment_systemUuid'],
+                    ],
+                    'object' => [
+                        'houseUuid' => $item['house_uuid'],
+                        'fullTitle' => $location,
+                    ],
+                ];
+                $element = self::addEquipment($equipment, $docs, $userSystems, $userHouses, $tasks, '../equipment/tree-street');
+                $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = $element;
             }
         }
 
         $users = Users::find()->all();
-        $items = ArrayHelper::map($users, 'uuid', 'name');
+        $users = ArrayHelper::map($users, 'uuid', 'name');
 
         return $this->render(
             'tree-street',
             [
                 'equipment' => $fullTree,
-                'users' => $items
+                'users' => $users
             ]
         );
     }
@@ -1074,8 +1164,9 @@ class EquipmentController extends ZhkhController
      */
     public function actionSelectTask()
     {
+        $model = new Task();
+        $model->taskDate = date('Y-m-d H:i');
         if (isset($_GET["equipmentUuid"])) {
-            $model = new Task();
             if (isset($_GET["defectUuid"])) {
                 $defectUuid = $_GET["defectUuid"];
                 $defect = Defect::find()->where(['uuid' => $defectUuid])->one();
@@ -1090,7 +1181,7 @@ class EquipmentController extends ZhkhController
                 'defectUuid' => $defectUuid
             ]);
         }
-        $model = new Task();
+
         return $this->renderAjax('_select_task', [
             'model' => $model
         ]);
@@ -1404,7 +1495,7 @@ class EquipmentController extends ZhkhController
     }
 
     /**
-     * @param Equipment $equipment
+     * @param Equipment|array $equipment
      * @param $documentations
      * @param $userSystems
      * @param $userHouses
@@ -1415,8 +1506,8 @@ class EquipmentController extends ZhkhController
     public function addEquipment($equipment, &$documentations, &$userSystems, &$userHouses, &$tasks, $source)
     {
         $count = 0;
-        $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystem']['uuid'];
-        $equipmentUuid = $equipment->uuid;
+        $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
+        $equipmentUuid = $equipment['uuid'];
         $equipmentTypeUuid = $equipment['equipmentTypeUuid'];
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
             ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
@@ -1535,8 +1626,8 @@ class EquipmentController extends ZhkhController
             ]
         );
 
-        if ($equipment["serial"]) {
-            $serial = $equipment["serial"];
+        if ($equipment['serial']) {
+            $serial = $equipment['serial'];
         } else {
             $serial = 'отсутствует';
         }
@@ -1551,14 +1642,14 @@ class EquipmentController extends ZhkhController
         return ['key' => $equipment['_id'] . "",
             'folder' => false,
             'serial' => $serial,
-            'title' => $equipment["title"],
+            'title' => $equipment['title'],
             'tag' => $equipment['tag'],
             'type' => 'equipment',
             'uuid' => $equipmentUuid,
-            'type_uuid' => $equipment['equipmentType']['uuid'],
+            'type_uuid' => $equipment['equipmentTypeUuid'],
             'docs' => $docs,
             'start' => "" . date_format(date_create($equipment['inputDate']), "d-m-Y"),
-            'location' => $equipment->object->getFullTitle(),
+            'location' => $equipment['object']['fullTitle'],
             'tasks' => $task,
             'user' => $userEquipmentName,
             'links' => $links,

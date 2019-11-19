@@ -11,7 +11,7 @@ $city = '';
 $street = '';
 $house = '';
 
-echo '<label>Адрес заявителя</label></br>';
+echo '<label>Местоположение / Адрес заявителя</label></br>';
 echo '<label>Город</label></br>';
 echo Select2::widget(
     ['id' => 'city',
@@ -114,6 +114,9 @@ $this->registerJs('function refreshStreets(city) {
             for(index in streets) {
                 select.options[select.options.length] = new Option(streets[index], index);
             }
+            
+            $(\'#city\').val(city).trigger(\'change\');
+            $(\'#city2\').val(city).trigger(\'change\');
         }
     }
     });

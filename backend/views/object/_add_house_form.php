@@ -106,8 +106,10 @@ use yii\helpers\Html;
         'latLng' => $center,
 //        'popupContent' => 'Hi!',
         'name' => 'geoMarker',
-        'icon' => $icon,
-        'clientOptions' => ['draggable' => true],
+        'clientOptions' => [
+            'draggable' => true,
+            'icon' => $icon,
+        ],
         'clientEvents' => [
             'dragend' => 'function(e){
 //                console.log(e.target._latlng.lat, e.target._latlng.lng);

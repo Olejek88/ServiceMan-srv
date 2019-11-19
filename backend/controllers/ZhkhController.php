@@ -7,6 +7,7 @@ namespace backend\controllers;
 use common\components\ZhkhActiveRecord;
 use common\models\IPermission;
 use common\models\User;
+use common\models\Users;
 use stdClass;
 use Yii;
 use yii\filters\AccessControl;
@@ -80,7 +81,7 @@ class ZhkhController extends Controller
             foreach ($actPermissions as $permission => $actions) {
                 if (in_array($act, $actions)) {
                     $tmpArray = explode('\\', $this->modelClass);
-                    $reqPermission = $permission . end($tmpArray);
+                    $reqPermission = $permission . end($tmpArray) . '-' . Users::getCurrentOid();
                     if ($currentUser->can($reqPermission)) {
                         $access = true;
                         break;

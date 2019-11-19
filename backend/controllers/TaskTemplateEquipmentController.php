@@ -306,7 +306,7 @@ class TaskTemplateEquipmentController extends ZhkhController
                         //$finish = $start + $taskTemplate['taskTemplate']['normative']*3600*10;
                         $finish = $start + 3600 * 24;
                         //$end_date = date("Y-m-d H:i:s", $finish);
-                        if ($start-$today<=3600*24*31*13) {
+                        if (abs($start - $today) <= 3600 * 24 * 31 * 13) {
                             $tasks[] = [
                                 'title' => $taskTemplateEquipment['taskTemplate']['title'],
                                 'start' => $start * 1000,
@@ -326,15 +326,17 @@ class TaskTemplateEquipmentController extends ZhkhController
                     foreach ($all_tasks as $task) {
                         $start = strtotime($task["startDate"]) * 1000;
                         $finish = strtotime($task["endDate"]) * 1000;
-                        $tasks[] = [
-                            'title' => $taskTemplateEquipment['taskTemplate']['title'],
-                            'start' => $start,
-                            'end' => $finish,
-                            'id' => 0,
-                            'completed' => 0,
-                            'y' => $task_equipment_count,
-                            'user' => $user
-                        ];
+                        if (abs($start - $today) <= 3600 * 24 * 31 * 13) {
+                            $tasks[] = [
+                                'title' => $taskTemplateEquipment['taskTemplate']['title'],
+                                'start' => $start,
+                                'end' => $finish,
+                                'id' => 0,
+                                'completed' => 0,
+                                'y' => $task_equipment_count,
+                                'user' => $user
+                            ];
+                        }
                     }
                 }
                 $task_equipment_count++;

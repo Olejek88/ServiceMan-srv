@@ -13,6 +13,7 @@ use common\models\TaskTemplate;
 use common\models\TaskTemplateEquipment;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
+use common\models\Users;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -74,6 +75,7 @@ class TaskTemplateController extends ZhkhController
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
      * @return mixed
+     * @throws Exception
      */
     public function actionCreate()
     {
@@ -286,6 +288,8 @@ class TaskTemplateController extends ZhkhController
      * Build tree of equipment
      *
      * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionTreeType()
     {
@@ -836,6 +840,7 @@ class TaskTemplateController extends ZhkhController
      * функция отрабатывает сигналы от дерева и выполняет добавление нового шаблона этапа или операции
      *
      * @return mixed
+     * @throws Exception
      */
     public function actionAddTemplate()
     {
@@ -882,6 +887,7 @@ class TaskTemplateController extends ZhkhController
                 $taskTemplateEquipment->equipmentTypeUuid = $_POST['equipmentTypeUuid'];
                 $taskTemplateEquipment->taskTemplateUuid = $model->uuid;
                 $taskTemplateEquipment->uuid = MainFunctions::GUID();
+                $taskTemplateEquipment->oid = Users::getCurrentOid();
                 $taskTemplateEquipment->save();
                 MainFunctions::log("tree.log", "[new] new TaskTemplateEquipment " .
                     json_encode($taskTemplateEquipment->errors));

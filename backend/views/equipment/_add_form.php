@@ -23,6 +23,7 @@ use kartik\select2\Select2;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\web\View;
 
 ?>
 
@@ -37,7 +38,7 @@ $this->registerJs('
         $(".field-equipment-tag").show();
       }
     });
-    $("#dynamicmodel-tagtype").trigger("change");', \yii\web\View::POS_READY);
+    $("#dynamicmodel-tagtype").trigger("change");', View::POS_READY);
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -79,7 +80,9 @@ $this->registerJs('
     echo Html::hiddenInput("source", $source);
     echo Html::hiddenInput("type", "equipment");
 
-    if ($equipment['uuid']) {
+    if (isset($objectUuid)) {
+        echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $objectUuid])->label(false);
+    } elseif ($equipment['objectUuid']) {
         echo $form->field($equipment, 'objectUuid')->hiddenInput(['value' => $equipment['objectUuid']])->label(false);
     } else {
         echo $this->render('../object/_select_object_subform', ['form' => $form]);
@@ -96,7 +99,9 @@ $this->registerJs('
             ]);
     }
 
-    if ($equipment['equipmentTypeUuid']) {
+    if (isset($equipmentTypeUuid)) {
+        echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipmentTypeUuid])->label(false);
+    } elseif ($equipment['equipmentTypeUuid']) {
         echo $form->field($equipment, 'equipmentTypeUuid')->hiddenInput(['value' => $equipment['equipmentTypeUuid']])->label(false);
     } else {
         $equipmentType = EquipmentType::find()->all();
