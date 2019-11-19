@@ -20,6 +20,27 @@ use yii\web\Application;
 class ZhkhActiveRecord extends ActiveRecord implements IPermission
 {
     const SCENARIO_UPDATE = 'update';
+    const SCENARIO_API = 'api';
+
+    /**
+     * @return string|null
+     * @throws Exception
+     */
+    public static function getOid()
+    {
+        if (!Yii::$app->user->isGuest) {
+            /** @var User $identity */
+            $identity = Yii::$app->user->identity;
+            $oid = Yii::$app->db
+                ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
+                ->query()
+                ->read();
+            return $oid['oid'];
+        } else {
+            return null;
+        }
+
+    }
 
     /**
      * @return object|ActiveQuery
@@ -37,11 +58,8 @@ class ZhkhActiveRecord extends ActiveRecord implements IPermission
                 $identity = Yii::$app->user->identity;
                 if ($identity->username != 'sUser') {
                     // обычный пользователь
-                    $oid = Yii::$app->db
-                        ->createCommand('SELECT oid FROM users WHERE user_id = ' . $identity->id)
-                        ->query()
-                        ->read();
-                    $aq->andWhere([$calledClass::tablename() . '.oid' => $oid['oid']]);
+                    $oid = self::getOid();
+                    $aq->andWhere([$calledClass::tablename() . '.oid' => $oid]);
                 }
             }
         }
@@ -57,8 +75,10 @@ class ZhkhActiveRecord extends ActiveRecord implements IPermission
     public function checkOrganizationOwn($attr, $param)
     {
         if (Yii::$app instanceof Application) {
-            if ($this->attributes[$attr] != Users::getCurrentOid()) {
-                $this->addError($attr, 'Не верный идентификатор организации.');
+            if (!Yii::$app->user->isGuest) {
+                if ($this->attributes[$attr] != Users::getCurrentOid()) {
+                    $this->addError($attr, 'Не верный идентификатор организации.');
+                }
             }
         }
     }

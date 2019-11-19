@@ -34,47 +34,61 @@ class RequestController extends ZhkhController
         ini_set('memory_limit', '-1');
         //OrderFunctions::checkRequests();
         if (isset($_POST['editableAttribute'])) {
+            $toLog = [
+                'type' => 'request',
+                'title' => '',
+                'description' => '',
+            ];
             $model = Request::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
             if ($_POST['editableAttribute'] == 'closeDate') {
                 $model['closeDate'] = date("Y-m-d H:i:s", $_POST['Request'][$_POST['editableIndex']]['closeDate']);
-                MainFunctions::register('request', 'Изменена дата закрытия заявки',
-                    'Комментарий: изменена дата закрытия заявки №' . $model['_id'] . ' на ' . $model['closeDate'], $model['uuid']);
+                $toLog['title'] = 'Изменена дата закрытия заявки';
+                $toLog['description'] = 'Комментарий: изменена дата закрытия заявки №' . $model['_id'] . ' на ' . $model['closeDate'];
             }
             if ($_POST['editableAttribute'] == 'requestStatusUuid') {
                 $model['requestStatusUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestStatusUuid'];
-                MainFunctions::register('request', 'Изменен статус заявки',
-                    'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'], $model['uuid']);
+                $toLog['title'] = 'Изменен статус заявки';
+                $toLog['description'] = 'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'];
             }
             if ($_POST['editableAttribute'] == 'type') {
                 $model['type'] = $_POST['Request'][$_POST['editableIndex']]['type'];
                 if ($model['type'] == 0)
                     $type = "Бесплатная заявка";
                 else $type = "Платная заявка";
-                MainFunctions::register('request', 'Изменен тип заявки',
-                    'Комментарий: изменен тип заявки №' . $model['_id'] . ' на ' . $type, $model['uuid']);
+                $toLog['title'] = 'Изменен тип заявки';
+                $toLog['description'] = 'Комментарий: изменен тип заявки №' . $model['_id'] . ' на ' . $type;
             }
             if ($_POST['editableAttribute'] == 'comment') {
                 $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
-                MainFunctions::register('request', 'Изменен комментарий заявки',
-                    'Комментарий: изменен комментарий заявки №' . $model['_id'] . ' на ' . $model['comment'], $model['uuid']);
+                $toLog['title'] = 'Изменен комментарий заявки';
+                $toLog['description'] = 'Комментарий: изменен комментарий заявки №' . $model['_id'] . ' на ' . $model['comment'];
             }
             if ($_POST['editableAttribute'] == 'verdict') {
                 $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
-                MainFunctions::register('request', 'Изменен вердикт заявки',
-                    'Комментарий: изменен вердикт заявки №' . $model['_id'] . ' на ' . $model['verdict'], $model['uuid']);
+                $toLog['title'] = 'Изменен вердикт заявки';
+                $toLog['description'] = 'Комментарий: изменен вердикт заявки №' . $model['_id'] . ' на ' . $model['verdict'];
             }
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
-                MainFunctions::register('request', 'Изменен результат',
-                    'Комментарий: изменен результат контроля заявки №' . $model['_id'] . ' на ' . $model['result'], $model['uuid']);
+                $toLog['title'] = 'Изменен результат';
+                $toLog['description'] = 'Комментарий: изменен результат контроля заявки №' . $model['_id'] . ' на ' . $model['result'];
             }
 
-            if ($model->save())
-                return json_encode('success');
-            return json_encode('failed');
+            // костыль для того чтобы можно было изменить обращения которые были созданы без контрагента и оборудования
+            if ($model->contragentUuid == null && $model->equipmentUuid == null) {
+                $model->scenario = Request::SCENARIO_API;
+            }
+
+            if ($model->save()) {
+                MainFunctions::register($toLog['type'], $toLog['title'], $toLog['description'], $model['uuid']);
+                return json_encode([]);
+            } else {
+                return json_encode(['message' => 'failed']);
+            }
         }
+
         $searchModel = new RequestSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
@@ -114,34 +128,6 @@ class RequestController extends ZhkhController
                 'model' => $model,
             ]
         );
-    }
-
-    /**
-     * Action info.
-     *
-     * @param integer $id Id
-     *
-     * @return string
-     * @throws NotFoundHttpException
-     */
-    public function actionInfo($id)
-    {
-        return $this->render(
-            'info',
-            [
-                'model' => $this->findModel($id),
-            ]
-        );
-    }
-
-    /**
-     * Action search.
-     *
-     * @return string
-     */
-    public function actionSearch()
-    {
-        return $this->render('search', []);
     }
 
     /**

@@ -15,7 +15,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model common\models\Equipment */
+/* @var $model common\models\Task */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -167,7 +167,6 @@ use yii\widgets\ActiveForm;
             'attribute' => 'taskDate',
             'language' => 'ru',
             'size' => 'ms',
-            'value' => date("Y-m-d H:i"),
             'clientOptions' => [
                 'autoclose' => true,
                 'linkFormat' => 'yyyy-mm-dd H:ii:ss',
@@ -206,7 +205,9 @@ use yii\widgets\ActiveForm;
     <script>
         $(document).on("beforeSubmit", "#dynamic-form", function () {
         }).on('submit', function (e) {
+            var me = $('button.btn.btn-success', e.target);
             e.preventDefault();
+            me.prop('disabled', true).removeClass('enabled').addClass('disabled');
             $.ajax({
                 url: "../task/add-task",
                 type: "post",
@@ -214,7 +215,12 @@ use yii\widgets\ActiveForm;
                 success: function () {
                     $('#modalAddTask').modal('hide');
                 },
-                error: function () {
+                error: function (result) {
+                    alert(result.statusText);
+                },
+                complete: function () {
+                    console.log('complete');
+                    me.prop('disabled', false).removeClass('disabled').addClass('enabled');
                 }
             })
         });

@@ -10,7 +10,6 @@
 use common\components\MainFunctions;
 use common\models\Contragent;
 use common\models\ContragentType;
-use common\models\Equipment;
 use common\models\RequestStatus;
 use common\models\RequestType;
 use common\models\Task;
@@ -147,17 +146,14 @@ if (isset($_GET["equipmentUuid"]))
                 <?php
                 echo $form->field($model, 'comment')->textInput();
                 $defaultRequestType = RequestType::find()
-                    ->where(['uuid' => RequestType::GENERAL])
+                    ->where(['title' => 'Другой характер обращения'])
                     ->one();
                 $value = '';
                 if ($model['requestTypeUuid'])
                     $value = $model['requestTypeUuid'];
                 else if ($defaultRequestType)
                     $value = $defaultRequestType['uuid'];
-                $type = RequestType::find()
-                    ->where(['oid' => Users::getCurrentOid()])
-                    ->orWhere(['uuid' => RequestType::GENERAL])
-                    ->all();
+                $type = RequestType::find()->all();
                 $items = ArrayHelper::map($type, 'uuid', 'title');
                 echo $form->field($model, 'requestTypeUuid')->widget(Select2::class,
                     [
@@ -193,7 +189,6 @@ if (isset($_GET["equipmentUuid"]))
                         ]);
                 }
                 ?>
-
 
                 <?php
                 if ($model->objectUuid && $model->equipmentUuid && false) {
