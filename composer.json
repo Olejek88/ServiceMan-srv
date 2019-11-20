@@ -26,7 +26,7 @@
     "c006/yii2-migration-utility": "~2.0.3",
     "2amigos/yii2-date-time-picker-widget": "~1.0",
     "philippfrenzel/yii2fullcalendar": "~3.9.0",
-    "phpoffice/phpspreadsheet": "~1.6.0",
+    "phpoffice/phpspreadsheet": "~1.8.0",
     "wbraganca/yii2-fancytree-widget": "~1.0.1",
     "execut/yii2-widget-bootstraptreeview": "^1.1.6",
     "kartik-v/yii2-date-range": "~1.6.8",
