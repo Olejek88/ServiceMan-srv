@@ -289,5 +289,5 @@ success: function (data) {
 $this->registerJs('$(document).ready(function() 
 {
 //refreshContragent(\'' . $model['contragentUuid'] . '\');
-}');
+})');
 ?>
