@@ -293,6 +293,7 @@ class Request extends ZhkhActiveRecord
                 'search',
                 'form',
                 'history',
+                'search-form',
             ],
             'edit' => [
                 'new',
