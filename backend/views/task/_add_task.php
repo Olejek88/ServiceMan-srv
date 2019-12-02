@@ -174,6 +174,10 @@ use yii\helpers\Html;
 </div>
 <script>
     $(document).on("beforeSubmit", "#form", function () {
+        e.preventDefault();
+    }).on('submit', function (e) {
+        e.preventDefault();
+        me.prop('disabled', true).removeClass('enabled').addClass('disabled');
         var form = $('#form');
         $.ajax({
             url: "../task/add-task",
@@ -184,11 +188,13 @@ use yii\helpers\Html;
                 $('#modalTask').modal('hide');
                 window.location.reload();
             },
-            error: function () {
+            error: function (result) {
+                alert(result.statusText);
+            },
+            complete: function () {
+                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
             }
         })
-    }).on('submit', function (e) {
-        e.preventDefault();
     });
 
 </script>
