@@ -66,7 +66,7 @@ $this->title = 'Дерево технологических карт';
                     'icon' => "add",
                     'callback' => new JsExpression('function(key, opt) {
                             var node = $.ui.fancytree.getNode(opt.$trigger);
-                            if (node.type == "template-type")
+                            if (node.type == "template-type" || node.type == "equipment-type" )
                             $.ajax({
                                 url: "add-template",
                                 type: "post",

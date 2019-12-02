@@ -316,7 +316,8 @@ class TaskTemplateController extends ZhkhController
                 $expanded = false;
                 $tree['children'][$childIdx]['children'][] = [
                     'title' => $type['title'], 'key' => $type['_id'] . "",
-                    'expanded' => $expanded, 'folder' => true, 'type' => true, 'type_id' => $type['uuid'] . "",
+                    'expanded' => $expanded, 'folder' => true, 'type' => 'equipment-type',
+                    'type_id' => $type['uuid'] . "",
                     'operation' => false];
                 $childIdx2 = count($tree['children'][$childIdx]['children']) - 1;
                 $taskTemplateTypes = TaskType::find()->all();

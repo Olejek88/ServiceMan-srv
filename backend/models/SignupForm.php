@@ -101,6 +101,7 @@ class SignupForm extends Model
                     ReferenceFunctions::loadReferencesNext($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::loadReferencesAll($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::loadReferencesAll2($organization->uuid, Yii::$app->db);
+                    ReferenceFunctions::loadReferencesAll3($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::loadRequestTypes($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::addOrgPermission($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::fixOrgPermission($organization->uuid, Yii::$app->db);

@@ -618,6 +618,81 @@ class ReferenceFunctions
      * @param $db Connection
      * @throws Exception
      */
+    public static function loadReferencesAll3($oid, $db)
+    {
+        //1 текущий ремонт const TASK_TYPE_CURRENT_REPAIR
+        //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
+        //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
+        //4 внеочередной осмотр const TASK_TYPE_NOT_PLANNED_CHECK
+        //5 сезонный осмотры const TASK_TYPE_SEASON_CHECK
+        //6 плановое обслуживание const TASK_TYPE_PLAN_TO
+        //7 внеплановое обслуживание const TASK_TYPE_NOT_PLAN_TO
+        //8 устранение аварий const TASK_TYPE_REPAIR
+        //9 контроль и поверка const TASK_TYPE_CONTROL
+        //10 снятие показаний const TASK_TYPE_MEASURE
+        //11 поверка const TASK_TYPE_POVERKA
+        //12 монтаж const TASK_TYPE_INSTALL
+
+        self::insertIntoTaskTemplateNew($db, 'Общий осмотр',
+            8, [2, 3, 4, 5], EquipmentType::EQUIPMENT_GAS, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Плановое обслуживание',
+            8, [6], EquipmentType::EQUIPMENT_GAS, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Устранение аварий',
+            8, [1, 2], EquipmentType::EQUIPMENT_GAS, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Замена',
+            8, [9], EquipmentType::EQUIPMENT_GAS, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий ремонт',
+            8, [1], EquipmentType::EQUIPMENT_ROOF_WATER_PIPE, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Внеочередной осмотр',
+            8, [4, 5], EquipmentType::EQUIPMENT_ROOF_WATER_PIPE, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Внеплановое обслуживание',
+            8, [7], EquipmentType::EQUIPMENT_ROOF_WATER_PIPE, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Устранение аварий',
+            8, [8], EquipmentType::EQUIPMENT_ROOF_WATER_PIPE, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий осмотр',
+            8, [3, 5, 6], EquipmentType::EQUIPMENT_CONDITIONER, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий ремонт',
+            8, [1], EquipmentType::EQUIPMENT_HEAT_PUMP, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Текущий  осмотр',
+            8, [3, 6], EquipmentType::EQUIPMENT_HEAT_PUMP, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Внеплановое обслуживание',
+            8, [7], EquipmentType::EQUIPMENT_HEAT_PUMP, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Устранение аварий',
+            8, [8], EquipmentType::EQUIPMENT_HEAT_PUMP, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Монтаж',
+            8, [12], EquipmentType::EQUIPMENT_HEAT_PUMP, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий ремонт',
+            8, [1], EquipmentType::EQUIPMENT_DOMOPHONE, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Текущий осмотр',
+            8, [3], EquipmentType::EQUIPMENT_DOMOPHONE, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Плановое обслуживание',
+            8, [6], EquipmentType::EQUIPMENT_DOMOPHONE, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий ремонт',
+            8, [1], EquipmentType::EQUIPMENT_INTERNET, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Текущий осмотр',
+            8, [3], EquipmentType::EQUIPMENT_INTERNET, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Плановое обслуживание',
+            8, [6], EquipmentType::EQUIPMENT_INTERNET, $oid);
+
+        self::insertIntoTaskTemplateNew($db, 'Текущий ремонт',
+            8, [1], EquipmentType::EQUIPMENT_TV, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Текущий осмотр',
+            8, [3], EquipmentType::EQUIPMENT_TV, $oid);
+        self::insertIntoTaskTemplateNew($db, 'Плановое обслуживание',
+            8, [6], EquipmentType::EQUIPMENT_TV, $oid);
+
+    }
+
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws Exception
+     */
     public static function loadRequestTypes($oid, $db)
     {
         self::insertIntoRequestType($db, 'Внеочередной осмотр при форс-мажорных обстоятельствах',
@@ -845,6 +920,7 @@ class ReferenceFunctions
 
             $db->createCommand()->insert('task_template_equipment_type', [
                 'uuid' => MainFunctions::GUID(),
+                'oid' => $organizationUuid,
                 'equipmentTypeUuid' => $equipmentTypeUuid,
                 'taskTemplateUuid' => $uuid,
                 'createdAt' => $currentTime,
