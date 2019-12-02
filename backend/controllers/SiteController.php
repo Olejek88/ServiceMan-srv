@@ -68,7 +68,7 @@ class SiteController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove', 'config'],
+                        'actions' => ['logout', 'index', 'dashboard', 'test', 'timeline', 'files', 'add', 'remove', 'config', 'picec'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -988,11 +988,7 @@ class SiteController extends Controller
     public function actionPicec()
     {
         $oid = Users::getCurrentOid();
-        ReferenceFunctions::loadReferences($oid, Yii::$app->db);
-        ReferenceFunctions::loadReferencesNext($oid, Yii::$app->db);
-        ReferenceFunctions::loadReferencesAll($oid, Yii::$app->db);
-        ReferenceFunctions::loadReferencesAll2($oid, Yii::$app->db);
-        ReferenceFunctions::loadRequestTypes($oid, Yii::$app->db);
+        ReferenceFunctions::loadReferencesAll3($oid, Yii::$app->db);
     }
 
     /**

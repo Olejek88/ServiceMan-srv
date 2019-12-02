@@ -77,7 +77,9 @@ use yii\helpers\Html;
 
     $(document).on("beforeSubmit", "#form", function () {
     }).on('submit', function (e) {
+        var me = $('button.btn.btn-success', e.target);
         e.preventDefault();
+        me.prop('disabled', true).removeClass('enabled').addClass('disabled');
         var form = $('#form');
         $.ajax({
             url: "../contragent/create",
@@ -101,7 +103,11 @@ use yii\helpers\Html;
                     }
                 });
             },
-            error: function () {
+            error: function (result) {
+                alert(result.statusText);
+            },
+            complete: function () {
+                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
             }
         })
     });
