@@ -373,6 +373,7 @@ class EquipmentController extends ZhkhController
      */
     public function actionTree()
     {
+        ini_set('memory_limit', '-1');
         $fullTree = array();
         $documentations = Documentation::find()->all();
         $userSystems = UserSystem::find()->all();
