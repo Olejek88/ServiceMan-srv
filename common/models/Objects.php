@@ -34,6 +34,8 @@ class Objects extends ZhkhActiveRecord
 {
     public const DESCRIPTION = 'Объекты';
 
+    public const COMMON_OBJECT_TITLE = 'Общий';
+
     public function behaviors()
     {
         return [
