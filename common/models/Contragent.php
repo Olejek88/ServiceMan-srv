@@ -23,6 +23,7 @@ use yii\db\Expression;
  * @property string $email
  * @property string $contragentTypeUuid
  * @property integer $deleted
+ * @property string $extId
  * @property string $createdAt
  * @property string $changedAt
  *
