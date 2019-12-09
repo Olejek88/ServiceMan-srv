@@ -7,6 +7,7 @@ use common\components\ZhkhActiveRecord;
 use common\models\Contragent;
 use common\models\ContragentType;
 use common\models\House;
+use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\ObjectType;
 use common\models\Organization;
@@ -92,11 +93,13 @@ class IntegrationIsController extends Controller
             throw new BadRequestHttpException();
         }
 
+        // TODO: реализовать обработку операции update
         $operation = $request->getBodyParam('operation');
         if ($operation != 'create') {
             throw new BadRequestHttpException();
         }
 
+        // TODO: реализовать обработку объекта comment
         $object = $request->getBodyParam('object');
         if ($object != 'appeal') {
             throw new BadRequestHttpException();
@@ -134,13 +137,11 @@ class IntegrationIsController extends Controller
         // TODO: нужно как-то уведомить админа что не нашли дом или "Общий" объект
 
         foreach ($data['incidents'] as $incident) {
-            // ищем контрагента по extId, если не находим создаём его
+            // сначала ищем связь по object_contragent
+            $objectContr = ObjectContragent::find()->where(['objectUuid' => $localObjectUuid])->one();
             $contrUuid = null;
-            $contrExtId = $flatNum = $incident['regUser']['id'];
-            $contr = Contragent::find()->where(['extId' => $contrExtId, 'oid' => $orgUuid])->one();
-            if ($contr != null) {
-                $contrUuid = $contr->uuid;
-            } else {
+            if ($objectContr == null) {
+                // если не нашли связи между объектом и контрагентом, считаем что контрагента нет, заводим нового
                 $contr = new Contragent();
                 $contr->uuid = MainFunctions::GUID();
                 $contr->oid = $orgUuid;
@@ -154,7 +155,20 @@ class IntegrationIsController extends Controller
                     // TODO: нужно как-то уведомить админа что что-то не сохранилось
                 } else {
                     $contrUuid = $contr->uuid;
+                    // создаём связь между объектом и контрагентом
+                    if ($localObjectUuid != null) {
+                        $newObjContr = new ObjectContragent();
+                        $newObjContr->uuid = MainFunctions::GUID();
+                        $newObjContr->oid = $orgUuid;
+                        $newObjContr->objectUuid = $localObjectUuid;
+                        $newObjContr->contragentUuid = $contrUuid;
+                        if (!$newObjContr->save()) {
+                            // TODO: нужно как-то уведомить админа что что-то не сохранилось
+                        }
+                    }
                 }
+            } else {
+                $contrUuid = $objectContr->contragentUuid;
             }
 
             $request = new Request();
@@ -172,7 +186,7 @@ class IntegrationIsController extends Controller
             $request->result = '';
             $request->equipmentUuid = null;
             $request->objectUuid = $localObjectUuid;
-            $request->extId = $data['id']; // TODO: проверить! возможно это $incident['id'];
+            $request->extId = $data['id'];
             $request->integrationClass = self::class;
 //            $request->taskUuid; // null
             $request->closeDate = null; // ? current_timestamp можно ли установить в null?
