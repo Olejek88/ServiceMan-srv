@@ -11,6 +11,7 @@ use common\models\ObjectContragent;
 use common\models\Objects;
 use common\models\ObjectType;
 use common\models\Organization;
+use common\models\OrganizationSub;
 use common\models\Request;
 use common\models\RequestStatus;
 use common\models\RequestType;
@@ -106,15 +107,27 @@ class IntegrationIsController extends Controller
         }
 
         $data = $request->getBodyParam('data');
+        $orgUuids = [$orgUuid];
+        // получаем все связанные организации
+        $orgSubs = OrganizationSub::find()->where(['masterUuid' => $orgUuid])->all();
+        foreach ($orgSubs as $orgSub) {
+            $orgUuids[] = $orgSub->subUuid;
+        }
 
-        // ищем дом по gis_id
+        // ищем дом по gis_id, только для uuid организации для кторой выполняется web-hook и связанных с ней.
         $fiasHouseUuid = strtoupper($data['address']['buildingFiasId']);
-        $house = House::find()->where(['gis_id' => $fiasHouseUuid])->one();
+        $house = House::find()->where([
+            'gis_id' => $fiasHouseUuid,
+            'oid' => $orgUuids,
+        ])->one();
         if ($house == null) {
             // TODO: что-то нужно сделать. Может получится так что дом закрепили за ДСС а они его еще в базу не добавили
             // либо по какой-то причине изменился uuid
             throw new \Exception('Интерсвязь прислала обращение, с uuid дома которого нет в базе.');
         }
+
+        // uuid организации за которой закреплён дом, т.е. именно для неё будем создавать обращение
+        $realOid = $house->oid;
 
         // ищем объект по квартире или "Общий" если квартира не указана
         $localObject = null;
@@ -123,6 +136,7 @@ class IntegrationIsController extends Controller
             $flatNum = $data['address']['flatNum'];
         }
 
+        $isCommonObject = false;
         if ($flatNum > 0) {
             $localObject = Objects::find()->where(['title' => $flatNum, 'houseUuid' => $house->uuid])->one();
         } else {
@@ -131,6 +145,7 @@ class IntegrationIsController extends Controller
                 'houseUuid' => $house->uuid,
                 'objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL
             ])->one();
+            $isCommonObject = true;
         }
 
         $localObjectUuid = $localObject != null ? $localObject->uuid : null;
@@ -144,7 +159,7 @@ class IntegrationIsController extends Controller
                 // если не нашли связи между объектом и контрагентом, считаем что контрагента нет, заводим нового
                 $contr = new Contragent();
                 $contr->uuid = MainFunctions::GUID();
-                $contr->oid = $orgUuid;
+                $contr->oid = $realOid;
                 $contr->title = $incident['regUser']['fullName'];
                 $contr->address = $incident['address']['text'];
                 $contr->phone = '' . $incident['phone'];
@@ -155,11 +170,11 @@ class IntegrationIsController extends Controller
                     // TODO: нужно как-то уведомить админа что что-то не сохранилось
                 } else {
                     $contrUuid = $contr->uuid;
-                    // создаём связь между объектом и контрагентом
-                    if ($localObjectUuid != null) {
+                    // создаём связь между объектом и контрагентом только для квартир, для общих объектов нет
+                    if ($localObjectUuid != null && !$isCommonObject) {
                         $newObjContr = new ObjectContragent();
                         $newObjContr->uuid = MainFunctions::GUID();
-                        $newObjContr->oid = $orgUuid;
+                        $newObjContr->oid = $realOid;
                         $newObjContr->objectUuid = $localObjectUuid;
                         $newObjContr->contragentUuid = $contrUuid;
                         if (!$newObjContr->save()) {
@@ -173,13 +188,13 @@ class IntegrationIsController extends Controller
 
             $request = new Request();
             $request->scenario = ZhkhActiveRecord::SCENARIO_API;
-            $request->oid = $orgUuid;
+            $request->oid = $realOid;
             $request->uuid = MainFunctions::GUID();
             $request->type = 0; // 0 - бесплатная заявка (может можно сечь по категориям интерсвязи для точного определения)
             $request->contragentUuid = $contrUuid;
             $request->authorUuid = Users::USER_SERVICE_UUID; // sUser
             $request->requestStatusUuid = RequestStatus::NEW_REQUEST; // Состояние (1 - новое, 2 - в работе, 3 - закрыто)
-            $requestType = RequestType::findOne(['title' => 'Другой характер обращения', 'oid' => $orgUuid])->uuid;
+            $requestType = RequestType::findOne(['title' => 'Другой характер обращения', 'oid' => $realOid])->uuid;
             $request->requestTypeUuid = $requestType;
             $request->comment = $data['category']['text'] . ': ' . $incident['description'];
             $request->verdict = '';
