@@ -23,11 +23,12 @@ use yii\db\Exception;
 use yii\filters\ContentNegotiator;
 use yii\filters\VerbFilter;
 use yii\rest\Controller;
-use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
 class IntegrationIsController extends Controller
 {
+    public const IS_API_PARAM_NAME = 'IS_API';
+
     /**
      * Behaviors
      *
@@ -73,7 +74,6 @@ class IntegrationIsController extends Controller
     /**
      * @param $orgUuid
      * @return array
-     * @throws BadRequestHttpException
      * @throws Exception
      * @throws InvalidConfigException
      * @throws \Exception
@@ -84,46 +84,111 @@ class IntegrationIsController extends Controller
         file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . '.log'),
             json_encode($request->getBodyParams()));
 
-        $apiIp = Settings::findOne(['uuid' => Settings::SETTING_IS_IP])->parameter;
-        if (!strstr($apiIp, $request->remoteIP)) {
-            throw new BadRequestHttpException();
-        }
+        // закоментарено т.к. уведомления приходят с 5 разных адресов, заявлено что с одного
+//        $apiIp = Settings::findOne(['uuid' => Settings::SETTING_IS_IP])->parameter;
+//        if (!strstr($apiIp, $request->remoteIP)) {
+//            throw new BadRequestHttpException();
+//        }
 
         $organisation = Organization::findOne(['uuid' => $orgUuid]);
         if ($organisation == null) {
-            throw new BadRequestHttpException();
+            // TODO: протоколирование уведомление о неизвестном uuid организации переданном интерсвязью
+//            throw new BadRequestHttpException();
+            return [];
         }
 
-        // TODO: реализовать обработку операции update
+        $IS_API = self::getOrgSetting($orgUuid, self::IS_API_PARAM_NAME);
+        $IS_API = json_decode($IS_API, true);
+
         $operation = $request->getBodyParam('operation');
-        if ($operation != 'create') {
-            throw new BadRequestHttpException();
+        if (!in_array($operation, ['create', 'update'])) {
+            // TODO: протоколирование уведомление о неизвестной операции
+            return [];
         }
 
-        // TODO: реализовать обработку объекта comment
         $object = $request->getBodyParam('object');
-        if ($object != 'appeal') {
-            throw new BadRequestHttpException();
+        if (!in_array($object, ['appeal', 'comment', 'attachment'])) {
+            // TODO: протоколирование уведомление о неизвестном объекте
+            return [];
         }
 
+        // достаём данные
         $data = $request->getBodyParam('data');
-        $orgUuids = [$orgUuid];
+
+        switch ($operation) {
+            case 'create' :
+                switch ($object) {
+                    case 'appeal' :
+                        if (!self::createAppeal($orgUuid, $data)) {
+                            // TODO: протоколирование уведомление об ошибке
+                        }
+
+                        return [];
+                        break;
+                    case 'comment' :
+                        // TODO: реализовать обработку объекта comment
+                        // как сохранить комментарий не ясно, т.к. в уведомлении кроме самого комментария ни чего больше нет
+                        // т.е. мы его даже связать ни с одним обращением не можем.
+                        return [];
+                        break;
+                    case 'attachment' :
+                        // TODO: реализовать обработку объекта attachment
+                        return [];
+                        break;
+                }
+                break;
+            case 'update' :
+                // TODO: реализовать обработку операции update
+                switch ($object) {
+                    case 'appeal' :
+                        if (!self::updateAppeal($orgUuid, $data)) {
+                            // TODO: протоколирование уведомление об ошибке
+                        }
+
+                        return [];
+                        break;
+                    case 'comment' :
+                        // TODO: реализовать обработку объекта comment (возможно комментарии не меняются вовсе)
+                        return [];
+                        break;
+                    case 'attachment' :
+                        // TODO: реализовать обработку объекта attachment (возможно вложения не меняются вовсе)
+                        return [];
+                        break;
+                }
+        }
+
+        return [];
+    }
+
+    /**
+     * @param $oid string uuid организации
+     * @param $data array массив с инфорацией об обращении
+     * @return bool
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws \Exception
+     */
+    private function createAppeal($oid, $data)
+    {
+        $oids = [$oid];
         // получаем все связанные организации
-        $orgSubs = OrganizationSub::find()->where(['masterUuid' => $orgUuid])->all();
+        $orgSubs = OrganizationSub::find()->where(['masterUuid' => $oid])->all();
         foreach ($orgSubs as $orgSub) {
-            $orgUuids[] = $orgSub->subUuid;
+            $oids[] = $orgSub->subUuid;
         }
 
         // ищем дом по gis_id, только для uuid организации для кторой выполняется web-hook и связанных с ней.
         $fiasHouseUuid = strtoupper($data['address']['buildingFiasId']);
         $house = House::find()->where([
             'gis_id' => $fiasHouseUuid,
-            'oid' => $orgUuids,
+            'oid' => $oids,
         ])->one();
         if ($house == null) {
             // TODO: что-то нужно сделать. Может получится так что дом закрепили за ДСС а они его еще в базу не добавили
             // либо по какой-то причине изменился uuid
-            throw new \Exception('Интерсвязь прислала обращение, с uuid дома которого нет в базе.');
+//            throw new \Exception('Интерсвязь прислала обращение, с uuid дома которого нет в базе.');
+            return false;
         }
 
         // uuid организации за которой закреплён дом, т.е. именно для неё будем создавать обращение
@@ -160,14 +225,15 @@ class IntegrationIsController extends Controller
                 $contr = new Contragent();
                 $contr->uuid = MainFunctions::GUID();
                 $contr->oid = $realOid;
-                $contr->title = $incident['regUser']['fullName'];
+                $contr->title = $incident['user']['fullName'];
                 $contr->address = $incident['address']['text'];
                 $contr->phone = '' . $incident['phone'];
                 $contr->email = $incident['email'];
-                $contr->extId = $incident['regUser']['id'];
+                $contr->extId = $incident['user']['id'];
                 $contr->contragentTypeUuid = ContragentType::CITIZEN;
                 if (!$contr->save()) {
                     // TODO: нужно как-то уведомить админа что что-то не сохранилось
+                    return false;
                 } else {
                     $contrUuid = $contr->uuid;
                     // создаём связь между объектом и контрагентом только для квартир, для общих объектов нет
@@ -179,6 +245,7 @@ class IntegrationIsController extends Controller
                         $newObjContr->contragentUuid = $contrUuid;
                         if (!$newObjContr->save()) {
                             // TODO: нужно как-то уведомить админа что что-то не сохранилось
+                            return false;
                         }
                     }
                 }
@@ -207,10 +274,63 @@ class IntegrationIsController extends Controller
             $request->closeDate = null; // ? current_timestamp можно ли установить в null?
             if (!$request->save()) {
                 // TODO: нужно как-то уведомить админа что что-то не сохранилось
-                return $request->errors;
+//                return $request->errors;
+                return false;
             }
         }
 
-        return [];
+        return true;
+    }
+
+    /**
+     * @param $oid string uuid организации
+     * @param $data array массив с инфорацией об обращении
+     * @return bool
+     * @throws \Exception
+     */
+    private function updateAppeal($oid, $data)
+    {
+        // TODO: реализовать обновление данных по обращению
+        // пока видно только три сущности которые меняются:
+        // status(статус с ним всё ясно)
+        // ownerUser(видимо ответственный, может быть и организацией и человеком) - решить
+        // executorUser(исполнитель) - решить
+        $statusUuid = null;
+        switch ($data['status']) {
+            case 1:
+                $statusUuid = RequestStatus::NEW_REQUEST;
+                break;
+            case 2:
+                $statusUuid = RequestStatus::IN_WORK;
+                break;
+            case 3:
+                $statusUuid = RequestStatus::COMPLETE;
+                break;
+            default:
+                return false;
+                break;
+        }
+
+        $req = Request::find()->where(['extId' => $data['id']])->one();
+        if ($req == null) {
+            return false;
+        }
+
+        $req->requestStatusUuid = $statusUuid;
+        if (!$req->save()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $uuid string Uuid организации
+     * @param $parameter string Названия параметра
+     * @return Settings|null
+     */
+    private function getOrgSetting($uuid, $parameter)
+    {
+        return Settings::find()->where(['title' => $parameter . '-' . $uuid])->one();
     }
 }
