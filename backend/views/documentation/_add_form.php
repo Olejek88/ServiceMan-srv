@@ -143,9 +143,7 @@ use yii\helpers\Html;
         e.preventDefault();
         $.ajax({
             type: "post",
-            data: $('form').serialize(),
-            processData: false,
-            contentType: false
+            data: new FormData(this),
             url: "../documentation/save",
             success: function () {
                 $('#modalAddDocumentation').modal('hide');

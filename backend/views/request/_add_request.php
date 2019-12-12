@@ -25,6 +25,7 @@ if (isset($_GET["equipmentUuid"]))
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => "../request/new",
     'options' => [
         'id' => 'form'
     ]]);
