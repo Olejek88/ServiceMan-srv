@@ -21,6 +21,7 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
+    'action' => "../task/add-task",
     'options' => [
         'id' => 'form'
     ]]);
