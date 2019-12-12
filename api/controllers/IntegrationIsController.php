@@ -144,7 +144,7 @@ class IntegrationIsController extends Controller
                 // TODO: реализовать обработку операции update
                 switch ($object) {
                     case 'appeal' :
-                        if (!self::updateAppeal($orgUuid, $data)) {
+                        if (!self::updateAppeal($data)) {
                             // TODO: протоколирование уведомление об ошибке
                         }
 
@@ -286,12 +286,11 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid string uuid организации
      * @param $data array массив с инфорацией об обращении
      * @return bool
      * @throws \Exception
      */
-    private function updateAppeal($oid, $data)
+    private function updateAppeal($data)
     {
         // TODO: реализовать обновление данных по обращению
         // пока видно только три сущности которые меняются:
