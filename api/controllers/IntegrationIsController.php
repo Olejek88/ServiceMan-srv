@@ -28,6 +28,7 @@ use yii\web\Response;
 class IntegrationIsController extends Controller
 {
     public const IS_API_PARAM_NAME = 'IS_API';
+    public const IS_API_SECRET_NAME = 'IS_API_SECRET';
 
     /**
      * Behaviors
@@ -81,14 +82,16 @@ class IntegrationIsController extends Controller
     public function actionNotify($orgUuid)
     {
         $request = Yii::$app->request;
+        $headers = $request->getHeaders();
+        $signature = $headers->get('X-Signature');
+        $rawBody = $request->getRawBody();
         file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . '.log'),
-            json_encode($request->getBodyParams()));
-
-        // закоментарено т.к. уведомления приходят с 5 разных адресов, заявлено что с одного
-//        $apiIp = Settings::findOne(['uuid' => Settings::SETTING_IS_IP])->parameter;
-//        if (!strstr($apiIp, $request->remoteIP)) {
-//            throw new BadRequestHttpException();
-//        }
+            $rawBody . PHP_EOL . '"X-Signature: ' . $signature . '"');
+        $secret = self::getOrgSetting($orgUuid, self::IS_API_SECRET_NAME);
+        $testSignature = hash_hmac('sha256', $rawBody, $secret->parameter);
+        if ($testSignature !== $signature) {
+            return [];
+        }
 
         $organisation = Organization::findOne(['uuid' => $orgUuid]);
         if ($organisation == null) {
