@@ -77,24 +77,24 @@ use yii\helpers\Html;
                         'allowClear' => true
                     ],
                     'pluginEvents' => [
-                        "select2:select" => "function(data) { 
+                        "select2:select" => "function(data) {
+                            refreshObjects(data.params.data.id); 
                     }"]
                 ]);
-                /*
-                                refreshObjects(data.params.data.id);
 
-                                echo '<label>Квартира/помещение</label></br>';
-                                echo Select2::widget([
-                                    'id' => 'objectUuid',
-                                    'name' => 'objectUuid',
-                                    'language' => 'ru',
-                                    'options' => [
-                                        'placeholder' => 'Выберите объект..'
-                                    ],
-                                    'pluginOptions' => [
-                                        'allowClear' => true
-                                    ],
-                                ]);*/
+
+                echo '<label>Квартира/помещение</label></br>';
+                echo Select2::widget([
+                    'id' => 'objectUuid',
+                    'name' => 'objectUuid',
+                    'language' => 'ru',
+                    'options' => [
+                        'placeholder' => 'Выберите объект..'
+                    ],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]);
 
                 $this->registerJs('function refreshHouse(street) {
                     $.ajax({
@@ -126,7 +126,7 @@ use yii\helpers\Html;
                             var streets = JSON.parse(data);
                             var select = document.getElementById(\'streets\');                                    
                             select.options.length = 0;
-                            refreshHouse(Object.keys(streets)[0]);
+                            refreshHouse(Object.keys(streets)[0]);                            
                             for(index in streets) {
                                 select.options[select.options.length] = new Option(streets[index], index);
                             }                                    
@@ -139,13 +139,15 @@ use yii\helpers\Html;
                         url: \'../city/objects\',
                         type: \'post\',
                         data: {
-                            id: house
+                            id: house,
+                            type: "flats"
                         },
                         success: function (data) {
                         var objects = JSON.parse(data);
                         var select = document.getElementById("objectUuid");
                         if (select) {
                             select.options.length = 0;
+                            select.options[select.options.length] = new Option("нет", 0);
                             for(index in objects) {
                                 select.options[select.options.length] = new Option(objects[index], index);
                             }
@@ -171,7 +173,8 @@ use yii\helpers\Html;
             //url: "/request/index?objectUuid="+$('#objectUuid').val(),
             type: "post",
             data: {
-                house: $('#houses').val()
+                house: $('#houses').val(),
+                object: $('#objectUuid').val()
             },
             success: function () {
                 $('#modalFilter').modal('hide');

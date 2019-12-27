@@ -93,13 +93,20 @@ class RequestController extends ZhkhController
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 50;
         if (isset($_GET['start_time'])) {
-            $dataProvider->query->andWhere(['>=', 'request.createdAt', $_GET['start_time']]);
-            $dataProvider->query->andWhere(['<', 'request.createdAt', $_GET['end_time']]);
+            $dataProvider->query->andWhere(['>=', 'request.createdAt', date('Y-m-d 00:00:00', strtotime($_GET['start_time']))]);
+            $dataProvider->query->andWhere(['<', 'request.createdAt', date('Y-m-d 00:00:00', strtotime($_GET['end_time']))]);
         }
         //$dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
 
         if (isset($_GET['house'])) {
             $dataProvider->query->andWhere(['=', 'object.houseUuid', $_GET['house']]);
+        }
+        if (isset($_GET['object'])) {
+            $dataProvider->query->andWhere(['=', 'object.uuid', $_GET['object']]);
+        }
+        if (Yii::$app->request->isAjax && isset($_POST['house']) && isset($_POST['object'])) {
+            if ($_POST['object'] != '0')
+                return $this->redirect('../request/index?object=' . $_POST['object']);
         }
         if (Yii::$app->request->isAjax && isset($_POST['house'])) {
             return $this->redirect('../request/index?house=' . $_POST['house']);

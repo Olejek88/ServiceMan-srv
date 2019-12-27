@@ -17,11 +17,10 @@ use common\models\Users;
 use common\models\WorkStatus;
 use kartik\date\DatePicker;
 use kartik\datecontrol\DateControl;
-use kartik\datecontrol\Module;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use kartik\popover\PopoverX;
 use kartik\select2\Select2;
-use kartik\widgets\DateTimePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
@@ -379,6 +378,7 @@ $gridColumns = [
                     $stat['title'];
             }
             return [
+                'placement' => PopoverX::ALIGN_LEFT,
                 'header' => 'Статус задачи',
                 'size' => 'md',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
@@ -560,8 +560,8 @@ if ($show && $show == '1') {
     }
 }
 
-$start_date = '2018-12-31';
-$end_date = '2021-12-31';
+$start_date = date('d-m-Y', time() - 3600 * 24 * 31 * 2 * 12);
+$end_date = date('d-m-Y');
 if (isset($_GET['end_time']))
     $end_date = $_GET['end_time'];
 if (isset($_GET['start_time']))
@@ -586,7 +586,7 @@ echo GridView::widget([
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd 00:00:00'
+                    'format' => 'dd-mm-yyyy'
                 ]
             ]) . '</td><td style="width: 300px">' .
             DatePicker::widget([
@@ -595,7 +595,7 @@ echo GridView::widget([
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd 00:00:00'
+                    'format' => 'dd-mm-yyyy'
                 ]
             ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-success']) . '</td><td style="width: 100px">{export}</td></tr></table></form>',
