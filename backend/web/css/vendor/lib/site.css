@@ -150,7 +150,8 @@ a.desc:after {
 .wrapper-block {
     padding-top: 100px;
     height: 100vh;
-    background: url('/images/automation.jpg') no-repeat 100% 100%;
+    background: url("/images/zhkh2.jpg") no-repeat 100% 100%;
+    background-size: cover;
 }
 
 #wrapper-login-footer-list {

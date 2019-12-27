@@ -382,8 +382,8 @@ $gridColumns = [
     ]
 ];
 
-$start_date = '2018-12-31';
-$end_date = '2021-12-31';
+$start_date = date('d-m-Y', time() - 3600 * 24 * 31 * 2 * 12);
+$end_date = date('d-m-Y');
 $type = '';
 if (isset($_GET['type']))
     $type = $_GET['type'];
@@ -412,7 +412,7 @@ echo GridView::widget([
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd'
+                    'format' => 'dd-mm-yyyy'
                 ]
             ]).'</td><td style="width: 300px">'.
             DatePicker::widget([
@@ -421,7 +421,7 @@ echo GridView::widget([
                 'removeButton' => false,
                 'pluginOptions' => [
                     'autoclose' => true,
-                    'format' => 'yyyy-mm-dd'
+                    'format' => 'dd-mm-yyyy'
                 ]
             ]).'</td><td style="width: 100px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
                 'class' => 'btn btn-info']).'</td><td style="width: 150px">'.
@@ -467,7 +467,6 @@ echo GridView::widget([
     }
 ]);
 
-/*
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
      $(this).removeData();
@@ -485,7 +484,7 @@ function () {
 $this->registerJs('$("#modalTaskInfo").on("hidden.bs.modal",
 function () {
      $(this).removeData();
-})'); */
+})');
 
 ?>
 <style>
