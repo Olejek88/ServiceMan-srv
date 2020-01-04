@@ -377,26 +377,12 @@ class EquipmentController extends ZhkhController
         $fullTree = array();
         $documentations = self::getDocumentationForTree();
         $userSystems = self::getSystems2UsersForTree();
-        $userHouses = self::getHomes2UsersForTree();
         $tasks = self::getTasksForTree();
 
-        $streets = Street::find()->asArray()->all();
-        $streets = ArrayHelper::map($streets, 'uuid', function ($element) {
-            return $element;
-        });
-
-        $objects = Objects::find()->asArray()->all();
-        $objects = ArrayHelper::map($objects, 'uuid', function ($element) {
-            return $element;
-        });
-
-        $houses = House::find()->asArray()->all();
-        $houses = ArrayHelper::map($houses, 'uuid', function ($element) {
-            return $element;
-        });
-
-        $statuses = EquipmentStatus::find()->asArray()->orderBy('title')->all();
-        $statuses = ArrayHelper::map($statuses, 'uuid', 'title');
+        $streets = Street::find()->asArray()->indexBy('uuid')->all();
+        $objects = Objects::find()->asArray()->indexBy('uuid')->all();
+        $houses = House::find()->asArray()->indexBy('uuid')->all();
+        $statuses = EquipmentStatus::find()->asArray()->indexBy('uuid')->orderBy('title')->all();
 
         $types = EquipmentType::find()->asArray()->orderBy('title')->all();
         $typesBySystem = [];
@@ -447,17 +433,14 @@ class EquipmentController extends ZhkhController
                     $equipment['equipmentType'] = [
                         'equipmentSystemUuid' => $system['uuid'],
                     ];
-                    $equipment['equipmentStatus'] = [
-                        'uuid' => $equipment['equipmentStatusUuid'],
-                        'title' => $statuses[$equipment['equipmentStatusUuid']],
-                    ];
+                    $equipment['equipmentStatus'] = $statuses[$equipment['equipmentStatusUuid']];
                     $streetTitle = $streets[$houses[$objects[$equipment['objectUuid']]['houseUuid']]['streetUuid']]['title'];
                     $houseNumber = $houses[$objects[$equipment['objectUuid']]['houseUuid']]['number'];
                     $objectTitle = $objects[$equipment['objectUuid']]['title'];
                     $equipment['object'] = [
                         'fullTitle' => 'ул.' . $streetTitle . ', д.' . $houseNumber . ' - ' . $objectTitle,
                     ];
-                    $e = self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree");
+                    $e = self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = $e;
                 }
             }
@@ -616,23 +599,48 @@ class EquipmentController extends ZhkhController
     public function actionTreeUser()
     {
         ini_set('memory_limit', '-1');
-        $documentations = Documentation::find()->all();
-//        $documentations = self::getDocumentationForTree();
-        $userSystems = UserSystem::find()->all();
-//        $userSystems = self::getSystems2UsersForTree();
-        $userHouses = UserHouse::find()->all();
-//        $userHouses = self::getHomes2UsersForTree();
-        $tasks = Task::find()->orderBy('changedAt DESC')->all();
-//        $tasks = self::getTasksForTree();
+        $documentations = self::getDocumentationForTree();
+        $userSystems = self::getSystems2UsersForTree();
+        $tasks = self::getTasksForTree();
 
+        // выбираем всех исполнителей с домами которые им назначены
+        $userHousesTmp = UserHouse::find()->with('house')->asArray()->all();
+        $housesByUsers = [];
+        foreach ($userHousesTmp as $userHouse) {
+            $housesByUsers[$userHouse['userUuid']][$userHouse['houseUuid']] = $userHouse['house'];
+        }
 
-        // TODO: исправить алгоритм построения массива для дерева
+        unset($userHousesTmp);
+
+        // выбираем все объекты по домам
+        $objects = Objects::find()->asArray()->all();
+        $objectsByHouses = [];
+        foreach ($objects as $object) {
+            $objectsByHouses[$object['houseUuid']][$object['uuid']] = $object;
+        }
+
+        unset($objects);
+
+        // выбираем всё оборудование по объектам
+        $equipments = Equipment::find()->asArray()->all();
+        $equipmentsByObjects = [];
+        foreach ($equipments as $equipment) {
+            $equipmentsByObjects[$equipment['objectUuid']][$equipment['uuid']] = $equipment;
+        }
+
+        unset($equipments);
+
+        $equipmentTypes = EquipmentType::find()->asArray()->indexBy('uuid')->all();
+        $equipmentStatuses = EquipmentStatus::find()->asArray()->indexBy('uuid')->all();
+        $streets = Street::find()->asArray()->indexBy('uuid')->all();
+
         $fullTree = array();
         $users = Users::find()
             ->select('_id,uuid,name')
             ->where('name != "sUser"')
             ->andWhere('name != "Иванов О.А."')
             ->orderBy('_id')
+            ->asArray()
             ->all();
 
         foreach ($users as $user) {
@@ -643,31 +651,39 @@ class EquipmentController extends ZhkhController
                 'folder' => true,
                 'expanded' => false
             ];
-            $user_houses = UserHouse::find()->select('houseUuid')->where(['userUuid' => $user['uuid']])->all();
-            foreach ($user_houses as $user_house) {
+            if (!isset($housesByUsers[$user['uuid']])) {
+                continue;
+            }
+
+            foreach ($housesByUsers[$user['uuid']] as $house) {
                 $childIdx = count($fullTree['children']) - 1;
-                $houses = House::find()->select('uuid,number')->where(['uuid' => $user_house['houseUuid']])->
-                orderBy('number')->all();
-                foreach ($houses as $house) {
-                    $fullTree['children'][$childIdx]['children'][] =
-                        [
-                            'title' => 'ул.' . $house['street']['title'] . ', д.' . $house['number'],
-                            'type' => 'house',
-                            'key' => $house['_id'],
-                            'folder' => true
+                $fullTree['children'][$childIdx]['children'][] = [
+                    'title' => 'ул.' . $streets[$house['streetUuid']]['title'] . ', д.' . $house['number'],
+                    'type' => 'house',
+                    'key' => $house['_id'],
+                    'folder' => true
+                ];
+                $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+
+                foreach ($objectsByHouses[$house['uuid']] as $object) {
+                    if (!isset($equipmentsByObjects[$object['uuid']])) {
+                        continue;
+                    }
+
+                    foreach ($equipmentsByObjects[$object['uuid']] as $equipment) {
+                        $equipment['equipmentType'] = $equipmentTypes[$equipment['equipmentTypeUuid']];
+                        $equipment['equipmentStatus'] = $equipmentStatuses[$equipment['equipmentStatusUuid']];
+                        $equipment['object'] = [
+                            'fullTitle' => '',
                         ];
-                    $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-                    $objects = Objects::find()->select('uuid, title')->where(['houseUuid' => $house['uuid']])->all();
-                    foreach ($objects as $object) {
-                        $equipments = Equipment::find()->where(['objectUuid' => $object['uuid']])->all();
-                        foreach ($equipments as $equipment) {
-                            $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] =
-                                self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, "../equipment/tree");
-                        }
+                        $e = self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = $e;
+
                     }
                 }
             }
         }
+
         $users = Users::find()->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -961,7 +977,7 @@ class EquipmentController extends ZhkhController
                         'fullTitle' => $location,
                     ],
                 ];
-                $element = self::addEquipment($equipment, $documentations, $userSystems, $userHouses, $tasks, '../equipment/tree-street');
+                $element = self::addEquipment($equipment, $documentations, $userSystems, $tasks, '../equipment/tree-street');
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = $element;
             }
         }
@@ -1648,12 +1664,11 @@ class EquipmentController extends ZhkhController
      * @param Equipment|array $equipment
      * @param Documentation[] $documentations
      * @param $userSystems
-     * @param $userHouses
      * @param $tasks
      * @param $source
      * @return array
      */
-    public function addEquipment($equipment, &$documentations, &$userSystems, &$userHouses, &$tasks, $source)
+    public function addEquipment($equipment, &$documentations, &$userSystems, &$tasks, $source)
     {
         $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
         $equipmentUuid = $equipment['uuid'];
