@@ -706,16 +706,18 @@ class EquipmentController extends ZhkhController
         $docs = Documentation::find()->all();
         $documentations = [];
         foreach ($docs as $doc) {
+            $tmpDoc = $doc->toArray();
+            $tmpDoc['docLocalPath'] = $doc->getDocLocalPath();
             if ($doc['equipmentUuid'] != null) {
-                $documentations['equipment'][$doc['equipmentUuid']][] = $doc;
+                $documentations['equipment'][$doc['equipmentUuid']][] = $tmpDoc;
             }
 
             if ($doc['equipmentTypeUuid'] != null) {
-                $documentations['equipmentType'][$doc['equipmentTypeUuid']][] = $doc;
+                $documentations['equipmentType'][$doc['equipmentTypeUuid']][] = $tmpDoc;
             }
 
             if ($doc['houseUuid'] != null) {
-                $documentations['house'][$doc['houseUuid']][] = $doc;
+                $documentations['house'][$doc['houseUuid']][] = $tmpDoc;
             }
         }
 
@@ -806,7 +808,7 @@ class EquipmentController extends ZhkhController
     {
         ini_set('memory_limit', '-1');
         // выбираем всю документацию для оборудования
-        $docs = self::getDocumentationForTree();
+        $documentations = self::getDocumentationForTree();
         // выбираем в виде массива связи исполнителей с системами
         $userSystems = self::getSystems2UsersForTree();
         // выбираем все последние задачи для каждого оборудования
@@ -889,10 +891,10 @@ class EquipmentController extends ZhkhController
                 $objectIdx = -1;
 
                 $docsLink = '';
-                if (isset($docs['house'][$item['house_uuid']])) {
-                    foreach ($docs['house'][$item['house_uuid']] as $doc) {
+                if (isset($documentations['house'][$item['house_uuid']])) {
+                    foreach ($documentations['house'][$item['house_uuid']] as $documentation) {
                         $docsLink .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                            [$doc->getDocLocalPath()], ['title' => $doc->title]
+                            [$documentation['docLocalPath']], ['title' => $documentation['title']]
                         );
                     }
                 }
@@ -1727,9 +1729,8 @@ class EquipmentController extends ZhkhController
         if (isset($documentations['equipment'][$equipmentUuid])) {
             foreach ($documentations['equipment'][$equipmentUuid] as $documentation) {
                 /** @var Documentation $documentation */
-                // TODO: избавиться от вызова getDocLocalPath()
                 $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                    [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
+                    [$documentation['docLocalPath']], ['title' => $documentation['title']]
                 );
             }
         }
@@ -1738,9 +1739,8 @@ class EquipmentController extends ZhkhController
         if (isset($documentations['equipmentType'][$equipmentTypeUuid])) {
             foreach ($documentations['equipmentType'][$equipmentTypeUuid] as $documentation) {
                 /** @var Documentation $documentation */
-                // TODO: избавиться от вызова getDocLocalPath()
                 $docs .= Html::a('<span class="glyphicon glyphicon-floppy-disk"></span>&nbsp',
-                    [$documentation->getDocLocalPath()], ['title' => $documentation['title']]
+                    [$documentation['docLocalPath']], ['title' => $documentation['title']]
                 );
             }
         }
