@@ -741,8 +741,8 @@ class EquipmentController extends ZhkhController
             $delimiter = '';
             $userName = '';
             foreach ($tmpUserSystems as $tmpUserSystem) {
-                $userName .= $delimiter . $tmpUserSystem['user']['name'];
-                $delimiter = ', ';
+                $userName .= $delimiter . '<b>' . $tmpUserSystem['user']['name'] . '</b>';
+                $delimiter = '<br/>';
             }
 
             $usByUuid[$systemUuid]['usersString'] = $userName;
@@ -786,8 +786,8 @@ class EquipmentController extends ZhkhController
             $delimiter = '';
             $userName = '';
             foreach ($tmpUserHouses as $tmpUserHouse) {
-                $userName .= $delimiter . $tmpUserHouse['user']['name'];
-                $delimiter = ', ';
+                $userName .= $delimiter . '<b>' . $tmpUserHouse['user']['name'] . '<b>';
+                $delimiter = '<br/>';
             }
 
             $uhByUuid[$houseUuid]['usersString'] = $userName;
@@ -899,12 +899,17 @@ class EquipmentController extends ZhkhController
                     }
                 }
 
+                $employers = '';
+                if ($userHouses[$item['house_uuid']]['usersString'] != '') {
+                    $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userHouses[$item['house_uuid']]['usersString'] . '</div></div>';
+                }
+
                 $fullTree['children'][$streetIdx]['children'][$houseIdx] = [
                     'title' => $item['house_number'],
                     'address' => $item['street_title'] . ', ' . $item['house_number'],
                     'type' => 'house',
                     'expanded' => false,
-                    'user' => $userHouses[$item['house_uuid']]['usersString'],
+                    'user' => $employers,
                     'docs' => $docsLink,
                     'uuid' => $item['house_uuid'],
                     'key' => $item['house__id'],
@@ -924,12 +929,17 @@ class EquipmentController extends ZhkhController
                     $title = $item['object_title'];
                 }
 
+                $employers = '';
+                if ($userSystems[$item['equipment_systemUuid']]['usersString'] != '') {
+                    $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userSystems[$item['equipment_systemUuid']]['usersString'] . '</div></div>';
+                }
+
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx] = [
                     'title' => $title,
                     'address' => $item['street_title'] . ', ' . $item['house_number'] . ', ' . $item['object_title'],
                     'type' => 'object',
                     'uuid' => $item['object_uuid'],
-                    'user' => $userSystems[$item['equipment_systemUuid']]['usersString'],
+                    'user' => $employers,
                     'key' => $item['object__id'] . "",
                     'expanded' => false,
                     'folder' => true
@@ -1675,6 +1685,9 @@ class EquipmentController extends ZhkhController
         $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
         $equipmentUuid = $equipment['uuid'];
         $equipmentTypeUuid = $equipment['equipmentTypeUuid'];
+
+        // TODO: заменть все Html::a на ручной вариант, т.к. на тысячах единц оборудования это слишком тормозит
+        $userEquipmentName = '';
         $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
             ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
             [
@@ -1705,6 +1718,7 @@ class EquipmentController extends ZhkhController
             }
         }
 
+        $task = '';
         $task = Html::a($task_text,
             ['select-task', 'equipmentUuid' => $equipmentUuid, 'source' => $source],
             [
@@ -1745,6 +1759,7 @@ class EquipmentController extends ZhkhController
             }
         }
 
+        $links = '';
         $links = Html::a('<span class="fa fa-exclamation-circle"></span>&nbsp',
             ['/defect/list', 'equipmentUuid' => $equipmentUuid],
             [
