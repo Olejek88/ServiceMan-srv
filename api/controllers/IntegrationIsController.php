@@ -4,8 +4,10 @@ namespace api\controllers;
 
 use common\components\MainFunctions;
 use common\components\ZhkhActiveRecord;
+use common\models\Comments;
 use common\models\Contragent;
 use common\models\ContragentType;
+use common\models\ExtSystemUser;
 use common\models\House;
 use common\models\ObjectContragent;
 use common\models\Objects;
@@ -101,7 +103,7 @@ class IntegrationIsController extends Controller
         }
 
         $IS_API = self::getOrgSetting($orgUuid, self::IS_API_PARAM_NAME);
-        $IS_API = json_decode($IS_API, true);
+        $IS_API = json_decode($IS_API->parameter, true);
 
         $operation = $request->getBodyParam('operation');
         if (!in_array($operation, ['create', 'update'])) {
@@ -124,14 +126,17 @@ class IntegrationIsController extends Controller
                     case 'appeal' :
                         if (!self::createAppeal($orgUuid, $data)) {
                             // TODO: протоколирование уведомление об ошибке
+                            return [];
                         }
 
                         return [];
                         break;
                     case 'comment' :
-                        // TODO: реализовать обработку объекта comment
-                        // как сохранить комментарий не ясно, т.к. в уведомлении кроме самого комментария ни чего больше нет
-                        // т.е. мы его даже связать ни с одним обращением не можем.
+                        if (!self::createComment($data)) {
+                            // TODO: протоколирование уведомление об ошибке
+                            return [];
+                        }
+
                         return [];
                         break;
                     case 'attachment' :
@@ -146,16 +151,17 @@ class IntegrationIsController extends Controller
                     case 'appeal' :
                         if (!self::updateAppeal($data)) {
                             // TODO: протоколирование уведомление об ошибке
+                            return [];
                         }
 
                         return [];
                         break;
                     case 'comment' :
-                        // TODO: реализовать обработку объекта comment (возможно комментарии не меняются вовсе)
+                        // комментарии не меняются вовсе
                         return [];
                         break;
                     case 'attachment' :
-                        // TODO: реализовать обработку объекта attachment (возможно вложения не меняются вовсе)
+                        // вложения не меняются вовсе
                         return [];
                         break;
                 }
@@ -220,48 +226,89 @@ class IntegrationIsController extends Controller
         // TODO: нужно как-то уведомить админа что не нашли дом или "Общий" объект
 
         foreach ($data['incidents'] as $incident) {
-            // сначала ищем связь по object_contragent
-            $objectContr = ObjectContragent::find()->where(['objectUuid' => $localObjectUuid])->one();
-            $contrUuid = null;
-            if ($objectContr == null) {
-                // если не нашли связи между объектом и контрагентом, считаем что контрагента нет, заводим нового
-                $contr = new Contragent();
-                $contr->uuid = MainFunctions::GUID();
-                $contr->oid = $realOid;
-                $contr->title = $incident['user']['fullName'];
-                $contr->address = $incident['address']['text'];
-                $contr->phone = '' . $incident['phone'];
-                $contr->email = $incident['email'];
-                $contr->extId = $incident['user']['id'];
-                $contr->contragentTypeUuid = ContragentType::CITIZEN;
-                if (!$contr->save()) {
+            // ищем внешнего пользователя
+            $extUser = ExtSystemUser::find()->where([
+                'extId' => $incident['user']['id'],
+                'integrationClass' => self::class,
+            ])->one();
+            if ($extUser == null) {
+                // создаём его
+                $extUser = new ExtSystemUser();
+                $extUser->uuid = MainFunctions::GUID();
+                $extUser->oid = $realOid;
+                $extUser->extId = '' . $incident['user']['id'];
+                $extUser->fullName = $incident['user']['fullName'];
+                $extUser->rawData = json_encode($incident['user']);
+                $extUser->integrationClass = self::class;
+                if (!$extUser->save()) {
                     // TODO: нужно как-то уведомить админа что что-то не сохранилось
                     return false;
-                } else {
-                    $contrUuid = $contr->uuid;
+                }
+            }
+
+            // объявляем переменную для связи объекта с контрагентом
+            $objectContr = null;
+
+            // ищем контрагента связанного с внешним пользователем
+            $contragent = Contragent::findOne(['extSystemUserUuid' => $extUser->uuid]);
+            if ($contragent == null) {
+                // создаём его
+                $contragent = new Contragent();
+                $contragent->uuid = MainFunctions::GUID();
+                $contragent->oid = $realOid;
+                $contragent->title = $incident['user']['fullName'];
+                $contragent->address = $incident['address']['text'];
+                $contragent->phone = '' . $incident['phone'];
+                $contragent->email = $incident['email'];
+                $contragent->extSystemUserUuid = $extUser->uuid;
+                $contragent->contragentTypeUuid = ContragentType::CITIZEN;
+                if (!$contragent->save()) {
+                    // TODO: нужно как-то уведомить админа что что-то не сохранилось
+                    return false;
+                }
+
+                // если контрагента только что создали, значит связи между ним и объектом нет
+                // создаём связь между объектом и контрагентом только для квартир, для общих объектов нет
+                if ($localObjectUuid != null && !$isCommonObject) {
+                    $objectContr = new ObjectContragent();
+                    $objectContr->uuid = MainFunctions::GUID();
+                    $objectContr->oid = $realOid;
+                    $objectContr->objectUuid = $localObjectUuid;
+                    $objectContr->contragentUuid = $contragent->uuid;
+                    if (!$objectContr->save()) {
+                        // TODO: нужно как-то уведомить админа что что-то не сохранилось
+                        return false;
+                    }
+                }
+            }
+
+
+            if ($objectContr == null) {
+                // контрагент "старый", ищем связь с объектом
+                $objectContr = ObjectContragent::find()->where(['objectUuid' => $localObjectUuid])->one();
+                if ($objectContr == null) {
                     // создаём связь между объектом и контрагентом только для квартир, для общих объектов нет
                     if ($localObjectUuid != null && !$isCommonObject) {
-                        $newObjContr = new ObjectContragent();
-                        $newObjContr->uuid = MainFunctions::GUID();
-                        $newObjContr->oid = $realOid;
-                        $newObjContr->objectUuid = $localObjectUuid;
-                        $newObjContr->contragentUuid = $contrUuid;
-                        if (!$newObjContr->save()) {
+                        $objectContr = new ObjectContragent();
+                        $objectContr->uuid = MainFunctions::GUID();
+                        $objectContr->oid = $realOid;
+                        $objectContr->objectUuid = $localObjectUuid;
+                        $objectContr->contragentUuid = $contragent->uuid;
+                        if (!$objectContr->save()) {
                             // TODO: нужно как-то уведомить админа что что-то не сохранилось
                             return false;
                         }
                     }
                 }
-            } else {
-                $contrUuid = $objectContr->contragentUuid;
             }
 
+            // создаём запрос
             $request = new Request();
             $request->scenario = ZhkhActiveRecord::SCENARIO_API;
             $request->oid = $realOid;
             $request->uuid = MainFunctions::GUID();
             $request->type = 0; // 0 - бесплатная заявка (может можно сечь по категориям интерсвязи для точного определения)
-            $request->contragentUuid = $contrUuid;
+            $request->contragentUuid = $contragent->uuid;
             $request->authorUuid = Users::USER_SERVICE_UUID; // sUser
             $request->requestStatusUuid = RequestStatus::NEW_REQUEST; // Состояние (1 - новое, 2 - в работе, 3 - закрыто)
             $requestType = RequestType::findOne(['title' => 'Другой характер обращения', 'oid' => $realOid])->uuid;
@@ -292,7 +339,6 @@ class IntegrationIsController extends Controller
      */
     private function updateAppeal($data)
     {
-        // TODO: реализовать обновление данных по обращению
         // пока видно только три сущности которые меняются:
         // status(статус с ним всё ясно)
         // ownerUser(видимо ответственный, может быть и организацией и человеком) - решить
@@ -313,13 +359,48 @@ class IntegrationIsController extends Controller
                 break;
         }
 
-        $req = Request::find()->where(['extId' => $data['id']])->one();
+        $req = Request::find()->where(['extId' => $data['id'], 'integrationClass' => self::class])->one();
         if ($req == null) {
             return false;
         }
 
         $req->requestStatusUuid = $statusUuid;
         if (!$req->save()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $data array массив с инфорацией об обращении
+     * @return bool
+     */
+    private function createComment($data)
+    {
+        // ищем обращение с которым связан комментарий
+        $request = Request::findOne(['extId' => $data['ticketId'], 'integrationClass' => self::class]);
+
+        if ($request == null) {
+            // коментарий к обращению которого у нас нет
+            return false;
+        }
+
+        $comment = new Comments();
+        $comment->uuid = MainFunctions::GUID();
+        $comment->oid = $request->oid;
+        $comment->entityUuid = $request->uuid;
+        $comment->text = $data['text'];
+        $comment->extId = '' . $data['id'];
+        $comment->extParentId = $request->extId;
+        // для создания уникального индеска, все поля вхдящие в него должны быть заполнены
+        // интерсвязь в $data['type'] передаёт всегда null
+        $comment->extParentType = 'null';
+        $comment->rawData = json_encode($data);
+        $comment->date = date('Y-m-d H:i:s', strtotime($data['date']));
+        $comment->integrationClass = self::class;
+        if (!$comment->save()) {
+            // TODO: нужно как-то уведомить админа что что-то не сохранилось
             return false;
         }
 

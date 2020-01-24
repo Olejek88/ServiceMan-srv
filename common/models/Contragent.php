@@ -109,6 +109,11 @@ class Contragent extends ZhkhActiveRecord
         return $this->hasOne(ContragentType::class, ['uuid' => 'contragentTypeUuid']);
     }
 
+    public function getExtSystemUser()
+    {
+        return $this->hasOne(ExtSystemUser::class, ['uuid' => 'extSystemUserUuid']);
+    }
+
     /**
      * Поиск контрагента по id и статусу.
      *
