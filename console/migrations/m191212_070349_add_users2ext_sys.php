@@ -17,32 +17,38 @@ class m191212_070349_add_users2ext_sys extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('{{%users_ext_system}}', [
+        $this->createTable('{{%ext_system_user}}', [
             '_id' => $this->primaryKey(),
             'uuid' => $this->string(45)->notNull()->unique(),
             'oid' => $this->string(45)->notNull(),
-            'usersUuid' => $this->string(45)->notNull(),
             'extId' => $this->string(45)->notNull(),
+            'fullName' => $this->string(64)->notNull(),
+            'rawData' => $this->text(),
+            'integrationClass' => $this->string(128)->null(),
             'createdAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'changedAt' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
         ], $tableOptions);
 
-        $this->createIndex('users_ext_system-extId', '{{%users_ext_system}}', ['oid', 'usersUuid', 'extId'], true);
+        $this->createIndex('ext_system_user-extId', '{{%ext_system_user}}', ['oid', 'extId', 'integrationClass'], true);
         $this->addForeignKey(
-            'users_ext_system-usersUuid-users_uuid',
-            '{{%users_ext_system}}',
-            ['usersUuid'],
-            '{{%users}}',
-            ['uuid']
-        );
-        $this->addForeignKey(
-            'fk-users_ext_system-organization-oid',
-            '{{%users_ext_system}}',
+            'fk-ext_system_user-organization-oid',
+            '{{%ext_system_user}}',
             'oid',
             '{{%organization}}',
             'uuid',
             $delete = 'RESTRICT',
             $update = 'CASCADE'
+        );
+
+        // исправляем поле для связи контрагента с пользователем из внешней системы
+        $this->dropColumn('{{%contragent}}', 'extId');
+        $this->addColumn('{{%contragent}}', 'extSystemUserUuid', $this->string('45')->null());
+        $this->addForeignKey(
+            'fk-contraget-extSystemUserUuid-ext_system_user-uuid',
+            '{{%contragent}}',
+            'extSystemUserUuid',
+            '{{%ext_system_user}}',
+            'uuid'
         );
 
     }

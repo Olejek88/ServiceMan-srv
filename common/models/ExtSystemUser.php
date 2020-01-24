@@ -6,27 +6,28 @@ use common\components\ZhkhActiveRecord;
 use yii\db\ActiveQuery;
 
 /**
- * This is the model class for table "users_ext_system".
+ * This is the model class for table "ext_system_user".
  *
  * @property int $_id
  * @property string $uuid
  * @property string $oid
- * @property string $usersUuid
  * @property string $extId
+ * @property string $fullName
+ * @property string $rawData
+ * @property string $integrationClass
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property Users $users
  * @property Organization $organization
  */
-class UsersExtSystem extends ZhkhActiveRecord
+class ExtSystemUser extends ZhkhActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'users_ext_system';
+        return 'ext_system_user';
     }
 
     /**
@@ -35,12 +36,13 @@ class UsersExtSystem extends ZhkhActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'oid', 'usersUuid', 'extId'], 'required'],
+            [['uuid', 'oid', 'extId', 'fullName'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'oid', 'usersUuid', 'extId'], 'string', 'max' => 45],
+            [['uuid', 'oid', 'extId'], 'string', 'max' => 45],
+            [['fullName',], 'string', 'max' => 64],
+            [['integrationClass',], 'string', 'max' => 64],
             [['uuid'], 'unique'],
-            [['oid', 'usersUuid', 'extId'], 'unique', 'targetAttribute' => ['oid', 'usersUuid', 'extId']],
-            [['usersUuid'], 'exist', 'skipOnError' => true, 'targetClass' => Users::class, 'targetAttribute' => ['usersUuid' => 'uuid']],
+            [['oid', 'extId', 'integrationClass'], 'unique', 'targetAttribute' => ['oid', 'extId', 'integrationClass']],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -55,19 +57,13 @@ class UsersExtSystem extends ZhkhActiveRecord
             '_id' => 'Id',
             'uuid' => 'Uuid',
             'oid' => 'Oid',
-            'usersUuid' => 'Users Uuid',
             'extId' => 'Ext ID',
+            'fullName' => 'Full name',
+            'rawData' => 'Raw data',
+            'integrationClass' => 'Integration class',
             'createdAt' => 'Created At',
             'changedAt' => 'Changed At',
         ];
-    }
-
-    /**
-     * @return ActiveQuery
-     */
-    public function getUsers()
-    {
-        return $this->hasOne(Users::class, ['uuid' => 'usersUuid']);
     }
 
     /**
