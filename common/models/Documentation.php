@@ -33,6 +33,7 @@ use yii\web\UploadedFile;
  * @property string $docLocalPath
  * @property string $docFullPath
  * @property string $fileLocalDir
+ * @property House $house
  * @property string $fileFullDir
  */
 class Documentation extends ZhkhActiveRecord
