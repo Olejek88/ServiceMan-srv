@@ -25,6 +25,7 @@ use yii\db\Expression;
  * @property integer $deleted
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $extSystemUserUuid
  *
  * @property ContragentType $contragentType
  */
@@ -71,36 +72,11 @@ class Contragent extends ZhkhActiveRecord
             ['deleted', 'in', 'range' => [Status::STATUS_DEFAULT, Status::STATUS_ARCHIVED]],
             [['uuid', 'phone', 'title', 'contragentTypeUuid', 'deleted'], 'required'],
             [['createdAt', 'changedAt'], 'safe'],
-            [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid'], 'string', 'max' => 50],
+            [['uuid', 'title', 'oid', 'phone', 'inn', 'director', 'email', 'contragentTypeUuid', 'extSystemUserUuid'], 'string', 'max' => 50],
             [['address','account'], 'string', 'max' => 250],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
-    }
-
-    public function fields()
-    {
-        $fields = parent::fields();
-        return $fields;
-//        return [
-//            '_id',
-//            'oid',
-//            'uuid',
-//            'title',
-//            'address',
-//            'phone',
-//            'inn',
-//            'account',
-//            'director',
-//            'email',
-//            'contragentTypeUuid',
-//            'contragentType' => function ($model) {
-//                return $model->contragentType;
-//            },
-//            'deleted',
-//            'createdAt',
-//            'changedAt',
-//        ];
     }
 
     /**
@@ -131,6 +107,11 @@ class Contragent extends ZhkhActiveRecord
     public function getContragentType()
     {
         return $this->hasOne(ContragentType::class, ['uuid' => 'contragentTypeUuid']);
+    }
+
+    public function getExtSystemUser()
+    {
+        return $this->hasOne(ExtSystemUser::class, ['uuid' => 'extSystemUserUuid']);
     }
 
     /**

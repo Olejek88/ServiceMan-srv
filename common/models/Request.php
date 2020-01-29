@@ -28,6 +28,8 @@ use yii\db\Expression;
  * @property string $closeDate
  * @property string $createdAt
  * @property string $changedAt
+ * @property string $extId
+ * @property string $integrationClass
  *
  * @property Contragent $contragent
  * @property Users $author
