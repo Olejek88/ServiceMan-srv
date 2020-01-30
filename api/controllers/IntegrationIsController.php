@@ -94,7 +94,7 @@ class IntegrationIsController extends Controller
         $headers = $request->getHeaders();
         $signature = $headers->get('X-Signature');
         $rawBody = $request->getRawBody();
-        file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . '.log'),
+        file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . ' - ' . rand(0, 65535) . '.log'),
             $rawBody . PHP_EOL . '"X-Signature: ' . $signature . '"');
 
         $organisation = Organization::findOne(['uuid' => $orgUuid]);
@@ -106,7 +106,7 @@ class IntegrationIsController extends Controller
         $IS_API = self::getOrgSetting($orgUuid, self::IS_API_PARAM_NAME);
         $IS_API = json_decode($IS_API->parameter, true);
 
-        $secret = self::getOrgSetting($orgUuid, $IS_API['secret']);
+        $secret = $IS_API['secret'];
         $testSignature = hash_hmac('sha256', $rawBody, $secret);
         if ($testSignature !== $signature) {
             Yii::error('Уведомление для организации (uuid=' . $orgUuid . ') имеет не верную подпись.', self::LOG_TAG);
