@@ -378,7 +378,7 @@ class IntegrationIsController extends Controller
         // ownerUser(видимо ответственный, может быть и организацией и человеком) - решить
         // executorUser(исполнитель) - решить
         $statusUuid = null;
-        switch ($data['status']) {
+        switch ($data['status']['id']) {
             case self::IS_APPEAL_NEW:
                 $statusUuid = RequestStatus::NEW_REQUEST;
                 break;
@@ -390,7 +390,7 @@ class IntegrationIsController extends Controller
                 break;
             default:
                 Yii::error('Получен не известный статус к обращению(extId=' . $data['id']
-                    . ', status=)' . $data['status'], self::LOG_TAG);
+                    . ', status=)' . $data['status']['text'], self::LOG_TAG);
                 return false;
                 break;
         }
@@ -408,6 +408,7 @@ class IntegrationIsController extends Controller
             }
         }
 
+        $req->scenario = Request::SCENARIO_API;
         $req->requestStatusUuid = $statusUuid;
         if (!$req->save()) {
             Yii::error('Для организации с oid: ' . $oid . ', не смогли изменить статус обращения (extId=' . $data['id']
@@ -492,11 +493,12 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid
-     * @param $appealId
-     * @param $text
+     * @param $oid string Uuid организации
+     * @param $appealId string Номер обращения во внешней системе
+     * @param $text string Текст коментария
      * @return int
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public static function sendComment($oid, $appealId, $text)
     {
@@ -518,10 +520,9 @@ class IntegrationIsController extends Controller
 
         $httpClient = new Client();
         $q = $isApiSettings['url'] . '/api/mc/appeals/' . $appealId . '/comments';
-//        $q = 'http://zhkh-back.local.net/test/index?XDEBUG_SESSION_START=xdebug';
         /** @var \yii\httpclient\Response $response */
         $response = $httpClient->createRequest()
-            ->setMethod('GET')
+            ->setMethod('POST')
             ->setUrl($q)
             ->setHeaders([
                 'from-user' => $tokenData['userId'],
@@ -529,7 +530,7 @@ class IntegrationIsController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])
-            ->setData(json_encode([
+            ->setContent(json_encode([
                 'text' => $text,
                 'type' => null,
             ]))
@@ -545,11 +546,12 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid
-     * @param $appealId
-     * @param $text
+     * @param $oid string Uuid организации
+     * @param $appealId string Номер обращения во внешней системе
+     * @param $text string Текст коментария
      * @return boolean
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public static function closeAppeal($oid, $appealId, $text)
     {
@@ -571,7 +573,6 @@ class IntegrationIsController extends Controller
 
         $httpClient = new Client();
         $q = $isApiSettings['url'] . '/api/mc/appeals/' . $appealId;
-//        $q = 'http://zhkh-back.local.net/test/index?XDEBUG_SESSION_START=xdebug';
         /** @var \yii\httpclient\Response $response */
         $response = $httpClient->createRequest()
             ->setMethod('PUT')
@@ -582,7 +583,7 @@ class IntegrationIsController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])
-            ->setData(json_encode([
+            ->setContent(json_encode([
                 'comment' => $text,
                 'statusId' => self::IS_APPEAL_CLOSED,
             ]))
@@ -601,6 +602,7 @@ class IntegrationIsController extends Controller
      * @param $oid
      * @return string|null
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     private static function getToken($oid)
     {
@@ -644,6 +646,7 @@ class IntegrationIsController extends Controller
      * @param $oid string Uuid организации
      * @return string|null json encoded token data
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     private static function createToken($oid)
     {
@@ -660,7 +663,7 @@ class IntegrationIsController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])
-            ->setData(json_encode([
+            ->setContent(json_encode([
                 'username' => $isApiSettings['user'],
                 'password' => $isApiSettings['password'],
             ]))
