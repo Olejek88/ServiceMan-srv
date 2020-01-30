@@ -94,7 +94,7 @@ class IntegrationIsController extends Controller
         $headers = $request->getHeaders();
         $signature = $headers->get('X-Signature');
         $rawBody = $request->getRawBody();
-        file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . '.log'),
+        file_put_contents(Yii::getAlias('@api/runtime/logs/is-' . date('Ymd-His') . ' - ' . rand(0, 65535) . '.log'),
             $rawBody . PHP_EOL . '"X-Signature: ' . $signature . '"');
 
         $organisation = Organization::findOne(['uuid' => $orgUuid]);
