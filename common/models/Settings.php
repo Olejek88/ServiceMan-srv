@@ -116,11 +116,16 @@ class Settings extends ActiveRecord
             [
                 [
                     'uuid',
+                ],
+                'string', 'max' => 50,
+            ],
+            [
+                [
                     'title',
                     'parameter'
                 ],
-                'string', 'max' => 50
-            ]
+                'string', 'max' => 255,
+            ],
         ];
     }
 
