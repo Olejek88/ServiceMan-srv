@@ -492,9 +492,9 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid
-     * @param $appealId
-     * @param $text
+     * @param $oid string Uuid организации
+     * @param $appealId string Номер обращения во внешней системе
+     * @param $text string Текст коментария
      * @return int
      * @throws InvalidConfigException
      */
@@ -518,7 +518,6 @@ class IntegrationIsController extends Controller
 
         $httpClient = new Client();
         $q = $isApiSettings['url'] . '/api/mc/appeals/' . $appealId . '/comments';
-//        $q = 'http://zhkh-back.local.net/test/index?XDEBUG_SESSION_START=xdebug';
         /** @var \yii\httpclient\Response $response */
         $response = $httpClient->createRequest()
             ->setMethod('GET')
@@ -545,9 +544,9 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid
-     * @param $appealId
-     * @param $text
+     * @param $oid string Uuid организации
+     * @param $appealId string Номер обращения во внешней системе
+     * @param $text string Текст коментария
      * @return boolean
      * @throws InvalidConfigException
      */
@@ -571,7 +570,6 @@ class IntegrationIsController extends Controller
 
         $httpClient = new Client();
         $q = $isApiSettings['url'] . '/api/mc/appeals/' . $appealId;
-//        $q = 'http://zhkh-back.local.net/test/index?XDEBUG_SESSION_START=xdebug';
         /** @var \yii\httpclient\Response $response */
         $response = $httpClient->createRequest()
             ->setMethod('PUT')
