@@ -3,6 +3,8 @@
 namespace backend\controllers;
 
 use backend\models\ShutdownSearch;
+use common\models\Contragent;
+use common\models\ContragentType;
 use common\models\Shutdown;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -68,6 +70,7 @@ class ShutdownController extends ZhkhController
      * Creates a new Shutdown model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
+     * @throws Exception
      * @throws InvalidConfigException
      */
     public function actionCreate()
@@ -141,10 +144,23 @@ class ShutdownController extends ZhkhController
         }
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
     public function actionForm()
     {
         $model = new Shutdown();
-        return $this->renderAjax('_add_shutdown', ['model' => $model]);
+        $contragents = Contragent::find()
+            ->where(['IN', 'contragentTypeUuid', [
+                ContragentType::CONTRACTOR,
+                ContragentType::ORGANIZATION
+            ]])
+            ->andWhere(['deleted' => 0])
+            ->all();
+
+        return $this->renderAjax('_add_shutdown', ['model' => $model, 'contragents' => $contragents]);
     }
 
     /**
