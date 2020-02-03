@@ -6,6 +6,15 @@ use yii\web\JsExpression;
 $this->title = 'Дерево элементов по расположению';
 
 ?>
+    <style>
+        .showme {
+            display: none;
+        }
+
+        .showhim:hover .showme {
+            display: block;
+        }
+    </style>
     <table id="tree" style="width: 100%">
         <colgroup>
             <col style="width:*">

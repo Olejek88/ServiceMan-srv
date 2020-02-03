@@ -1,11 +1,12 @@
 <?php
 
+use common\models\Contragent;
 use common\models\ObjectContragent;
 use kartik\grid\GridView;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 
-/* @var $model */
+/* @var Contragent $model */
 
 $gridColumns = [
     [
@@ -56,6 +57,16 @@ $gridColumns = [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'template' => '{view}',
+        'buttons' => [
+            'view' => function ($url, $model) {
+                /** @var ObjectContragent $model */
+                $url = '/object/view?id=' . $model->object->_id;
+                return Html::a('<span class="glyphicon glyphicon-eye-open"></span>', $url, [
+                    'title' => Yii::t('yii', 'View'),
+                ]);
+            },
+        ],
     ]
 ];
 
@@ -63,7 +74,7 @@ $objectContragents = ObjectContragent::find()->where(['contragentUuid' => $model
 $provider = new ActiveDataProvider(
     [
         'query' => $objectContragents,
-        'sort' =>false,
+        'sort' => false,
     ]
 );
 

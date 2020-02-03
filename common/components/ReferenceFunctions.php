@@ -4,7 +4,11 @@ namespace common\components;
 
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
+use common\models\House;
 use common\models\IPermission;
+use common\models\Objects;
+use common\models\ObjectStatus;
+use common\models\ObjectType;
 use common\models\Organization;
 use common\models\TaskType;
 use common\models\User;
@@ -1021,7 +1025,7 @@ class ReferenceFunctions
 
     /**
      * @param $oid
-     * @param $db
+     * @param $db Connection
      */
     public static function fixOrgPermission($oid, $db)
     {
@@ -1161,6 +1165,29 @@ class ReferenceFunctions
             $permissionName = 'edit' . $directorRight . '-' . $oid;
             $permission = $am->getPermission($permissionName);
             $am->removeChild($directorRoleObj, $permission);
+        }
+    }
+
+    /**
+     * @param $oid
+     * @param $db Connection
+     * @throws \yii\base\Exception
+     */
+    public static function addCommonObject($oid, $db)
+    {
+
+        $houses = House::findAll(['oid' => $oid]);
+        foreach ($houses as $house) {
+            $co = new Objects();
+            $co->uuid = MainFunctions::GUID();
+            $co->oid = $oid;
+            $co->title = Objects::COMMON_OBJECT_TITLE;
+            $co->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
+            $co->houseUuid = $house->uuid;
+            $co->objectTypeUuid = ObjectType::OBJECT_TYPE_GENERAL;
+            if (!$co->save()) {
+                throw new \yii\base\Exception('Не удалось создать объект "Общий" для дома.');
+            }
         }
     }
 }

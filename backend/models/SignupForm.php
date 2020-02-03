@@ -105,7 +105,7 @@ class SignupForm extends Model
                     ReferenceFunctions::loadRequestTypes($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::addOrgPermission($organization->uuid, Yii::$app->db);
                     ReferenceFunctions::fixOrgPermission($organization->uuid, Yii::$app->db);
-
+                    ReferenceFunctions::addCommonObject($organization->uuid, Yii::$app->db);
                     //ReferenceFunctions::loadReferences1($organization->uuid, Yii::$app->db);
                     return $user;
                 } else {
