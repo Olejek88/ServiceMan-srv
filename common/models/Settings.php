@@ -24,6 +24,7 @@ class Settings extends ActiveRecord
     const SETTING_GPS_DEEP = '04B72195-6285-46FB-955D-4D4BE223DD9C';
     // адрес с которого приходят уведомления от интерсвязи
     const SETTING_IS_IP = '97F69939-B4C1-4CB0-9547-DFA88F2E39B9';
+    const SETTING_REQUEST_STATUS_FROM_TASK = '3AA7C0AD-8C23-4AB8-8C23-7BA82B95EBC2';
 
     /**
      * Table name.
@@ -51,6 +52,9 @@ class Settings extends ActiveRecord
             }
             if ($uuid == Settings::SETTING_SHOW_WARNINGS) {
                 $settings->title = 'Показывать предупреждения в таблице задач';
+            }
+            if ($uuid == Settings::SETTING_REQUEST_STATUS_FROM_TASK) {
+                $settings->title = 'Статус заявки и решение в журнале диспетчера наследуется от задачи';
             }
             $settings->uuid = $uuid;
             $settings->parameter = $parameter;

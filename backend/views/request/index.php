@@ -5,6 +5,7 @@ use common\models\Contragent;
 use common\models\Request;
 use common\models\RequestStatus;
 use common\models\RequestType;
+use common\models\Settings;
 use common\models\Task;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -28,7 +29,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'text-center'],
         'mergeHeader' => true,
         'content' => function ($data) {
-            return Html::a($data->_id,
+            return Html::a($data->id,
                 ['../request/form', 'uuid' => $data['uuid']],
                 [
                     'title' => 'Редактировать заявку',
@@ -281,8 +282,9 @@ $gridColumns = [
                             'data-target' => '#modalTaskInfo',
                         ]);
                     $order.=' ';
-                    if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                    if ($task['workStatusUuid'] == WorkStatus::COMPLETE) {
                         $order .= "<span class='badge' style='background-color: green; height: 22px'>Выполнена</span>";
+                    }
                     if ($task['workStatusUuid'] == WorkStatus::NEW)
                         $order .= "<span class='badge' style='background-color: gray; height: 22px'>Новая</span>";
                     if ($task['workStatusUuid'] == WorkStatus::CANCELED)
@@ -375,9 +377,29 @@ $gridColumns = [
                         'data-target' => '#modalRequestHistory',
                     ]
                 );
+            },
+            'messages' => function ($url, $model) {
+                return Html::a('<span class="fa fa-comments"></span>',
+                    ['../request/messages', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'Сообщения',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalMessages',
+                    ]
+                );
+            },
+            'add' => function ($url, $model) {
+                return Html::a('<span class="fa fa-comment"></span>',
+                    ['../request/add-message', 'uuid' => $model['uuid']],
+                    [
+                        'title' => 'Добавить сообщение',
+                        'data-toggle' => 'modal',
+                        'data-target' => '#modalAddComment',
+                    ]
+                );
             }
         ],
-        'template' => ' {history} {delete}',
+        'template' => ' {history} {messages} {delete} {add}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];
@@ -485,8 +507,12 @@ $this->registerJs('$("#modalTaskInfo").on("hidden.bs.modal",
 function () {
      $(this).removeData();
 })');
-
+$this->registerJs('$("#modalMessages").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
 ?>
+
 <style>
     .grid-view td {
         white-space: pre-line;
@@ -494,6 +520,12 @@ function () {
 </style>
 
 <div class="modal remote fade" id="modalRequest">
+    <div class="modal-dialog" style="width: 1000px; height: 700px">
+        <div class="modal-content loader-lg"></div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalMessages">
     <div class="modal-dialog" style="width: 1000px; height: 700px">
         <div class="modal-content loader-lg"></div>
     </div>
@@ -514,6 +546,13 @@ function () {
 <div class="modal remote fade" id="modalRequestHistory">
     <div class="modal-dialog" style="width: 800px; height: 400px">
         <div class="modal-content loader-lg" id="modalContentHistory">
+        </div>
+    </div>
+</div>
+
+<div class="modal remote fade" id="modalAddComment">
+    <div class="modal-dialog" style="width: 800px; height: 400px">
+        <div class="modal-content loader-lg" id="modalAddComment">
         </div>
     </div>
 </div>

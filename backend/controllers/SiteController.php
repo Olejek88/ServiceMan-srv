@@ -982,6 +982,11 @@ class SiteController extends Controller
             if ($_POST["gps"] > 0 && $_POST["gps"] < 1000)
                 Settings::storeSetting(Settings::SETTING_GPS_DEEP, $_POST["gps"]);
         }
+        if (isset($_POST["status"])) {
+            Settings::storeSetting(Settings::SETTING_REQUEST_STATUS_FROM_TASK, "1");
+        } else {
+            Settings::storeSetting(Settings::SETTING_REQUEST_STATUS_FROM_TASK, "0");
+        }
         return $this->actionIndex();
     }
 

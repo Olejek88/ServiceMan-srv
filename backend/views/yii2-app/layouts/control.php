@@ -11,6 +11,7 @@ $journals = Journal::find()->select('*')->orderBy('date DESC')->limit(8)->all();
 $settings = Settings::find()->all();
 $period = "0";
 $move = 0;
+$status = 0;
 $gps = 0;
 foreach ($settings as $setting) {
     if ($setting['uuid'] == Settings::SETTING_TASK_PAUSE_BEFORE_WARNING)
@@ -19,6 +20,9 @@ foreach ($settings as $setting) {
         $warnings = $setting['parameter'];
     if ($setting['uuid'] == Settings::SETTING_GPS_DEEP)
         $gps = $setting['parameter'];
+    if ($setting['uuid'] == Settings::SETTING_REQUEST_STATUS_FROM_TASK) {
+        $status = $setting['parameter'];
+    }
 }
 
 ?>
@@ -88,6 +92,17 @@ foreach ($settings as $setting) {
                        name="warning" <?php if ($warnings == 1) echo "checked='checked'"; ?> />
                 <p>
                     Показывать предупреждения в таблице задач
+                </p>
+            </div>
+            <br/>
+            <div class="form-group">
+                <label class="control-sidebar-subheading">
+                    Статус заявки<br/>
+                </label>
+                <input type="checkbox" id="status"
+                       name="status" <?php if ($status == 1) echo "checked='checked'"; ?> />
+                <p>
+                    Наследется от статуса задачи
                 </p>
             </div>
             <br/>
