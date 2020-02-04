@@ -39,7 +39,7 @@ class RequestController extends ZhkhController
     {
         ini_set('memory_limit', '-1');
         //OrderFunctions::checkRequests();
-        self::checkAllRequests();
+        //self::checkAllRequests();
         if (isset($_POST['editableAttribute'])) {
             $toLog = [
                 'type' => 'request',

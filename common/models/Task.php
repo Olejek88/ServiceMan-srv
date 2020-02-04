@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use api\controllers\IntegrationIsController;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -156,6 +157,32 @@ class Task extends ZhkhActiveRecord
     public function getWorkStatus()
     {
         return $this->hasOne(WorkStatus::class, ['uuid' => 'workStatusUuid']);
+    }
+
+    /**
+     * @return bool
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     */
+    public function setWorkStatus()
+    {
+        $change_status = 0;
+        $setting = Settings::find()->where(['uuid' => Settings::SETTING_REQUEST_STATUS_FROM_TASK])->one();
+        if ($setting && $setting['parameter'] == "1")
+            $change_status = 1;
+        $request = Request::find()->where(['taskUuid' => $this->uuid])->one();
+        /** @var Request $request */
+        if ($request && $request->requestStatusUuid != RequestStatus::COMPLETE) {
+            if ($change_status) {
+                // TODO какой текст? ид?
+                IntegrationIsController::closeAppeal($request->oid, $request->extId, "");
+                $request->requestStatusUuid = RequestStatus::COMPLETE;
+                $request->save();
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getEquipment()

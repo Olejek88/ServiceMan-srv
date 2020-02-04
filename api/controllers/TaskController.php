@@ -110,6 +110,7 @@ class TaskController extends BaseController
             $tasks = Task::findAll(['uuid' => $params]);
             foreach ($tasks as $task) {
                 $task->workStatusUuid = WorkStatus::COMPLETE;
+                $task->setWorkStatus();
                 if ($task->save()) {
                     $saved[] = [
                         '_id' => $task->_id,
