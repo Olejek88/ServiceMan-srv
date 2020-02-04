@@ -2,13 +2,18 @@
 
 namespace backend\controllers;
 
+use api\controllers\IntegrationIsController;
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
+use common\models\Comments;
 use common\models\Equipment;
 use common\models\Journal;
 use common\models\Receipt;
 use common\models\Request;
+use common\models\RequestStatus;
+use common\models\Settings;
 use common\models\Users;
+use common\models\WorkStatus;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -28,17 +33,20 @@ class RequestController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionIndex()
     {
         ini_set('memory_limit', '-1');
         //OrderFunctions::checkRequests();
+        //self::checkAllRequests();
         if (isset($_POST['editableAttribute'])) {
             $toLog = [
                 'type' => 'request',
                 'title' => '',
                 'description' => '',
             ];
+            /** @var Request $model */
             $model = Request::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
@@ -51,6 +59,9 @@ class RequestController extends ZhkhController
                 $model['requestStatusUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestStatusUuid'];
                 $toLog['title'] = 'Изменен статус заявки';
                 $toLog['description'] = 'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'];
+                if ($model['requestStatusUuid'] == RequestStatus::COMPLETE) {
+                    IntegrationIsController::closeAppeal($model->oid, $model->extId, "");
+                }
             }
             if ($_POST['editableAttribute'] == 'type') {
                 $model['type'] = $_POST['Request'][$_POST['editableIndex']]['type'];
@@ -80,6 +91,7 @@ class RequestController extends ZhkhController
             if ($model->contragentUuid == null && $model->equipmentUuid == null) {
                 $model->scenario = Request::SCENARIO_API;
             }
+
 
             if ($model->save()) {
                 MainFunctions::register($toLog['type'], $toLog['title'], $toLog['description'], $model['uuid']);
@@ -344,5 +356,94 @@ class RequestController extends ZhkhController
     public function actionSearchForm()
     {
         return $this->renderAjax('_search_filter');
+    }
+
+    /**
+     * Lists all Comments models for Request.
+     * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function actionMessages()
+    {
+        $comments = [];
+        if (isset($_GET['uuid'])) {
+            $comments = Comments::find()
+                ->where(['entityUuid' => $_GET['uuid']])
+                ->all();
+        }
+        return $this->renderAjax('_message_list', [
+            'comments' => $comments
+        ]);
+    }
+
+    /**
+     * Add new Comment model for Request
+     * @return mixed
+     */
+    public function actionAddMessage()
+    {
+        if (isset($_GET['uuid']) && isset($_GET['requestId'])) {
+            $comment = new Comments();
+            return $this->renderAjax('../request/_add_comment', [
+                'model' => $comment,
+                'entityUuid' => $_GET['uuid'],
+                'extParentId' => $_GET['requestId']
+            ]);
+        }
+        return null;
+    }
+
+    /**
+     * Creates a new Comment to Request.
+     * @return mixed
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     */
+    public function actionSaveComment()
+    {
+        /** @var Comments $model */
+        $model = new Comments();
+        if ($model->load(Yii::$app->request->post())) {
+            $model->date = date('Y-m-d H:i:s');
+            if ($model->save(false)) {
+                /** @var Request $request */
+                $request = Request::find()->where(['uuid' => $model->entityUuid])->one();
+                if ($request && $request->extId && $request->integrationClass) {
+                    $id = IntegrationIsController::sendComment($model->oid, $model->extParentId, $model->text);
+                    $model->extId = "" . $id;
+                    $model->save();
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     */
+    public function checkAllRequests()
+    {
+        $change_status = 0;
+        $setting = Settings::find()->where(['uuid' => Settings::SETTING_REQUEST_STATUS_FROM_TASK])->one();
+        if ($setting && $setting['parameter'] == "1")
+            $change_status = 1;
+        $requests = Request::find()->all();
+        /** @var Request $request */
+        foreach ($requests as $request) {
+            // если закончили задачу
+            if ($request->requestStatusUuid != RequestStatus::COMPLETE && $request->taskUuid) {
+                if ($request->task->workStatusUuid == WorkStatus::COMPLETE && $change_status) {
+                    // TODO какой текст? ид?
+                    IntegrationIsController::closeAppeal($request->oid, $request->extId, "");
+                    $request->requestStatusUuid = RequestStatus::COMPLETE;
+                    $request->save();
+                }
+            }
+        }
     }
 }

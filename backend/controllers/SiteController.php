@@ -659,34 +659,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Action error
-     *
-     * @return string
-     */
-    public function actionError()
-    {
-        if (Yii::$app->getUser()->isGuest) {
-            Yii::$app->getResponse()->redirect("/")->send();
-        } else {
-            $exception = Yii::$app->errorHandler->exception;
-            if ($exception !== null) {
-                $statusCode = $exception->statusCode;
-                $name = $exception->getName();
-                $message = $exception->getMessage();
-                return $this->render(
-                    'error',
-                    [
-                        'name' => $name . " " . $statusCode,
-                        'message' => $message
-                    ]
-                );
-            }
-        }
-
-        return '';
-    }
-
-    /**
      * Logout action.
      *
      * @return string
@@ -1010,7 +982,30 @@ class SiteController extends Controller
             if ($_POST["gps"] > 0 && $_POST["gps"] < 1000)
                 Settings::storeSetting(Settings::SETTING_GPS_DEEP, $_POST["gps"]);
         }
+        if (isset($_POST["status"])) {
+            Settings::storeSetting(Settings::SETTING_REQUEST_STATUS_FROM_TASK, "1");
+        } else {
+            Settings::storeSetting(Settings::SETTING_REQUEST_STATUS_FROM_TASK, "0");
+        }
         return $this->actionIndex();
     }
 
+    /**
+     * Action error
+     *
+     * @return string
+     */
+    public function actionError()
+    {
+        if (Yii::$app->getUser()->isGuest) {
+            Yii::$app->getResponse()->redirect("/")->send();
+        } else {
+            $exception = Yii::$app->errorHandler->exception;
+            if ($exception !== null) {
+                Yii::$app->getSession()->setFlash('error', 'Произошла ошибка. Наши администраторы уже работают над ее устранением.');
+                return $this->redirect("../site/dashboard");
+            }
+        }
+        return '';
+    }
 }

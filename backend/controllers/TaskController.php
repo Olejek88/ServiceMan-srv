@@ -220,10 +220,12 @@ class TaskController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionTable()
     {
         if (isset($_POST['editableAttribute'])) {
+            /** @var Task $model */
             $model = Task::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
@@ -232,6 +234,7 @@ class TaskController extends ZhkhController
                 if ($status == WorkStatus::COMPLETE) {
                     $model['startDate'] = $model['taskDate'];
                     $model['endDate'] = date("Y-m-d H:i:s");
+                    $model->setWorkStatus();
                 }
                 $model['workStatusUuid'] = $_POST['Task'][$_POST['editableIndex']]['workStatusUuid'];
             }

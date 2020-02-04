@@ -4,7 +4,10 @@ namespace backend\controllers;
 
 use Yii;
 use common\models\Comments;
+use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
+use yii\db\Exception;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -32,6 +35,8 @@ class CommentsController extends Controller
     /**
      * Lists all Comments models.
      * @return mixed
+     * @throws InvalidConfigException
+     * @throws Exception
      */
     public function actionIndex()
     {
@@ -117,6 +122,8 @@ class CommentsController extends Controller
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws StaleObjectException
      */
     public function actionDelete($id)
     {

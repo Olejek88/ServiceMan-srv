@@ -4,8 +4,10 @@ namespace common\models;
 
 use common\components\ZhkhActiveRecord;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\Exception;
 use yii\db\Expression;
 
 /**
@@ -38,6 +40,7 @@ use yii\db\Expression;
  * @property Equipment $equipment
  * @property Object $object
  * @property Task $task
+ * @property int $id
  */
 class Request extends ZhkhActiveRecord
 {
@@ -273,6 +276,24 @@ class Request extends ZhkhActiveRecord
         return $this->hasOne(
             Objects::class, ['uuid' => 'objectUuid']
         );
+    }
+
+    /**
+     * Объект связанного поля.
+     *
+     * @return int
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function getId()
+    {
+        $date = date("Y-01-01 00:00:00", strtotime($this->createdAt));
+        $request = Request::find()->where(['>=', 'createdAt', $date])->orderBy('_id')->one();
+        if ($request) {
+            return $this->_id - $request['_id'] + 1;
+        } else {
+            return 0;
+        }
     }
 
     /**
