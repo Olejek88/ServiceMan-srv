@@ -390,9 +390,10 @@ $gridColumns = [
             },
             'add' => function ($url, $model) {
                 return Html::a('<span class="fa fa-comment"></span>',
-                    ['../request/add-message', 'uuid' => $model['uuid']],
+                    ['../request/add-message', 'uuid' => $model['uuid'],
+                        'requestId' => $model['extId']],
                     [
-                        'title' => 'Добавить сообщение',
+                        'title' => 'Добавить сообщение ' . $model['extId'],
                         'data-toggle' => 'modal',
                         'data-target' => '#modalAddComment',
                     ]
@@ -504,6 +505,10 @@ function () {
      window.location.reload();
 })');
 $this->registerJs('$("#modalTaskInfo").on("hidden.bs.modal",
+function () {
+     $(this).removeData();
+})');
+$this->registerJs('$("#modalAddComment").on("hidden.bs.modal",
 function () {
      $(this).removeData();
 })');

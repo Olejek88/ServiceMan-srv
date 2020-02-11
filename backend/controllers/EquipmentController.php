@@ -414,35 +414,37 @@ class EquipmentController extends ZhkhController
             ];
             $childIdx = count($fullTree['children']) - 1;
 
-            foreach ($typesBySystem[$system['uuid']] as $type) {
-                $fullTree['children'][$childIdx]['children'][] = [
-                    'title' => $type['title'],
-                    'address' => '',
-                    'uuid' => $type['uuid'],
-                    'type' => 'type',
-                    'key' => $type['_id'],
-                    'folder' => true,
-                    'expanded' => false
-                ];
-                $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
-
-                if (!isset($equipmentsByType[$type['uuid']])) {
-                    continue;
-                }
-
-                foreach ($equipmentsByType[$type['uuid']] as $equipment) {
-                    $equipment['equipmentType'] = [
-                        'equipmentSystemUuid' => $system['uuid'],
+            if (isset($typesBySystem[$system['uuid']])) {
+                foreach ($typesBySystem[$system['uuid']] as $type) {
+                    $fullTree['children'][$childIdx]['children'][] = [
+                        'title' => $type['title'],
+                        'address' => '',
+                        'uuid' => $type['uuid'],
+                        'type' => 'type',
+                        'key' => $type['_id'],
+                        'folder' => true,
+                        'expanded' => false
                     ];
-                    $equipment['equipmentStatus'] = $statuses[$equipment['equipmentStatusUuid']];
-                    $streetTitle = $streets[$houses[$objects[$equipment['objectUuid']]['houseUuid']]['streetUuid']]['title'];
-                    $houseNumber = $houses[$objects[$equipment['objectUuid']]['houseUuid']]['number'];
-                    $objectTitle = $objects[$equipment['objectUuid']]['title'];
-                    $equipment['object'] = [
-                        'fullTitle' => 'ул.' . $streetTitle . ', д.' . $houseNumber . ' - ' . $objectTitle,
-                    ];
-                    $e = self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = $e;
+                    $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
+
+                    if (!isset($equipmentsByType[$type['uuid']])) {
+                        continue;
+                    }
+
+                    foreach ($equipmentsByType[$type['uuid']] as $equipment) {
+                        $equipment['equipmentType'] = [
+                            'equipmentSystemUuid' => $system['uuid'],
+                        ];
+                        $equipment['equipmentStatus'] = $statuses[$equipment['equipmentStatusUuid']];
+                        $streetTitle = $streets[$houses[$objects[$equipment['objectUuid']]['houseUuid']]['streetUuid']]['title'];
+                        $houseNumber = $houses[$objects[$equipment['objectUuid']]['houseUuid']]['number'];
+                        $objectTitle = $objects[$equipment['objectUuid']]['title'];
+                        $equipment['object'] = [
+                            'fullTitle' => 'ул.' . $streetTitle . ', д.' . $houseNumber . ' - ' . $objectTitle,
+                        ];
+                        $e = self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                        $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = $e;
+                    }
                 }
             }
         }
@@ -901,8 +903,10 @@ class EquipmentController extends ZhkhController
                 }
 
                 $employers = '';
-                if ($userHouses[$item['house_uuid']]['usersString'] != '') {
-                    $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userHouses[$item['house_uuid']]['usersString'] . '</div></div>';
+                if (isset($userHouses[$item['house_uuid']])) {
+                    if ($userHouses[$item['house_uuid']]['usersString'] != '') {
+                        $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userHouses[$item['house_uuid']]['usersString'] . '</div></div>';
+                    }
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx] = [
@@ -931,8 +935,10 @@ class EquipmentController extends ZhkhController
                 }
 
                 $employers = '';
-                if ($userSystems[$item['equipment_systemUuid']]['usersString'] != '') {
-                    $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userSystems[$item['equipment_systemUuid']]['usersString'] . '</div></div>';
+                if (isset($userSystems[$item['equipment_systemUuid']])) {
+                    if ($userSystems[$item['equipment_systemUuid']]['usersString'] != '') {
+                        $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userSystems[$item['equipment_systemUuid']]['usersString'] . '</div></div>';
+                    }
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx] = [
@@ -1698,7 +1704,7 @@ class EquipmentController extends ZhkhController
             ]
         );
 
-        if ($userSystems[$equipmentSystemUuid]['usersString'] === '') {
+        if (isset($userSystems[$equipmentSystemUuid]) && $userSystems[$equipmentSystemUuid]['usersString'] === '') {
             $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
         }
 

@@ -45,7 +45,7 @@ $this->registerJs('
     'enableAjaxValidation' => false,
     'action' => '/equipment/save',
     'options' => [
-        'id' => 'form',
+        'id' => 'form2',
         'enctype' => 'multipart/form-data'
     ]]);
 ?>
@@ -163,11 +163,11 @@ $this->registerJs('
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function (e) {
+    $(document).on("beforeSubmit", "#form2", function (e) {
         e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
-        var form = $('#form');
+        var form = $('#form2');
         $.ajax({
             type: "post",
             data: form.serialize(),

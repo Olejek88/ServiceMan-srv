@@ -175,9 +175,9 @@ class Task extends ZhkhActiveRecord
         /** @var Request $request */
         if ($request && $request->requestStatusUuid != RequestStatus::COMPLETE) {
             if ($change_status) {
-                // TODO какой текст? ид?
-                IntegrationIsController::closeAppeal($request->oid, $request->extId, "");
+                IntegrationIsController::closeAppeal($request->oid, $request->extId, "Задача по этому запросу выполнена");
                 $request->requestStatusUuid = RequestStatus::COMPLETE;
+                $request->result = "Заявка выполнена";
                 $request->save();
                 return true;
             }
