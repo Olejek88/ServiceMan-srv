@@ -30,7 +30,7 @@ echo Select2::widget(
                 refreshStreets(data.params.data.id); 
             }"]
     ]);
-echo '<label>Улица</label></br>';
+echo '</br><label>Улица</label></br>';
 echo Select2::widget([
     'id' => 'streets',
     'name' => 'streets',
@@ -48,7 +48,7 @@ echo Select2::widget([
             refreshHouse(data.params.data.id);
         }"]
 ]);
-echo '<label>Дом</label></br>';
+echo '</br><label>Дом</label></br>';
 echo Select2::widget([
     'id' => 'houses',
     'name' => 'houses',
