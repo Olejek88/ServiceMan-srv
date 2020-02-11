@@ -18,7 +18,7 @@ use yii\helpers\Html;
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
     'options' => [
-        'id' => 'form'
+        'id' => 'form2'
     ]]);
 ?>
 <div class="modal-header">
@@ -80,7 +80,7 @@ use yii\helpers\Html;
         var me = $('button.btn.btn-success', e.target);
         e.preventDefault();
         me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-        var form = $('#form');
+        var form = $('#form2');
         $.ajax({
             url: "../contragent/create",
             type: "post",
