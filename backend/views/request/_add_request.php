@@ -27,7 +27,7 @@ if (isset($_GET["equipmentUuid"]))
     'enableAjaxValidation' => false,
     'action' => "../request/new",
     'options' => [
-        'id' => 'form'
+        'id' => 'form2'
     ]]);
 ?>
     <div class="modal-header">
@@ -235,24 +235,28 @@ if (isset($_GET["equipmentUuid"]))
     </div>
 
     <script>
-        $(document).on("beforeSubmit", "#form", function (e) {
+        var send = false;
+        $(document).on("beforeSubmit", "#form2", function () {
             e.preventDefault();
         }).on('submit', function (e) {
             e.preventDefault();
-            var form = $('#form');
-            $.ajax({
-                url: "../request/new",
-                type: "post",
-                data: form.serialize(),
-                success: function (ret) {
-                    if (ret.length > 5) {
-                        $('#errors').val(ret);
-                    } else {
-                        $('#modalRequest').modal('hide');
-                        window.location.reload();
+            if (!send) {
+                send = true;
+                var form = $('#form2');
+                $.ajax({
+                    url: "../request/new",
+                    type: "post",
+                    data: form.serialize(),
+                    success: function (ret) {
+                        if (ret.length > 5) {
+                            $('#errors').val(ret);
+                        } else {
+                            $('#modalRequest').modal('hide');
+                            window.location.reload();
+                        }
                     }
-                }
-            })
+                });
+            }
         });
     </script>
 <?php ActiveForm::end(); ?>

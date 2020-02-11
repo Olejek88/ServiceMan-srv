@@ -23,7 +23,7 @@ use yii\helpers\Html;
     'enableAjaxValidation' => false,
     'action' => "../task/add-task",
     'options' => [
-        'id' => 'form'
+        'id' => 'form2'
     ]]);
 ?>
 <div class="modal-header">
@@ -179,13 +179,12 @@ use yii\helpers\Html;
     }).on('submit', function (e) {
         e.preventDefault();
         me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-        var form = $('#form');
+        var form = $('#form2');
         $.ajax({
             url: "../task/add-task",
             type: "post",
             data: form.serialize(),
-            success: function (ret) {
-                //$('#errors').val(ret);
+            success: function () {
                 $('#modalTask').modal('hide');
                 window.location.reload();
             },

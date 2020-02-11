@@ -406,19 +406,27 @@ class RequestController extends ZhkhController
         /** @var Comments $model */
         $model = new Comments();
         if ($model->load(Yii::$app->request->post())) {
-            $model->date = date('Y-m-d H:i:s');
-            if ($model->save(false)) {
-                /** @var Request $request */
-                $request = Request::find()->where(['uuid' => $model->entityUuid])->one();
-                if ($request && $request->extId && $request->integrationClass) {
-                    $id = IntegrationIsController::sendComment($model->oid, $model->extParentId, $model->text);
-                    $model->extId = "" . $id;
-                    $model->save();
+            /** @var Request $request */
+            $request = Request::find()->where(['uuid' => $model->entityUuid])->one();
+            if ($request) {
+                $model->date = date('Y-m-d H:i:s');
+                $model->integrationClass = $request->integrationClass;
+                $model->extParentType = "null";
+                if ($model->save(false)) {
+                    /** @var Request $request */
+                    if ($request && $request->extId && $request->integrationClass) {
+                        $id = IntegrationIsController::sendComment($model->oid, $model->extParentId, $model->text);
+                        $model->extId = "" . $id;
+                        $model->save();
+                        return 0;
+                    }
+                    return -1;
                 }
-                return false;
+                return -2;
             }
+            return -3;
         }
-        return true;
+        return -4;
     }
 
     /**

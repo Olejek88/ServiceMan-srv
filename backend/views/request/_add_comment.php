@@ -13,7 +13,7 @@ use yii\helpers\Html;
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
     'options' => [
-        'id' => 'form'
+        'id' => 'form2'
     ]]);
 ?>
 <div class="modal-header">
@@ -35,19 +35,24 @@ use yii\helpers\Html;
 </div>
 
 <script>
-    $(document).on("beforeSubmit", "#form", function () {
-        $.ajax({
-            url: "../request/save-comment",
-            type: "post",
-            data: $('form').serialize(),
-            success: function () {
-                $('#modalAddComment').modal('hide');
-            },
-            error: function () {
-            }
-        })
+    var send = false;
+    $(document).on("beforeSubmit", "#form2", function () {
+        e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
+        if (!send) {
+            send = true;
+            $.ajax({
+                url: "../request/save-comment",
+                type: "post",
+                data: $('form2').serialize(),
+                success: function () {
+                    $('#modalAddComment').modal('hide');
+                },
+                error: function () {
+                }
+            });
+        }
     });
 </script>
 <?php ActiveForm::end(); ?>

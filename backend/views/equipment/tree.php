@@ -379,6 +379,7 @@ function () {
 })');
 $this->registerJs('$("#modalAddTask").on("hidden.bs.modal",
 function () {
+     $(this).removeData();
 })');
 $this->registerJs('$("#modalStatus").on("hidden.bs.modal",
 function () {
