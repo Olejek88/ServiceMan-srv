@@ -317,9 +317,12 @@ class Request extends ZhkhActiveRecord
                 'form',
                 'history',
                 'search-form',
+                'messages',
             ],
             'edit' => [
                 'new',
+                'add-message',
+                'save-comment',
             ]]);
     }
 }
