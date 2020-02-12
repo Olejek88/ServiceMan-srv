@@ -80,7 +80,7 @@ class TaskSearch extends Task
 
         // grid filtering conditions
         $query->andFilterWhere([
-            '_id' => $this->_id,
+            'task._id' => $this->_id,
             'taskTemplateUuid' => $this->taskTemplateUuid,
             'taskVerdictUuid' => $this->taskVerdictUuid,
             'startDate' => $this->startDate,
