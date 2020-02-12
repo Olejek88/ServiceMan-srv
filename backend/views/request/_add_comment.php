@@ -45,7 +45,7 @@ use yii\helpers\Html;
             $.ajax({
                 url: "../request/save-comment",
                 type: "post",
-                data: $('form2').serialize(),
+                data: $('#form2').serialize(),
                 success: function () {
                     $('#modalAddComment').modal('hide');
                 },

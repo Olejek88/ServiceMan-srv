@@ -965,8 +965,6 @@ class SiteController extends Controller
 
     /**
      * @return string
-     * @throws Exception
-     * @throws InvalidConfigException
      */
     public function actionConfig()
     {
@@ -987,7 +985,7 @@ class SiteController extends Controller
         } else {
             Settings::storeSetting(Settings::SETTING_REQUEST_STATUS_FROM_TASK, "0");
         }
-        return $this->actionIndex();
+        return $this->redirect("../site/index");
     }
 
     /**
