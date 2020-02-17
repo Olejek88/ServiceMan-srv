@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use common\components\IntegrationExtSystem;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -324,5 +325,41 @@ class Request extends ZhkhActiveRecord
                 'add-message',
                 'save-comment',
             ]]);
+    }
+
+    /**
+     * @param $request Request
+     * @param string $text
+     * @return boolean
+     * @throws \yii\httpclient\Exception
+     * @throws InvalidConfigException
+     */
+    public static function closeAppeal($request, $text = "")
+    {
+        if ($request->integrationClass == null || $request->extId == null) {
+            return false;
+        }
+
+        /** @var IntegrationExtSystem $integrationClass */
+        $integrationClass = $request->integrationClass;
+        return $integrationClass::closeAppeal($request, $text);
+    }
+
+    /**
+     * @param $request Request
+     * @param $text string Комментарий
+     * @return integer
+     * @throws \yii\httpclient\Exception
+     * @throws InvalidConfigException
+     */
+    public static function sendComment($request, $text)
+    {
+        if ($request->integrationClass == null || $request->extId == null) {
+            return -1;
+        }
+
+        /** @var IntegrationExtSystem $integrationClass */
+        $integrationClass = $request->integrationClass;
+        return $integrationClass::sendComment($request, $text);
     }
 }
