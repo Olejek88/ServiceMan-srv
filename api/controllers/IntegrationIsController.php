@@ -2,6 +2,7 @@
 
 namespace api\controllers;
 
+use common\components\IntegrationExtSystem;
 use common\components\MainFunctions;
 use common\components\ZhkhActiveRecord;
 use common\models\Comments;
@@ -28,7 +29,7 @@ use yii\httpclient\Client;
 use yii\rest\Controller;
 use yii\web\Response;
 
-class IntegrationIsController extends Controller
+class IntegrationIsController extends Controller implements IntegrationExtSystem
 {
     public const IS_API_PARAM_NAME = 'IS_API';
     public const IS_API_TOKEN_NAME = 'IS_TOKEN';
@@ -477,13 +478,19 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $uuid string Uuid организации
+     * @param $oid string Uuid организации
      * @param $paramName string Названия параметра
      * @return Settings|null
      */
-    private static function getOrgSetting($uuid, $paramName)
+    private static function getOrgSetting($oid, $paramName)
     {
-        return Settings::findOne(['title' => $paramName . '-' . $uuid]);
+        // ищем "головную" организацию для получения настроек работы с API
+        $subOrg = OrganizationSub::findOne(['subUuid' => $oid]);
+        if ($subOrg != null) {
+            $oid = $subOrg->masterUuid;
+        }
+
+        return Settings::findOne(['title' => $paramName . '-' . $oid]);
     }
 
     /**
@@ -494,6 +501,12 @@ class IntegrationIsController extends Controller
      */
     private static function setOrgSettings($oid, $paramName, $data)
     {
+        // ищем "головную" организацию для получения настроек работы с API
+        $subOrg = OrganizationSub::findOne(['subUuid' => $oid]);
+        if ($subOrg != null) {
+            $oid = $subOrg->masterUuid;
+        }
+
         $settings = Settings::findOne(['title' => $paramName . '-' . $oid]);
         if ($settings == null) {
             $settings = new Settings();
@@ -512,15 +525,17 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid string Uuid организации
-     * @param $appealId string Номер обращения во внешней системе
-     * @param $text string Текст коментария
+     * @param $request Request Обращение
+     * @param $text string Комментарий
      * @return int
      * @throws InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    public static function sendComment($oid, $appealId, $text)
+    public static function sendComment($request, $text)
     {
+        $oid = $request->oid;
+        $appealId = $request->extId;
+
         $isApiSettings = self::getOrgSetting($oid, self::IS_API_PARAM_NAME);
         if ($isApiSettings == null) {
             Yii::error('Для организации с oid: ' . $oid . ', не найдены настройки API.', self::LOG_TAG);
@@ -565,15 +580,21 @@ class IntegrationIsController extends Controller
     }
 
     /**
-     * @param $oid string Uuid организации
-     * @param $appealId string Номер обращения во внешней системе
-     * @param $text string Текст коментария
-     * @return boolean
+     * @param Request $request
+     * @param string $text
+     * @return bool
      * @throws InvalidConfigException
      * @throws \yii\httpclient\Exception
      */
-    public static function closeAppeal($oid, $appealId, $text)
+    public static function closeAppeal($request, $text = "")
     {
+        if ($request == null || $request->extId == null) {
+            return false;
+        }
+
+        $oid = $request->oid;
+        $appealId = $request->extId;
+
         $isApiSettings = self::getOrgSetting($oid, self::IS_API_PARAM_NAME);
         if ($isApiSettings == null) {
             Yii::error('Для организации с oid: ' . $oid . ', не найдены настройки API.', self::LOG_TAG);
@@ -611,7 +632,8 @@ class IntegrationIsController extends Controller
         if ($response->isOk) {
             return true;
         } else {
-            Yii::error('Для организации с oid: ' . $oid . ', не смогли закрыть обращение.', self::LOG_TAG);
+            Yii::error('Для организации с oid: ' . $oid . ', не смогли закрыть обращение, request->uuid='
+                . $request->uuid . ', extId=' . $appealId, self::LOG_TAG);
             return false;
         }
     }
