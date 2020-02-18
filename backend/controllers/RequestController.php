@@ -2,7 +2,6 @@
 
 namespace backend\controllers;
 
-use api\controllers\IntegrationIsController;
 use backend\models\RequestSearch;
 use common\components\MainFunctions;
 use common\models\Comments;
@@ -60,7 +59,7 @@ class RequestController extends ZhkhController
                 $toLog['title'] = 'Изменен статус заявки';
                 $toLog['description'] = 'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'];
                 if ($model['requestStatusUuid'] == RequestStatus::COMPLETE) {
-                    IntegrationIsController::closeAppeal($model->oid, $model->extId, "");
+                    Request::closeAppeal($model);
                 }
             }
             if ($_POST['editableAttribute'] == 'type') {
@@ -412,10 +411,11 @@ class RequestController extends ZhkhController
                 $model->date = date('Y-m-d H:i:s');
                 $model->integrationClass = $request->integrationClass;
                 $model->extParentType = "null";
+                $model->extParentId = $request->extId;
                 if ($model->save(false)) {
                     /** @var Request $request */
                     if ($request && $request->extId && $request->integrationClass) {
-                        $id = IntegrationIsController::sendComment($model->oid, $model->extParentId, $model->text);
+                        $id = Request::sendComment($request, $model->text);
                         $model->extId = "" . $id;
                         $model->save();
                         return 0;
@@ -446,8 +446,7 @@ class RequestController extends ZhkhController
             // если закончили задачу
             if ($request->requestStatusUuid != RequestStatus::COMPLETE && $request->taskUuid) {
                 if ($request->task->workStatusUuid == WorkStatus::COMPLETE && $change_status) {
-                    // TODO какой текст? ид?
-                    IntegrationIsController::closeAppeal($request->oid, $request->extId, "");
+                    Request::closeAppeal($request);
                     $request->requestStatusUuid = RequestStatus::COMPLETE;
                     $request->save();
                 }

@@ -2,7 +2,6 @@
 
 namespace common\models;
 
-use api\controllers\IntegrationIsController;
 use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -175,7 +174,7 @@ class Task extends ZhkhActiveRecord
         /** @var Request $request */
         if ($request && $request->requestStatusUuid != RequestStatus::COMPLETE) {
             if ($change_status) {
-                IntegrationIsController::closeAppeal($request->oid, $request->extId, "Задача по этому запросу выполнена");
+                Request::closeAppeal($request, "Задача по этому запросу выполнена");
                 $request->requestStatusUuid = RequestStatus::COMPLETE;
                 $request->result = "Заявка выполнена";
                 $request->save();
