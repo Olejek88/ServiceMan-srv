@@ -174,9 +174,10 @@ use yii\helpers\Html;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function () {
+    $(document).on("beforeSubmit", "#form2", function (e) {
         e.preventDefault();
     }).on('submit', function (e) {
+        var me = $('button.btn.btn-success', e.target);
         e.preventDefault();
         me.prop('disabled', true).removeClass('enabled').addClass('disabled');
         var form = $('#form2');
@@ -189,7 +190,7 @@ use yii\helpers\Html;
                 window.location.reload();
             },
             error: function (result) {
-                alert(result.statusText);
+                //alert(result.statusText);
             },
             complete: function () {
                 me.prop('disabled', false).removeClass('disabled').addClass('enabled');
