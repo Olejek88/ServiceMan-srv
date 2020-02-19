@@ -6,6 +6,7 @@ use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Exception;
 use yii\db\Expression;
@@ -138,21 +139,33 @@ class Task extends ZhkhActiveRecord
         ];
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getTaskVerdict()
     {
         return $this->hasOne(TaskVerdict::class, ['uuid' => 'taskVerdictUuid']);
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getTaskTemplate()
     {
         return $this->hasOne(TaskTemplate::class, ['uuid' => 'taskTemplateUuid']);
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getAuthor()
     {
         return $this->hasOne(Users::class, ['uuid' => 'authorUuid']);
     }
 
+    /**
+     * @return ActiveQuery
+     */
     public function getWorkStatus()
     {
         return $this->hasOne(WorkStatus::class, ['uuid' => 'workStatusUuid']);

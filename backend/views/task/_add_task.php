@@ -1,21 +1,27 @@
 <?php
 /* @var $model common\models\Task */
-/* @var $equipmentUuid */
-/* @var $requestUuid */
-/* @var $type_uuid */
+/* @var $equipment Equipment */
+/* @var $request Request */
+/* @var $authorUuid */
+/* @var $equipments Equipment[] */
+/* @var $userSystem UserSystem[] */
+
+/* @var $taskTemplates TaskTemplate[] */
 
 use common\models\Equipment;
-use common\models\TaskTemplateEquipmentType;
-use common\models\TaskType;
+use common\models\Request;
+use common\models\TaskTemplate;
 use common\models\TaskVerdict;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\select2\Select2;
+use kartik\widgets\DepDrop;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 ?>
 
@@ -32,103 +38,87 @@ use yii\helpers\Html;
 </div>
 <div class="modal-body">
     <?php
-/*    if (!$model->isNewRecord) {
-        echo $form->field($model, 'uuid')
-            ->textInput(['maxlength' => true, 'readonly' => true]);
+    if ($equipment != null) {
+        echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipment->uuid])->label(false);
     } else {
-        echo $form->field($model, 'uuid')->hiddenInput(['value' => (new MainFunctions)->GUID()])->label(false);
-    }*/
-    ?>
-    <?php echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipmentUuid])->label(false); ?>
-    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
-    <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
-    <?php echo $form->field($model, 'taskVerdictUuid')->hiddenInput(['value' => TaskVerdict::NOT_DEFINED])->label(false); ?>
-    <?php
-        $accountUser = Yii::$app->user->identity;
-        $currentUser = Users::findOne(['user_id' => $accountUser['id']]);
-        echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $currentUser['uuid']])->label(false);
-        ?>
-    <?php if ($requestUuid != null) echo Html::hiddenInput("requestUuid", $requestUuid); ?>
-
-    <?php
-    if (isset($_GET["equipmentUuid"])) {
-        $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
-        $users = UserSystem::find()
-            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid']])
-            ->all();
-        $items = ArrayHelper::map($users, 'userUuid', 'user.name');
-    } else {
-        $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
-        $items = ArrayHelper::map($users, 'uuid', 'name');
-    }
-    echo '<label class="control-label">Исполнитель</label>';
-    echo Select2::widget(
-        [
-            'id' => 'userUuid',
-            'name' => 'userUuid',
+        echo $form->field($model, 'equipmentUuid')->widget(Select2::class, [
+            'data' => ArrayHelper::map($equipments, 'uuid', 'title'),
             'language' => 'ru',
-            'data' => $items,
-            'options' => ['placeholder' => 'Выберите исполнителя ...'],
+            'options' => [
+                'placeholder' => 'Выберите..',
+                'value' => $equipments[0]->uuid,
+            ],
             'pluginOptions' => [
                 'allowClear' => true
             ],
         ]);
+    }
+    ?>
 
-    if (isset($_GET["equipmentUuid"])) {
-        $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
-        $taskTemplate = TaskTemplateEquipmentType::find()
-            ->joinWith('taskTemplate')
-            ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
-            ->andWhere(['or',
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
-            ->orderBy('task_template.taskTypeUuid')
-            ->all();
-        $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
-            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
-        });
-        echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
+    <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
+    <?php echo $form->field($model, 'workStatusUuid')->hiddenInput(['value' => WorkStatus::NEW])->label(false); ?>
+    <?php echo $form->field($model, 'taskVerdictUuid')->hiddenInput(['value' => TaskVerdict::NOT_DEFINED])->label(false); ?>
+    <?php
+    echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $authorUuid])->label(false);
+    ?>
+    <?php if ($request->uuid != null) echo Html::hiddenInput("requestUuid", $request->uuid); ?>
+
+    <?php
+    echo '<label class="control-label">Исполнитель</label>';
+    if ($equipment != null) {
+        echo Select2::widget(
             [
-                'data' => $items,
+                'id' => 'userUuid',
+                'name' => 'userUuid',
                 'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Выберите..'
-                ],
+                'data' => $userSystem,
+                'options' => ['placeholder' => 'Выберите исполнителя ...'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
             ]);
     } else {
-        $taskTemplate = TaskTemplateEquipmentType::find()
-            ->where(['equipmentTypeUuid' => $type_uuid])
-            ->all();
-        $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
-            return $data['taskTemplate']['taskType']['title'] . ' :: ' . $data['taskTemplate']['title'];
-        });
-        echo $form->field($model, 'taskTemplateUuid')->widget(\kartik\widgets\Select2::class,
-            [
-                'data' => $items,
-                'language' => 'ru',
-                'options' => [
-                    'placeholder' => 'Шаблон задачи'
-                ],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]);
+        echo DepDrop::widget([
+            'id' => 'userUuid',
+            'name' => 'userUuid',
+            'language' => 'ru',
+            'data' => $userSystem,
+            'options' => ['placeholder' => 'Выберите исполнителя ...'],
+            'pluginOptions' => [
+                'depends' => ['task-equipmentuuid'],
+                'url' => Url::to(['//task/get-user-system'])
+            ],
+        ]);
+    }
+
+    if ($equipment != null) {
+        echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class, [
+            'data' => $taskTemplates,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите шаблон задачи..'
+            ],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);
+    } else {
+        echo $form->field($model, 'taskTemplateUuid')->widget(DepDrop::class, [
+            'data' => $taskTemplates,
+            'language' => 'ru',
+            'options' => [
+                'placeholder' => 'Выберите шаблон задачи..'
+            ],
+            'pluginOptions' => [
+                'depends' => ['task-equipmentuuid'],
+                'url' => Url::to(['//task/get-task-template'])
+            ],
+        ]);
     }
     ?>
 
     <?php
-    if (!isset($requestUuid))
+    if ($request == null)
         echo $form->field($model, 'comment')
             ->textarea(['rows' => 4, 'style' => 'resize: none;']);
     ?>
