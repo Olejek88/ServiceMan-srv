@@ -763,6 +763,9 @@ class TaskController extends ZhkhController
                         // так как задачи могут создаваться по заявкам из внешних систем, и у заявки может не быть оборудования,
                         // которое выбирают в момент создания заявки, принудительно его устанавливаем
                         $request->equipmentUuid = $model->equipmentUuid;
+                        // так как добавлена возможность выбрать объект с которым связано обращение,
+                        // принудительно его меняем в обращении
+                        $request->objectUuid = $model->equipment->objectUuid;
                         $request->save();
                     }
                 }
@@ -803,8 +806,11 @@ class TaskController extends ZhkhController
         $identity = Yii::$app->user->identity;
         $currentUser = $identity->users->uuid;
 
+        $objects = [];
         if ($requestUuid != null) {
             $request = Request::findOne(['uuid' => $requestUuid]);
+            $res = $request->object->house->objects;
+            $objects = ArrayHelper::map($res, 'uuid', 'title');
         }
 
         if ($equipmentUuid != null) {
@@ -815,7 +821,13 @@ class TaskController extends ZhkhController
             $equipments = Equipment::find()->where(['objectUuid' => $request->objectUuid])->all();
         }
 
-        $eqSysUuid = $equipment != null ? $equipment->equipmentType->equipmentSystemUuid : $equipments[0]->equipmentType->equipmentSystemUuid;
+        $eqSysUuid = null;
+        if ($equipment != null) {
+            $eqSysUuid = $equipment->equipmentType->equipmentSystemUuid;
+        } else if (count($equipments) > 0) {
+            $eqSysUuid = $equipments[0]->equipmentType->equipmentSystemUuid;
+        }
+
         $res = UserSystem::find()
             ->joinWith('user')
             ->where(['equipmentSystemUuid' => $eqSysUuid])->asArray()
@@ -825,7 +837,13 @@ class TaskController extends ZhkhController
             $userSystem[$v['userUuid']] = $v['user']['name'];
         }
 
-        $eqTypeUuid = $equipment != null ? $equipment->equipmentTypeUuid : $equipments[0]->equipmentTypeUuid;
+        $eqTypeUuid = null;
+        if ($equipment != null) {
+            $eqTypeUuid = $equipment->equipmentTypeUuid;
+        } else if (count($equipments) > 0) {
+            $eqTypeUuid = $equipments[0]->equipmentTypeUuid;
+        }
+
         $res = TaskTemplateEquipmentType::find()
             ->joinWith('taskTemplate')
             ->where(['equipmentTypeUuid' => $eqTypeUuid])
@@ -856,6 +874,7 @@ class TaskController extends ZhkhController
             'equipments' => $equipments,
             'userSystem' => $userSystem,
             'taskTemplates' => $taskTemplates,
+            'objects' => $objects,
         ]);
     }
 
@@ -1329,9 +1348,14 @@ class TaskController extends ZhkhController
             if ($parents != null) {
                 $equUuid = $parents[0];
                 $eq = Equipment::findOne(['uuid' => $equUuid]);
-                $out = UserSystem::find()
-                    ->joinWith('user')
-                    ->where(['equipmentSystemUuid' => $eq->equipmentType->equipmentSystemUuid])->asArray()->all();
+                if ($eq != null) {
+                    $out = UserSystem::find()
+                        ->joinWith('user')
+                        ->where(['equipmentSystemUuid' => $eq->equipmentType->equipmentSystemUuid])->asArray()->all();
+                } else {
+                    $out = [];
+                }
+
                 $res = [];
                 foreach ($out as $v) {
                     $res[] = ['id' => $v['userUuid'], 'name' => $v['user']['name']];
@@ -1357,28 +1381,58 @@ class TaskController extends ZhkhController
             if ($parents != null) {
                 $equUuid = $parents[0];
                 $eq = Equipment::findOne(['uuid' => $equUuid]);
-                $out = TaskTemplateEquipmentType::find()
-                    ->joinWith('taskTemplate')
-                    ->where(['equipmentTypeUuid' => $eq->equipmentTypeUuid])
-                    ->andWhere(['or',
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
-                        ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
-                    ->orderBy('task_template.taskTypeUuid')
-                    ->all();
+                if ($eq != null) {
+                    $out = TaskTemplateEquipmentType::find()
+                        ->joinWith('taskTemplate')
+                        ->where(['equipmentTypeUuid' => $eq->equipmentTypeUuid])
+                        ->andWhere(['or',
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+                        ->orderBy('task_template.taskTypeUuid')
+                        ->all();
+                } else {
+                    $out = [];
+                }
+
                 $res = [];
                 foreach ($out as $v) {
                     $res[] = [
                         'id' => $v->taskTemplateUuid,
                         'name' => $v->taskTemplate->taskType->title . ' :: ' . $v->taskTemplate->title,
                     ];
+                }
+
+                return ['output' => $res, 'selected' => ''];
+            }
+        }
+
+        return ['output' => '', 'selected' => ''];
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionGetEquipments()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $objectsUuid = $parents[0];
+                $out = Equipment::find()->where(['objectUuid' => $objectsUuid])->asArray()->all();
+                $res = [];
+                foreach ($out as $v) {
+                    $res[] = ['id' => $v['uuid'], 'name' => $v['title']];
                 }
 
                 return ['output' => $res, 'selected' => ''];

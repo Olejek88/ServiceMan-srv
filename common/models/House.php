@@ -30,6 +30,7 @@ use yii\db\Expression;
  * @property Photo $photo
  * @property string $fullTitle
  * @property HouseType $houseType
+ * @property Objects[] $objects
  */
 class House extends ZhkhActiveRecord
 {
@@ -149,4 +150,13 @@ class House extends ZhkhActiveRecord
     {
         return 'ул.' . $this->street['title'] . ', д.' . $this->number;
     }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getObjects()
+    {
+        return $this->hasMany(Objects::class, ['houseUuid' => 'uuid']);
+    }
+
 }

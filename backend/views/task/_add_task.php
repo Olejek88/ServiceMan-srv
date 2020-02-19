@@ -1,13 +1,4 @@
 <?php
-/* @var $model common\models\Task */
-/* @var $equipment Equipment */
-/* @var $request Request */
-/* @var $authorUuid */
-/* @var $equipments Equipment[] */
-/* @var $userSystem UserSystem[] */
-
-/* @var $taskTemplates TaskTemplate[] */
-
 use common\models\Equipment;
 use common\models\Request;
 use common\models\TaskTemplate;
@@ -23,6 +14,13 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
+/* @var $model common\models\Task */
+/* @var $equipment Equipment */
+/* @var $request Request */
+/* @var $authorUuid */
+/* @var $equipments Equipment[] */
+/* @var $userSystem UserSystem[] */
+/* @var $taskTemplates TaskTemplate[] */
 ?>
 
 <?php $form = ActiveForm::begin([
@@ -41,15 +39,32 @@ use yii\helpers\Url;
     if ($equipment != null) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipment->uuid])->label(false);
     } else {
-        echo $form->field($model, 'equipmentUuid')->widget(Select2::class, [
+        echo Select2::widget(
+            [
+                'id' => 'objectsUuid',
+                'name' => 'objectsUuid',
+                'language' => 'ru',
+                'data' => $objects,
+                'value' => $request != null ? $request->objectUuid : '',
+                'options' => [
+                    'placeholder' => 'Выберите объект...',
+                ],
+                'pluginOptions' => [
+                    'allowClear' => true
+                ],
+            ]);
+
+        $eqUuid = isset($equipments[0]) ? $equipments[0]->uuid : null;
+        echo $form->field($model, 'equipmentUuid')->widget(DepDrop::class, [
             'data' => ArrayHelper::map($equipments, 'uuid', 'title'),
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите..',
-                'value' => $equipments[0]->uuid,
+                'placeholder' => 'Выберите элемент...',
+                'value' => $eqUuid,
             ],
             'pluginOptions' => [
-                'allowClear' => true
+                'depends' => ['objectsUuid'],
+                'url' => Url::to(['//task/get-equipments'])
             ],
         ]);
     }
