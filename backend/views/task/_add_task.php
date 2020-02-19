@@ -39,6 +39,7 @@ use yii\helpers\Url;
     if ($equipment != null) {
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $equipment->uuid])->label(false);
     } else {
+        echo '<label class="control-label" for="objectsUuid">Объект / инженерная система</label>';
         echo Select2::widget(
             [
                 'id' => 'objectsUuid',
@@ -47,7 +48,7 @@ use yii\helpers\Url;
                 'data' => $objects,
                 'value' => $request != null ? $request->objectUuid : '',
                 'options' => [
-                    'placeholder' => 'Выберите объект...',
+                    'placeholder' => 'Выберите объект/инженерную систему...',
                 ],
                 'pluginOptions' => [
                     'allowClear' => true
@@ -55,16 +56,19 @@ use yii\helpers\Url;
             ]);
 
         $eqUuid = isset($equipments[0]) ? $equipments[0]->uuid : null;
+        echo '<br/>';
+        $placeHolder = 'Выберите элемент...';
         echo $form->field($model, 'equipmentUuid')->widget(DepDrop::class, [
             'data' => ArrayHelper::map($equipments, 'uuid', 'title'),
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите элемент...',
+                'placeholder' => $placeHolder,
                 'value' => $eqUuid,
             ],
             'pluginOptions' => [
                 'depends' => ['objectsUuid'],
-                'url' => Url::to(['//task/get-equipments'])
+                'url' => Url::to(['//task/get-equipments']),
+                'placeholder' => $placeHolder,
             ],
         ]);
     }
@@ -93,13 +97,16 @@ use yii\helpers\Url;
                 ],
             ]);
     } else {
+        echo '<br/>';
+        $placeHolder = 'Выберите исполнителя...';
         echo DepDrop::widget([
             'id' => 'userUuid',
             'name' => 'userUuid',
             'language' => 'ru',
             'data' => $userSystem,
-            'options' => ['placeholder' => 'Выберите исполнителя ...'],
+            'options' => ['placeholder' => $placeHolder],
             'pluginOptions' => [
+                'placeholder' => $placeHolder,
                 'depends' => ['task-equipmentuuid'],
                 'url' => Url::to(['//task/get-user-system'])
             ],
@@ -111,20 +118,23 @@ use yii\helpers\Url;
             'data' => $taskTemplates,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите шаблон задачи..'
+                'placeholder' => 'Выберите шаблон задачи...',
             ],
             'pluginOptions' => [
                 'allowClear' => true
             ],
         ]);
     } else {
+        echo '<br/>';
+        $placeHolder = 'Выберите шаблон задачи...';
         echo $form->field($model, 'taskTemplateUuid')->widget(DepDrop::class, [
             'data' => $taskTemplates,
             'language' => 'ru',
             'options' => [
-                'placeholder' => 'Выберите шаблон задачи..'
+                'placeholder' => $placeHolder,
             ],
             'pluginOptions' => [
+                'placeholder' => $placeHolder,
                 'depends' => ['task-equipmentuuid'],
                 'url' => Url::to(['//task/get-task-template'])
             ],
