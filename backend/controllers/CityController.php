@@ -196,6 +196,7 @@ class CityController extends ZhkhController
         if (isset($_POST['id'])) {
             $equipments = Equipment::find()
                 ->where(['objectUuid' => $_POST['id']])
+                ->andWhere(['deleted' => 0])
                 ->all();
             $items = ArrayHelper::map($equipments, 'uuid', function ($data) {
                 return $data['title'];

@@ -122,11 +122,6 @@ class ContragentController extends ZhkhController
      */
     public function actionCreate()
     {
-        if (!Yii::$app->user->can(User::ROLE_ADMIN) &&
-            !Yii::$app->user->can(User::ROLE_OPERATOR)) {
-            $this->redirect('index');
-        }
-
         $contragent = new Contragent();
         $searchModel = new ContragentSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
