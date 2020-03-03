@@ -504,18 +504,13 @@ class UsersController extends ZhkhController
     {
         $events = [];
 
-        $journals = Journal::find()->orderBy('date DESC')->all();
+        $journals = Journal::find()
+            ->leftJoin('{{%users}}', '{{%users}}.oid = \'' . Users::getCurrentOid() . '\'')
+            ->orderBy('date DESC')
+            ->all();
         foreach ($journals as $journal) {
             $events[] = ['date' => $journal['date'], 'event' => self::formEventUsers($journal['date'], $journal['type'],
                 $journal['user']['name'], $journal['title'], $journal['description'])];
-        }
-        $photos = Photo::find()
-            ->limit(5)
-            ->all();
-        foreach ($photos as $photo) {
-            $text = '<a class="btn btn-default btn-xs">' . $photo['equipment']['title'] . '</a><br/>';
-            $events[] = ['date' => $photo['createdAt'], 'event' => self::formEventUsers($photo['createdAt'], 'photo',
-                $photo['user']['name'], 'Добавлено фото', $text)];
         }
 
         $measures = Measure::find()
