@@ -855,7 +855,10 @@ class ObjectController extends ZhkhController
      */
     public function actionHouse()
     {
-        $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
+        $houses = House::find()
+            ->where(['streetUuid' => $_POST['id']])
+            ->andWhere(['deleted' => 0])
+            ->all();
         $items = ArrayHelper::map($houses, 'uuid', function ($model) {
             return $model['houseType']->title . ', ' . $model->number;
         });

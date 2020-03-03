@@ -192,7 +192,7 @@ class SiteController extends Controller
         $photosGroup = 'var houses=L.layerGroup([';
         $photosList = '';
         $photoHouses = House::find()
-            ->select('*')
+            ->where(['deleted' => 0])
             ->all();
         $default_coordinates = "[55.54,61.36]";
         $coordinates = $default_coordinates;
