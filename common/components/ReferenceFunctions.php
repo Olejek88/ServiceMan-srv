@@ -738,15 +738,15 @@ class ReferenceFunctions
         self::insertIntoRequestType($db, 'Устранение аварийных повреждений внутридомовых систем  электроснабжения',
             72, TaskType::TASK_TYPE_REPAIR, $oid);
         // Особый тип без шаблона задачи
-        /*        $currentTime = date('Y-m-d\TH:i:s');
-                $db->createCommand()->insert('request_type', [
-                    'uuid' => MainFunctions::GUID(),
-                    'oid' => $oid,
-                    'title' => 'Другой характер обращения',
-                    'taskTemplateUuid' => null,
-                    'createdAt' => $currentTime,
-                    'changedAt' => $currentTime
-                ])->execute();*/
+        $currentTime = date('Y-m-d\TH:i:s');
+        $db->createCommand()->insert('request_type', [
+            'uuid' => MainFunctions::GUID(),
+            'oid' => $oid,
+            'title' => 'Другой характер обращения',
+            'taskTemplateUuid' => null,
+            'createdAt' => $currentTime,
+            'changedAt' => $currentTime
+        ])->execute();
     }
 
     /**

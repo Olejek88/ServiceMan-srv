@@ -690,22 +690,23 @@ class SiteController extends Controller
                 ->where(['objectUuid' => $measure['equipmentUuid']])
                 ->orderBy('createdAt DESC')
                 ->one();
-
-            $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
-            if ($path == null)
-                $path = 'images/no-image-icon-4.png';
-            $text = '<a href="/storage/equipment/' . $photo['uuid'] . '.jpg"><img src="' . Html::encode($path) . '" class="margin" 
+            if ($photo) {
+                $path = '/storage/equipment/' . $photo['uuid'] . '.jpg';
+                if ($path == null)
+                    $path = 'images/no-image-icon-4.png';
+                $text = '<a href="/storage/equipment/' . $photo['uuid'] . '.jpg"><img src="' . Html::encode($path) . '" class="margin" 
                         style="width:50px; margin: 2px; float:left" alt=""></a>';
-            $text .= '<a class="btn btn-default btn-xs">' .
-                $measure['equipment']['equipmentType']->title . ' [' .
-                $measure['equipment']['object']['house']['street']->title . ', ' .
-                $measure['equipment']['object']['house']->number . ', ' .
-                $measure['equipment']['object']['title'] . ']</a><br/>
+                $text .= '<a class="btn btn-default btn-xs">' .
+                    $measure['equipment']['equipmentType']->title . ' [' .
+                    $measure['equipment']['object']['house']['street']->title . ', ' .
+                    $measure['equipment']['object']['house']->number . ', ' .
+                    $measure['equipment']['object']['title'] . ']</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Оборудование: ' . $measure['equipment']['equipmentType']->title . '<br/>
                 <i class="fa fa-check-square"></i>&nbsp;Значение: ' . $measure['value'] . '';
-            $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
-                $measure['_id'],
-                $measure['equipment']['equipmentType']->title, $text, $measure['user']->name)];
+                $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
+                    $measure['_id'],
+                    $measure['equipment']['equipmentType']->title, $text, $measure['user']->name)];
+            }
         }
 
         $alarms = Alarm::find()
@@ -729,6 +730,7 @@ class SiteController extends Controller
         }
 
         $journals = Journal::find()
+            ->leftJoin('{{%users}}', '{{%users}}.oid = \'' . Users::getCurrentOid() . '\'')
             ->orderBy('date DESC')
             ->limit(20)
             ->all();
