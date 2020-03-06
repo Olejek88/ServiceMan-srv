@@ -803,7 +803,7 @@ class ReferenceFunctions
     {
         $currentTime = date('Y-m-d\TH:i:s');
         $uuid = MainFunctions::GUID();
-        $db->createCommand()->insert('task_template', [
+        $data = [
             'uuid' => $uuid,
             'title' => $title,
             'description' => $description,
@@ -812,15 +812,18 @@ class ReferenceFunctions
             'oid' => $organizationUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ])->execute();
+        ];
+        $db->createCommand()->insert('task_template', $data)->execute();
 
-        $db->createCommand()->insert('task_template_equipment_type', [
+        $data = [
             'uuid' => MainFunctions::GUID(),
+            'oid' => $organizationUuid,
             'equipmentTypeUuid' => $equipmentTypeUuid,
             'taskTemplateUuid' => $uuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ])->execute();
+        ];
+        $db->createCommand()->insert('task_template_equipment_type', $data)->execute();
     }
 
     /**
@@ -833,13 +836,14 @@ class ReferenceFunctions
     private static function insertIntoEquipmentType($db, $uuid, $equipmentSystemUuid, $title)
     {
         $currentTime = date('Y-m-d\TH:i:s');
-        $db->createCommand()->insert('equipment_type', [
+        $data = [
             'uuid' => $uuid,
             'title' => $title,
             'equipmentSystemUuid' => $equipmentSystemUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ])->execute();
+        ];
+        $db->createCommand()->insert('equipment_type', $data)->execute();
     }
 
     /**
@@ -911,7 +915,7 @@ class ReferenceFunctions
                     $taskTypeUuid = TaskType::TASK_TYPE_CURRENT_REPAIR;
             }
 
-            $db->createCommand()->insert('task_template', [
+            $data = [
                 'uuid' => $uuid,
                 'title' => $title,
                 'description' => $title,
@@ -920,16 +924,18 @@ class ReferenceFunctions
                 'oid' => $organizationUuid,
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
-            ])->execute();
+            ];
+            $db->createCommand()->insert('task_template', $data)->execute();
 
-            $db->createCommand()->insert('task_template_equipment_type', [
+            $data = [
                 'uuid' => MainFunctions::GUID(),
                 'oid' => $organizationUuid,
                 'equipmentTypeUuid' => $equipmentTypeUuid,
                 'taskTemplateUuid' => $uuid,
                 'createdAt' => $currentTime,
                 'changedAt' => $currentTime
-            ])->execute();
+            ];
+            $db->createCommand()->insert('task_template_equipment_type', $data)->execute();
         }
     }
 
@@ -945,7 +951,7 @@ class ReferenceFunctions
     {
         $currentTime = date('Y-m-d\TH:i:s');
         $uuid = MainFunctions::GUID();
-        $db->createCommand()->insert('task_template', [
+        $data = [
             'uuid' => $uuid,
             'title' => $title,
             'description' => $title,
@@ -954,16 +960,18 @@ class ReferenceFunctions
             'taskTypeUuid' => $taskTypeUuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ])->execute();
+        ];
+        $db->createCommand()->insert('task_template', $data)->execute();
 
-        $db->createCommand()->insert('request_type', [
+        $data = [
             'uuid' => MainFunctions::GUID(),
             'oid' => $organizationUuid,
             'title' => $title,
             'taskTemplateUuid' => $uuid,
             'createdAt' => $currentTime,
             'changedAt' => $currentTime
-        ])->execute();
+        ];
+        $db->createCommand()->insert('request_type', $data)->execute();
     }
 
     public static function addOrgPermission($oid, $db)

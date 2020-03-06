@@ -16,7 +16,10 @@ use common\models\Request;
 use common\models\Settings;
 use common\models\Task;
 use common\models\TaskTemplateEquipment;
+use common\models\TaskTemplateEquipmentType;
+use common\models\TaskType;
 use common\models\TaskUser;
+use common\models\User;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
@@ -27,6 +30,7 @@ use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 use yii2fullcalendar\models\Event;
 
 class TaskController extends ZhkhController
@@ -39,6 +43,7 @@ class TaskController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionIndex()
     {
@@ -177,6 +182,7 @@ class TaskController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionTableReportView()
     {
@@ -375,6 +381,7 @@ class TaskController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionCreate()
     {
@@ -721,6 +728,7 @@ class TaskController extends ZhkhController
      * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionAddTask()
     {
@@ -752,6 +760,12 @@ class TaskController extends ZhkhController
                     $request = Request::find()->where(['uuid' => $_POST["requestUuid"]])->one();
                     if ($request) {
                         $request['taskUuid'] = $task['task']['uuid'];
+                        // так как задачи могут создаваться по заявкам из внешних систем, и у заявки может не быть оборудования,
+                        // которое выбирают в момент создания заявки, принудительно его устанавливаем
+                        $request->equipmentUuid = $model->equipmentUuid;
+                        // так как добавлена возможность выбрать объект с которым связано обращение,
+                        // принудительно его меняем в обращении
+                        $request->objectUuid = $model->equipment->objectUuid;
                         $request->save();
                     }
                 }
@@ -778,18 +792,90 @@ class TaskController extends ZhkhController
 
     /**
      * @return string
+     * @throws Exception
+     * @throws InvalidConfigException
      */
     public function actionForm()
     {
-        if (isset($_GET["equipmentUuid"])) {
-            $model = new Task();
-            $model->taskDate = date("Y-m-d H:i:s", time());
-            $requestUuid = Yii::$app->request->getQueryParam('requestUuid');
-            return $this->renderAjax('_add_task', ['model' => $model, 'equipmentUuid' => $_GET["equipmentUuid"],
-                'requestUuid' => $requestUuid, 'type_uuid' => $_GET["type_uuid"]]);
-        } else {
-            return '<h3 style="color: red">Не указанно оборудование.</h3>';
+        $request = null;
+        $requestUuid = Yii::$app->request->getQueryParam('requestUuid');
+        $equipment = null;
+        $equipments = null;
+        $equipmentUuid = Yii::$app->request->getQueryParam('equipmentUuid');
+        /** @var User $identity */
+        $identity = Yii::$app->user->identity;
+        $currentUser = $identity->users->uuid;
+
+        $objects = [];
+        if ($requestUuid != null) {
+            $request = Request::findOne(['uuid' => $requestUuid]);
+            $res = $request->object->house->objects;
+            $objects = ArrayHelper::map($res, 'uuid', 'title');
         }
+
+        if ($equipmentUuid != null) {
+            $equipment = Equipment::findOne(['uuid' => $equipmentUuid]);
+        }
+
+        if ($equipment == null && $request != null) {
+            $equipments = Equipment::find()->where(['objectUuid' => $request->objectUuid])->all();
+        }
+
+        $eqSysUuid = null;
+        if ($equipment != null) {
+            $eqSysUuid = $equipment->equipmentType->equipmentSystemUuid;
+        } else if (count($equipments) > 0) {
+            $eqSysUuid = $equipments[0]->equipmentType->equipmentSystemUuid;
+        }
+
+        $res = UserSystem::find()
+            ->joinWith('user')
+            ->where(['equipmentSystemUuid' => $eqSysUuid])->asArray()
+            ->all();
+        $userSystem = [];
+        foreach ($res as $v) {
+            $userSystem[$v['userUuid']] = $v['user']['name'];
+        }
+
+        $eqTypeUuid = null;
+        if ($equipment != null) {
+            $eqTypeUuid = $equipment->equipmentTypeUuid;
+        } else if (count($equipments) > 0) {
+            $eqTypeUuid = $equipments[0]->equipmentTypeUuid;
+        }
+
+        $res = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where(['equipmentTypeUuid' => $eqTypeUuid])
+            ->andWhere(['or',
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
+                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+            ->orderBy('task_template.taskTypeUuid')
+            ->all();
+        $taskTemplates = ArrayHelper::map($res, 'taskTemplate.uuid', function ($model) {
+            return $model->taskTemplate->taskType->title . ' :: ' . $model->taskTemplate->title;
+        });
+
+        $model = new Task();
+        $model->taskDate = date("Y-m-d H:i:s", time());
+        return $this->renderAjax('_add_task', [
+            'model' => $model,
+            'equipment' => $equipment,
+            'request' => $request,
+            'authorUuid' => $currentUser,
+            'equipments' => $equipments,
+            'userSystem' => $userSystem,
+            'taskTemplates' => $taskTemplates,
+            'objects' => $objects,
+        ]);
     }
 
     /**
@@ -944,6 +1030,7 @@ class TaskController extends ZhkhController
      * @return string
      * @throws Exception
      * @throws InvalidConfigException
+     * @throws \yii\httpclient\Exception
      */
     public function actionUser()
     {
@@ -1246,5 +1333,112 @@ class TaskController extends ZhkhController
         }
         return Yii::$app->response->redirect(['task/table']);
         //return "Задача не найдена!";
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionGetUserSystem()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $equUuid = $parents[0];
+                $eq = Equipment::findOne(['uuid' => $equUuid]);
+                if ($eq != null) {
+                    $out = UserSystem::find()
+                        ->joinWith('user')
+                        ->where(['equipmentSystemUuid' => $eq->equipmentType->equipmentSystemUuid])->asArray()->all();
+                } else {
+                    $out = [];
+                }
+
+                $res = [];
+                foreach ($out as $v) {
+                    $res[] = ['id' => $v['userUuid'], 'name' => $v['user']['name']];
+                }
+
+                return ['output' => $res, 'selected' => ''];
+            }
+        }
+
+        return ['output' => '', 'selected' => ''];
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionGetTaskTemplate()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $equUuid = $parents[0];
+                $eq = Equipment::findOne(['uuid' => $equUuid]);
+                if ($eq != null) {
+                    $out = TaskTemplateEquipmentType::find()
+                        ->joinWith('taskTemplate')
+                        ->where(['equipmentTypeUuid' => $eq->equipmentTypeUuid])
+                        ->andWhere(['or',
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CONTROL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLAN_TO],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_UNINSTALL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_INSTALL],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_NOT_PLANNED_CHECK],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK]])
+                        ->orderBy('task_template.taskTypeUuid')
+                        ->all();
+                } else {
+                    $out = [];
+                }
+
+                $res = [];
+                foreach ($out as $v) {
+                    $res[] = [
+                        'id' => $v->taskTemplateUuid,
+                        'name' => $v->taskTemplate->taskType->title . ' :: ' . $v->taskTemplate->title,
+                    ];
+                }
+
+                return ['output' => $res, 'selected' => ''];
+            }
+        }
+
+        return ['output' => '', 'selected' => ''];
+    }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function actionGetEquipments()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        if (isset($_POST['depdrop_parents'])) {
+            $parents = $_POST['depdrop_parents'];
+            if ($parents != null) {
+                $objectsUuid = $parents[0];
+                $out = Equipment::find()->where(['objectUuid' => $objectsUuid])->asArray()->all();
+                $res = [];
+                foreach ($out as $v) {
+                    $res[] = ['id' => $v['uuid'], 'name' => $v['title']];
+                }
+
+                return ['output' => $res, 'selected' => ''];
+            }
+        }
+
+        return ['output' => '', 'selected' => ''];
     }
 }

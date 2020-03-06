@@ -39,7 +39,7 @@ use yii\db\Expression;
  * @property RequestStatus $requestStatus
  * @property RequestType $requestType
  * @property Equipment $equipment
- * @property Object $object
+ * @property Objects $object
  * @property Task $task
  * @property int $id
  */

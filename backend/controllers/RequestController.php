@@ -233,8 +233,8 @@ class RequestController extends ZhkhController
                     }
                 }
                 if (isset($_POST['phoneNumber'])) {
-                    $model_contragent =  $model['contragent'];
-                    if ($model_contragent && ($model_contragent['phone']!=$_POST['phoneNumber'])) {
+                    $model_contragent = $model['contragent'];
+                    if ($model_contragent && ($model_contragent['phone'] != $_POST['phoneNumber'])) {
                         $model_contragent["phone"] = $_POST['phoneNumber'];
                         $model_contragent->save();
                     }
