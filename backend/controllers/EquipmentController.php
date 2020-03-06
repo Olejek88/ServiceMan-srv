@@ -1695,17 +1695,12 @@ class EquipmentController extends ZhkhController
 
         // TODO: заменть все Html::a на ручной вариант, т.к. на тысячах единц оборудования это слишком тормозит
         $userEquipmentName = '';
-        $userEquipmentName = Html::a('<span class="glyphicon glyphicon-comment"></span>&nbsp',
-            ['/request/form', 'equipmentUuid' => $equipmentUuid, 'source' => 'tree'],
-            [
-                'title' => 'Добавить заявку',
-                'data-toggle' => 'modal',
-                'data-target' => '#modalRequest',
-            ]
-        );
-
-        if (isset($userSystems[$equipmentSystemUuid]) && $userSystems[$equipmentSystemUuid]['usersString'] === '') {
-            $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+        if (isset($userSystems[$equipmentSystemUuid])) {
+            if ($userSystems[$equipmentSystemUuid]['usersString'] === '') {
+                $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+            } else {
+                $userEquipmentName = $userSystems[$equipmentSystemUuid]['usersString'];
+            }
         }
 
         $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';

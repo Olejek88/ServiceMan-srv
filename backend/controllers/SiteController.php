@@ -730,7 +730,6 @@ class SiteController extends Controller
         }
 
         $journals = Journal::find()
-            //->joinWith('user')
             ->leftJoin('{{%users}}', '{{%users}}.oid = \'' . Users::getCurrentOid() . '\'')
             ->orderBy('date DESC')
             ->limit(20)

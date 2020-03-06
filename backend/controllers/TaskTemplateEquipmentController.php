@@ -386,11 +386,16 @@ class TaskTemplateEquipmentController extends ZhkhController
         return false;
     }
 
+    /**
+     * @return bool|string
+     * @throws InvalidConfigException
+     * @throws \yii\db\Exception
+     */
     public function actionMove()
     {
         if (isset($_POST["id"])) {
             $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["id"]])->one();
-            if ($model) {
+            if ($model && isset($_POST['start']) && isset($_POST['end'])) {
                 $search = date("Y-m-d H:i:s", $_POST['start']/1000);
                 $replace = date("Y-m-d H:i:s", $_POST['end']/1000);
                 $result = str_replace($search,$replace,$model['next_dates']);

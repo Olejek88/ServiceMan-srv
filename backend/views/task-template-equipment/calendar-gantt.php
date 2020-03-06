@@ -40,7 +40,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         each = Highcharts.each,
         reduce = Highcharts.reduce,
         btnShowDialog = document.getElementById('btnShowDialog'),
-        btnRemoveTask = document.getElementById('btnRemoveSelected'),
+        //btnRemoveTask = document.getElementById('btnRemoveSelected'),
         btnAddTask = document.getElementById('btnAddTask'),
         btnCancelAddTask = document.getElementById('btnCancelAddTask'),
         addTaskDialog = document.getElementById('addTaskDialog'),
@@ -210,8 +210,11 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                         select: updateRemoveButtonStatus,
                         unselect: updateRemoveButtonStatus,
                         remove: updateRemoveButtonStatus,
+                        drag: function (data) {
+                            //start = data.newPoint.start;
+                            //console.warn(data);
+                        },
                         click: function(data) {
-                            console.log(data.point.start);
                             start = data.point.start;
                         },
                         drop: function(data) {
