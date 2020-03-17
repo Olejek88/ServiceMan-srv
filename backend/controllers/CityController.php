@@ -172,9 +172,10 @@ class CityController extends ZhkhController
                     ->where(['in', 'objectTypeUuid',
                         [ObjectType::OBJECT_TYPE_FLAT, ObjectType::OBJECT_TYPE_GENERAL, ObjectType::OBJECT_TYPE_COMMERCE]])
                     ->andWhere(['houseUuid' => $_POST['id']])
+                    ->andWhere(['deleted' => false])
                     ->all();
             } else {
-                $objects = Objects::find()->where(['houseUuid' => $_POST['id']])->all();
+                $objects = Objects::find()->where(['deleted' => false])->andWhere(['houseUuid' => $_POST['id']])->all();
             }
             $items = ArrayHelper::map($objects, 'uuid', function ($data) {
                 if ($data['objectTypeUuid'] == ObjectType::OBJECT_TYPE_FLAT)

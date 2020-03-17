@@ -61,7 +61,7 @@ use yii\widgets\ActiveForm;
 
     <?php
 
-    $object = Objects::find()->all();
+    $object = Objects::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($object, 'uuid', 'title');
     echo $form->field($model, 'objectUuid')->widget(Select2::class,
         [

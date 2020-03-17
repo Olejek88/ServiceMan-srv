@@ -44,7 +44,7 @@ use yii\widgets\ActiveForm;
 
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
 
-    $equipments = Equipment::find()->all();
+    $equipments = Equipment::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
         return $model->getFullTitle();
     });

@@ -382,7 +382,7 @@ class EquipmentController extends ZhkhController
 
         $streets = Street::find()->asArray()->indexBy('uuid')->all();
         $objects = Objects::find()->asArray()->indexBy('uuid')->all();
-        $houses = House::find()->asArray()->indexBy('uuid')->all();
+        $houses = House::find()->where(['deleted' => false])->asArray()->indexBy('uuid')->all();
         $statuses = EquipmentStatus::find()->asArray()->indexBy('uuid')->orderBy('title')->all();
 
         $types = EquipmentType::find()->asArray()->orderBy('title')->all();
@@ -393,7 +393,14 @@ class EquipmentController extends ZhkhController
 
         unset($types);
 
-        $equipments = Equipment::find()->asArray()->andWhere(['deleted' => false])->all();
+        $equipments = Equipment::find()
+            ->joinWith('object')
+            ->joinWith('object.house')
+            ->asArray()
+            ->where(['equipment.deleted' => false])
+            ->andWhere(['object.deleted' => false])
+            ->andWhere(['house.deleted' => false])
+            ->all();
         $equipmentsByType = [];
         foreach ($equipments as $equipment) {
             $equipmentsByType[$equipment['equipmentTypeUuid']][] = $equipment;
@@ -616,7 +623,7 @@ class EquipmentController extends ZhkhController
         unset($userHousesTmp);
 
         // выбираем все объекты по домам
-        $objects = Objects::find()->asArray()->all();
+        $objects = Objects::find()->where(['deleted' => false])->asArray()->all();
         $objectsByHouses = [];
         foreach ($objects as $object) {
             $objectsByHouses[$object['houseUuid']][$object['uuid']] = $object;
@@ -625,7 +632,7 @@ class EquipmentController extends ZhkhController
         unset($objects);
 
         // выбираем всё оборудование по объектам
-        $equipments = Equipment::find()->asArray()->all();
+        $equipments = Equipment::find()->where(['deleted' => false])->asArray()->all();
         $equipmentsByObjects = [];
         foreach ($equipments as $equipment) {
             $equipmentsByObjects[$equipment['objectUuid']][$equipment['uuid']] = $equipment;

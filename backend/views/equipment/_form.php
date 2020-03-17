@@ -122,7 +122,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $object = Objects::find()->all();
+    $object = Objects::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($object, 'uuid', function ($model) {
         return $model['house']['street']->title . ', ' . $model['house']->number . ', ' . $model['title'];
     });

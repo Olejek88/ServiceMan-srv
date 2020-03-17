@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'latitude')->textInput(['maxlength' => true]) ?>
 
     <?php
-    $equipment = Equipment::find()->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
         return $model['object']['house']['street']->title . ', ' . $model['object']['house']->number . ', ' .
             $model['object']['number'] . ' ' . $model['equipmentType']->title;

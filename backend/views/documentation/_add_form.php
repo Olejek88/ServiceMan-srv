@@ -82,6 +82,7 @@ use yii\helpers\Html;
     if (!$equipmentTypeUuid && !$equipmentUuid && !$houseUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => null])->label(false);
         $equipment = Equipment::find()
+            ->where(['deleted' => false])
             ->orderBy('objectUuid')
             ->all();
         $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
