@@ -96,7 +96,7 @@ use yii\widgets\ActiveForm;
                   }"]
         ]);
 
-    $equipments = Equipment::find()->all();
+    $equipments = Equipment::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
         return $model->getFullTitle();
     });

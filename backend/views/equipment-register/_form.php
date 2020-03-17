@@ -37,7 +37,7 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($registerTypes, 'uuid', 'title');
     echo $form->field($model, 'registerTypeUuid')->dropDownList($items);
 
-    $equipment = Equipment::find()->orderBy("title")->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->orderBy("title")->all();
     $items = ArrayHelper::map($equipment, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid')->dropDownList($items);
 

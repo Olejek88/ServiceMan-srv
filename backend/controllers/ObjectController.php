@@ -216,6 +216,7 @@ class ObjectController extends ZhkhController
             foreach ($houses as $house) {
                 $objects = Objects::find()
                     ->where(['houseUuid' => $house['uuid']])
+                    ->andWhere(['deleted' => false])
                     ->andwhere(['IN', 'objectTypeUuid',
                         [ObjectType::OBJECT_TYPE_FLAT,
                             ObjectType::OBJECT_TYPE_COMMERCE]])

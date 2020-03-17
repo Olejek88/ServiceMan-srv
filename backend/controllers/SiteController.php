@@ -304,9 +304,9 @@ class SiteController extends Controller
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
         $houseCount = House::find()->count();
-        $objectsCount = Objects::find()->count();
+        $objectsCount = Objects::find()->where(['deleted' => false])->count();
         $flatCount = Objects::find()->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])->count();
-        $equipmentCount = Equipment::find()->count();
+        $equipmentCount = Equipment::find()->where(['deleted' => false])->count();
         $contragentCount = Contragent::find()->count();
         $equipmentTypeCount = EquipmentType::find()->count();
         //        $usersCount = Users::find()->count();
