@@ -226,6 +226,12 @@ class Equipment extends ZhkhActiveRecord
         return $this['object']->getFullTitle() . ' [' . $this['title'] . ']';
     }
 
+    public static function getFullTitleStatic($equipment)
+    {
+        $objectFullTitle = Objects::getFullTitleStatic($equipment['object']);
+        return $objectFullTitle . ' [' . $equipment['title'] . ']';
+    }
+
     public function getAddress()
     {
         if ($this['object'] && $this['object']['house'])

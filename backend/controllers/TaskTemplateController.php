@@ -170,6 +170,7 @@ class TaskTemplateController extends ZhkhController
         $fullTree = array();
         $systems = EquipmentSystem::find()
             ->orderBy('title')
+            ->asArray()
             ->all();
         foreach ($systems as $system) {
             $fullTree['children'][] = [
@@ -185,6 +186,7 @@ class TaskTemplateController extends ZhkhController
             $types = EquipmentType::find()
                 ->where(['equipmentSystemUuid' => $system['uuid']])
                 ->orderBy('title')
+                ->asArray()
                 ->all();
             foreach ($types as $type) {
                 $expanded = false;
@@ -193,10 +195,19 @@ class TaskTemplateController extends ZhkhController
                     'operation' => false];
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
 
-                $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+                $equipments = Equipment::find()
+                    ->joinWith('object.house')
+                    ->where([
+                        'equipment.equipmentTypeUuid' => $type['uuid'],
+                        'equipment.deleted' => false,
+                        'house.deleted' => false
+                    ])
+                    ->with(['object.house.street'])
+                    ->asArray()
+                    ->all();
                 foreach ($equipments as $equipment) {
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
-                        'title' => $equipment->getFullTitle(),
+                        'title' => Equipment::getFullTitleStatic($equipment),
                         'key' => $equipment['_id'] . "",
                         'expanded' => $expanded,
                         'folder' => true,
@@ -207,6 +218,7 @@ class TaskTemplateController extends ZhkhController
 
                     $taskTemplateEquipments = TaskTemplateEquipment::find()
                         ->where(['equipmentUuid' => $equipment['uuid']])
+                        ->asArray()
                         ->all();
                     foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
                         $period_text = $taskTemplateEquipment["period"];
@@ -254,6 +266,7 @@ class TaskTemplateController extends ZhkhController
                         $childIdx4 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
                         $taskOperations = TaskOperation::find()
                             ->where(['taskTemplateUuid' => $taskTemplateEquipment["taskTemplate"]["uuid"]])
+                            ->asArray()
                             ->all();
                         foreach ($taskOperations as $taskOperation) {
                             $type = '<div class="progress"><div class="critical5">' .
@@ -821,7 +834,7 @@ class TaskTemplateController extends ZhkhController
             $task_id = $_POST["task_id"];
         if (isset($_POST["type_id"]))
             $type_id = $_POST["type_id"];
-        $types_id=0;
+        $types_id = 0;
         if ($task_id) {
             $taskTemplate = TaskTemplate::find()->where(['uuid' => $task_id])->one();
             if ($taskTemplate) {
