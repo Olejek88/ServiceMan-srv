@@ -13,6 +13,8 @@ use yii\db\Exception;
  */
 class ObjectsSearch extends Objects
 {
+    public $fullTitle;
+
     /**
      * @inheritdoc
      */
@@ -75,6 +77,13 @@ class ObjectsSearch extends Objects
 
         $query->andFilterWhere(['like', 'uuid', $this->uuid])
             ->andFilterWhere(['like', 'object.title', $this->title]);
+
+        $query->andFilterWhere([
+            'or',
+            ['like', 'house.number', '%' . $this->fullTitle . '%', false],
+            ['like', 'street.title', '%' . $this->fullTitle . '%', false]
+        ]);
+
         return $dataProvider;
     }
 }

@@ -55,25 +55,25 @@ class ObjectController extends ZhkhController
             $model = Objects::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
+
             if ($_POST['editableAttribute'] == 'square') {
                 $model['square'] = $_POST['Objects'][$_POST['editableIndex']]['square'];
             }
+
             if ($_POST['editableAttribute'] == 'objectTypeUuid') {
                 $model['objectTypeUuid'] = $_POST['Objects'][$_POST['editableIndex']]['objectTypeUuid'];
             }
-            if ($model->save())
+
+            if ($model->save()) {
                 return json_encode('success');
+            }
+
             return json_encode('failed');
         }
+
         $searchModel = new ObjectsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 1200;
-
-        if (isset($_GET['address'])) {
-            $dataProvider->query->andWhere(['or', ['like', 'house.number', '%' . $_GET['address'] . '%', false],
-                    ['like', 'street.title', '%' . $_GET['address'] . '%', false]]
-            );
-        }
+        $dataProvider->pagination->pageSize = 100;
 
         return $this->render('table', [
             'searchModel' => $searchModel,

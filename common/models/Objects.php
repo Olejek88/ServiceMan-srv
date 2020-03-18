@@ -150,6 +150,12 @@ class Objects extends ZhkhActiveRecord
         return 'ул.' . $house->street->title . ', д.' . $house->number . ' - ' . $this->title;
     }
 
+    public static function getFullTitleStatic($object)
+    {
+        $house = $object['house'];
+        return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' . $object['title'];
+    }
+
     function getActionPermissions()
     {
         return array_merge_recursive(parent::getActionPermissions(), [
