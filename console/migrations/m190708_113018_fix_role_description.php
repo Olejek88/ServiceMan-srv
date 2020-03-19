@@ -22,12 +22,12 @@ class m190708_113018_fix_role_description extends Migration
         $role = $am->getRole(User::ROLE_OPERATOR);
         $role->description = 'Оператор';
         $am->update(User::ROLE_OPERATOR, $role);
-        $role = $am->getRole(User::ROLE_ANALYST);
-        $role->description = 'Аналитик';
-        $am->update(User::ROLE_ANALYST, $role);
-        $role = $am->getRole(User::ROLE_USER);
-        $role->description = 'Пользователь';
-        $am->update(User::ROLE_USER, $role);
+//        $role = $am->getRole(User::ROLE_ANALYST);
+//        $role->description = 'Аналитик';
+//        $am->update(User::ROLE_ANALYST, $role);
+//        $role = $am->getRole(User::ROLE_USER);
+//        $role->description = 'Пользователь';
+//        $am->update(User::ROLE_USER, $role);
     }
 
     /**

@@ -183,7 +183,7 @@ class m190621_043620_add_object_references extends Migration
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_GAS,EquipmentSystem::EQUIPMENT_SYSTEM_GAS,
             'Система газоснабжения');
 
-        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT,EquipmentSystem::EQUIPMENT_SYSTEM_MAIN,
+        $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_DOOR,EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
             'Входные двери подвала');
         $this->insertIntoEquipmentType(EquipmentType::EQUIPMENT_BASEMENT_ROOM,EquipmentSystem::EQUIPMENT_SYSTEM_MAIN,
             'Помещение');
