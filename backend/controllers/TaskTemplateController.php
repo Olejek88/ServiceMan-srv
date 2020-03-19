@@ -19,6 +19,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 
@@ -218,6 +219,7 @@ class TaskTemplateController extends ZhkhController
 
                     $taskTemplateEquipments = TaskTemplateEquipment::find()
                         ->where(['equipmentUuid' => $equipment['uuid']])
+                        ->with(['taskTemplate'])
                         ->asArray()
                         ->all();
                     foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
@@ -292,8 +294,9 @@ class TaskTemplateController extends ZhkhController
                 }
             }
         }
+
         return $this->render('tree', [
-            'equipment' => $fullTree
+            'equipments' => $fullTree
         ]);
     }
 
@@ -654,15 +657,38 @@ class TaskTemplateController extends ZhkhController
 
             // оборудование
             if ($folder == "true" && $equipment_id > 0) {
-                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                $equipment = Equipment::findOne(['_id' => $equipment_id]);
+                if ($equipment != null) {
+                    $equipmentUuid = $equipment['uuid'];
+                    $taskTemplate = TaskTemplateEquipmentType::find()
+                        ->joinWith('taskTemplate')
+                        ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
+                        ->andWhere(['or',
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_TO],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA]])
+                        ->orderBy('task_template.taskTypeUuid')
+                        ->all();
+                    $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
+                        return $model['taskTemplate']['taskType']['title'] . ' :: ' . $model['taskTemplate']['title'];
+                    });
+                } else {
+                    $equipmentUuid = null;
+                    $taskTemplates = TaskTemplate::find()->all();
+                    $items = ArrayHelper::map($taskTemplates, 'uuid', 'title');
+                }
+
                 return $this->renderAjax('_choose_task', [
-                    'equipment' => $equipment
+                    'taskTemplates' => $items,
+                    'equipmentUuid' => $equipmentUuid,
                 ]);
             }
 
             // задача
             if ($folder == "false" && $task_id > 0) {
-                $taskTemplate = TaskTemplate::find()->where(['_id' => $task_id])->one();
+                $taskTemplate = TaskTemplate::findOne(['_id' => $task_id]);
                 if ($taskTemplate) {
                     return $this->renderAjax('_choose_operation', [
                         'taskTemplate' => $taskTemplate
@@ -670,8 +696,10 @@ class TaskTemplateController extends ZhkhController
                 }
             }
         }
+
         if (isset($_POST["equipment_uuid"]) && isset($_POST["taskTemplateUuid"])) {
             $taskTemplateEquipment = new TaskTemplateEquipment();
+            $taskTemplateEquipment->oid = Users::getCurrentOid();;
             $taskTemplateEquipment->taskTemplateUuid = $_POST["taskTemplateUuid"];
             $taskTemplateEquipment->equipmentUuid = $_POST["equipment_uuid"];
             if (isset($_POST["period"])) {

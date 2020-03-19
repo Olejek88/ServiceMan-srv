@@ -2,11 +2,14 @@
 
 use wbraganca\fancytree\FancytreeWidget;
 use yii\web\JsExpression;
+use yii\web\View;
 
 $this->title = 'Дерево задач';
 
 /* @var $operations common\models\Operation */
 /* @var $users */
+/* @var $equipments */
+/* @var View $this */
 
 ?>
 <table id="tree" style="background-color: white; width: 100%">
@@ -15,11 +18,10 @@ $this->title = 'Дерево задач';
         <col width="150px">
         <col width="80px">
         <col width="150px">
-        <col width="150px">
     </colgroup>
     <thead style="background-color: #337ab7; color: white">
     <tr>
-        <th align="center" colspan="6" style="background-color: #3c8dbc; color: whitesmoke">
+        <th align="center" colspan="4" style="background-color: #3c8dbc; color: whitesmoke">
             Технологические карты (шаблоны) для элементов системы
         </th>
     </tr>
@@ -35,14 +37,11 @@ $this->title = 'Дерево задач';
         <th>Наименование</th>
         <th>Норматив</th>
         <th>Период</th>
-        <th>Создан</th>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td></td>
-        <td class="alt" align="center"></td>
-        <td align="center"></td>
         <td class="alt" align="center"></td>
         <td align="center"></td>
         <td class="alt" align="center"></td>
@@ -60,7 +59,7 @@ $this->title = 'Дерево задач';
     echo FancytreeWidget::widget([
     'options' => [
         'id' => 'tree',
-        'source' => $equipment,
+        'source' => $equipments,
         'checkbox' => true,
         'selectMode' => 1,
         'extensions' => ['table', 'contextMenu'],
@@ -201,7 +200,6 @@ $this->title = 'Дерево задач';
             "typesColumnIdx" => "2",
             "normativeColumnIdx" => "3",
             "periodColumnIdx" => "4",
-            "createdColumnIdx" => "5",
         ],
         'renderColumns' => new JsExpression('function(event, data) {
             var node = data.node;
@@ -209,7 +207,7 @@ $this->title = 'Дерево задач';
             $tdList.eq(1).html(node.data.types);
             $tdList.eq(2).text(node.data.normative);
             $tdList.eq(3).html(node.data.period);
-            $tdList.eq(4).text(node.data.created);            
+           
         }')
     ]
 ]);
