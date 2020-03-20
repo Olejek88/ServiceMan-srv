@@ -276,6 +276,8 @@ class TaskTemplateEquipmentController extends ZhkhController
         $all_task_equipment_count = 0;
         $today = time();
         $equipments = Equipment::find()
+            ->with('object.house.street')
+            ->asArray()
             ->all();
         foreach ($equipments as $equipment) {
             $taskTemplateEquipments = TaskTemplateEquipment::find()
@@ -345,7 +347,7 @@ class TaskTemplateEquipmentController extends ZhkhController
                 $all_task_equipment_count++;
                 $events[] = [
                     'title' => $equipment['title'],
-                    'address' => $equipment->getAddress(),
+                    'address' => Equipment::getFullTitleStatic($equipment),
                     'data' => $tasks
                 ];
             }

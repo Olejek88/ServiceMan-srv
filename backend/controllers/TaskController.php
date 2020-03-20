@@ -1118,6 +1118,8 @@ class TaskController extends ZhkhController
         $events = [];
         $today = time();
         $equipments = Equipment::find()
+            ->where(['deleted' => false])
+            ->asArray()
             ->all();
         foreach ($equipments as $equipment) {
             $taskTemplateEquipments = TaskTemplateEquipment::find()
@@ -1153,6 +1155,7 @@ class TaskController extends ZhkhController
                         $count++;
                         if ($count > 5) break;
                     }
+
                     $all_tasks = Task::find()
                         ->select('*')
                         ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
@@ -1183,6 +1186,7 @@ class TaskController extends ZhkhController
                         $events[] = $event;
                     }
                 }
+
                 $task_equipment_count++;
             }
         }

@@ -38,7 +38,11 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipments = Equipment::find()->where(['deleted' => false])->all();
+    $equipments = Equipment::find()
+        ->with(['object.house.street', 'equipmentType'])
+        ->where(['deleted' => false])
+        ->asArray()
+        ->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
         return $model['equipmentType']['title'] . ' (' . $model['object']['house']['street']['title'] . ', ' .
             $model['object']['house']['number'] . ', ' .

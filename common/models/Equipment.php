@@ -240,6 +240,14 @@ class Equipment extends ZhkhActiveRecord
             return '';
     }
 
+    public static function getAddressStatic($model)
+    {
+        if ($model['object'] && $model['object']['house'])
+            return $model['object']['house']['street']['title'] . ', ' . $model['object']['house']['number'] . ' - ' . $model['object']['title'];
+        else
+            return '';
+    }
+
     /**
      * @return string
      * @throws InvalidConfigException

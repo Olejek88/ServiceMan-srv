@@ -45,7 +45,7 @@ use yii\widgets\ActiveForm;
     if (isset($_GET["equipmentUuid"]))
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $_GET["equipmentUuid"]])->label(false);
     else {
-        $equipment = Equipment::find()->where(['deleted' => false])->all();
+        $equipment = Equipment::find()->where(['deleted' => false])->asArray()->all();
         $items = ArrayHelper::map($equipment, 'uuid', 'title');
         echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
             [

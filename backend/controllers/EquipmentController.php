@@ -1856,8 +1856,11 @@ class EquipmentController extends ZhkhController
      */
     public function actionTimelineAll()
     {
+        // TODO: если этот метод будет использоваться, провести оптимизацию!!!
+        // TODO: на каждое оборудование в actionTimeline() приходится порядка 6 запросов в базу
+        // TODO: при количестве оборудования идущем на тысячи, это не приемлемо
         $events = [];
-        $equipments = Equipment::find()->all();
+        $equipments = Equipment::find()->asArray()->all();
         foreach ($equipments as $equipment) {
             $new_events = self::actionTimeline($equipment['uuid'], 0);
             foreach ($new_events as $new_event) {
@@ -1890,7 +1893,7 @@ class EquipmentController extends ZhkhController
     public function actionTimeline($uuid, $r)
     {
         $events = [];
-        $tasks = Task::find()->where(['equipmentUuid' => $uuid])->orderBy('changedAt DESC')->all();
+        $tasks = Task::find()->where(['equipmentUuid' => $uuid])->orderBy('changedAt DESC')->asArray()->with('equipment')->all();
         foreach ($tasks as $task) {
             if ($task['workStatusUuid'] == WorkStatus::NEW) {
                 $text = '<a class="btn btn-default btn-xs">Создана задача для оборудования ' . $task['equipment']['title'] . '</a><br/>
@@ -1906,7 +1909,7 @@ class EquipmentController extends ZhkhController
             }
         }
 
-        $equipment_photos = Photo::find()->where(['objectUuid' => $uuid])->all();
+        $equipment_photos = Photo::find()->where(['objectUuid' => $uuid])->asArray()->all();
         foreach ($equipment_photos as $equipment_photo) {
             $text = '<a class="btn btn-default btn-xs">Для оборудования сделано фото</a><br/><i class="fa fa-cogs"></i>&nbsp;Фото<br/>';
             $events[] = ['date' => $equipment_photo['date'], 'event' => self::formEvent($equipment_photo['date'], 'photo',
@@ -1915,22 +1918,25 @@ class EquipmentController extends ZhkhController
 
         $measures = Measure::find()
             ->where(['=', 'equipmentUuid', $uuid])
+            ->with('equipment.equipmentType')
+            ->asArray()
             ->all();
         foreach ($measures as $measure) {
-            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']->title . '</a><br/>
+            $text = '<a class="btn btn-default btn-xs">' . $measure['equipment']['equipmentType']['title'] . '</a><br/>
                 <i class="fa fa-bar-chart-o"></i>&nbsp;Значения: ' . $measure['value'] . '<br/>';
             $events[] = ['date' => $measure['date'], 'event' => self::formEvent($measure['date'], 'measure',
-                $measure['_id'], $measure['equipment']['equipmentType']->title, $text)];
+                $measure['_id'], $measure['equipment']['equipmentType']['title'], $text)];
         }
 
         $equipment_registers = EquipmentRegister::find()
-            ->where(['=', 'equipmentUuid', $uuid])
+            ->with(['equipment.equipmentType', 'registerType'])
+            ->where(['equipmentUuid' => $uuid])
             ->all();
         foreach ($equipment_registers as $register) {
-            $text = '<a class="btn btn-default btn-xs">' . $register['equipment']->title . '</a><br/>
+            $text = '<a class="btn btn-default btn-xs">' . $register['equipment']['title'] . '</a><br/>
                 <i class="fa fa-cogs"></i>&nbsp;Тип: ' . $register['registerType']['title'] . '<br/>';
             $events[] = ['date' => $register['date'], 'event' => self::formEvent($register['date'], 'register',
-                $register['_id'], $register['equipment']['equipmentType']->title, $text)];
+                $register['_id'], $register['equipment']['equipmentType']['title'], $text)];
         }
 
         if ($r > 0) {
