@@ -153,7 +153,7 @@ class CityController extends ZhkhController
     public function actionHouses()
     {
         if (isset($_POST['id'])) {
-            $houses = House::find()->where(['streetUuid' => $_POST['id']])->all();
+            $houses = House::find()->where(['streetUuid' => $_POST['id']])->where(['deleted' => false])->all();
             $items = ArrayHelper::map($houses, 'uuid', 'number');
             return json_encode($items);
         }

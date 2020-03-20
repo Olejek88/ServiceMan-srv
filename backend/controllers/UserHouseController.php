@@ -88,6 +88,7 @@ class UserHouseController extends ZhkhController
     public function actionCreateDefault()
     {
         $houses = House::find()
+            ->where(['deleted' => false])
             ->all();
         $currentUser = Users::find()
             ->where('user_id>3')

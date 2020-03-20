@@ -305,7 +305,7 @@ class SiteController extends Controller
 
         $cityCount = City::find()->count();
         $streetCount = Street::find()->count();
-        $houseCount = House::find()->count();
+        $houseCount = House::find()->where(['deleted' => false])->count();
         $objectsCount = Objects::find()->where(['deleted' => false])->count();
         $flatCount = Objects::find()->where(['objectTypeUuid' => ObjectType::OBJECT_TYPE_FLAT])->count();
         $equipmentCount = Equipment::find()->where(['deleted' => false])->count();
@@ -514,6 +514,7 @@ class SiteController extends Controller
         $photosGroup = 'var houses=L.layerGroup([';
         $photosList = '';
         $photoHouses = House::find()
+            ->where(['deleted' => false])
             ->select('*')
             ->all();
         $default_coordinates = "[55.54,61.36]";
