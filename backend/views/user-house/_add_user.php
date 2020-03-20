@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
@@ -33,23 +34,25 @@ use yii\widgets\ActiveForm;
     echo '</br>';
     $userSystems = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystemUuid])->all();
     $userHouses = UserHouse::find()->where(['houseUuid' => $houseUuid])->all();
-    $user_list='';
+    $user_list = '';
     foreach ($userSystems as $userSystem) {
         foreach ($userHouses as $userHouse) {
-            if ($userSystem['userUuid']==$userHouse['userUuid']) {
+            if ($userSystem['userUuid'] == $userHouse['userUuid']) {
                 echo Html::checkbox('user-' . $userHouse['user']['_id'], false, ['label' => $userHouse['user']['name']]);
                 echo '</br>';
             }
         }
     }
-    $users = Users::find()->all();
-    $items = ArrayHelper::map($users, 'uuid', 'name');
 
-    echo Html::hiddenInput('houseUuid',$houseUuid);
+    echo Html::hiddenInput('houseUuid', $houseUuid);
 
     echo '</br>';
     echo '<label class="control-label">Добавить исполнителя</label>';
-    $users = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystemUuid])->all();
+    $users = UserSystem::find()
+        ->where(['equipmentSystemUuid' => $equipmentSystemUuid])
+        ->joinWith('user.user')
+        ->where(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($users, 'user.uuid', 'user.name');
     try {
         echo Select2::widget(

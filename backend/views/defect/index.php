@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\DefectSearch */
 
 use common\models\DefectType;
+use common\models\User;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\editable\Editable;
@@ -119,8 +120,9 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '200px',
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
-            'uuid', 'name'),
+        'filter' => ArrayHelper::map(Users::find()->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->orderBy('name')->all(), 'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],

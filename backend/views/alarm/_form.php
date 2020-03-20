@@ -4,6 +4,7 @@ use app\commands\MainFunctions;
 use common\models\AlarmStatus;
 use common\models\AlarmType;
 use common\models\Objects;
+use common\models\User;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
@@ -116,7 +117,10 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php
-    $users = Users::find()->all();
+    $users = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->widget(Select2::class,
         [

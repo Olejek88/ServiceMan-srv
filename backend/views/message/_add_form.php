@@ -40,7 +40,10 @@ use yii\helpers\Html;
         echo '<span style="font-weight: bold">Кому: </span>&nbsp;'.Html::textInput('toUser', $message['toUser']['name'],['readonly' => true]);
         echo $form->field($message, 'toUserUuid')->hiddenInput(['value' => $message['fromUserUuid']])->label(false);
     } else {
-        $user  = Users::find()->all();
+        $user = Users::find()
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->all();
         $items = ArrayHelper::map($user,'uuid','name');
         echo $form->field($message, 'toUserUuid')->widget(Select2::class,
             [

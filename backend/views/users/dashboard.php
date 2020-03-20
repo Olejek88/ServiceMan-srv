@@ -3,6 +3,7 @@
 
 /* @var $user_property */
 
+use common\models\User;
 use common\models\Users;
 use yii\helpers\Html;
 
@@ -28,7 +29,7 @@ $this->title = Yii::t('app', 'Пользователи');
 
         print '<div class="col-md-3">
                         <div class="box box-widget widget-user-2">
-                        <div class="widget-user-header bg-yellow">
+                        <div class="widget-user-header ' . ($user->user->status == User::STATUS_ACTIVE ? 'bg-yellow' : 'bg-red') . '">
                         <div class="widget-user-image">';
         echo Html::a('<img class="img-circle" src="' . Html::encode($path) . '" style="width:65px; float: left">',
             ['/users/view', 'id' => Html::encode($user['_id'])]);

@@ -23,6 +23,7 @@ use common\models\ObjectType;
 use common\models\Photo;
 use common\models\Street;
 use common\models\Task;
+use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
@@ -455,14 +456,11 @@ class EquipmentController extends ZhkhController
                 }
             }
         }
-        $users = Users::find()->all();
-        $items = ArrayHelper::map($users, 'uuid', 'name');
 
         return $this->render(
             'tree',
             [
                 'equipment' => $fullTree,
-                'users' => $items
             ]
         );
     }
@@ -483,10 +481,7 @@ class EquipmentController extends ZhkhController
         ini_set('memory_limit', '-1');
         $c = 'children';
         $fullTree = array();
-        $user = Users::find()
-            ->select('*')
-            ->where(['id' => $id])
-            ->one();
+        $user = Users::findOne(['_id' => $id]);
         if ($user) {
             $oCnt1 = 0;
             $gut_total_count = 0;
@@ -646,10 +641,11 @@ class EquipmentController extends ZhkhController
 
         $fullTree = array();
         $users = Users::find()
-            ->select('_id,uuid,name')
             ->where('name != "sUser"')
             ->andWhere('name != "Иванов О.А."')
-            ->orderBy('_id')
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->orderBy('users._id')
             ->asArray()
             ->all();
 
@@ -694,14 +690,10 @@ class EquipmentController extends ZhkhController
             }
         }
 
-        $users = Users::find()->all();
-        $items = ArrayHelper::map($users, 'uuid', 'name');
-
         return $this->render(
             'tree-street',
             [
                 'equipment' => $fullTree,
-                'users' => $items
             ]
         );
     }
@@ -741,7 +733,7 @@ class EquipmentController extends ZhkhController
      */
     private static function getSystems2UsersForTree()
     {
-        $userSystems = UserSystem::find()->with('user')->asArray()->all();
+        $userSystems = UserSystem::find()->with('user.user')->asArray()->all();
         $usByUuid = [];
         foreach ($userSystems as $userSystem) {
             $usByUuid[$userSystem['equipmentSystemUuid']][] = $userSystem;
@@ -751,6 +743,10 @@ class EquipmentController extends ZhkhController
             $delimiter = '';
             $userName = '';
             foreach ($tmpUserSystems as $tmpUserSystem) {
+                if ($tmpUserSystem['user']['user']['status'] == User::STATUS_DELETED) {
+                    continue;
+                }
+
                 $userName .= $delimiter . '<b>' . $tmpUserSystem['user']['name'] . '</b>';
                 $delimiter = '<br/>';
             }
@@ -1008,14 +1004,10 @@ class EquipmentController extends ZhkhController
             }
         }
 
-        $users = Users::find()->all();
-        $users = ArrayHelper::map($users, 'uuid', 'name');
-
         return $this->render(
             'tree-street',
             [
                 'equipment' => $fullTree,
-                'users' => $users
             ]
         );
     }

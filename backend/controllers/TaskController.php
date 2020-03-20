@@ -123,9 +123,12 @@ class TaskController extends ZhkhController
                 $tasks_completed[] = $task_complete;
 
         }
+
         $users = Users::find()
             ->where('name != "sUser"')
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -393,7 +396,10 @@ class TaskController extends ZhkhController
                 '<a class="btn btn-default btn-xs">' . $model['equipment']['title'] . '</a> ' . $model['comment'],
                 $model->uuid);
             // TODO реализовать логику выбора пользователя
-            $user = Users::find()->one();
+            $user = Users::find()
+                ->joinWith('user')
+                ->andWhere(['user.status' => User::STATUS_ACTIVE])
+                ->one();
             $modelTU = new TaskUser();
             $modelTU->uuid = (new MainFunctions)->GUID();
             $modelTU->taskUuid = $model['uuid'];
@@ -495,13 +501,16 @@ class TaskController extends ZhkhController
 
         $users = Users::find()
             ->where('name != "sUser"')
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->all();
         if (isset($_GET['user_select']) && $_GET['user_select'] != '') {
             $users = Users::find()
                 ->where(['uuid' => $_GET["user_select"]])
                 ->all();
         }
+
         $user_array = [];
         $t_count = 1;
         $categories = "";
@@ -515,6 +524,7 @@ class TaskController extends ZhkhController
                 $categories .= ',';
                 $bar .= ",";
             }
+
             $categories .= '"' . $current_user['name'] . '"';
 
             $taskComplete += TaskUser::find()
@@ -527,6 +537,7 @@ class TaskController extends ZhkhController
             $bar .= $taskComplete;
             $count++;
         }
+
         $bar .= "]},";
 
         $count = 0;
@@ -627,6 +638,7 @@ class TaskController extends ZhkhController
             if ($count > 0) {
                 $bar .= ",";
             }
+
             $taskBad = TaskUser::find()
                 ->joinWith('task')
                 ->where(['userUuid' => $current_user['uuid']])
@@ -642,6 +654,8 @@ class TaskController extends ZhkhController
 
         $users = Users::find()
             ->where('name != "sUser"')
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
 
@@ -945,7 +959,10 @@ class TaskController extends ZhkhController
             }
         }
         //foreach ($_POST as $key => $value) {}
-        $users = Users::find()->where(['!=', 'name', 'sUser'])->all();
+        $users = Users::find()->where(['!=', 'name', 'sUser'])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->all();
         foreach ($users as $user) {
             $id = 'user-' . $user['_id'];
             if (isset($_POST[$id]) && ($_POST[$id] == 1 || $_POST[$id] == "1")) {

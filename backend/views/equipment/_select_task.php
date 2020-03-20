@@ -5,6 +5,7 @@ use common\models\Equipment;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
 use common\models\TaskVerdict;
+use common\models\User;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
@@ -92,7 +93,7 @@ use yii\widgets\ActiveForm;
             ->orderBy('task_template.taskTypeUuid')
             ->all();
         $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
-            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
+            return $model['taskTemplate']['taskType']['title'] . ' :: ' . $model['taskTemplate']['title'];
         });
         echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
             [
@@ -135,18 +136,26 @@ use yii\widgets\ActiveForm;
     if (isset($_GET["equipmentUuid"])) {
         $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
         $users = UserSystem::find()
-            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid']])
+            ->joinWith('user.user')
+            ->where([
+                'equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid'],
+                'user.status' => User::STATUS_ACTIVE
+            ])
             ->all();
         $items = ArrayHelper::map($users, 'userUuid', 'user.name');
     } else {
-        $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
+        $users = Users::find()
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
     }
 
     echo '<label class="control-label">Исполнитель</label>';
     echo Select2::widget(
         [
-                'id' => 'userUuid',
+            'id' => 'userUuid',
             'name' => 'userUuid',
             'language' => 'ru',
             'data' => $items,
@@ -193,7 +202,7 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php
-        echo $form->field($model, 'comment')
+    echo $form->field($model, 'comment')
         ->textarea(['rows' => 4, 'style' => 'resize: none;']);
     ?>
 

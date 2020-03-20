@@ -1,6 +1,7 @@
 <?php
 
 use app\commands\MainFunctions;
+use common\models\User;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use yii\helpers\ArrayHelper;
@@ -35,13 +36,19 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
-    $user  = Users::find()->all();
+    $user = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($user,'uuid','name');
     echo $form->field($model, 'fromUserUuid')->dropDownList($items);
     ?>
 
     <?php
-    $user  = Users::find()->all();
+    $user = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($user,'uuid','name');
     echo $form->field($model, 'toUserUuid')->dropDownList($items);
     ?>

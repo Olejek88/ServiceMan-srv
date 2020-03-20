@@ -13,6 +13,7 @@ use common\models\Photo;
 use common\models\Request;
 use common\models\Settings;
 use common\models\TaskVerdict;
+use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
 use kartik\date\DatePicker;
@@ -96,7 +97,12 @@ $gridColumns = [
             'class' => 'table_class'
         ],
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->orderBy('name')->all(),
+        'filter' => ArrayHelper::map(Users::find()
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
+            ->orderBy('name')
+            ->all(),
             'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
@@ -297,7 +303,11 @@ $gridColumns = [
         'vAlign' => 'middle',
         'hAlign' => 'center',
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
+        'filter' => ArrayHelper::map(Users::find()
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->orderBy('name')
+            ->all(),
             'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],

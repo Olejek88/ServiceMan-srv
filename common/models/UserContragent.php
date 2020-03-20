@@ -17,8 +17,8 @@ use yii\db\ActiveQuery;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property ActiveQuery $user
- * @property ActiveQuery $contragent
+ * @property Users $user
+ * @property Contragent $contragent
  */
 class UserContragent extends ZhkhActiveRecord
 {

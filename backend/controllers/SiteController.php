@@ -121,8 +121,10 @@ class SiteController extends Controller
         $gpsStatus = false;
 
         $users = Users::find()
+            ->joinWith('user')
             ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->all();
         $userList[] = $users;
 
@@ -297,7 +299,7 @@ class SiteController extends Controller
         $accountUser = Yii::$app->user->identity;
         $currentUser = Users::find()
             ->where(['user_id' => $accountUser['id']])
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
             ->asArray()
             ->one();
 
@@ -320,28 +322,32 @@ class SiteController extends Controller
             ->limit(15)
             ->all();
 
+        // выбираем только активных пользователей
         $users = Users::find()
+            ->joinWith('user')
             ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->select('*')
             ->all();
         $userList[] = $users;
-        $usersCount = count($users);
-        $activeUsersCount = 0;
+        $activeUsersCount = count($users);
+        // выбираем всех пользователей
+        $usersCount = Users::find()
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->count();
 
         $count = 0;
         $categories = "";
         $bar = "{ name: 'Выполнено в срок', color: 'green', ";
         $bar .= "data: [";
         foreach ($users as $current_user) {
-            if ($current_user->user->status == User::STATUS_ACTIVE) {
-                $activeUsersCount++;
-            }
-
             if ($count > 0) {
                 $categories .= ',';
                 $bar .= ",";
             }
+
             $categories .= '"' . $current_user['name'] . '"';
             $taskGood=0;
             $taskUsers = TaskUser::find()
@@ -422,8 +428,10 @@ class SiteController extends Controller
         $gpsStatus = false;
 
         $users = Users::find()
+            ->joinWith('user')
             ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
-            ->andWhere(['OR', ['type' => Users::USERS_WORKER], ['type' => Users::USERS_ARM_WORKER]])
+            ->andWhere(['OR', ['type' => [Users::USERS_WORKER, Users::USERS_ARM_WORKER]]])
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
             ->all();
         $userList[] = $users;
 
@@ -439,6 +447,7 @@ class SiteController extends Controller
                 }
             }
         }
+
         /**
          * [userList description]
          *
@@ -497,6 +506,7 @@ class SiteController extends Controller
         if (!$gpsStatus) {
             $gps = Gpstrack::find()->orderBy('date DESC')->asArray()->one();
         }
+
         /**
          * Настройки - История активности
          */
