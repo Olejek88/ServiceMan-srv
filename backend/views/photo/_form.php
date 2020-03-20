@@ -34,10 +34,10 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'latitude')->textInput(['maxlength' => true]) ?>
 
     <?php
-    $equipment = Equipment::find()->where(['deleted' => false])->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->with(['object.house.street', 'equipmentType'])->asArray()->all();
     $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
-        return $model['object']['house']['street']->title . ', ' . $model['object']['house']->number . ', ' .
-            $model['object']['number'] . ' ' . $model['equipmentType']->title;
+        return $model['object']['house']['street']['title'] . ', ' . $model['object']['house']['number'] . ', ' .
+            $model['object']['number'] . ' ' . $model['equipmentType']['title'];
     });
     echo $form->field($model, 'objectUuid')->widget(Select2::class,
         [

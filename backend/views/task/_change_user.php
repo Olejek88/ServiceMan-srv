@@ -1,5 +1,6 @@
 <?php
 
+use common\models\User;
 use common\models\Users;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -21,14 +22,17 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-        $users = Users::find()->all();
+    $users = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
         echo Select2::class,
         [
             'name' => 'user',
             'language' => 'ru',
             'data' => $items,
-            'options' => ['placeholder' => 'Выберите пользователь ...'],
+            'options' => ['placeholder' => 'Выберите пользователя ...'],
             'pluginOptions' => [
                 'allowClear' => true
             ],

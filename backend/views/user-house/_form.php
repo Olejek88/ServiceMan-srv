@@ -2,6 +2,7 @@
 
 use app\commands\MainFunctions;
 use common\models\House;
+use common\models\User;
 use common\models\Users;
 use kartik\widgets\Select2;
 use yii\helpers\ArrayHelper;
@@ -38,7 +39,10 @@ use yii\widgets\ActiveForm;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
-    $users = Users::find()->all();
+    $users = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->widget(Select2::class,
         [

@@ -255,11 +255,17 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
      */
     public function formDates()
     {
+        if (empty($this->period)) {
+            return false;
+        }
+
         $next_dates = $this->next_dates;
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $count = count($dates);
-            if (strlen($this->next_dates) < 6) $count = 0;
+            if (strlen($this->next_dates) < 6) {
+                $count = 0;
+            }
 
             while (self::TASK_DEEP - $count) {
                 if ($count > 0)

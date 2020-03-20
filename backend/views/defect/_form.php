@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\DefectType;
 use common\models\Equipment;
+use common\models\User;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\select2\Select2;
@@ -44,9 +45,13 @@ use yii\widgets\ActiveForm;
 
     echo $form->field($model, 'title')->textarea(['rows' => 4, 'style' => 'resize: none;']);
 
-    $equipments = Equipment::find()->where(['deleted' => false])->all();
+    $equipments = Equipment::find()
+        ->where(['deleted' => false])
+        ->with('object.house.street')
+        ->asArray()
+        ->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
-        return $model->getFullTitle();
+        return Equipment::getFullTitleStatic($model);
     });
     echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
         [
@@ -59,7 +64,10 @@ use yii\widgets\ActiveForm;
             ],
         ]);
 
-    $user = Users::find()->all();
+    $user = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($user, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->dropDownList($items);
 

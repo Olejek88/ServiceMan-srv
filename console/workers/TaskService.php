@@ -44,6 +44,12 @@ class  TaskService extends Worker
                 }*/
     }
 
+    public function init()
+    {
+        $this->logFile = '@console/runtime/daemon/logs/worker.log';
+        parent::init();
+    }
+
     /**
      * 1. читаем таблицу задач
      * 2. упаковываем их в наряд

@@ -17,9 +17,7 @@ use yii\db\ActiveQuery;
  * @property string $createdAt
  * @property string $changedAt
  *
- * @property ActiveQuery $user
- * @property ActiveQuery $system
- *
+ * @property Users $user
  * @property EquipmentSystem $equipmentSystem
  */
 class UserSystem extends ZhkhActiveRecord
@@ -83,15 +81,6 @@ class UserSystem extends ZhkhActiveRecord
     public function getUser()
     {
         return $this->hasOne(Users::class, ['uuid' => 'userUuid']);
-    }
-
-    /**
-     * Объект связанного поля.
-     * @return ActiveQuery
-     */
-    public function getSystem()
-    {
-        return $this->hasOne(EquipmentSystem::class, ['uuid' => 'equipmentSystemUuid']);
     }
 
     /**

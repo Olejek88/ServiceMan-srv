@@ -101,7 +101,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipment = Equipment::find()->where(['deleted' => false])->orderBy(['changedAt' => SORT_DESC])->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->orderBy(['changedAt' => SORT_DESC])->asArray()->all();
     $items = ['' => 'нет'];
     $items += ArrayHelper::map($equipment, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid')->dropDownList($items);

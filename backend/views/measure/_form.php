@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\MeasureType;
+use common\models\User;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use kartik\widgets\Select2;
@@ -37,7 +38,11 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipments = Equipment::find()->where(['deleted' => false])->all();
+    $equipments = Equipment::find()
+        ->with(['object.house.street', 'equipmentType'])
+        ->where(['deleted' => false])
+        ->asArray()
+        ->all();
     $items = ArrayHelper::map($equipments, 'uuid', function ($model) {
         return $model['equipmentType']['title'] . ' (' . $model['object']['house']['street']['title'] . ', ' .
             $model['object']['house']['number'] . ', ' .
@@ -70,7 +75,10 @@ use yii\widgets\ActiveForm;
         ]);
     ?>
     <?php
-    $users = Users::find()->all();
+    $users = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->widget(Select2::class,
         [

@@ -66,7 +66,7 @@ class MainFunctions
             $messages = [$messages];
         }
         foreach ($messages as $message) {
-            file_put_contents($filename, date('d.m.Y H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents(Yii::getAlias($filename), date('d.m.Y H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
     }
 
@@ -267,7 +267,7 @@ class MainFunctions
             $task->deadlineDate = $model->deadlineDate;
         }
         if (!$task->save()) {
-            MainFunctions::log("request.log", json_encode($task->errors));
+            MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($task->errors));
             return ['result' => null, 'task' => null, 'message' => 'Не верное оборудование'];
         } else {
             if ($userUuid) {
@@ -277,7 +277,7 @@ class MainFunctions
                 $taskUser->userUuid = $userUuid;
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
-                    MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($taskUser->errors));
                     return ['result' => null, 'task' => $task, 'message' => 'Задача создана, но не назначена'];
                 }
             }
@@ -288,7 +288,7 @@ class MainFunctions
                 self::createOperation($operationTemplate['operationTemplate']['uuid'], $task['uuid'], $oid);
             }
         }
-        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
+        MainFunctions::log("@console/runtime/daemon/logs/request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
         return ['result' => 1, 'task' => $task, 'message' => 'Задача создана успешно'];
     }
 
@@ -340,7 +340,7 @@ class MainFunctions
                             //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
                             MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
                                 $equipment['uuid'], 'Задача создана по план-графику',
-                                $equipment['oid'], $user, null, $start, null);
+                                $equipment['oid'], $user['uuid'], null, $start, null);
                             $taskTemplateEquipment->last_date = $dates[$count];
                             $taskTemplateEquipment->save();
                             $taskTemplateEquipment->popDate();

@@ -46,6 +46,7 @@
 */
 
 use common\models\Equipment;
+use common\models\User;
 use common\models\UserContragent;
 use common\models\Users;
 use yii\helpers\Html;
@@ -326,7 +327,7 @@ $this->title = Yii::t('app', 'Сводная');
                             $count = 0;
                             foreach ($contragents as $contragent) {
                                 $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
-                                if ($userContragent) {
+                                if ($userContragent && $userContragent->user->user->status == User::STATUS_ACTIVE) {
                                     if ($userContragent['user']['type'] == Users::USERS_WORKER) {
                                         $path = $userContragent['user']->getPhotoUrl();
                                         if (!$path || !$userContragent['user']['image']) {
@@ -334,7 +335,7 @@ $this->title = Yii::t('app', 'Сводная');
                                         }
                                         print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
                                         echo Html::a(Html::encode($userContragent['user']['name']),
-                                            ['/users/view', '_id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
+                                            ['/users/view', 'id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
                                         echo '<span class="users-list-date">' . $userContragent['user']['createdAt'] . '</span></li>';
                                     }
                                 }

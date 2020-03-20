@@ -1,17 +1,12 @@
 <?php
-/* @var $equipment common\models\Equipment
- * @var $equipment_id
- */
 
-use common\models\Equipment;
-use common\models\StageType;
-use common\models\TaskTemplate;
-use common\models\TaskTemplateEquipmentType;
-use common\models\TaskType;
+/** @var $taskTemplates */
+
+/** @var $equipmentUuid */
+
 use kartik\date\DatePicker;
 use kartik\widgets\Select2;
 use yii\bootstrap\ActiveForm;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 ?>
@@ -19,7 +14,7 @@ use yii\helpers\Html;
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
     'options' => [
-        'id' => 'form'
+        'id' => 'choose_form'
     ]]);
 ?>
 <div class="modal-header">
@@ -27,70 +22,47 @@ use yii\helpers\Html;
     <h4 class="modal-title">Выбрать шаблон задачи</h4>
 </div>
 <br class="modal-body">
-    <?php
-    if ($_POST["equipment_id"])
-        $equipment_id = $_POST["equipment_id"];
-    $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
-    if ($equipment) {
-        $taskTemplate = TaskTemplateEquipmentType::find()
-            ->joinWith('taskTemplate')
-            ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
-            ->andWhere(['or',
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_TO],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
-                ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA]])
-            ->orderBy('task_template.taskTypeUuid')
-            ->all();
-        $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
-            return $model['taskTemplate']['taskType']['title'] . ' :: ' . $model['taskTemplate']['title'];
-        });
-    } else {
-        $taskTemplates = TaskTemplate::find()->all();
-        $items = ArrayHelper::map($taskTemplates, 'uuid', 'title');
-    }
-    echo Select2::widget(
-        [
-            'id' => 'taskTemplateUuid',
-            'name' => 'taskTemplateUuid',
-            'language' => 'ru',
-            'data' => $items,
-            'options' => ['placeholder' => 'Выберите шаблон ...'],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);
-    echo '<label class="control-label">Период (дн.)</label><br/>';
-    echo Html::textInput("period");
-    echo Html::hiddenInput("equipment_uuid", $equipment['uuid']);
-    ?>
+<?php
+echo Select2::widget([
+    'id' => 'taskTemplateUuid',
+    'name' => 'taskTemplateUuid',
+    'language' => 'ru',
+    'data' => $taskTemplates,
+    'options' => ['placeholder' => 'Выберите шаблон ...'],
+    'pluginOptions' => [
+        'allowClear' => true
+    ],
+]);
+echo '<label class="control-label">Период (дн.)</label><br/>';
+echo Html::textInput("period");
+echo Html::hiddenInput("equipment_uuid", $equipmentUuid);
+?>
 
 <br/><br/>
-    <label>Дата отсчета</label>
-    <div class="pole-mg" style="margin: 2px 2px 2px 5px;">
-        <?= DatePicker::widget([
-            'id' => 'last_date',
-            'name' => 'last_date',
-            'removeButton' => false,
-            'pluginOptions' => [
-                'autoclose' => true,
-                'format' => 'yyyy-mm-dd',
-            ]
-        ])
-        ?>
-    </div>
+<label>Дата отсчета</label>
+<div class="pole-mg" style="margin: 2px 2px 2px 5px;">
+    <?= DatePicker::widget([
+        'id' => 'last_date',
+        'name' => 'last_date',
+        'removeButton' => false,
+        'pluginOptions' => [
+            'autoclose' => true,
+            'format' => 'yyyy-mm-dd',
+        ]
+    ])
+    ?>
+</div>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function () {
+    $(document).on("beforeSubmit", "#choose_form", function () {
         $.ajax({
             url: "choose",
             type: "post",
-            data: $('form').serialize(),
+            data: $('#choose_form').serialize(),
             success: function () {
                 console.log("success?!");
                 $('#modalAddOperation').modal('hide');
@@ -98,7 +70,7 @@ use yii\helpers\Html;
             error: function () {
             }
         })
-    }).on('submit', function (e) {
+    }).on('submit', '#choose_form', function (e) {
         e.preventDefault();
     });
 

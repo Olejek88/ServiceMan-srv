@@ -102,7 +102,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipments = Equipment::find()->where(['deleted' => false])->all();
+    $equipments = Equipment::find()->where(['deleted' => false])->asArray()->all();
     $items = ArrayHelper::map($equipments, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid',
         ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
