@@ -80,7 +80,7 @@ use yii\helpers\Url;
     <?php
     echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $authorUuid])->label(false);
     ?>
-    <?php if ($request->uuid != null) echo Html::hiddenInput("requestUuid", $request->uuid); ?>
+    <?php if ($request != null) echo Html::hiddenInput("requestUuid", $request->uuid); ?>
 
     <?php
     echo '<label class="control-label">Исполнитель</label>';
