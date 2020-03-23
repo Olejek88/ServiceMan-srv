@@ -276,7 +276,9 @@ class TaskTemplateEquipmentController extends ZhkhController
         $all_task_equipment_count = 0;
         $today = time();
         $equipments = Equipment::find()
+            ->joinWith('object.house')
             ->with('object.house.street')
+            ->where(['equipment.deleted' => false, 'house.deleted' => false, 'object.deleted' => false])
             ->asArray()
             ->all();
         foreach ($equipments as $equipment) {
