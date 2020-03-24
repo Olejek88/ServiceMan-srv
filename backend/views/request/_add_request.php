@@ -25,7 +25,6 @@ if (isset($_GET["equipmentUuid"]))
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => "../request/new",
     'options' => [
         'id' => 'form2'
     ]]);
@@ -236,18 +235,21 @@ if (isset($_GET["equipmentUuid"]))
 
     <script>
         var send = false;
-        $(document).on("beforeSubmit", "#form2", function () {
+        $(document).on("beforeSubmit", "#form2", function (e) {
             e.preventDefault();
         }).on('submit', function (e) {
             e.preventDefault();
             if (!send) {
                 send = true;
+                var me = $('button.btn.btn-success', e.target);
+                me.prop('disabled', true).removeClass('enabled').addClass('disabled');
                 var form = $('#form2');
                 $.ajax({
                     url: "../request/new",
                     type: "post",
                     data: form.serialize(),
                     success: function (ret) {
+                        me.prop('disabled', false).removeClass('disabled').addClass('enabled');
                         if (ret.length > 5) {
                             $('#errors').val(ret);
                         } else {

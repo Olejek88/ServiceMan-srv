@@ -26,7 +26,6 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => '/object/save',
     'options' => [
         'id' => 'form',
         'enctype' => 'multipart/form-data'
@@ -215,12 +214,15 @@ use yii\helpers\Html;
         e.preventDefault();
     }).on('submit', function (e) {
         e.preventDefault();
+        var me = $('button.btn.btn-success', e.target);
+        me.prop('disabled', true).removeClass('enabled').addClass('disabled');
         var form = $('#form');
         $.ajax({
             type: "post",
             data: form.serialize(),
             url: "../object/save",
             success: function () {
+                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
                 $('#modalAdd').modal('hide');
             },
             error: function () {
