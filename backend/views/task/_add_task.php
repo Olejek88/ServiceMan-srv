@@ -25,7 +25,6 @@ use yii\helpers\Url;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => "../task/add-task",
     'options' => [
         'id' => 'form2'
     ]]);
@@ -201,14 +200,12 @@ use yii\helpers\Url;
             type: "post",
             data: form.serialize(),
             success: function () {
+                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
                 $('#modalTask').modal('hide');
                 window.location.reload();
             },
             error: function (result) {
                 //alert(result.statusText);
-            },
-            complete: function () {
-                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
             }
         })
     });

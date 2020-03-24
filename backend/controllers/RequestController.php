@@ -220,6 +220,10 @@ class RequestController extends ZhkhController
         else
             $model = new Request();
         if ($model->load(Yii::$app->request->post())) {
+            if ($model["equipmentUuid"] === '') {
+                $model["equipmentUuid"] = null;
+            }
+
             if (!isset($model["objectUuid"]) && isset($model["equipmentUuid"])) {
                 $model["objectUuid"] = $model["equipment"]["objectUuid"];
             }

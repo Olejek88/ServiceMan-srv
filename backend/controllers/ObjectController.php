@@ -194,8 +194,9 @@ class ObjectController extends ZhkhController
         ini_set('memory_limit', '-1');
         $fullTree = array();
         $streets = Street::find()
-            ->select('*')
             ->orderBy('title')
+            ->with(['city'])
+            ->asArray()
             ->all();
         foreach ($streets as $street) {
             $fullTree['children'][] = [
@@ -212,6 +213,7 @@ class ObjectController extends ZhkhController
                 ->where(['streetUuid' => $street['uuid']])
                 ->andWhere(['deleted' => 0])
                 ->orderBy('number')
+                ->asArray()
                 ->all();
             foreach ($houses as $house) {
                 $objects = Objects::find()
@@ -220,6 +222,8 @@ class ObjectController extends ZhkhController
                     ->andwhere(['IN', 'objectTypeUuid',
                         [ObjectType::OBJECT_TYPE_FLAT,
                             ObjectType::OBJECT_TYPE_COMMERCE]])
+                    ->with(['objectType', 'house'])
+                    ->asArray()
                     ->all();
                 if (count($objects)) {
                     $childIdx = count($fullTree['children']) - 1;
