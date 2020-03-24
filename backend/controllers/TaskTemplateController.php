@@ -393,7 +393,7 @@ class TaskTemplateController extends ZhkhController
      */
     public function actionAdd()
     {
-        MainFunctions::log("tree.log", "[add] stage template / model" . $_POST["selected_node"]);
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[add] stage template / model" . $_POST["selected_node"]);
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
             $type_id = 0;
@@ -435,7 +435,7 @@ class TaskTemplateController extends ZhkhController
                         ->andWhere(['taskTemplateUuid' => $taskTemplate['uuid']])
                         ->one();
                     $operationTemplate = new OperationTemplate();
-                    MainFunctions::log("tree.log", "!operationTemplate");
+                    MainFunctions::log("@backend/runtime/logs/tree.log", "!operationTemplate");
                     return $this->renderAjax('_add_operation', [
                         'taskTemplateUuid' => $taskTemplate['uuid'],
                         'taskTemplateEquipment' => $taskTemplateEquipment['uuid'],
@@ -557,7 +557,7 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new TaskTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new taskTemplate");
         if ($request->isPost && $model->load($request->post())) {
             if (isset($_POST["TaskTemplate"]["normative"]))
                 $model->normative = $_POST["TaskTemplate"]["normative"];
@@ -572,7 +572,7 @@ class TaskTemplateController extends ZhkhController
             $model->taskTypeUuid = $_POST["TaskTemplate"]["taskTypeUuid"];
             $model->uuid = MainFunctions::GUID();
             $model->save();
-            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
             if ($model->validate() && $equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
                 if ($equipment) {
@@ -586,7 +586,7 @@ class TaskTemplateController extends ZhkhController
                     $taskTemplateEquipment->uuid = MainFunctions::GUID();
                     $taskTemplateEquipment->save();
                 } else
-                    MainFunctions::log("tree.log", "error create task template");
+                    MainFunctions::log("@backend/runtime/logs/tree.log", "error create task template");
             }
         }
         return $this->redirect(['tree']);
@@ -606,7 +606,7 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new OperationTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] operationTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] operationTemplate");
         if ($request->isPost && $model->load($request->post())) {
             if (isset($_POST["OperationTemplate"]["normative"]))
                 $model->description = $_POST["OperationTemplate"]["description"];
@@ -620,17 +620,17 @@ class TaskTemplateController extends ZhkhController
             }
             $model->uuid = MainFunctions::GUID();
             $model->save();
-            MainFunctions::log("tree.log", "[new] new OperationTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new OperationTemplate " . json_encode($model->errors));
             if ($model->validate()) {
                 $taskOperation = new TaskOperation();
                 $taskOperation->uuid = MainFunctions::GUID();
                 $taskOperation->taskTemplateUuid = $_POST["taskTemplateUuid"];
                 $taskOperation->operationTemplateUuid = $model["uuid"];
-                MainFunctions::log("tree.log", "[new] create new");
+                MainFunctions::log("@backend/runtime/logs/tree.log", "[new] create new");
                 $taskOperation->save();
             }
         } else
-            MainFunctions::log("tree.log", "[new] error create operation template: " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] error create operation template: " . json_encode($model->errors));
         return $this->redirect(['tree']);
     }
 
@@ -920,10 +920,10 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new TaskTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new taskTemplate");
         if ($request->isPost && $model->load($request->post())) {
             $model->save();
-            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
             if (!isset($_POST['taskTemplateUuid'])) {
                 $taskTemplateEquipment = new TaskTemplateEquipmentType();
                 $taskTemplateEquipment->equipmentTypeUuid = $_POST['equipmentTypeUuid'];
@@ -931,7 +931,7 @@ class TaskTemplateController extends ZhkhController
                 $taskTemplateEquipment->uuid = MainFunctions::GUID();
                 $taskTemplateEquipment->oid = Users::getCurrentOid();
                 $taskTemplateEquipment->save();
-                MainFunctions::log("tree.log", "[new] new TaskTemplateEquipment " .
+                MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplateEquipment " .
                     json_encode($taskTemplateEquipment->errors));
                 echo json_encode($taskTemplateEquipment->errors);
             }

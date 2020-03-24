@@ -302,10 +302,10 @@ class MainFunctions
         $operation->oid = $oid;
         $operation->workStatusUuid = WorkStatus::NEW;
         if (!$operation->save()) {
-            MainFunctions::log("request.log", json_encode($operation->errors));
+            MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($operation->errors));
             return null;
         }
-        MainFunctions::log("request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
+        MainFunctions::log("@console/runtime/daemon/logs/request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
         return $operation;
     }
 
@@ -337,7 +337,7 @@ class MainFunctions
                             $dates[$count] = date("Y-m-d H:i:s", $start);
                         }
                         if ($start < $today) {
-                            //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
+                            //MainFunctions::log("@backend/runtime/logs/task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
                             MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
                                 $equipment['uuid'], 'Задача создана по план-графику',
                                 $equipment['oid'], $user['uuid'], null, $start, null);

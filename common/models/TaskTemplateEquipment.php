@@ -231,7 +231,7 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
     {
         $next_dates = "";
         $dates = explode(',', $this->next_dates);
-        MainFunctions::log('task.log', $this->next_dates);
+        MainFunctions::log('@backend/runtime/logs/task.log', $this->next_dates);
         if ($dates) {
             $first = 0;
             foreach ($dates as $date) {
@@ -242,7 +242,7 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
                 $first++;
             }
             $this->next_dates = $next_dates;
-            MainFunctions::log('task.log', $next_dates);
+            MainFunctions::log('@backend/runtime/logs/task.log', $next_dates);
             $this->save();
             return $dates[0];
         }
