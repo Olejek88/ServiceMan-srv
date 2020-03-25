@@ -213,24 +213,22 @@ use yii\widgets\ActiveForm;
     </div>
     <script>
         $(document).on("beforeSubmit", "#dynamic-form", function () {
-        }).on('submit', function (e) {
-            var me = $('button.btn.btn-success', e.target);
             e.preventDefault();
+        }).on('submit', function (e) {
+            e.preventDefault();
+            var me = $('button.btn.btn-success', e.target);
             me.prop('disabled', true).removeClass('enabled').addClass('disabled');
             $.ajax({
                 url: "../task/add-task",
                 type: "post",
-                data: $('form').serialize(),
+                data: $('#form').serialize(),
                 success: function () {
+                    me.prop('disabled', false).removeClass('disabled').addClass('enabled');
                     $('#modalAddTask').modal('hide');
                 },
                 error: function (result) {
                     alert(result.statusText);
                 },
-                complete: function () {
-                    console.log('complete');
-                    me.prop('disabled', false).removeClass('disabled').addClass('enabled');
-                }
             })
         });
     </script>
