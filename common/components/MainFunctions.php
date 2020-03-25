@@ -65,6 +65,14 @@ class MainFunctions
         if (!is_array($messages)) {
             $messages = [$messages];
         }
+
+        $dir = dirname(Yii::getAlias($filename));
+        if ($dir != '.' && !file_exists($dir)) {
+            if (!mkdir($dir, 0777, true)) {
+                return;
+            }
+        }
+
         foreach ($messages as $message) {
             file_put_contents(Yii::getAlias($filename), date('d.m.Y H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
