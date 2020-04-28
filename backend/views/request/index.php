@@ -5,7 +5,6 @@ use common\models\Contragent;
 use common\models\Request;
 use common\models\RequestStatus;
 use common\models\RequestType;
-use common\models\Settings;
 use common\models\Task;
 use common\models\Users;
 use common\models\WorkStatus;
@@ -19,25 +18,17 @@ $this->title = Yii::t('app', 'ТОИРУС::Журнал диспетчера');
 
 $gridColumns = [
     [
-        'attribute' => '_id',
-        'hAlign' => 'center',
+        'class' => 'kartik\grid\EditableColumn',
+        'attribute' => 'serialNumber',
         'vAlign' => 'middle',
+        'header' => 'Номер заявки',
+        'format' => 'raw',
+        'headerOptions' => ['class' => 'kartik-sheet-style'],
+        'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class',
-            'style' => 'width: 50px; text-align: center'
+            'style' => 'width: 50px; text-align: center;'
         ],
-        'headerOptions' => ['class' => 'text-center'],
-        'mergeHeader' => true,
-        'content' => function ($data) {
-            return Html::a($data->id,
-                ['../request/form', 'uuid' => $data['uuid']],
-                [
-                    'title' => 'Редактировать заявку',
-                    'data-toggle' => 'modal',
-                    'data-target' => '#modalRequest',
-                ]
-            );
-        }
     ],
     [
         'attribute' => 'createdAt',
@@ -48,7 +39,7 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kartik-sheet-style'],
         'mergeHeader' => true,
         'content' => function ($data) {
-            if (strtotime($data->createdAt)>0)
+            if (strtotime($data->createdAt) > 0)
                 return date("d-m-Y H:i", strtotime($data->createdAt));
             else
                 return 'не открыт';
@@ -85,8 +76,8 @@ $gridColumns = [
             $types = [
                 0 => "Бесплатная заявка", 1 => "Платная заявка"
             ];
-            $status = ["<span class='badge' style='background-color: seagreen; height: 22px'>Бесплатная</span>",
-                "<span class='badge' style='background-color: darkorange; height: 22px'>Платная</span>"];
+            $status = ["<span class='badge' style='background-color: seagreen; height: 22px;'>Бесплатная</span>",
+                "<span class='badge' style='background-color: darkorange; height: 22px;'>Платная</span>"];
             $list = $types;
             return [
                 'size' => 'md',
@@ -151,11 +142,11 @@ $gridColumns = [
         ],
         'value' => function ($model) {
             if ($model['requestStatusUuid'] == RequestStatus::COMPLETE)
-                return "<span class='badge' style='background-color: green; height: 22px'>" . $model['requestStatus']['title'] . "</span>";
+                return "<span class='badge' style='background-color: green; height: 22px;'>" . $model['requestStatus']['title'] . "</span>";
             else if ($model['requestStatusUuid'] == RequestStatus::NEW_REQUEST)
-                return "<span class='badge' style='background-color: lightcoral; height: 22px'>" . $model['requestStatus']['title'] . "</span>";
+                return "<span class='badge' style='background-color: lightcoral; height: 22px;'>" . $model['requestStatus']['title'] . "</span>";
             else
-                return "<span class='badge' style='background-color: gray; height: 22px'>" . $model['requestStatus']['title'] . "</span>";
+                return "<span class='badge' style='background-color: gray; height: 22px;'>" . $model['requestStatus']['title'] . "</span>";
         },
         'editableOptions' => function () {
             $status = [];
@@ -163,11 +154,11 @@ $gridColumns = [
             $statuses = RequestStatus::find()->orderBy('title')->all();
             foreach ($statuses as $stat) {
                 if ($stat['uuid'] == RequestStatus::COMPLETE)
-                    $status[$stat['uuid']] = "<span class='badge' style='background-color: green; height: 22px'>" . $stat['title'] . "</span>";
+                    $status[$stat['uuid']] = "<span class='badge' style='background-color: green; height: 22px;'>" . $stat['title'] . "</span>";
                 else if ($stat['uuid'] == RequestStatus::NEW_REQUEST)
-                    $status[$stat['uuid']] = "<span class='badge' style='background-color: lightcoral; height: 22px'>" . $stat['title'] . "</span>";
+                    $status[$stat['uuid']] = "<span class='badge' style='background-color: lightcoral; height: 22px;'>" . $stat['title'] . "</span>";
                 else
-                    $status[$stat['uuid']] = "<span class='badge' style='background-color: gray; height: 22px'>" . $stat['title'] . "</span>";
+                    $status[$stat['uuid']] = "<span class='badge' style='background-color: gray; height: 22px;'>" . $stat['title'] . "</span>";
                 $list[$stat['uuid']] = $stat['title'];
             }
             return [
@@ -220,9 +211,9 @@ $gridColumns = [
 
         'value' => function ($model) {
             if ($model->objectUuid)
-                return "<span style='display: inline-block !important; height: 22px'>" . $model['object']->getFullTitle() . "</span>";
+                return "<span style='display: inline-block !important; height: 22px;'>" . $model['object']->getFullTitle() . "</span>";
             else
-                return "<span style='height: 22px; display: inline-block !important'>нет</span>";
+                return "<span style='height: 22px; display: inline-block !important;'>нет</span>";
         },
         'contentOptions' => [
             'class' => 'table_class'
@@ -281,21 +272,21 @@ $gridColumns = [
                             'data-toggle' => 'modal',
                             'data-target' => '#modalTaskInfo',
                         ]);
-                    $order.=' ';
+                    $order .= ' ';
                     if ($task['workStatusUuid'] == WorkStatus::COMPLETE) {
-                        $order .= "<span class='badge' style='background-color: green; height: 22px'>Выполнена</span>";
+                        $order .= "<span class='badge' style='background-color: green; height: 22px;'>Выполнена</span>";
                     }
                     if ($task['workStatusUuid'] == WorkStatus::NEW)
-                        $order .= "<span class='badge' style='background-color: gray; height: 22px'>Новая</span>";
+                        $order .= "<span class='badge' style='background-color: gray; height: 22px;'>Новая</span>";
                     if ($task['workStatusUuid'] == WorkStatus::CANCELED)
-                        $order .= "<span class='badge' style='background-color: lightskyblue; height: 22px'>Отменена</span>";
+                        $order .= "<span class='badge' style='background-color: lightskyblue; height: 22px;'>Отменена</span>";
                     if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
-                        $order .= "<span class='badge' style='background-color: orangered; height: 22px'>Не завершена</span>";
+                        $order .= "<span class='badge' style='background-color: orangered; height: 22px;'>Не завершена</span>";
                     $order .= '<br/>' . $task['taskTemplate']['title'];
                     return $order;
                 }
             }
-            return Html::a("<span class='badge' style='background-color: lightgrey; height: 22px'>не создавалась</span>",
+            return Html::a("<span class='badge' style='background-color: lightgrey; height: 22px;'>не создавалась</span>",
                 ['../task/form', 'equipmentUuid' => $model['equipmentUuid'], 'requestUuid' => $model['uuid'],
                     'type_uuid' => $model['equipment']['equipmentTypeUuid']],
                 [
@@ -306,28 +297,28 @@ $gridColumns = [
             );
         },
     ],
-/*    [
-        'attribute' => 'contragent',
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'header' => 'Исполнитель',
-        'format' => 'raw',
-        'headerOptions' => ['class' => 'kartik-sheet-style'],
-        'mergeHeader' => true,
-        'value' => function ($model) {
-            return "<span class='badge' style='background-color: gray; height: 22px'>" . $model['contragent']['title'] . "</span>";
-        },
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Contragent::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-    ],*/
+//    [
+//        'attribute' => 'contragent',
+//        'hAlign' => 'center',
+//        'vAlign' => 'middle',
+//        'header' => 'Исполнитель',
+//        'format' => 'raw',
+//        'headerOptions' => ['class' => 'kartik-sheet-style'],
+//        'mergeHeader' => true,
+//        'value' => function ($model) {
+//            return "<span class='badge' style='background-color: gray; height: 22px;'>" . $model['contragent']['title'] . "</span>";
+//        },
+//        'contentOptions' => [
+//            'class' => 'table_class'
+//        ],
+//        'filterType' => GridView::FILTER_SELECT2,
+//        'filter' => ArrayHelper::map(Contragent::find()->orderBy('title')->all(),
+//            'uuid', 'title'),
+//        'filterWidgetOptions' => [
+//            'pluginOptions' => ['allowClear' => true],
+//        ],
+//        'filterInputOptions' => ['placeholder' => 'Любой'],
+//    ],
     [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'verdict',
@@ -357,8 +348,8 @@ $gridColumns = [
     [
         'class' => 'kartik\grid\ActionColumn',
         'header' => 'Действия',
-        'buttons'=>[
-            'edit' => function ($url,$model) {
+        'buttons' => [
+            'edit' => function ($url, $model) {
                 return Html::a('<span class="fa fa-edit"></span>',
                     ['../request/form', 'uuid' => $model['uuid']],
                     [
@@ -389,6 +380,10 @@ $gridColumns = [
                 );
             },
             'add' => function ($url, $model) {
+                if (empty($model['extId'])) {
+                    return '';
+                }
+
                 return Html::a('<span class="fa fa-comment"></span>',
                     ['../request/add-message', 'uuid' => $model['uuid'],
                         'requestId' => $model['extId']],
@@ -400,7 +395,7 @@ $gridColumns = [
                 );
             }
         ],
-        'template' => ' {history} {messages} {delete} {add}',
+        'template' => ' {edit} {history} {messages} {delete} {add}',
         'headerOptions' => ['class' => 'kartik-sheet-style'],
     ]
 ];
@@ -428,7 +423,7 @@ echo GridView::widget([
     ],
     'toolbar' => [
         ['content' =>
-            '<form action="/request"><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
+            '<form action="/request"><table style="width: 800px; padding: 3px;"><tr><td style="width: 300px;">' .
             DatePicker::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
@@ -437,7 +432,7 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]).'</td><td style="width: 300px">'.
+            ]) . '</td><td style="width: 300px;">' .
             DatePicker::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
@@ -446,8 +441,8 @@ echo GridView::widget([
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]).'</td><td style="width: 100px">'.Html::submitButton(Yii::t('app', 'Выбрать'), [
-                'class' => 'btn btn-info']).'</td><td style="width: 150px">'.
+            ]) . '</td><td style="width: 100px;">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-info']) . '</td><td style="width: 150px;">' .
             Html::a('Новая',
                 ['../request/form'],
                 [
@@ -457,9 +452,13 @@ echo GridView::widget([
                     'data-target' => '#modalRequest',
                 ]
             )
-            .'</td>
-            <td style="width: 100px">{export}</td></tr></table></form>',
-            'options' => ['style' => 'width:100%']
+            . '</td>
+            <td style="width: 100px;">{export}</td></tr></table></form>',
+            'options' => [
+                'style' => [
+                    'width' => '100%',
+                ],
+            ]
         ],
     ],
     'export' => [
@@ -469,7 +468,7 @@ echo GridView::widget([
     ],
     'pjax' => true,
     'showPageSummary' => false,
-    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
+    'pageSummaryRowOptions' => ['style' => ['line-height' => 0, 'padding' => 0]],
     'summary' => '',
     'bordered' => true,
     'striped' => false,
@@ -480,10 +479,10 @@ echo GridView::widget([
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="fa fa-tasks"></i>&nbsp; Журнал диспетчера',
-        'headingOptions' => ['style' => 'background: #337ab7']
+        'headingOptions' => ['style' => 'background: #337ab7;']
     ],
-    'rowOptions' => function($model) {
-        if (isset($_GET['uuid'])){
+    'rowOptions' => function ($model) {
+        if (isset($_GET['uuid'])) {
             if ($_GET['uuid'] == $model['uuid'])
                 return ['class' => 'danger'];
         }
@@ -525,13 +524,13 @@ function () {
 </style>
 
 <div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog" style="width: 1000px; height: 700px">
+    <div class="modal-dialog" style="width: 1000px; height: 700px;">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>
 
 <div class="modal remote fade" id="modalMessages">
-    <div class="modal-dialog" style="width: 1000px; height: 700px">
+    <div class="modal-dialog" style="width: 1000px; height: 700px;">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>
@@ -549,21 +548,21 @@ function () {
 </div>
 
 <div class="modal remote fade" id="modalRequestHistory">
-    <div class="modal-dialog" style="width: 800px; height: 400px">
+    <div class="modal-dialog" style="width: 800px; height: 400px;">
         <div class="modal-content loader-lg" id="modalContentHistory">
         </div>
     </div>
 </div>
 
 <div class="modal remote fade" id="modalAddComment">
-    <div class="modal-dialog" style="width: 800px; height: 400px">
+    <div class="modal-dialog" style="width: 800px; height: 400px;">
         <div class="modal-content loader-lg" id="modalAddComment">
         </div>
     </div>
 </div>
 
 <div class="modal remote fade" id="modalFilter">
-    <div class="modal-dialog" style="width: 400px; height: 500px">
+    <div class="modal-dialog" style="width: 400px; height: 500px;">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>

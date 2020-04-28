@@ -56,7 +56,7 @@ use yii\helpers\Html;
                 <td><?php
                 $request = Request::find()->where(['taskUuid' => $task['uuid']])->one();
                 if ($request) {
-                    $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+                    $name = "<span class='badge' style='background-color: lightblue; height: 22px;'>Заявка #" . $request['serialNumber'] . "</span>";
                     $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
                     echo $link;
                 } else {

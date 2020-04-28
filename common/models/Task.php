@@ -234,7 +234,7 @@ class Task extends ZhkhActiveRecord
     {
         $request = Request::find()->where(['taskUuid' => $this->uuid])->one();
         if ($request) {
-            $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+            $name = "<span class='badge' style='background-color: lightblue; height: 22px;'>Заявка #" . $request['serialNumber'] . "</span>";
             $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
             return $link;
         } else

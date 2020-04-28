@@ -86,17 +86,28 @@ class RequestController extends ZhkhController
                 $toLog['description'] = 'Комментарий: изменен результат контроля заявки №' . $model['_id'] . ' на ' . $model['result'];
             }
 
+            if ($_POST['editableAttribute'] == 'serialNumber') {
+                $oldValue = $model['serialNumber'];
+                $model['serialNumber'] = $_POST['Request'][$_POST['editableIndex']]['serialNumber'];
+                $toLog['title'] = 'Изменен номер заявки';
+                $toLog['description'] = 'Комментарий: изменен номер заявки с ' . $oldValue . ' на ' . $model['serialNumber'];
+                $model->scenario = Request::SCENARIO_API;
+            }
+
             // костыль для того чтобы можно было изменить обращения которые были созданы без контрагента и оборудования
             if ($model->contragentUuid == null && $model->equipmentUuid == null) {
                 $model->scenario = Request::SCENARIO_API;
             }
 
-
             if ($model->save()) {
                 MainFunctions::register($toLog['type'], $toLog['title'], $toLog['description'], $model['uuid']);
                 return json_encode([]);
             } else {
-                return json_encode(['message' => 'failed']);
+                $message = '';
+                foreach ($model->errors as $error) {
+                    $message = $error[0] . '<br/>';
+                }
+                return json_encode(['message' => $message]);
             }
         }
 
@@ -244,7 +255,7 @@ class RequestController extends ZhkhController
                     }
                 }
 
-                MainFunctions::register('request', 'Создана заявка #' . $model['_id'],
+                MainFunctions::register('request', 'Создана заявка #' . $model['serialNumber'],
                     'Комментарий: заявитель ' . $model['contragent']['title'], $model->uuid);
 
                 if ($model['requestType']['taskTemplateUuid']) {

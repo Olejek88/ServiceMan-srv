@@ -47,7 +47,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 // rules for your project
-//                '/' => 'auth/request',
+                '/' => 'auth/index',
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'orders'],
                 ['class' => 'yii\rest\UrlRule', 'controller' => 'gpstrack'],
                 '/integration-is/notify/<orgUuid>' => 'integration-is/notify',

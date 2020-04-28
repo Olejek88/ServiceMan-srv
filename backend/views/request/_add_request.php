@@ -176,9 +176,10 @@ if (isset($_GET["equipmentUuid"]))
                                             $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
                                                 return $equipment->getFullTitle();
                                             });*/
+                        $items = empty($model->equipmentUuid) ? [] : [$model->equipmentUuid => $model->equipment->title];
                         echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
                             [
-                                //'data' => $items,
+                                'data' => $items,
                                 'language' => 'ru',
                                 'options' => [
                                     'placeholder' => 'Выберите элементы..'
@@ -275,19 +276,19 @@ if (isset($_GET["equipmentUuid"]))
 
 $this->registerJs('function refreshContragent(contragentUuid) {
 $.ajax({
-    url: \'../contragent/address\',
-    type: \'post\',
+    url: "../contragent/address",
+    type: "post",
     data: {
        id: contragentUuid
 },
 success: function (data) {
     var obj = JSON.parse(data);
-    $(\'#request-cityuuid\').val(obj.city).trigger(\'change\');
+    $("#request-cityuuid").val(obj.city).trigger("change");
     refreshStreets(obj.city);
     console.log(obj.street);
-    $(\'#request-streetuuid\').val(obj.street).trigger(\'change\');
-    $(\'#request-houseuuid\').val(obj.house).trigger(\'change\');
-    $(\'#request-objectuuid\').val(obj.object).trigger(\'change\');
+    $("#request-streetuuid").val(obj.street).trigger("change");
+    $("#request-houseuuid").val(obj.house).trigger("change");
+    $("#request-objectuuid").val(obj.object).trigger("change");
     }
   });    
 };
@@ -295,6 +296,6 @@ success: function (data) {
 
 $this->registerJs('$(document).ready(function() 
 {
-//refreshContragent(\'' . $model['contragentUuid'] . '\');
+//refreshContragent("' . $model['contragentUuid'] . '"");
 })');
 ?>
