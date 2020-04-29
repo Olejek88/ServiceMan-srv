@@ -318,44 +318,52 @@ class MainFunctions
     }
 
     /**
-     * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
      */
     public static function checkTasks()
     {
         $today = time();
-        $equipments = Equipment::find()->all();
-        foreach ($equipments as $equipment) {
-            $taskTemplateEquipments = TaskTemplateEquipment::find()
-                ->where(['equipmentUuid' => $equipment['uuid']])
-                ->all();
-
-            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
-                $user = $taskTemplateEquipment->getUser();
-                $taskTemplateEquipment->formDates();
-                $dates = $taskTemplateEquipment->getDates();
-                if ($dates) {
-                    $count = 0;
-                    while ($count < count($dates)) {
-                        $start = strtotime($dates[$count]);
-                        // что-то пошло не так, дата очень старая, нужно перенести на текущую
-                        if ($today - $start > 3600 * 24 * 31) {
-                            $start = $today - 1;
-                            $dates[$count] = date("Y-m-d H:i:s", $start);
-                        }
-                        if ($start < $today) {
-                            //MainFunctions::log("@backend/runtime/logs/task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
-                            MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
-                                $equipment['uuid'], 'Задача создана по план-графику',
-                                $equipment['oid'], $user['uuid'], null, $start, null);
-                            $taskTemplateEquipment->last_date = $dates[$count];
-                            $taskTemplateEquipment->save();
-                            $taskTemplateEquipment->popDate();
-                        }
-                        $count++;
-                        if ($count > 5) break;
+        $equipments = Equipment::find()
+            ->joinWith(['object.house'])
+            ->with(['equipmentType.equipmentSystem'])
+            ->where(['equipment.deleted' => false, 'house.deleted' => false, 'object.deleted' => false])
+            ->asArray()
+            ->all();
+        $eqUuids = ArrayHelper::map($equipments, '_id', 'uuid');
+        $equipments = ArrayHelper::map($equipments, 'uuid', function ($element) {
+            return $element;
+        });
+        $taskTemplateEquipments = TaskTemplateEquipment::find()
+            ->where(['equipmentUuid' => $eqUuids])
+            ->all();
+        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            $user = TaskTemplateEquipment::getUserStatic($equipments[$taskTemplateEquipment['equipmentUuid']]['equipmentType']['equipmentSystem'],
+                $equipments[$taskTemplateEquipment['equipmentUuid']]['object']['house']);
+            $taskTemplateEquipment->formDates();
+            $dates = $taskTemplateEquipment->getDates();
+            if ($dates) {
+                $count = 0;
+                while ($count < count($dates)) {
+                    $start = strtotime($dates[$count]);
+                    // что-то пошло не так, дата очень старая, нужно перенести на текущую
+                    if ($today - $start > 3600 * 24 * 31) {
+                        $start = $today - 1;
+                        $dates[$count] = date("Y-m-d H:i:s", $start);
                     }
+
+                    if ($start < $today) {
+                        //MainFunctions::log("@backend/runtime/logs/task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
+                        MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
+                            $taskTemplateEquipment['equipmentUuid'], 'Задача создана по план-графику',
+                            $taskTemplateEquipment['oid'], $user['uuid'], null, $start, null);
+                        $taskTemplateEquipment->last_date = $dates[$count];
+                        $taskTemplateEquipment->save();
+                        $taskTemplateEquipment->popDate();
+                    }
+
+                    $count++;
+                    if ($count > 5) break;
                 }
             }
         }

@@ -39,6 +39,7 @@ use yii\helpers\Html;
  * @property WorkStatus $workStatus
  * @property Equipment $equipment
  * @property Operation $operations
+ * @property TaskUser[] $taskUsers
  */
 class Task extends ZhkhActiveRecord
 {
@@ -241,6 +242,11 @@ class Task extends ZhkhActiveRecord
             return "без заявки";
     }
 
+    public function getTaskUsers()
+    {
+        return $this->hasMany(TaskUser::class, ['taskUuid' => 'uuid']);
+    }
+
     function getActionPermissions()
     {
         return array_merge_recursive(parent::getActionPermissions(), [
@@ -264,6 +270,7 @@ class Task extends ZhkhActiveRecord
                 'get-user-system',
                 'get-task-template',
                 'get-equipments',
+                'json-calendar',
             ],
             'edit' => [
                 'add-task',

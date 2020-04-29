@@ -195,6 +195,33 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
     }
 
     /**
+     * @param $equipmentSystem
+     * @param $house
+     * @return array|Users|ActiveRecord|null
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public static function getUserStatic($equipmentSystem, $house)
+    {
+        $userHouses = UserHouse::find()->where(['houseUuid' => $house['uuid']])->all();
+        foreach ($userHouses as $userHouse) {
+            $userSystems = UserSystem::find()->where(['userUuid' => $userHouse['userUuid']])->all();
+            // если в специализации пользователя есть нужная - выберем пользователя по-умолчанию
+            foreach ($userSystems as $userSystem) {
+                if ($equipmentSystem['uuid'] == $userSystem['equipmentSystemUuid']) {
+                    $user = Users::find()
+                        ->where(['uuid' => $userHouse['userUuid']])
+                        ->andWhere(['active' => 1])
+                        ->one();
+                    if ($user)
+                        return $user;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Link
      *
      * @return string[]
