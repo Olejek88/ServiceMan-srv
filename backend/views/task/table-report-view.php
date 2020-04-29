@@ -161,9 +161,10 @@ $gridColumns = [
     ],
     [
         'attribute' => 'taskTemplateUuid',
+        'header' => 'Задача',
         'vAlign' => 'middle',
-        'header' => 'Задача' . '<table><tr><form action=""><td>' .
-            Select2::widget([
+        'format' => 'raw',
+        'filter' => Select2::widget([
                 'id' => 'type',
                 'name' => 'type',
                 'language' => 'ru',
@@ -174,25 +175,13 @@ $gridColumns = [
                     '3' => 'Отмененные'
                 ],
                 'value' => $type,
+            'pjaxContainerId' => 'tasks-table',
+            'class' => ['add-filter'],
                 'options' => ['placeholder' => 'Статус по времени'],
-                'pluginEvents' => [
-                    "select2:select" => "function() {
-                        window.location.replace('table?type='+document.getElementById('type').value); 
-                        }",
-                    "select2:unselecting" => "function() {
-                        window.location.replace('table');
-                    }"
-                ],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ])
-            . '</td></form></tr></table>',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
+        ]),
         'content' => function ($data) {
             return $data['taskTemplate']->title;
         }
@@ -578,6 +567,7 @@ if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
 
 echo GridView::widget([
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
@@ -594,6 +584,8 @@ echo GridView::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'tasks-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
@@ -603,6 +595,8 @@ echo GridView::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'tasks-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
@@ -617,6 +611,11 @@ echo GridView::widget([
         'filename' => 'tasks'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'tasks-table',
+        ],
+    ],
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => ['line-height' => '0', 'padding' => '0']],
     'summary' => '',

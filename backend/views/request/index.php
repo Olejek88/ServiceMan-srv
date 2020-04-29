@@ -412,6 +412,7 @@ if (isset($_GET['start_time']))
 
 echo GridView::widget([
     'id' => 'requests-table',
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
@@ -428,6 +429,8 @@ echo GridView::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'request-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
@@ -437,6 +440,8 @@ echo GridView::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'request-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
@@ -467,6 +472,11 @@ echo GridView::widget([
         'filename' => 'requests'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'request-table',
+        ],
+    ],
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => ['line-height' => 0, 'padding' => 0]],
     'summary' => '',

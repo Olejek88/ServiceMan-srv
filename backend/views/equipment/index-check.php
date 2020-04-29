@@ -27,8 +27,12 @@ $gridColumns = [
     [
         'hAlign' => 'center',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
-        'header' => 'Адрес'.'<table><tr><form action=""><td>'.Html::textInput('address','',['style' => 'width:100%']).'</td></form></tr></table>',
+        'header' => 'Адрес',
+        'filter' => Html::textInput('address', Yii::$app->request->getQueryParam('address'), [
+            'style' => 'width:100%',
+            'pjaxContainerId' => 'check-table',
+            'class' => ['add-filter'],
+        ]),
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
             return $data['object']->getFullTitle();
@@ -91,6 +95,7 @@ $gridColumns = [
 ];
 
 echo GridView::widget([
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
@@ -108,6 +113,8 @@ echo GridView::widget([
                 'name' => 'start_time',
                 'value' => '2018-12-01',
                 'removeButton' => false,
+                'pjaxContainerId' => 'check-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd'
@@ -117,6 +124,8 @@ echo GridView::widget([
                 'name' => 'end_time',
                 'value' => '2021-12-31',
                 'removeButton' => false,
+                'pjaxContainerId' => 'check-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd',
@@ -133,6 +142,11 @@ echo GridView::widget([
         'filename' => 'orders'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'check-table',
+        ],
+    ],
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
     'summary' => '',
@@ -147,7 +161,7 @@ echo GridView::widget([
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; Отчет о поверках приборов',
         'headingOptions' => ['style' => 'background: #337ab7']
     ],
-    'rowOptions' => function($model) {
+    'rowOptions' => function ($model) {
         if (isset($_GET['type'])) {
             if ($model['nextDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30) ||
                 $model['replaceDate'] <= date("Y-m-d 00:00:00", time() + 24 * 3600 * 30))

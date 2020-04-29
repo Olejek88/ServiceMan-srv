@@ -174,6 +174,7 @@ if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
 
 echo GridView::widget([
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
@@ -188,6 +189,8 @@ echo GridView::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'defect-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd 00:00:00'
@@ -197,6 +200,8 @@ echo GridView::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'defect-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd 00:00:00'
@@ -211,6 +216,11 @@ echo GridView::widget([
         'filename' => 'event'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'defect-table',
+        ],
+    ],
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
     'summary' => '',
