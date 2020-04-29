@@ -1110,10 +1110,39 @@ class TaskController extends ZhkhController
 
     /**
      * @return string
+     */
+    public function actionCalendar()
+    {
+        return $this->render('calendar');
+    }
+
+    /**
+     * Метод возвращает события календарю, за указанный период.
+     *
+     * @param null $start
+     * @param null $end
+     * @param null $_
+     * @return array
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public function actionCalendar()
+    public function actionJsonCalendar($start = NULL, $end = NULL, $_ = NULL)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $tsStart = strtotime($start);
+        $tsEnd = strtotime($end);
+        $events = self::getAllEvents($tsStart, $tsEnd);
+        return $events;
+    }
+
+    /**
+     * @param $tsStart
+     * @param $tsEnd
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    function getAllEvents($tsStart, $tsEnd)
     {
         $events = [];
         $today = time();
@@ -1121,14 +1150,30 @@ class TaskController extends ZhkhController
             ->where(['deleted' => false])
             ->asArray()
             ->all();
+        $eqUuids = ArrayHelper::map($equipments, '_id', 'uuid');
+        $taskTemplateEquipments = TaskTemplateEquipment::find()
+            ->where(['equipmentUuid' => $eqUuids])
+            ->all();
+        $result = [];
+        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            $result[$taskTemplateEquipment['equipmentUuid']][] = $taskTemplateEquipment;
+        }
+
+        $taskTemplateEquipments = &$result;
+
         foreach ($equipments as $equipment) {
-            $taskTemplateEquipments = TaskTemplateEquipment::find()
-                ->where(['equipmentUuid' => $equipment['uuid']])
-                ->all();
+            try {
+                $taskTemplateEquipmentList = $taskTemplateEquipments[$equipment['uuid']];
+                if ($taskTemplateEquipmentList == null) {
+                    continue;
+                }
+            } catch (\Exception $exception) {
+                continue;
+            }
 
             $task_equipment_count = 0;
 
-            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            foreach ($taskTemplateEquipmentList as $taskTemplateEquipment) {
                 $selected_user = $taskTemplateEquipment->getUser();
                 if ($selected_user)
                     $user = $selected_user['name'];
@@ -1141,7 +1186,8 @@ class TaskController extends ZhkhController
                     while ($count < count($dates)) {
                         $start = strtotime($dates[$count]);
                         $finish = $start + 3600 * 24;
-                        if ($start - $today <= 3600 * 24 * 31 * 13) {
+//                        if ($start - $today <= 3600 * 24 * 31 * 13) {
+                        if ($start >= $tsStart && $start < $tsEnd) {
                             $event = new Event();
                             //$event->id = $taskTemplateEquipment['_id'];
                             $event->id = 0;
@@ -1152,18 +1198,19 @@ class TaskController extends ZhkhController
                             $event->color = '#333333';
                             $events[] = $event;
                         }
+
                         $count++;
                         if ($count > 5) break;
                     }
 
                     $all_tasks = Task::find()
-                        ->select('*')
+                        ->with(['taskUsers.user'])
                         ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
+                        ->asArray()
                         ->all();
                     foreach ($all_tasks as $task) {
-                        $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
                         $user_names = '';
-                        foreach ($taskUsers as $taskUser) {
+                        foreach ($task['taskUsers'] as $taskUser) {
                             $user_names .= $taskUser['user']['name'];
                         }
 
@@ -1193,67 +1240,78 @@ class TaskController extends ZhkhController
 
         $all_tasks = Task::find()
             ->where(['workStatusUuid' => WorkStatus::COMPLETE])
+            ->with(['taskTemplate', 'taskUsers.user'])
+            ->asArray()
             ->all();
         foreach ($all_tasks as $task) {
-            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $taskUsers = $task['taskUsers'];
             $user_names = '';
             foreach ($taskUsers as $taskUser) {
                 $user_names .= $taskUser['user']['name'];
             }
 
-            $event = new Event();
-            $event->id = $task['_id'];
-            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
-            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
-                $task['workStatusUuid'] == WorkStatus::NEW)
-                $event->backgroundColor = 'gray';
-            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
-                $event->backgroundColor = 'orange';
-            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
-                $event->backgroundColor = 'lightred';
-            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
-                $event->backgroundColor = 'green';
+            $start = strtotime($task["startDate"]);
+            $end = strtotime($task["endDate"]);
+            if (($start >= $tsStart && $start < $tsEnd) || ($end >= $tsStart && $end < $tsEnd)) {
+                $event = new Event();
+                $event->id = $task['_id'];
+                $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+                if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                    $task['workStatusUuid'] == WorkStatus::NEW)
+                    $event->backgroundColor = 'gray';
+                if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                    $event->backgroundColor = 'orange';
+                if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                    $event->backgroundColor = 'lightred';
+                if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                    $event->backgroundColor = 'green';
 
-            $event->start = $task["startDate"];
-            $event->end = $task["endDate"];
-            $event->color = 'green';
-            $events[] = $event;
+                $event->start = $task["startDate"];
+                $event->end = $task["endDate"];
+                $event->color = 'green';
+                $events[] = $event;
+            }
         }
 
         $all_tasks = Task::find()
-            ->where('workStatusUuid !=\'' . WorkStatus::COMPLETE . '\'')
+            ->where(['!=', 'workStatusUuid', WorkStatus::COMPLETE])
+            ->with(['taskTemplate', 'taskUsers.user'])
+            ->asArray()
             ->all();
         foreach ($all_tasks as $task) {
-            $taskUsers = TaskUser::find()->where(['taskUuid' => $task['uuid']])->all();
+            $taskUsers = $task['taskUsers'];
             $user_names = '';
             foreach ($taskUsers as $taskUser) {
                 $user_names .= $taskUser['user']['name'];
             }
 
-            $event = new Event();
-            $event->id = $task['_id'];
-            $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
-            if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
-                $task['workStatusUuid'] == WorkStatus::NEW)
-                $event->backgroundColor = 'gray';
-            if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
-                $event->backgroundColor = 'orange';
-            if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
-                $event->backgroundColor = 'lightred';
-            if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
-                $event->backgroundColor = 'green';
+            $start = strtotime($task["taskDate"]);
+            $end = strtotime($task["taskDate"]) + 3600 * 12;
+            if (($start >= $tsStart && $start < $tsEnd) || ($end >= $tsStart && $end < $tsEnd)) {
+                $event = new Event();
+                $event->id = $task['_id'];
+                $event->title = '[' . $user_names . '] ' . $task['taskTemplate']['title'];
+                if ($task['workStatusUuid'] == WorkStatus::CANCELED ||
+                    $task['workStatusUuid'] == WorkStatus::NEW)
+                    $event->backgroundColor = 'gray';
+                if ($task['workStatusUuid'] == WorkStatus::IN_WORK)
+                    $event->backgroundColor = 'orange';
+                if ($task['workStatusUuid'] == WorkStatus::UN_COMPLETE)
+                    $event->backgroundColor = 'lightred';
+                if ($task['workStatusUuid'] == WorkStatus::COMPLETE)
+                    $event->backgroundColor = 'green';
 
-            $event->start = $task["taskDate"];
-            $event->end = date("Y-m-d H:i:s", strtotime($task["taskDate"]) + 3600 * 12);
-            $event->color = 'gray';
-            if ($task['workStatusUuid'] == WorkStatus::CANCELED)
-                $event->color = 'red';
-            $events[] = $event;
+                $event->start = $task["taskDate"];
+//                $event->end = date("Y-m-d H:i:s", strtotime($task["taskDate"]) + 3600 * 12);
+                $event->end = $end;
+                $event->color = 'gray';
+                if ($task['workStatusUuid'] == WorkStatus::CANCELED)
+                    $event->color = 'red';
+                $events[] = $event;
+            }
         }
 
-        return $this->render('calendar', [
-            'events' => $events
-        ]);
+        return $events;
     }
 
     /**

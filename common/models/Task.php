@@ -39,6 +39,7 @@ use yii\helpers\Html;
  * @property WorkStatus $workStatus
  * @property Equipment $equipment
  * @property Operation $operations
+ * @property TaskUser[] $taskUsers
  */
 class Task extends ZhkhActiveRecord
 {
@@ -234,11 +235,16 @@ class Task extends ZhkhActiveRecord
     {
         $request = Request::find()->where(['taskUuid' => $this->uuid])->one();
         if ($request) {
-            $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+            $name = "<span class='badge' style='background-color: lightblue; height: 22px;'>Заявка #" . $request['serialNumber'] . "</span>";
             $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
             return $link;
         } else
             return "без заявки";
+    }
+
+    public function getTaskUsers()
+    {
+        return $this->hasMany(TaskUser::class, ['taskUuid' => 'uuid']);
     }
 
     function getActionPermissions()
@@ -264,6 +270,7 @@ class Task extends ZhkhActiveRecord
                 'get-user-system',
                 'get-task-template',
                 'get-equipments',
+                'json-calendar',
             ],
             'edit' => [
                 'add-task',

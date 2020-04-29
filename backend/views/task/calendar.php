@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\web\JsExpression;
 
 $this->title = 'Календарь задач';
@@ -25,8 +26,8 @@ $this->title = 'Календарь задач';
 
 <div class="site-index">
     <div class="body-content">
-<?php
-$JSCode = <<<EOF
+        <?php
+        $JSCode = <<<EOF
         function(start, end) {
             $.get("../task/info",{ task: ""+start.id+"" },
             function() {	
@@ -39,7 +40,7 @@ $JSCode = <<<EOF
         }
 EOF;
 
-$JSDropEvent = <<<EOF
+        $JSDropEvent = <<<EOF
     function( event, delta, revertFunc, jsEvent, ui, view ) {
         if (window.keyCode == 16) {
 	        var jqxhr = $.post("/task/copy",{ event_start: ""+event.start.format()+"", event_id: ""+event.id+"" },
@@ -98,7 +99,7 @@ EOF;
         }
     }
 EOF;
-?>
+        ?>
 
         <?= yii2fullcalendar\yii2fullcalendar::widget(array(
             'id' => 'calendar',
@@ -130,13 +131,13 @@ EOF;
                     'right' => 'delete'
                 ],
             ],
-            'ajaxEvents' => $events,
+            'events' => Url::to(['/task/json-calendar'])
         ));
 
-$this->registerJs('$("#modalTask").on("hidden.bs.modal",
+        $this->registerJs('$("#modalTask").on("hidden.bs.modal",
             function () {
                 window.location.reload();
         })');
-?>
+        ?>
     </div>
 </div>

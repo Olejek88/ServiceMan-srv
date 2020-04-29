@@ -149,11 +149,11 @@ $gridColumns = [
         'content' => function ($data) {
             $request = Request::find()->where(['taskUuid' => $data['uuid']])->one();
             if ($request) {
-                $name = "<span class='badge' style='background-color: lightblue; height: 22px'>Заявка #" . $request['_id'] . "</span>";
+                $name = "<span class='badge' style='background-color: lightblue; height: 22px;'>Заявка #" . $request['serialNumber'] . "</span>";
                 $link = Html::a($name, ['../request/index', 'uuid' => $request['uuid']], ['title' => 'Заявка']);
-                $type = "<span class='badge' style='background-color: seagreen; height: 22px'>Бесплатная</span>";
+                $type = "<span class='badge' style='background-color: seagreen; height: 22px;'>Бесплатная</span>";
                 if ($request['type'] == 1)
-                    $type = "<span class='badge' style='background-color: darkorange; height: 22px'>Платная</span>";
+                    $type = "<span class='badge' style='background-color: darkorange; height: 22px;'>Платная</span>";
                 return $link . '<br/>' . $type;
             } else
                 return "без заявки";
@@ -161,9 +161,10 @@ $gridColumns = [
     ],
     [
         'attribute' => 'taskTemplateUuid',
+        'header' => 'Задача',
         'vAlign' => 'middle',
-        'header' => 'Задача' . '<table><tr><form action=""><td>' .
-            Select2::widget([
+        'format' => 'raw',
+        'filter' => Select2::widget([
                 'id' => 'type',
                 'name' => 'type',
                 'language' => 'ru',
@@ -174,25 +175,13 @@ $gridColumns = [
                     '3' => 'Отмененные'
                 ],
                 'value' => $type,
+            'pjaxContainerId' => 'tasks-table',
+            'class' => ['add-filter'],
                 'options' => ['placeholder' => 'Статус по времени'],
-                'pluginEvents' => [
-                    "select2:select" => "function() {
-                        window.location.replace('table?type='+document.getElementById('type').value); 
-                        }",
-                    "select2:unselecting" => "function() {
-                        window.location.replace('table');
-                    }"
-                ],
                 'pluginOptions' => [
                     'allowClear' => true
                 ]
-            ])
-            . '</td></form></tr></table>',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'mergeHeader' => true,
-        'headerOptions' => ['class' => 'text-center'],
+        ]),
         'content' => function ($data) {
             return $data['taskTemplate']->title;
         }
@@ -342,7 +331,7 @@ $gridColumns = [
                 if ($data['workStatusUuid'] != WorkStatus::NEW) $link = $users_list;
                 return $link;
             } else {
-                $name = "<span class='badge' style='background-color: gray; height: 22px'>Не назначены</span>";
+                $name = "<span class='badge' style='background-color: gray; height: 22px;'>Не назначены</span>";
                 $link = Html::a($name,
                     ['../task/user', 'taskUuid' => $data['uuid']],
                     [
@@ -384,7 +373,7 @@ $gridColumns = [
                 if ($stat['uuid'] == WorkStatus::COMPLETE)
                     $color = 'background-color: green';
                 $list[$stat['uuid']] = $stat['title'];
-                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;" .
+                $status[$stat['uuid']] = "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px;'> </span>&nbsp;" .
                     $stat['title'];
             }
             return [
@@ -578,37 +567,42 @@ if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
 
 echo GridView::widget([
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
-    'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px'],
-    'filterRowOptions' => ['class' => 'kartik-sheet-style', 'style' => 'height: 20px important!'],
-    'containerOptions' => ['style' => 'overflow: auto'], // only set when $responsive = false
+    'headerRowOptions' => ['class' => 'kartik-sheet-style', 'style' => ['height' => '20px']],
+    'filterRowOptions' => ['class' => 'kartik-sheet-style', 'style' => ['height' => '20px important!']],
+    'containerOptions' => ['style' => ['overflow' => 'auto']], // only set when $responsive = false
     'beforeHeader' => [
         '{toggleData}'
     ],
     'toolbar' => [
         ['content' =>
-            '<form action=""><table style="width: 800px; padding: 3px"><tr><td style="width: 300px">' .
+            '<form action=""><table style="width: 800px; padding: 3px;"><tr><td style="width: 300px;">' .
             DatePicker::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'tasks-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]) . '</td><td style="width: 300px">' .
+            ]) . '</td><td style="width: 300px;">' .
             DatePicker::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'tasks-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'dd-mm-yyyy'
                 ]
-            ]) . '</td><td style="width: 100px">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
-                'class' => 'btn btn-success']) . '</td><td style="width: 100px">{export}</td></tr></table></form>',
+            ]) . '</td><td style="width: 100px;">' . Html::submitButton(Yii::t('app', 'Выбрать'), [
+                'class' => 'btn btn-success']) . '</td><td style="width: 100px;">{export}</td></tr></table></form>',
             'options' => ['style' => 'width:100%']
         ],
     ],
@@ -617,8 +611,13 @@ echo GridView::widget([
         'filename' => 'tasks'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'tasks-table',
+        ],
+    ],
     'showPageSummary' => false,
-    'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
+    'pageSummaryRowOptions' => ['style' => ['line-height' => '0', 'padding' => '0']],
     'summary' => '',
     'bordered' => true,
     'striped' => false,
@@ -638,7 +637,7 @@ echo GridView::widget([
     'panel' => [
         'type' => GridView::TYPE_PRIMARY,
         'heading' => '<i class="glyphicon glyphicon-user"></i>&nbsp; ' . $titles,
-        'headingOptions' => ['style' => 'background: #337ab7']
+        'headingOptions' => ['style' => ['background' => '#337ab7']]
     ],
     'rowOptions' => function ($model) {
         if ($model['workStatusUuid'] != WorkStatus::COMPLETE && (strtotime($model['deadlineDate']) <= time()))
@@ -686,26 +685,26 @@ function () {
     </div>
 </div>
 <div class="modal remote fade" id="modalMeasure">
-    <div class="modal-dialog" style="width: 700px">
+    <div class="modal-dialog" style="width: 700px;">
         <div class="modal-content loader-lg" id="modalContentMeasure">
         </div>
     </div>
 </div>
 <div class="modal remote fade" id="modalDefects">
-    <div class="modal-dialog" style="width: 700px">
+    <div class="modal-dialog" style="width: 700px;">
         <div class="modal-content loader-lg" id="modalContentDefects">
         </div>
     </div>
 </div>
 <div class="modal remote fade" id="modalPhoto">
-    <div class="modal-dialog" style="width: 800px; height: 400px">
+    <div class="modal-dialog" style="width: 800px; height: 400px;">
         <div class="modal-content loader-lg" id="modalContentPhoto">
         </div>
     </div>
 </div>
 
 <div class="modal remote fade" id="modalFilter">
-    <div class="modal-dialog" style="width: 400px; height: 500px">
+    <div class="modal-dialog" style="width: 400px; height: 500px;">
         <div class="modal-content loader-lg"></div>
     </div>
 </div>

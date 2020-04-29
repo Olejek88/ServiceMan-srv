@@ -16,6 +16,7 @@ use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -276,31 +277,48 @@ class TaskTemplateEquipmentController extends ZhkhController
         $all_task_equipment_count = 0;
         $today = time();
         $equipments = Equipment::find()
-            ->joinWith('object.house')
-            ->with('object.house.street')
+            ->joinWith(['object.house'])
+            ->with(['object.house.street', 'equipmentType.equipmentSystem'])
             ->where(['equipment.deleted' => false, 'house.deleted' => false, 'object.deleted' => false])
             ->asArray()
             ->all();
+        $eqUuids = ArrayHelper::map($equipments, '_id', 'uuid');
+        $taskTemplateEquipments = TaskTemplateEquipment::find()->where(['equipmentUuid' => $eqUuids])->all();
+        $result = [];
+        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            $result[$taskTemplateEquipment['equipmentUuid']][] = $taskTemplateEquipment;
+        }
+
+        $taskTemplateEquipments = &$result;
+
         foreach ($equipments as $equipment) {
-            $taskTemplateEquipments = TaskTemplateEquipment::find()
-                ->where(['equipmentUuid' => $equipment['uuid']])
-                ->all();
+            try {
+                $taskTemplateEquipmentList = $taskTemplateEquipments[$equipment['uuid']];
+                if ($taskTemplateEquipmentList == null) {
+                    continue;
+                }
+            } catch (Exception $exception) {
+                continue;
+            }
 
             $task_equipment_count = 0;
             $tasks = [];
             $user = 'Не назначен';
 
-            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            foreach ($taskTemplateEquipmentList as $taskTemplateEquipment) {
                 //echo $taskTemplateEquipment['equipment']['title'] . ' - ' . $taskTemplateEquipment['taskTemplate']['title'] . '<br/>';
-                $selected_user = $taskTemplateEquipment->getUser();
+                $selected_user = TaskTemplateEquipment::getUserStatic($equipment['equipmentType']['equipmentSystem'],
+                    $equipment['object']['house']);
                 if ($selected_user)
                     $user = $selected_user['name'];
                 else
                     $user = 'Не назначен';
-                /*                try {
-                                    $last = new DateTime($taskTemplateEquipment["last_date"]);
-                                } catch (Exception $e) {
-                                }*/
+
+//                try {
+//                    $last = new DateTime($taskTemplateEquipment["last_date"]);
+//                } catch (Exception $e)
+//                }
+
                 $taskTemplateEquipment->formDates();
                 $dates = $taskTemplateEquipment->getDates();
                 if ($dates) {
@@ -323,6 +341,7 @@ class TaskTemplateEquipmentController extends ZhkhController
                         $count++;
                         if ($count > 5) break;
                     }
+
                     $all_tasks = Task::find()
                         ->select('*')
                         ->where(['equipmentUuid' => $taskTemplateEquipment['equipmentUuid']])
@@ -343,8 +362,10 @@ class TaskTemplateEquipmentController extends ZhkhController
                         }
                     }
                 }
+
                 $task_equipment_count++;
             }
+
             if (count($tasks)) {
                 $all_task_equipment_count++;
                 $events[] = [
@@ -354,14 +375,15 @@ class TaskTemplateEquipmentController extends ZhkhController
                 ];
             }
         }
+
         $max = 0;
         if ($all_task_equipment_count > 0) $max = $all_task_equipment_count - 1;
         //echo json_encode($events);
-                return $this->render('calendar-gantt', [
-                    'events' => $events,
-                    'categories' => $categories,
-                    'max' => $max
-                ]);
+        return $this->render('calendar-gantt', [
+            'events' => $events,
+            'categories' => $categories,
+            'max' => $max
+        ]);
     }
 
     public function actionPeriod()
@@ -400,12 +422,12 @@ class TaskTemplateEquipmentController extends ZhkhController
         if (isset($_POST["id"])) {
             $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["id"]])->one();
             if ($model && isset($_POST['start']) && isset($_POST['end'])) {
-                $search = date("Y-m-d H:i:s", $_POST['start']/1000);
-                $replace = date("Y-m-d H:i:s", $_POST['end']/1000);
-                $result = str_replace($search,$replace,$model['next_dates']);
+                $search = date("Y-m-d H:i:s", $_POST['start'] / 1000);
+                $replace = date("Y-m-d H:i:s", $_POST['end'] / 1000);
+                $result = str_replace($search, $replace, $model['next_dates']);
                 $model["next_dates"] = $result;
                 $model->save();
-                return '['.$search.'] '.$model["next_dates"];
+                return '[' . $search . '] ' . $model["next_dates"];
             }
         }
         return false;

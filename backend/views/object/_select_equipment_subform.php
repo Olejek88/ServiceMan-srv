@@ -38,11 +38,20 @@ echo Select2::widget(
                                 },
                                 success: function (data) {
                                     var streets = JSON.parse(data);
-                                    var select = document.getElementById(\"streets2\");
+                                    var select = document.getElementById('streets2');
                                     select.options.length = 0;
                                     for(index in streets) {
                                         select.options[select.options.length] = new Option(streets[index], index);
                                     }
+
+                                    $('#streets2').trigger(
+                                        {
+                                            type: 'select2:select',
+                                            params: {
+                                                data: {id : select.options[0].value}
+                                            }
+                                        }
+                                    );
                                 }
                             });
                   }"]
@@ -73,7 +82,16 @@ echo Select2::widget([
                                     select.options.length = 0;
                                     for(index in houses) {
                                         select.options[select.options.length] = new Option(houses[index], index);
-                                    }               
+                                    }
+
+                                    $('#houses2').trigger(
+                                        {
+                                            type: 'select2:select',
+                                            params: {
+                                                data: {id : select.options[0].value}
+                                            }
+                                        }
+                                    );
                                 }
                             });
             }"]
@@ -99,13 +117,22 @@ echo Select2::widget([
                        id: data.params.data.id
                   },
                   success: function (data) {
-                       var objects = JSON.parse(data);
-                       var select = document.getElementById(\"object2\");
-                       select.options.length = 0;
-                       for(index in objects) {
-                            select.options[select.options.length] = new Option(objects[index], index);
-                       }               
-                    }
+                      var objects = JSON.parse(data);
+                      var select = document.getElementById('object2');
+                      select.options.length = 0;
+                      for(index in objects) {
+                          select.options[select.options.length] = new Option(objects[index], index);
+                      }
+
+                      $('#object2').trigger(
+                            {
+                                type: 'select2:select',
+                                params: {
+                                    data: {id : select.options[0].value}
+                                }
+                            }
+                      );
+                  }
                  });
             }"]
 ]);
@@ -131,7 +158,7 @@ echo Select2::widget([
                    },
                    success: function (data) {
                         var objects = JSON.parse(data);
-                        var select = document.getElementById(\"request-equipmentuuid\");
+                        var select = document.getElementById('request-equipmentuuid');
                         if (select) {
                              select.options.length = 0;
                              for(index in objects) {

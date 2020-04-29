@@ -38,6 +38,7 @@ use yii\db\Expression;
  * @property string $address
  * @property Photo $photo
  * @property User $user
+ * @property TaskTemplateEquipment[] $taskTemplateEquipments
  */
 class Equipment extends ZhkhActiveRecord
 {
@@ -263,6 +264,11 @@ class Equipment extends ZhkhActiveRecord
                 return $userSystem['user'];
         }
         return null;
+    }
+
+    public function getTaskTemplateEquipments()
+    {
+        return $this->hasMany(TaskTemplateEquipment::class, ['equipmentUuid' => 'uuid']);
     }
 
     function getActionPermissions()

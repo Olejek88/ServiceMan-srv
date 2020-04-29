@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\TaskSearchTemplate;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Equipment;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
@@ -16,6 +17,7 @@ use common\models\TaskType;
 use common\models\Users;
 use Throwable;
 use Yii;
+use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
@@ -810,9 +812,25 @@ class TaskTemplateController extends ZhkhController
             // оборудование
             if ($equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+
+                $tagTypeList = [
+                    Tag::TAG_TYPE_DUMMY => 'Пустая',
+                    Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                    Tag::TAG_TYPE_NFC => 'NFC метка',
+                    Tag::TAG_TYPE_UHF => 'UHF метка'
+                ];
+                $tagType = new DynamicModel(['tagType']);
+                $tagType->addRule(['tagType'], 'required');
+                $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+                $tagType->setAttributes(['tagType' => Tag::getTagType($equipment->tag)]);
+                $equipment->tag = Tag::getTagId($equipment->tag); // это нужно чтоб в форме правильно отображалась метка, без типа.
+
                 return $this->renderAjax('../equipment/_add_form', [
                     'equipment' => $equipment,
-                    'reference' => 'task-template/tree'
+                    'reference' => 'task-template/tree',
+                    'tagTypeList' => $tagTypeList,
+                    'source' => '/task-template/tree',
+                    'tagType' => $tagType,
                 ]);
             }
 

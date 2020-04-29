@@ -138,7 +138,7 @@ $gridColumns = [
             if ($model['requestUuid']) {
                 $request = Request::find()->where(['uuid' => $model['requestUuid']])->one();
                 if ($request) {
-                    $request_title = 'Заявка №' . $request['_id'] . ' ';
+                    $request_title = 'Заявка №' . $request['serialNumber'] . ' ';
                     if ($request['requestStatusUuid'] == WorkStatus::COMPLETE)
                         $request_title .= "<span class='badge' style='background-color: green; height: 22px'>Выполнена</span>";
                     else
