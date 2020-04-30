@@ -259,18 +259,20 @@ class RequestController extends ZhkhController
                     'Комментарий: заявитель ' . $model['contragent']['title'], $model->uuid);
 
                 if ($model['requestType']['taskTemplateUuid']) {
-                    $user = $model['equipment']->getUser();
+                    $userUuid = $model['equipment'] == null ? null : ($model['equipment']->getUser())['uuid'];
                     $accountUser = Yii::$app->user->identity;
                     $currentUser = Users::find()
                         ->where(['user_id' => $accountUser['id']])
                         ->asArray()
                         ->one();
-                    if ($user)
+                    // TODO: в форме нужно сделать условие - если выбран характер обращения с шаблоном задачи,
+                    // обязательно нужно выбрать оборудование !!!!
+                    $task = ['result' => null];
+                    if ($model['equipment'] != null) {
                         $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, $user['uuid'], null, time(), $currentUser['uuid']);
-                    else
-                        $task = MainFunctions::createTask($model['requestType']['taskTemplate'], $model->equipmentUuid,
-                            $model->comment, $model->oid, null, null, time(), $currentUser['uuid']);
+                            $model->comment, $model->oid, $userUuid, null, time(), $currentUser['uuid']);
+                    }
+
                     if ($task['result']) {
                         MainFunctions::register('task', 'Создана задача',
                             '<a class="btn btn-default btn-xs">' . $model['requestType']['taskTemplate']['taskType']['title'] . '</a> ' .
