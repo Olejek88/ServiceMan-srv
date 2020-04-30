@@ -2,9 +2,9 @@
 
 namespace common\models;
 
+use common\components\ZhkhActiveRecord;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 use yii\db\Expression;
 
 /**
@@ -18,7 +18,7 @@ use yii\db\Expression;
  * @property integer $createdAt
  * @property integer $changedAt
  */
-class Organization extends ActiveRecord
+class Organization extends ZhkhActiveRecord
 {
     public const ORG_SERVICE_UUID = '0A39C01E-9915-4F8A-8A8A-96A28A5AC6DC';
 
