@@ -1,7 +1,8 @@
 <?php
-/* @var $task common\models\TaskTemplateEquipment  */
+/* @var $task common\models\TaskTemplateEquipment */
 /* @var $equipmentUuid */
 /* @var $type_uuid */
+
 /* @var $requestUuid */
 
 use common\components\MainFunctions;
@@ -20,7 +21,7 @@ use yii\helpers\Html;
     'enableAjaxValidation' => false,
     'action' => "../task/new-periodic",
     'options' => [
-        'id' => 'form'
+        'id' => 'add-task-periodic'
     ]]);
 ?>
 <div class="modal-header">
@@ -41,7 +42,7 @@ use yii\helpers\Html;
     <?php echo $form->field($model, 'oid')->hiddenInput(['value' => Users::getCurrentOid()])->label(false); ?>
 
     <?php
-//    $taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
+    //$taskTemplate = TaskTemplateEquipmentType::find()->where(['equipmentTypeUuid' => $type_uuid])->all();
     //2 плановый ремонт const TASK_TYPE_PLAN_REPAIR
     //3 текущий осмотр const TASK_TYPE_CURRENT_CHECK
     //!5 сезонный осмотры const TASK_TYPE_SEASON_CHECK
@@ -62,7 +63,7 @@ use yii\helpers\Html;
         ->all();
 
     $items = ArrayHelper::map($taskTemplate, 'taskTemplateUuid', function ($data) {
-        return $data['taskTemplate']['taskType']['title'].' :: '.$data['taskTemplate']['title'];
+        return $data['taskTemplate']['taskType']['title'] . ' :: ' . $data['taskTemplate']['title'];
     });
     echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
         [
@@ -100,21 +101,35 @@ use yii\helpers\Html;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#dynamic-form", function ($e) {
-        e.preventDefault();
-    }).on('submit', function(e){
-        e.preventDefault();
-        $.ajax({
-            url: "../task/new-periodic",
-            type: "post",
-            data: $('form').serialize(),
-            success: function () {
-                console.log("success?!");
-                $('#modalAddPeriodicTask').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    });
+    if ($(document).data('_add_task_periodic') === true) {
+    } else {
+        $(document).data('_add_task_periodic', true);
+        $(document)
+            .on("beforeSubmit", "#add-task-periodic", function (e) {
+                e.preventDefault();
+            })
+            .on('submit', "#add-task-periodic", function (e) {
+                e.preventDefault();
+                var $form = $(this);
+                if ($form.data('submited') === true) {
+                    console.log('skip');
+                } else {
+                    console.log('submit');
+                    $form.data('submited', true);
+                    $.ajax({
+                        url: "../task/new-periodic",
+                        type: "post",
+                        data: $form.serialize(),
+                        success: function () {
+                            console.log("success?!");
+                            $('#modalAddPeriodicTask').modal('hide');
+                        },
+                        error: function () {
+                            $form.data('submited', false);
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <?php ActiveForm::end(); ?>
