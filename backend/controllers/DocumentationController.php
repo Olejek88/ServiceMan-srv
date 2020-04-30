@@ -419,6 +419,7 @@ class DocumentationController extends ZhkhController
                         'equipmentUuid' => $model->equipmentUuid,
                         'equipmentTypeUuid' => $model->equipmentTypeUuid,
                         'source' => Yii::$app->request->getBodyParam('source'),
+                        'houseUuid' => null,
                     ]);
                 }
             }
@@ -442,6 +443,7 @@ class DocumentationController extends ZhkhController
             'equipmentUuid' => $model->equipmentUuid,
             'equipmentTypeUuid' => null,
             'source' => Yii::$app->request->getBodyParam('source'),
+            'houseUuid' => null,
         ]);
     }
 }
