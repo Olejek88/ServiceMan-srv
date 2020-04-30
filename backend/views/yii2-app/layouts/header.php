@@ -65,6 +65,7 @@ $userImage = Yii::$app->view->params['userImage'];
                         <li><?= Html::a("<i class=\"fa fa-bar-chart\"></i> Типы измерений", ['../measure-type']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-list\"></i> Типы дефектов", ['../defect-type']); ?> </li>
                         <li><?= Html::a("<i class=\"fa fa-tasks\"></i> Шаблоны задач", ['../task-template']); ?> </li>
+                        <li><?= Html::a(Html::img('', ['class' => 'fa fa-cogs']) . 'Организация', ['/organization']); ?> </li>
                     </ul>
                 </li>
 
