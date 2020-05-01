@@ -26,12 +26,12 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 <div class="panel-body" style="position: relative;">
                     <div class="main-container">
                         <div id="container"></div>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -39,14 +39,13 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         day = 1000 * 60 * 60 * 24,
         each = Highcharts.each,
         reduce = Highcharts.reduce,
-        btnShowDialog = document.getElementById('btnShowDialog'),
-        //btnRemoveTask = document.getElementById('btnRemoveSelected'),
-        btnAddTask = document.getElementById('btnAddTask'),
-        btnCancelAddTask = document.getElementById('btnCancelAddTask'),
-        addTaskDialog = document.getElementById('addTaskDialog'),
-        inputName = document.getElementById('inputName'),
-        selectEquipment = document.getElementById('selectEquipment'),
-        chkMilestone = document.getElementById('chkMilestone'),
+//        btnShowDialog = document.getElementById('btnShowDialog'),
+//         btnAddTask = document.getElementById('btnAddTask'),
+//         btnCancelAddTask = document.getElementById('btnCancelAddTask'),
+//         addTaskDialog = document.getElementById('addTaskDialog'),
+//         inputName = document.getElementById('inputName'),
+//         selectEquipment = document.getElementById('selectEquipment'),
+//         chkMilestone = document.getElementById('chkMilestone'),
         isAddingTask = false;
 
     // Set to 00:00:00:000 today
@@ -57,16 +56,27 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
     today = today.getTime();
 
 
+    // btnRemoveTask = document.getElementById('btnRemoveSelected'),
+
     // Update disabled status of the remove button, depending on whether or not we
     // have any selected points.
-    function updateRemoveButtonStatus() {
-        var chart = this.series.chart;
-    // Run in a timeout to allow the select to update
-        setTimeout(function () {
-            btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
-                isAddingTask;
-        }, 10);
-    }
+    // function updateRemoveButtonStatus() {
+    //     var chart = this.series.chart;
+    //     // Run in a timeout to allow the select to update
+    //     setTimeout(function () {
+    //         btnRemoveTask.disabled = !chart.getSelectedPoints().length ||
+    //             isAddingTask;
+    //     }, 10);
+    // }
+
+    /* Add button handlers for add/remove tasks */
+    // btnRemoveTask.onclick = function () {
+    //     var points = chart.getSelectedPoints();
+    //     each(points, function (point) {
+    //         point.remove();
+    //     });
+    // };
+
 
     Highcharts.setOptions({
         lang: {
@@ -94,9 +104,11 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         }
     });
 
-    var series,map = Highcharts.map;
-    var events = <?php echo json_encode($events) ?>;
+    var series, map = Highcharts.map;
+    var events = [];
+    events = <?php echo json_encode($events) ?>;
     series = events.map(function (event, i) {
+        var dateIdx = 0;
         var data = event.data.map(function (task_event) {
             return {
                 id: task_event.id,
@@ -104,6 +116,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 start: task_event.start,
                 end: task_event.end,
                 y: i,
+                dateIdx: dateIdx++,
                 user: task_event.user
 
             };
@@ -129,7 +142,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
             spacing: [4, 4, 5, 5]
         },
         annotations: {
-          draggable: 'x'
+            draggable: 'x'
         },
         title: {
             text: ''
@@ -173,8 +186,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                     fontWeight: 'bold'
                 },
                 states: {
-                    hover: {
-                    },
+                    hover: {},
                     select: {
                         fill: '#039',
                         style: {
@@ -207,33 +219,32 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                 allowPointSelect: true,
                 point: {
                     events: {
-                        select: updateRemoveButtonStatus,
-                        unselect: updateRemoveButtonStatus,
-                        remove: updateRemoveButtonStatus,
+                        // select: updateRemoveButtonStatus,
+                        // unselect: updateRemoveButtonStatus,
+                        // remove: updateRemoveButtonStatus,
                         drag: function (data) {
                             //start = data.newPoint.start;
                             //console.warn(data);
                         },
-                        click: function(data) {
-                            start = data.point.start;
+                        click: function (data) {
                         },
-                        drop: function(data) {
-                            console.warn("start:", start);
-                            var end = data.target.end;
-                            console.warn("end:", end);
+                        drop: function (data) {
                             $.ajax({
                                 url: "move",
                                 type: "post",
                                 data: {
                                     id: data.target.id,
-                                    start: start,
-                                    end: data.target.start
+                                    dateIdx: data.target.dateIdx,
+                                    start: data.target.start,
+                                    end: data.target.end
                                 },
                                 success: function (data) {
                                     console.log("ok");
+                                },
+                                error: function (error) {
+                                    console.log(error);
                                 }
                             });
-
                         }
                     }
                 }
@@ -250,14 +261,14 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
                     title: {
                         text: 'Элементы'
                     },
-                    categories: map(series,function (s) {
+                    categories: map(series, function (s) {
                         return s.title;
                     })
                 }, {
                     title: {
                         text: 'Адрес'
                     },
-                    categories: map(series,function (s) {
+                    categories: map(series, function (s) {
                         return s.address;
                     })
                 }]
@@ -286,66 +297,57 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
         }
     });
 
-       /* Add button handlers for add/remove tasks */
+    // btnShowDialog.onclick = function () {
+    //     // Update dependency list
+    //     var depInnerHTML = '<option value=""></option>';
+    //     each(chart.series[0].points, function (point) {
+    //         depInnerHTML += '<option value="' + point.id + '">' + point.name +
+    //             ' </option>';
+    //     });
+    //
+    //     // Show dialog by removing "hidden" class
+    //     addTaskDialog.className = 'overlay';
+    //     isAddingTask = true;
+    //
+    //     // Focus name field
+    //     inputName.value = '';
+    //     inputName.focus();
+    // };
 
-    btnRemoveTask.onclick = function () {
-        var points = chart.getSelectedPoints();
-        each(points, function (point) {
-            point.remove();
-        });
-    };
+    // btnAddTask.onclick = function () {
+    //     // Get values from dialog
+    //     var series = chart.series[0],
+    //         name = inputName.value,
+    //         undef,
+    //         y = parseInt(
+    //             selectEquipment.options[selectEquipment.selectedIndex].value,
+    //             10
+    //         ),
+    //         maxEnd = reduce(series.points, function (acc, point) {
+    //             return point.y === y && point.end ? Math.max(acc, point.end) : acc;
+    //         }, 0);
+    //
+    //     // Empty category
+    //     if (maxEnd === 0) {
+    //         maxEnd = today;
+    //     }
+    //
+    //     // Add the point
+    //     series.addPoint({
+    //         start: maxEnd + (day),
+    //         end: maxEnd + day,
+    //         y: y,
+    //         name: name
+    //     });
+    //
+    //     // Hide dialog
+    //     addTaskDialog.className += ' hidden';
+    //     isAddingTask = false;
+    // };
 
-    btnShowDialog.onclick = function () {
-// Update dependency list
-        var depInnerHTML = '<option value=""></option>';
-        each(chart.series[0].points, function (point) {
-            depInnerHTML += '<option value="' + point.id + '">' + point.name +
-                ' </option>';
-        });
-
-// Show dialog by removing "hidden" class
-        addTaskDialog.className = 'overlay';
-        isAddingTask = true;
-
-// Focus name field
-        inputName.value = '';
-        inputName.focus();
-    };
-
-    btnAddTask.onclick = function () {
-// Get values from dialog
-        var series = chart.series[0],
-            name = inputName.value,
-            undef,
-            y = parseInt(
-                selectEquipment.options[selectEquipment.selectedIndex].value,
-                10
-            ),
-            maxEnd = reduce(series.points, function (acc, point) {
-                return point.y === y && point.end ? Math.max(acc, point.end) : acc;
-            }, 0);
-
-// Empty category
-        if (maxEnd === 0) {
-            maxEnd = today;
-        }
-
-// Add the point
-        series.addPoint({
-            start: maxEnd + (day),
-            end: maxEnd + day,
-            y: y,
-            name: name
-        });
-
-// Hide dialog
-        addTaskDialog.className += ' hidden';
-        isAddingTask = false;
-    };
-
-    btnCancelAddTask.onclick = function () {
-// Hide dialog
-        addTaskDialog.className += ' hidden';
-        isAddingTask = false;
-    };
+    // btnCancelAddTask.onclick = function () {
+    //     // Hide dialog
+    //     addTaskDialog.className += ' hidden';
+    //     isAddingTask = false;
+    // };
 </script>
