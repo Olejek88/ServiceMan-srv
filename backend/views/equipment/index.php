@@ -390,7 +390,7 @@ function () {
 
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
-     window.location.reload();
+//     window.location.reload();
 })');
 $this->registerJs('$("#modalDefects").on("hidden.bs.modal",
 function () {

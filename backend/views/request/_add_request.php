@@ -26,7 +26,7 @@ if (isset($_GET["equipmentUuid"]))
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
     'options' => [
-        'id' => 'form2'
+        'id' => 'add-request-form'
     ]]);
 ?>
     <div class="modal-header">
@@ -235,32 +235,50 @@ if (isset($_GET["equipmentUuid"]))
     </div>
 
     <script>
-        var send = false;
-        $(document).on("beforeSubmit", "#form2", function (e) {
-            e.preventDefault();
-        }).on('submit', function (e) {
-            e.preventDefault();
-            if (!send) {
-                send = true;
-                var me = $('button.btn.btn-success', e.target);
-                me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-                var form = $('#form2');
-                $.ajax({
-                    url: "../request/new",
-                    type: "post",
-                    data: form.serialize(),
-                    success: function (ret) {
-                        me.prop('disabled', false).removeClass('disabled').addClass('enabled');
-                        if (ret.length > 5) {
-                            $('#errors').val(ret);
-                        } else {
-                            $('#modalRequest').modal('hide');
-                            window.location.reload();
-                        }
+        if ($(document).data('add-request-form') === true) {
+        } else {
+            $(document).data('add-request-form', true);
+            $(document)
+                .on("beforeSubmit", "#add-request-form", function (e) {
+                    e.preventDefault();
+                })
+                .on('submit', "#add-request-form", function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    if (form.data('submited') === true) {
+                    } else {
+                        form.data('submited', true);
+                        $.ajax({
+                            url: "../request/new",
+                            type: "post",
+                            data: form.serialize(),
+                            success: function (ret) {
+                                if (ret.length > 5) {
+                                    $('#errors').val(ret);
+                                } else {
+                                    $('#modalRequest').modal('hide').removeData();
+                                    if ($('#request-table').length > 0) {
+                                        $.pjax.reload('#request-table');
+                                    }
+                                }
+                            },
+                            error: function (error) {
+                                // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                                if (error.status !== 302) {
+                                    // если это не редирект, включаем возможность повторной отправки формы
+                                    form.data('submited', false);
+                                }
+
+                                if (error.status === 302) {
+                                    // если редирект, считаем что всё в порядке
+                                    $('#modalRequest').modal('hide').removeData();
+                                }
+                            }
+                        });
                     }
                 });
-            }
-        });
+        }
+
     </script>
 <?php ActiveForm::end(); ?>
 
