@@ -52,12 +52,12 @@ class RequestController extends ZhkhController
             if ($_POST['editableAttribute'] == 'closeDate') {
                 $model['closeDate'] = date("Y-m-d H:i:s", $_POST['Request'][$_POST['editableIndex']]['closeDate']);
                 $toLog['title'] = 'Изменена дата закрытия заявки';
-                $toLog['description'] = 'Комментарий: изменена дата закрытия заявки №' . $model['_id'] . ' на ' . $model['closeDate'];
+                $toLog['description'] = 'Комментарий: изменена дата закрытия заявки №' . $model['serialNumber'] . ' на ' . $model['closeDate'];
             }
             if ($_POST['editableAttribute'] == 'requestStatusUuid') {
                 $model['requestStatusUuid'] = $_POST['Request'][$_POST['editableIndex']]['requestStatusUuid'];
                 $toLog['title'] = 'Изменен статус заявки';
-                $toLog['description'] = 'Комментарий: изменен статус заявки №' . $model['_id'] . ' на ' . $model['requestStatus']['title'];
+                $toLog['description'] = 'Комментарий: изменен статус заявки №' . $model['serialNumber'] . ' на ' . $model['requestStatus']['title'];
                 if ($model['requestStatusUuid'] == RequestStatus::COMPLETE) {
                     Request::closeAppeal($model);
                 }
@@ -68,22 +68,22 @@ class RequestController extends ZhkhController
                     $type = "Бесплатная заявка";
                 else $type = "Платная заявка";
                 $toLog['title'] = 'Изменен тип заявки';
-                $toLog['description'] = 'Комментарий: изменен тип заявки №' . $model['_id'] . ' на ' . $type;
+                $toLog['description'] = 'Комментарий: изменен тип заявки №' . $model['serialNumber'] . ' на ' . $type;
             }
             if ($_POST['editableAttribute'] == 'comment') {
                 $model['comment'] = $_POST['Request'][$_POST['editableIndex']]['comment'];
                 $toLog['title'] = 'Изменен комментарий заявки';
-                $toLog['description'] = 'Комментарий: изменен комментарий заявки №' . $model['_id'] . ' на ' . $model['comment'];
+                $toLog['description'] = 'Комментарий: изменен комментарий заявки №' . $model['serialNumber'] . ' на ' . $model['comment'];
             }
             if ($_POST['editableAttribute'] == 'verdict') {
                 $model['verdict'] = $_POST['Request'][$_POST['editableIndex']]['verdict'];
                 $toLog['title'] = 'Изменен вердикт заявки';
-                $toLog['description'] = 'Комментарий: изменен вердикт заявки №' . $model['_id'] . ' на ' . $model['verdict'];
+                $toLog['description'] = 'Комментарий: изменен вердикт заявки №' . $model['serialNumber'] . ' на ' . $model['verdict'];
             }
             if ($_POST['editableAttribute'] == 'result') {
                 $model['result'] = $_POST['Request'][$_POST['editableIndex']]['result'];
                 $toLog['title'] = 'Изменен результат';
-                $toLog['description'] = 'Комментарий: изменен результат контроля заявки №' . $model['_id'] . ' на ' . $model['result'];
+                $toLog['description'] = 'Комментарий: изменен результат контроля заявки №' . $model['serialNumber'] . ' на ' . $model['result'];
             }
 
             if ($_POST['editableAttribute'] == 'serialNumber') {
