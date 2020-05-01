@@ -277,7 +277,7 @@ $gridColumns = [
         'buttons' => [
             'add' => function ($url, $model) {
                 return Html::a('<span class="fa fa-tasks"></span>&nbsp',
-                    ['../task/form', 'equipmentUuid' => $model['uuid'], 'type_uuid'=> 0],
+                    ['../task/form', 'equipmentUuid' => $model['uuid'], 'type_uuid' => 0],
                     [
                         'title' => 'Добавить задачу',
                         'data-toggle' => 'modal',
@@ -390,6 +390,7 @@ function () {
 
 $this->registerJs('$("#modalTask").on("hidden.bs.modal",
 function () {
+    $(this).removeData().find(".modal-content").html("");
 //     window.location.reload();
 })');
 $this->registerJs('$("#modalDefects").on("hidden.bs.modal",
