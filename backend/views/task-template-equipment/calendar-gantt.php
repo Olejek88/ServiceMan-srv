@@ -148,7 +148,7 @@ $this->registerCssFile('/js/vendor/lib/HighCharts/css/highcharts.css');
             text: ''
         },
         tooltip: {
-            pointFormat: '<span><b>{point.title}</b></span><br/><span>Дата: {point.start:%e. %b}</span><br/>' +
+            pointFormat: '<span><b>{point.title}</b></span><br/><span>Дата: {point.start:%e. %b %H:%M}</span><br/>' +
                 '<span>Исполнитель: {point.user}</span>'
         },
         scrollbar: {
