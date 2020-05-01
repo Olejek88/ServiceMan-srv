@@ -110,22 +110,28 @@ use yii\helpers\Html;
             })
             .on('submit', "#add-task-periodic", function (e) {
                 e.preventDefault();
-                var $form = $(this);
-                if ($form.data('submited') === true) {
-                    console.log('skip');
+                var form = $(this);
+                if (form.data('submited') === true) {
                 } else {
-                    console.log('submit');
-                    $form.data('submited', true);
+                    form.data('submited', true);
                     $.ajax({
                         url: "../task/new-periodic",
                         type: "post",
-                        data: $form.serialize(),
+                        data: form.serialize(),
                         success: function () {
-                            console.log("success?!");
                             $('#modalAddPeriodicTask').modal('hide');
                         },
-                        error: function () {
-                            $form.data('submited', false);
+                        error: function (error) {
+                            // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                            if (error.status !== 302) {
+                                // если это не редирект, включаем возможность провторной отправки формы
+                                form.data('submited', false);
+                            }
+
+                            if (error.status === 302) {
+                                // если редирект, считаем что всё в порядке
+                                $('#modalAddPeriodicTask').modal('hide');
+                            }
                         }
                     });
                 }

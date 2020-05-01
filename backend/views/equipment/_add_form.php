@@ -45,7 +45,7 @@ $this->registerJs('
     'enableAjaxValidation' => false,
     'action' => '/equipment/save',
     'options' => [
-        'id' => 'form2',
+        'id' => 'form-add-equipment',
         'enctype' => 'multipart/form-data'
     ]]);
 ?>
@@ -163,21 +163,41 @@ $this->registerJs('
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form2", function (e) {
-        e.preventDefault();
-    }).on('submit', function (e) {
-        e.preventDefault();
-        var form = $('#form2');
-        $.ajax({
-            type: "post",
-            data: form.serialize(),
-            url: "../equipment/save",
-            success: function () {
-                $('#modalAddEquipment').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    });
+    if ($(document).data('_add_form_eq') === true) {
+    } else {
+        $(document).data('_add_form_eq', true);
+        $(document)
+            .on("beforeSubmit", "#form-add-equipment", function (e) {
+                e.preventDefault();
+            })
+            .on('submit', "#form-add-equipment", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    $.ajax({
+                        url: "../equipment/save",
+                        type: "post",
+                        data: form.serialize(),
+                        success: function () {
+                            $('#modalAddEquipment').modal('hide');
+                        },
+                        error: function (error) {
+                            // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                            if (error.status !== 302) {
+                                // если это не редирект, включаем возможность провторной отправки формы
+                                form.data('submited', false);
+                            }
+
+                            if (error.status === 302) {
+                                // если редирект, считаем что всё в порядке
+                                $('#modalAddEquipment').modal('hide');
+                            }
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <?php ActiveForm::end(); ?>

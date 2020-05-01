@@ -1424,7 +1424,8 @@ class EquipmentController extends ZhkhController
                         'tagType' => $tagType,
                         'tagTypeList' => $tagTypeList,
                         'equipmentTypeUuid' => null,
-                        'source' => '../equipment/tree-street'
+                        'source' => '../equipment/tree-street',
+                        'reference' => $source,
                     ]);
                 }
                 if ($type == 'type') {
@@ -1444,7 +1445,8 @@ class EquipmentController extends ZhkhController
                         'tagType' => $tagType,
                         'tagTypeList' => $tagTypeList,
                         'equipmentTypeUuid' => $uuid,
-                        'source' => '../equipment/tree'
+                        'source' => '../equipment/tree',
+                        'reference' => $source,
                     ]);
                 }
             }
