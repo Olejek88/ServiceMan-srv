@@ -27,7 +27,7 @@ use yii\helpers\Html;
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
     'options' => [
-        'id' => 'form',
+        'id' => 'add-house-form',
         'enctype' => 'multipart/form-data'
     ]]);
 ?>
@@ -177,7 +177,7 @@ use yii\helpers\Html;
     ];
     echo Select2::widget(
         [
-                'name' => 'energy',
+            'name' => 'energy',
             'data' => $types,
             'language' => 'ru',
             'options' => [
@@ -188,7 +188,7 @@ use yii\helpers\Html;
             ],
         ]);
     echo '</br>';
-    echo Html::checkbox('lift',true,['label' => 'Лифт']);
+    echo Html::checkbox('lift', true, ['label' => 'Лифт']);
     echo '</br>';
     //echo Html::checkbox('water_counter',true,['label' => 'Квартирные счетчики воды']);
     //echo '</br>';
@@ -196,13 +196,13 @@ use yii\helpers\Html;
     echo '</br>';
     echo Html::checkbox('trash_pipe', true, ['label' => 'Мусоропровод']);
     echo '</br>';
-    echo Html::checkbox('yard',true,['label' => 'Придомовая территория']);
+    echo Html::checkbox('yard', true, ['label' => 'Придомовая территория']);
     echo '</br>';
-    echo Html::checkbox('internet',true,['label' => 'Интернет']);
+    echo Html::checkbox('internet', true, ['label' => 'Интернет']);
     echo '</br>';
-    echo Html::checkbox('tv',true,['label' => 'ТВ']);
+    echo Html::checkbox('tv', true, ['label' => 'ТВ']);
     echo '</br>';
-    echo Html::checkbox('domophones',true,['label' => 'Домофоны']);
+    echo Html::checkbox('domophones', true, ['label' => 'Домофоны']);
     ?>
 </div>
 <div class="modal-footer">
@@ -210,24 +210,41 @@ use yii\helpers\Html;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function (e) {
-        e.preventDefault();
-    }).on('submit', function (e) {
-        e.preventDefault();
-        var me = $('button.btn.btn-success', e.target);
-        me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-        var form = $('#form');
-        $.ajax({
-            type: "post",
-            data: form.serialize(),
-            url: "../object/save",
-            success: function () {
-                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
-                $('#modalAdd').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    });
+    if ($(document).data('add-house-form') === true) {
+    } else {
+        $(document).data('add-house-form', true);
+        $(document)
+            .on("beforeSubmit", "#add-house-form", function (e) {
+                e.preventDefault();
+            })
+            .on('submit', "#add-house-form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    $.ajax({
+                        url: "../object/save",
+                        type: "post",
+                        data: form.serialize(),
+                        success: function () {
+                            $('#modalAdd').modal('hide');
+                        },
+                        error: function (error) {
+                            // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                            if (error.status !== 302) {
+                                // если это не редирект, включаем возможность провторной отправки формы
+                                form.data('submited', false);
+                            }
+
+                            if (error.status === 302) {
+                                // если редирект, считаем что всё в порядке
+                                $('#modalAdd').modal('hide');
+                            }
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <?php ActiveForm::end(); ?>
