@@ -71,7 +71,7 @@ class Task extends ZhkhActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'workStatusUuid'], 'required'],
+            [['uuid', 'workStatusUuid', 'equipmentUuid', 'taskVerdictUuid', 'taskTemplateUuid'], 'required'],
             [['comment'], 'string'],
             [['startDate', 'taskDate', 'authorUuid', 'deadlineDate', 'endDate', 'createdAt', 'changedAt'], 'safe'],
             [['uuid', 'workStatusUuid', 'authorUuid', 'taskVerdictUuid', 'taskTemplateUuid', 'equipmentUuid', 'oid'], 'string', 'max' => 45],

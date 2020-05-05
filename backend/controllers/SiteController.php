@@ -936,13 +936,15 @@ class SiteController extends Controller
 
             if ($folder == "true" && $type) {
                 if ($what == "documentation") {
+                    $type = Yii::$app->request->getBodyParam('selected_node');
                     $documentation = new Documentation();
                     return $this->renderAjax('../documentation/_add_form', [
                         'documentation' => $documentation,
                         'equipmentType' => $type,
                         'equipmentUuid' => 0,
                         'equipmentTypeUuid' => 0,
-                        'source' => $source
+                        'source' => $source,
+                        'houseUuid' => null,
                     ]);
                 }
                 return false;

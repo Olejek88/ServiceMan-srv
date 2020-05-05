@@ -414,21 +414,21 @@ class TaskTemplateEquipmentController extends ZhkhController
 
     /**
      * @return bool|string
-     * @throws InvalidConfigException
-     * @throws \yii\db\Exception
+     * @throws NotFoundHttpException
      */
     public function actionMove()
     {
-        if (isset($_POST["id"])) {
-            $model = TaskTemplateEquipment::find()->where(['_id' => $_POST["id"]])->one();
-            if ($model && isset($_POST['start']) && isset($_POST['end'])) {
-                $search = date("Y-m-d H:i:s", $_POST['start'] / 1000);
-                $replace = date("Y-m-d H:i:s", $_POST['end'] / 1000);
-                $result = str_replace($search, $replace, $model['next_dates']);
-                $model["next_dates"] = $result;
-                $model->save();
-                return '[' . $search . '] ' . $model["next_dates"];
-            }
+        $id = Yii::$app->request->getBodyParam('id', null);
+        $model = $this->findModel($id);
+        $dateIdx = Yii::$app->request->getBodyParam('dateIdx', null);
+        $start = Yii::$app->request->getBodyParam('start', null);
+        if ($dateIdx != null && $start != null) {
+            $datesArray = explode(',', $model->next_dates);
+            $datesArray[$dateIdx] = date("Y-m-d H:i:s", $start / 1000);
+            sort($datesArray);
+            $model->next_dates = implode(',', $datesArray);
+            $model->save();
+            return true;
         }
         return false;
     }

@@ -164,6 +164,8 @@ echo Select2::widget([
                              for(index in objects) {
                                   select.options[select.options.length] = new Option(objects[index], index);
                              }
+                             // это нужно для того чтобы сразу после загрузки данных ни чего не было выбрано
+                             $(select).select2('val', '-')
                         }
                    }
         });

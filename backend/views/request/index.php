@@ -501,8 +501,8 @@ echo GridView::widget([
 
 $this->registerJs('$("#modalRequest").on("hidden.bs.modal",
 function () {
-     $(this).removeData();
-     window.location.reload();
+     $(this).removeData().find(".modal-content").html("");
+//     window.location.reload();
 })');
 $this->registerJs('$("#modalRequestHistory").on("hidden.bs.modal",
 function () {

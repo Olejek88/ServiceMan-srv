@@ -17,7 +17,7 @@ class m200429_111254_add_fireguard_system extends Migration
         $this->insert('{{%equipment_system}}', [
             'uuid' => EquipmentSystem::EQUIPMENT_SYSTEM_FIREGUARD,
             'title' => 'Пожарная система',
-            'titleUser' => 'Специалист по пожарному оборудованию',
+            'titleUser' => 'Рабочий пожарной системы',
         ]);
 
         $this->insert('{{%equipment_type}}', [
