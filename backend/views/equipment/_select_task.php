@@ -212,25 +212,37 @@ use yii\widgets\ActiveForm;
         ]) ?>
     </div>
     <script>
-        $(document).on("beforeSubmit", "#dynamic-form", function () {
-            e.preventDefault();
-        }).on('submit', function (e) {
-            e.preventDefault();
-            var me = $('button.btn.btn-success', e.target);
-            me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-            $.ajax({
-                url: "../task/add-task",
-                type: "post",
-                data: $('#form').serialize(),
-                success: function () {
-                    me.prop('disabled', false).removeClass('disabled').addClass('enabled');
-                    $('#modalAddTask').modal('hide');
-                },
-                error: function (result) {
-                    alert(result.statusText);
-                },
-            })
-        });
+        if ($(document).data('select-task-form') === true) {
+        } else {
+            $(document).data('select-task-form', true);
+            $(document).on("beforeSubmit", "#dynamic-form", function () {
+                e.preventDefault();
+            }).on('submit', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    var me = $('button.btn.btn-success', e.target);
+                    me.prop('disabled', true).removeClass('enabled').addClass('disabled');
+                    $.ajax({
+                        url: "../task/add-task",
+                        type: "post",
+                        data: $('#form').serialize(),
+                        success: function () {
+                            me.prop('disabled', false).removeClass('disabled').addClass('enabled');
+                            $('#modalAddTask').modal('hide');
+                        },
+                        error: function (result) {
+                            alert(result.statusText);
+                        },
+                        complete: function() {
+                            form.data('submited', false);
+                        }
+                    });
+                }
+            });
+        }
     </script>
 
     <?php ActiveForm::end(); ?>
