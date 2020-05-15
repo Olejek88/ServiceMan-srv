@@ -18,6 +18,7 @@ use common\models\TaskType;
 use Exception;
 use Throwable;
 use yii\console\Controller;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Console;
 
 class AddFireguardTaskTemplatesController extends Controller
@@ -49,82 +50,293 @@ class AddFireguardTaskTemplatesController extends Controller
             exit(1);
         }
 
-        $tt = self::addTaskTemplate('Текущий ремонт', 'Текущий ремонт',
-            TaskType::TASK_TYPE_CURRENT_REPAIR);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
-
-        $tt = self::addTaskTemplate('Аварийное обслуживание', 'Аварийное обслуживание',
-            TaskType::TASK_TYPE_REPAIR);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
-
-        $tt = self::addTaskTemplate('Текущая замена', 'Текущая замена',
-            TaskType::TASK_TYPE_REPLACE);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
-
-        $tt = self::addTaskTemplate('Замена при аварийной ситуации', 'Замена при аварийной ситуации',
-            TaskType::TASK_TYPE_REPAIR);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
-
-        $tt = self::addTaskTemplate('Текущее обслуживание', 'Текущее обслуживание',
-            TaskType::TASK_TYPE_NOT_PLAN_TO);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
-
-        $tt = self::addTaskTemplate('Плановое обслуживание', 'Плановое обслуживание',
-            TaskType::TASK_TYPE_PLAN_TO);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-        self::addTaskTemplateEquipmentType($tt->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        self::createTemplates();
 
         $houses = House::findAll(['oid' => $this->uuid, 'deleted' => false]);
         foreach ($houses as $house) {
-            $object = Objects::findOne([
-                'objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL,
-                'houseUuid' => $house->uuid,
-                'deleted' => false,
-                'oid' => $this->uuid,
-            ]);
-            if ($object == null) {
-                $object = new Objects();
-                $object->uuid = MainFunctions::GUID();
-                $object->oid = $this->uuid;
-                $object->gis_id = null;
-                $object->title = 'Пожарная система';
-                $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
-                $object->houseUuid = $house->uuid;
-                $object->objectTypeUuid = ObjectType::OBJECT_TYPE_GENERAL;
-                $object->deleted = false;
-                $object->square = 0;
-                if (!$object->save()) {
-                    $message = '';
-                    foreach ($object->errors as $error) {
-                        $message .= $error[0] . PHP_EOL;
-                    }
-
-                    throw new Exception('Не удалось сохранить общий объект ' . $message);
-                }
-            }
-
-            self::addEquipment('Пожарный ящик', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
-            self::addEquipment('Пожарная кнопка', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
-            self::addEquipment('Пожарная сигнализация', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
-            self::addEquipment('Пожарный датчик', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+            self::addToHouse($house->uuid);
         }
+    }
+
+    /**
+     * @param $houseUuid
+     * @throws Exception
+     */
+    public function addToHouse($houseUuid)
+    {
+        $object = Objects::findOne([
+            'objectTypeUuid' => ObjectType::OBJECT_TYPE_GENERAL,
+            'title' => 'Пожарная система',
+            'houseUuid' => $houseUuid,
+            'deleted' => false,
+            'oid' => $this->uuid,
+        ]);
+        if ($object == null) {
+            $object = new Objects();
+            $object->uuid = MainFunctions::GUID();
+            $object->oid = $this->uuid;
+            $object->gis_id = null;
+            $object->title = 'Пожарная система';
+            $object->objectStatusUuid = ObjectStatus::OBJECT_STATUS_OK;
+            $object->houseUuid = $houseUuid;
+            $object->objectTypeUuid = ObjectType::OBJECT_TYPE_GENERAL;
+            $object->deleted = false;
+            $object->square = 0;
+            if (!$object->save()) {
+                $message = '';
+                foreach ($object->errors as $error) {
+                    $message .= $error[0] . PHP_EOL;
+                }
+
+                throw new Exception('Не удалось сохранить общий объект ' . $message);
+            }
+        }
+
+        self::addEquipment('Пожарный ящик', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        self::addEquipment('Пожарная кнопка', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        self::addEquipment('Пожарная сигнализация', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        self::addEquipment('Пожарный датчик', $object->uuid, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function createTemplates()
+    {
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Текущий ремонт',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Текущий ремонт', 'Текущий ремонт',
+                TaskType::TASK_TYPE_CURRENT_REPAIR);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Аварийное обслуживание',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Аварийное обслуживание', 'Аварийное обслуживание',
+                TaskType::TASK_TYPE_REPAIR);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Текущая замена',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Текущая замена', 'Текущая замена',
+                TaskType::TASK_TYPE_REPLACE);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Замена при аварийной ситуации',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Замена при аварийной ситуации', 'Замена при аварийной ситуации',
+                TaskType::TASK_TYPE_REPAIR);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Текущее обслуживание',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Текущее обслуживание', 'Текущее обслуживание',
+                TaskType::TASK_TYPE_NOT_PLAN_TO);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
+        //
+        $check = TaskTemplateEquipmentType::find()
+            ->joinWith('taskTemplate')
+            ->where([
+                'equipmentTypeUuid' => [
+                    EquipmentType::EQUIPMENT_FIREGUARD_BOX,
+                    EquipmentType::EQUIPMENT_FIREGUARD_BUTTON,
+                    EquipmentType::EQUIPMENT_FIREGUARD_ALARM,
+                    EquipmentType::EQUIPMENT_FIREGUARD_SENSOR,
+                ],
+                'task_template.title' => 'Плановое обслуживание',
+            ])->asArray()
+            ->all();
+        $testList = ArrayHelper::map($check, '_id', 'equipmentTypeUuid');
+
+        if (count($check) == 0) {
+            $tt = self::addTaskTemplate('Плановое обслуживание', 'Плановое обслуживание',
+                TaskType::TASK_TYPE_PLAN_TO);
+            $tt = $tt->uuid;
+        } else {
+            $tt = $check[0]['taskTemplateUuid'];
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BOX, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BOX);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_BUTTON, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_BUTTON);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_ALARM, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_ALARM);
+        }
+
+        if (!in_array(EquipmentType::EQUIPMENT_FIREGUARD_SENSOR, $testList)) {
+            self::addTaskTemplateEquipmentType($tt, EquipmentType::EQUIPMENT_FIREGUARD_SENSOR);
+        }
+
     }
 
     /**

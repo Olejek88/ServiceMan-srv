@@ -17,6 +17,7 @@ use common\models\ObjectStatus;
 use common\models\ObjectType;
 use common\models\Street;
 use common\models\Users;
+use console\controllers\AddFireguardTaskTemplatesController;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -24,6 +25,7 @@ use yii\db\Exception;
 use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * ObjectController implements the CRUD actions for Object model.
@@ -391,7 +393,8 @@ class ObjectController extends ZhkhController
                         return $this->renderAjax('_add_house_form', [
                             'houseUuid' => $uuid,
                             'house' => $house,
-                            'source' => $source
+                            'source' => $source,
+                            'streetUuid' => $house->streetUuid,
                         ]);
                     }
                 }
@@ -402,7 +405,8 @@ class ObjectController extends ZhkhController
                         return $this->renderAjax('_add_object_form', [
                             'objectUuid' => $uuid,
                             'object' => $object,
-                            'source' => $source
+                            'source' => $source,
+                            'houseUuid' => $object->houseUuid,
                         ]);
                     }
                 }
@@ -746,6 +750,15 @@ class ObjectController extends ZhkhController
                                 }
                             }
                         }
+
+                        // создаём элементы пожарной системы (по умолчанию, один шкаф, одну сигнализацию, один датчик,
+                        // одну кнопку)
+                        if ($request->getBodyParam('fireguard', 0) != 0) {
+                            $cnt = new AddFireguardTaskTemplatesController('add-fireguard-task-templates', $this->module);
+                            $cnt->uuid = Users::getCurrentOid();
+                            $cnt->createTemplates();
+                            $cnt->addToHouse($model->uuid);
+                        }
                     }
 
                     if ($source) {
@@ -753,6 +766,17 @@ class ObjectController extends ZhkhController
                     }
 
                     return $this->redirect(['/object/tree']);
+                } else {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    $message = '';
+                    foreach ($model->errors as $error) {
+                        $message .= $error[0] . '</br>';
+                    }
+
+                    return [
+                        'error' => true,
+                        'message' => $message,
+                    ];
                 }
             }
 
