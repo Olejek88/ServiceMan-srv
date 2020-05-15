@@ -203,11 +203,15 @@ use yii\helpers\Html;
     echo Html::checkbox('tv', true, ['label' => 'ТВ']);
     echo '</br>';
     echo Html::checkbox('domophones', true, ['label' => 'Домофоны']);
+    echo '</br>';
+    echo Html::checkbox('fireguard', true, ['label' => 'Пожарная система']);
     ?>
 </div>
 <div class="modal-footer">
     <?php echo Html::submitButton(Yii::t('app', 'Отправить'), ['class' => 'btn btn-success']) ?>
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+</div>
+<div class="errors" style="color: red;">
 </div>
 <script>
     if ($(document).data('add-house-form') === true) {
@@ -227,8 +231,13 @@ use yii\helpers\Html;
                         url: "../object/save",
                         type: "post",
                         data: form.serialize(),
-                        success: function () {
-                            $('#modalAdd').modal('hide');
+                        success: function ($res) {
+                            if ($res instanceof Object && $res.error === true) {
+                                form.data('submited', false);
+                                $('.errors').html($res.message);
+                            } else {
+                                $('#modalAdd').modal('hide');
+                            }
                         },
                         error: function (error) {
                             // когда на ajax запрос отвечают редиректом, генерируется ошибка

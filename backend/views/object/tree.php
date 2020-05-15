@@ -110,8 +110,8 @@ echo FancytreeWidget::widget([
                                     source: "../object/tree"
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAdd\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
+                                    $("#modalAdd").modal("show");
+                                    $("#modalContent").html(data);
                                 }
                            }); 
                         }                        
@@ -134,8 +134,8 @@ echo FancytreeWidget::widget([
                                     source: "../object/tree"                                    
                                 },
                                 success: function (data) { 
-                                    $(\'#modalAdd\').modal(\'show\');
-                                    $(\'#modalContent\').html(data);
+                                    $("#modalAdd").modal("show");
+                                    $("#modalContent").html(data);
                                 }
                            }); 
                     }')

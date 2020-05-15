@@ -21,6 +21,7 @@ use yii\db\Expression;
  * @property string $createdAt
  * @property string $changedAt
  *
+ * @property House[] $houses
  * @property City $city
  */
 class Street extends ZhkhActiveRecord
@@ -101,5 +102,13 @@ class Street extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'Изменен'),
         ];
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getHouses()
+    {
+        return $this->hasMany(House::class, ['streetUuid' => 'uuid'])->where(['house.deleted' => false]);
     }
 }

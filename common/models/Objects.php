@@ -28,6 +28,7 @@ use yii\db\Expression;
  * @property ObjectStatus $objectStatus
  * @property Photo $photo
  * @property string $fullTitle
+ * @property ObjectContragent[] $contragents
  * @property ObjectType $objectType
  */
 class Objects extends ZhkhActiveRecord
@@ -171,5 +172,13 @@ class Objects extends ZhkhActiveRecord
                 'remove',
                 'remove-link',
             ]]);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getContragents()
+    {
+        return $this->hasMany(ObjectContragent::class, ['objectUuid' => 'uuid']);
     }
 }

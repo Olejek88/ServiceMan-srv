@@ -66,6 +66,9 @@ class House extends ZhkhActiveRecord
             [['createdAt', 'changedAt', 'deleted'], 'safe'],
             [['uuid', 'number', 'houseStatusUuid', 'houseTypeUuid', 'streetUuid', 'oid'], 'string', 'max' => 50],
             [['latitude', 'longitude'], 'number'],
+            [['houseStatusUuid'], 'exist', 'targetClass' => HouseStatus::class, 'targetAttribute' => ['houseStatusUuid' => 'uuid']],
+            [['streetUuid'], 'exist', 'targetClass' => Street::class, 'targetAttribute' => ['streetUuid' => 'uuid']],
+            [['houseTypeUuid'], 'exist', 'targetClass' => HouseType::class, 'targetAttribute' => ['houseTypeUuid' => 'uuid']],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
         ];
@@ -156,7 +159,7 @@ class House extends ZhkhActiveRecord
      */
     public function getObjects()
     {
-        return $this->hasMany(Objects::class, ['houseUuid' => 'uuid']);
+        return $this->hasMany(Objects::class, ['houseUuid' => 'uuid'])->where(['object.deleted' => false]);
     }
 
 }

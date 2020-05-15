@@ -80,7 +80,8 @@ class ObjectContragent extends ZhkhActiveRecord
      */
     public function getContragent()
     {
-        return $this->hasOne(Contragent::class, ['uuid' => 'contragentUuid']);
+        return $this->hasOne(Contragent::class, ['uuid' => 'contragentUuid'])
+            ->where(['contragent.deleted' => false]);
     }
 
     /**
