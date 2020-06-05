@@ -332,6 +332,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'editableOptions' => ['placement' => PopoverX::ALIGN_LEFT]
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
