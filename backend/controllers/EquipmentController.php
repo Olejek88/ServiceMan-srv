@@ -967,8 +967,13 @@ class EquipmentController extends ZhkhController
                     }
 
                     $houseUsers = array_keys($houseUsers);
-                    // TODO: реализовать через пузырь
-                    $employers = implode(', ', $houseUsers);
+                    $employers = '<ol>';
+                    foreach ($houseUsers as $houseUser) {
+                        $employers .= '<li>' . $houseUser . '</li>';
+                    }
+
+                    $employers .= '</ol>';
+                    $employers = '<div class="popup isp">Ответственные<span class="popuptext" style="white-space: nowrap;">' . $employers . '</span></div>';
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx] = [
@@ -997,9 +1002,16 @@ class EquipmentController extends ZhkhController
                 }
 
                 $employers = '';
-                if (isset($res[$item['house_uuid']][$item['object_uuid']])) {
-                    // TODO: реализовать через пузырь
-                    $employers = implode(', ', $res[$item['house_uuid']][$item['object_uuid']]);
+                if (isset($houseObjectSystemUsers[$item['house_uuid']][$item['object_uuid']])) {
+                    $houseUsers = $houseObjectSystemUsers[$item['house_uuid']][$item['object_uuid']];
+                    $employers = '<ol>';
+                    foreach ($houseUsers as $houseUser) {
+                        $employers .= '<li>' . $houseUser . '</li>';
+                    }
+
+                    $employers .= '</ol>';
+                    $employers = '<div class="popup isp">Ответственные<span class="popuptext" style="white-space: nowrap;">' . $employers . '</span></div>';
+
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx] = [
@@ -1758,11 +1770,14 @@ class EquipmentController extends ZhkhController
         } else {
             $systemsUsers = $houseSystemUsers[$equipment['object']['houseUuid']];
             if (isset($systemsUsers[$equipmentSystemUuid])) {
-                // TODO: реализовать показ через пузырь
+                $userEquipmentName = '<ol>';
                 foreach ($systemsUsers[$equipmentSystemUuid] as $houseSystemUser) {
-                    $userEquipmentName .= $houseSystemUser . '</br>';
+                    $userEquipmentName .= '<li>' . $houseSystemUser . '</li>';
                 }
+                $userEquipmentName .= '</ol>';
             }
+
+            $userEquipmentName = '<div class="popup isp">Ответственные<span class="popuptext" style="white-space: nowrap;">' . $userEquipmentName . '</span></div>';
         }
 
         $task_text = '<div class="progress"><div class="critical5">задач нет</div></div>';
