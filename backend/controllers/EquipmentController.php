@@ -378,7 +378,6 @@ class EquipmentController extends ZhkhController
         ini_set('memory_limit', '-1');
         $fullTree = array();
         $documentations = self::getDocumentationForTree();
-        $userSystems = self::getSystems2UsersForTree();
         $tasks = self::getTasksForTree();
 
         $streets = Street::find()->asArray()->indexBy('uuid')->all();
@@ -408,6 +407,9 @@ class EquipmentController extends ZhkhController
         }
 
         unset($equipments);
+
+        // выбираем данные по домам и связанными с ними пользователями, рассортированными по системам
+        $houseSystemUsers = self::getHouseSystemUsers();
 
         $systems = EquipmentSystem::find()->orderBy('title')->asArray()->all();
         foreach ($systems as $system) {
@@ -449,8 +451,9 @@ class EquipmentController extends ZhkhController
                         $objectTitle = $objects[$equipment['objectUuid']]['title'];
                         $equipment['object'] = [
                             'fullTitle' => 'ул.' . $streetTitle . ', д.' . $houseNumber . ' - ' . $objectTitle,
+                            'houseUuid' => $equipment['object']['houseUuid'],
                         ];
-                        $e = self::addEquipment($equipment, $documentations, $userSystems, $tasks, "../equipment/tree");
+                        $e = self::addEquipment($equipment, $documentations, $houseSystemUsers, $tasks, "../equipment/tree");
                         $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = $e;
                     }
                 }
@@ -802,6 +805,22 @@ class EquipmentController extends ZhkhController
         return $uhByUuid;
     }
 
+    public static function getHouseSystemUsers()
+    {
+        $userHouses = UserHouse::find()
+            ->with(['user.userSystems'])
+            ->asArray()
+            ->all();
+        $houseSystemUsers = [];
+        foreach ($userHouses as $userHouse) {
+            foreach ($userHouse['user']['userSystems'] as $userSystem) {
+                $houseSystemUsers[$userHouse['houseUuid']][$userSystem['equipmentSystemUuid']][] = $userHouse['user']['name'];
+            }
+        }
+
+        return $houseSystemUsers;
+    }
+
     /**
      * Build tree of equipment by user
      *
@@ -819,8 +838,40 @@ class EquipmentController extends ZhkhController
         $userSystems = self::getSystems2UsersForTree();
         // выбираем все последние задачи для каждого оборудования
         $tasks = self::getTasksForTree();
-        // выбираем в виде массива связи исполнителей с домами
-        $userHouses = self::getHomes2UsersForTree();
+        // выбираем данные по домам и связанными с ними пользователями, рассортированными по системам
+        $houseSystemUsers = self::getHouseSystemUsers();
+
+        $equipments = Equipment::find()
+            ->with(['object.house', 'equipmentType'])
+            ->asArray()
+            ->all();
+        $houseObjectSystemUsers = [];
+        foreach ($equipments as $equipment) {
+            $houseUuid = $equipment['object']['house']['uuid'];
+            $objectUuid = $equipment['object']['uuid'];
+            $systemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
+
+            if (isset($houseSystemUsers[$houseUuid][$systemUuid])) {
+                $houseObjectSystemUsers[$houseUuid][$objectUuid][$systemUuid][] = $houseSystemUsers[$houseUuid][$systemUuid];
+            }
+        }
+
+        unset($equipments);
+
+        foreach ($houseObjectSystemUsers as $houseUuid => $objects) {
+            foreach ($objects as $objectUuid => $systems) {
+                $userKeys = [];
+                foreach ($systems as $system) {
+                    foreach ($system as $users) {
+                        foreach ($users as $user) {
+                            $userKeys[$user] = 0;
+                        }
+                    }
+                }
+
+                $houseObjectSystemUsers[$houseUuid][$objectUuid] = array_keys($userKeys);
+            }
+        }
 
         $fullTree = array();
         $q = new Query();
@@ -905,11 +956,19 @@ class EquipmentController extends ZhkhController
                     }
                 }
 
-                $employers = '';
-                if (isset($userHouses[$item['house_uuid']])) {
-                    if ($userHouses[$item['house_uuid']]['usersString'] != '') {
-                        $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userHouses[$item['house_uuid']]['usersString'] . '</div></div>';
+                if (!isset($houseSystemUsers[$item['house_uuid']])) {
+                    $employers = '<div class="progress"><div class="critical5">не назначен</div></div>';
+                } else {
+                    $houseUsers = [];
+                    foreach ($houseSystemUsers[$item['house_uuid']] as $users) {
+                        foreach ($users as $user) {
+                            $houseUsers[$user] = '';
+                        }
                     }
+
+                    $houseUsers = array_keys($houseUsers);
+                    // TODO: реализовать через пузырь
+                    $employers = implode(', ', $houseUsers);
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx] = [
@@ -938,10 +997,9 @@ class EquipmentController extends ZhkhController
                 }
 
                 $employers = '';
-                if (isset($userSystems[$item['equipment_systemUuid']])) {
-                    if ($userSystems[$item['equipment_systemUuid']]['usersString'] != '') {
-                        $employers = '<div class="showhim">Сотрудники<div class="showme">' . $userSystems[$item['equipment_systemUuid']]['usersString'] . '</div></div>';
-                    }
+                if (isset($res[$item['house_uuid']][$item['object_uuid']])) {
+                    // TODO: реализовать через пузырь
+                    $employers = implode(', ', $res[$item['house_uuid']][$item['object_uuid']]);
                 }
 
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx] = [
@@ -999,7 +1057,7 @@ class EquipmentController extends ZhkhController
                         'fullTitle' => $location,
                     ],
                 ];
-                $element = self::addEquipment($equipment, $documentations, $userSystems, $tasks, '../equipment/tree-street');
+                $element = self::addEquipment($equipment, $documentations, $houseSystemUsers, $tasks, '../equipment/tree-street');
                 $fullTree['children'][$streetIdx]['children'][$houseIdx]['children'][$objectIdx]['children'][$equipmentIdx] = $element;
             }
         }
@@ -1683,24 +1741,27 @@ class EquipmentController extends ZhkhController
     /**
      * @param Equipment|array $equipment
      * @param Documentation[] $documentations
-     * @param $userSystems
+     * @param array $houseSystemUsers
      * @param $tasks
      * @param $source
      * @return array
      */
-    public function addEquipment($equipment, &$documentations, &$userSystems, &$tasks, $source)
+    public function addEquipment($equipment, &$documentations, &$houseSystemUsers, &$tasks, $source)
     {
         $equipmentSystemUuid = $equipment['equipmentType']['equipmentSystemUuid'];
         $equipmentUuid = $equipment['uuid'];
         $equipmentTypeUuid = $equipment['equipmentTypeUuid'];
-
         // TODO: заменть все Html::a на ручной вариант, т.к. на тысячах единц оборудования это слишком тормозит
         $userEquipmentName = '';
-        if (isset($userSystems[$equipmentSystemUuid])) {
-            if ($userSystems[$equipmentSystemUuid]['usersString'] === '') {
-                $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
-            } else {
-                $userEquipmentName = $userSystems[$equipmentSystemUuid]['usersString'];
+        if (!isset($houseSystemUsers[$equipment['object']['houseUuid']])) {
+            $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+        } else {
+            $systemsUsers = $houseSystemUsers[$equipment['object']['houseUuid']];
+            if (isset($systemsUsers[$equipmentSystemUuid])) {
+                // TODO: реализовать показ через пузырь
+                foreach ($systemsUsers[$equipmentSystemUuid] as $houseSystemUser) {
+                    $userEquipmentName .= $houseSystemUser . '</br>';
+                }
             }
         }
 

@@ -33,6 +33,7 @@ use yii\db\Query;
  * @property null|string $imageDir
  * @property User $user
  * @property Organization|null $organization
+ * @property UserSystem[] $userSystems
  */
 class Users extends ZhkhActiveRecord
 {
@@ -174,6 +175,16 @@ class Users extends ZhkhActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['_id' => 'user_id']);
+    }
+
+    /**
+     * Связываем пользователя с его специализациями по системам.
+     *
+     * @return ActiveQuery
+     */
+    public function getUserSystems()
+    {
+        return $this->hasMany(UserSystem::class, ['userUuid' => 'uuid']);
     }
 
     /**
