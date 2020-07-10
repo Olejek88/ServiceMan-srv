@@ -1,8 +1,10 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
+use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
+use common\models\UserHouse;
 use common\models\UserSystem;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -31,12 +33,23 @@ use yii\helpers\Html;
         color: #fff;
         text-align: left;
         border-radius: 6px;
-        padding: 8px 18px 8px 0px;
+        padding: 0px 16px;
         position: absolute;
         z-index: 1;
         top: -150%;
         left: -210%;
         /*margin-left: -80px;*/
+    }
+
+    .popup .popuptext ol {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .popup .popuptext li {
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
     }
 
     /* Popup arrow */
@@ -325,8 +338,19 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
+            /** @var Equipment $data */
+            $usersLinkHouse = UserHouse::find()->where(['houseUuid' => $data->object->houseUuid])
+                ->select('userUuid')->asArray()->all();
+            $result = [];
+            foreach ($usersLinkHouse as $value) {
+                $result[] = $value['userUuid'];
+            }
+
             $userSystems = UserSystem::find()
-                ->where(['equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid']])
+                ->where([
+                    'equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid'],
+                    'userUuid' => $result,
+                ])
                 ->all();
             $count = 0;
             $userEquipmentName = '<ol>';
@@ -337,7 +361,7 @@ $gridColumns = [
 
             $userEquipmentName .= '</ol>';
             if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
-            else  $userEquipmentName = '<div class="popup isp" style="osition: unset;">Ответственные<span class="popuptext">' . $userEquipmentName . '</span></div>';
+            else  $userEquipmentName = '<div class="popup isp">Ответственные<span class="popuptext" style="white-space: nowrap;">' . $userEquipmentName . '</span></div>';
             return $userEquipmentName;
         },
     ],
@@ -478,14 +502,24 @@ function () {
     $(this).removeData();
 })');
 
-$this->registerJs('$(".isp").mouseenter(function(event) {
-    var popup = $(event.currentTarget).find("span");
-    popup[0].classList.toggle("show");
-})
-.mouseleave(function(event) {
-    var popup = $(event.currentTarget).find("span");
-    popup[0].classList.toggle("show");
-});');
+$this->registerJs('
+$(document).on("pjax:success", function() {
+    console.log("pjax:success");
+    initPopup();
+});
+
+function initPopup() {
+    $(".isp").mouseenter(function(event) {
+        var popup = $(event.currentTarget).find("span");
+        popup[0].classList.toggle("show");
+    })
+    .mouseleave(function(event) {
+        var popup = $(event.currentTarget).find("span");
+        popup[0].classList.toggle("show");
+    });
+}
+initPopup();
+');
 ?>
 
 <div class="modal remote fade" id="modalAdd">
