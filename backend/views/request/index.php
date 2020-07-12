@@ -10,6 +10,7 @@ use common\models\Users;
 use common\models\WorkStatus;
 use kartik\editable\Editable;
 use kartik\grid\GridView;
+use kartik\popover\PopoverX;
 use kartik\widgets\DatePicker;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -331,6 +332,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'editableOptions' => ['placement' => PopoverX::ALIGN_LEFT]
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
@@ -344,6 +346,7 @@ $gridColumns = [
         'contentOptions' => [
             'class' => 'table_class'
         ],
+        'editableOptions' => ['placement' => PopoverX::ALIGN_LEFT]
     ],
     [
         'class' => 'kartik\grid\ActionColumn',

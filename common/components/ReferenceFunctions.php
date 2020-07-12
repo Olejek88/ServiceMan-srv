@@ -603,11 +603,11 @@ class ReferenceFunctions
      */
     public static function loadReferencesAll2($oid, $db)
     {
-        if ($oid == Organization::ORG_SERVICE_UUID) {
-            self::insertIntoEquipmentType($db, EquipmentType::EQUIPMENT_BASEMENT_DOOR,
-                EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
-                'Входные двери подвала');
-        }
+//        if ($oid == Organization::ORG_SERVICE_UUID) {
+//            self::insertIntoEquipmentType($db, EquipmentType::EQUIPMENT_BASEMENT_DOOR,
+//                EquipmentSystem::EQUIPMENT_SYSTEM_TECHNO,
+//                'Входные двери подвала');
+//        }
 
         self::insertIntoTaskTemplateNew($db, 'Общий осмотр',
             8, [3, 4, 5, 9], EquipmentType::EQUIPMENT_BASEMENT_DOOR, $oid);

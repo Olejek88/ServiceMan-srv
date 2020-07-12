@@ -52,8 +52,8 @@ try {
                     'attribute' => 'model',
                     'header' => 'Раздел',
                     'group' => true,
-                    'contentOptions' => ['style' => 'text-align: center'],
-                    'content' => function($model) {
+                    'contentOptions' => ['style' => 'text-align: center;'],
+                    'content' => function ($model) {
                         /** @var AccessModel $model */
                         return $model->description;
                     }
@@ -63,7 +63,7 @@ try {
                     'attribute' => 'permission',
                     'header' => 'Разрешение',
                     'group' => true,
-                    'contentOptions' => ['style' => 'text-align: center'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
 //                [
 //                    'header' => 'Администратор',
@@ -102,7 +102,7 @@ try {
                         $outHtml .= Html::hiddenInput('oper[' . $idx . '][ch]', 0, ['id' => $aa . 'Ch',]);
                         return $outHtml;
                     },
-                    'contentOptions' => ['style' => 'text-align: center'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
                 [
                     'class' => 'yii\grid\CheckboxColumn',
@@ -122,7 +122,7 @@ try {
                         $outHtml .= Html::hiddenInput('disp[' . $idx . '][ch]', 0, ['id' => $aa . 'Ch',]);
                         return $outHtml;
                     },
-                    'contentOptions' => ['style' => 'text-align: center'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
                 [
                     'class' => 'yii\grid\CheckboxColumn',
@@ -142,7 +142,7 @@ try {
                         $outHtml .= Html::hiddenInput('dir[' . $idx . '][ch]', 0, ['id' => $aa . 'Ch',]);
                         return $outHtml;
                     },
-                    'contentOptions' => ['style' => 'text-align: center'],
+                    'contentOptions' => ['style' => 'text-align: center;'],
                 ],
             ],
         ]
