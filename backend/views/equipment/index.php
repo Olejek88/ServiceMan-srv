@@ -1,8 +1,10 @@
 <?php
 /* @var $searchModel backend\models\EquipmentSearch */
 
+use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\EquipmentType;
+use common\models\UserHouse;
 use common\models\UserSystem;
 use kartik\datecontrol\DateControl;
 use kartik\editable\Editable;
@@ -10,6 +12,85 @@ use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
+?>
+<style>
+    /* Popup container - can be anything you want */
+    .popup {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    /* The actual popup */
+    .popup .popuptext {
+        visibility: hidden;
+        /*width: 250px;*/
+        background-color: #555;
+        color: #fff;
+        text-align: left;
+        border-radius: 6px;
+        padding: 0px 16px;
+        position: absolute;
+        z-index: 1;
+        top: -150%;
+        left: -210%;
+        /*margin-left: -80px;*/
+    }
+
+    .popup .popuptext ol {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    .popup .popuptext li {
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    /* Popup arrow */
+    .popup .popuptext::after {
+        /*content: "";*/
+        /*position: absolute;*/
+        /*top: 100%;*/
+        /*left: 50%;*/
+        /*margin-left: -5px;*/
+        /*border-width: 5px;*/
+        /*border-style: solid;*/
+        /*border-color: #555 transparent transparent transparent;*/
+    }
+
+    /* Toggle this class - hide and show the popup */
+    .popup .show {
+        visibility: visible;
+        -webkit-animation: fadeIn 1s;
+        animation: fadeIn 1s;
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+<?php
 $this->title = Yii::t('app', 'Элементы');
 
 $gridColumns = [
@@ -257,17 +338,30 @@ $gridColumns = [
         'headerOptions' => ['class' => 'kv-sticky-column'],
         'contentOptions' => ['class' => 'kv-sticky-column'],
         'content' => function ($data) {
+            /** @var Equipment $data */
+            $usersLinkHouse = UserHouse::find()->where(['houseUuid' => $data->object->houseUuid])
+                ->select('userUuid')->asArray()->all();
+            $result = [];
+            foreach ($usersLinkHouse as $value) {
+                $result[] = $value['userUuid'];
+            }
+
             $userSystems = UserSystem::find()
-                ->where(['equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid']])
+                ->where([
+                    'equipmentSystemUuid' => $data['equipmentType']['equipmentSystem']['uuid'],
+                    'userUuid' => $result,
+                ])
                 ->all();
             $count = 0;
-            $userEquipmentName = '';
+            $userEquipmentName = '<ol>';
             foreach ($userSystems as $userSystem) {
-                if ($count > 0) $userEquipmentName .= ', ';
-                $userEquipmentName .= $userSystem['user']['name'];
+                $userEquipmentName .= '<li>' . $userSystem['user']['name'] . '</li>';
                 $count++;
             }
+
+            $userEquipmentName .= '</ol>';
             if ($count == 0) $userEquipmentName = '<div class="progress"><div class="critical5">не назначен</div></div>';
+            else  $userEquipmentName = '<div class="popup isp">Ответственные<span class="popuptext" style="white-space: nowrap;">' . $userEquipmentName . '</span></div>';
             return $userEquipmentName;
         },
     ],
@@ -408,6 +502,24 @@ function () {
     $(this).removeData();
 })');
 
+$this->registerJs('
+$(document).on("pjax:success", function() {
+    console.log("pjax:success");
+    initPopup();
+});
+
+function initPopup() {
+    $(".isp").mouseenter(function(event) {
+        var popup = $(event.currentTarget).find("span");
+        popup[0].classList.toggle("show");
+    })
+    .mouseleave(function(event) {
+        var popup = $(event.currentTarget).find("span");
+        popup[0].classList.toggle("show");
+    });
+}
+initPopup();
+');
 ?>
 
 <div class="modal remote fade" id="modalAdd">
