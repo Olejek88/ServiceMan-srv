@@ -48,7 +48,8 @@ class UsersController extends ZhkhController
     public function actionIndex()
     {
         return self::actionTable();
-/*        $searchModel = new UsersSearch();
+        /*
+        $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
 
@@ -304,21 +305,48 @@ class UsersController extends ZhkhController
             $model = Users::find()
                 ->where(['_id' => $_POST['editableKey']])
                 ->one();
-            if ($_POST['editableAttribute'] == 'type') {
-                $am = Yii::$app->getAuthManager();
-                $am->revokeAll($model['user_id']);
-                $newRole = $am->getRole($model->role);
-                $am->assign($newRole, $model['user_id']);
-                return "huy";
+            $message = '';
+            $role = Yii::$app->request->getBodyParam('role');
+            if ($role != null) {
+                if (in_array($role, ['admin', 'operator', 'dispatch', 'director'])) {
+                    $am = Yii::$app->getAuthManager();
+                    $am->revokeAll($model['user_id']);
+                    $newRole = $am->getRole($role);
+                    $output = self::formatRole($newRole->name);
+                    $am->assign($newRole, $model['user_id']);
+                } else {
+                    $output = self::formatRole($role->name);
+                    $message = 'Указано не верное значение.';
+                }
             }
-            if ($_POST['editableAttribute'] == 'active') {
-                if ($_POST['Users'][$_POST['editableIndex']]['active'] == true)
-                    $model['active'] = 1;
-                else $model['active'] = 0;
-                $model->save();
-                return json_encode("hui2");
+
+            $attribute = Yii::$app->request->getBodyParam('editableAttribute');
+            if ($attribute == 'active') {
+                if ($_POST['Users'][$_POST['editableIndex']]['active'] == User::STATUS_ACTIVE) {
+                    $model['active'] = User::STATUS_ACTIVE;
+                    $model->user->status = User::STATUS_ACTIVE;
+                    $output = '<span class="glyphicon glyphicon-ok text-success"></span>';
+                } else if ($_POST['Users'][$_POST['editableIndex']]['active'] == User::STATUS_DELETED) {
+                    $model['active'] = User::STATUS_DELETED;
+                    $model->user->status = User::STATUS_DELETED;
+                    $output = '<span class="glyphicon glyphicon-remove text-danger"></span>';
+                } else {
+                    $message = 'Указано не верное значение.';
+                }
+
+                if (empty($message)) {
+                    $model->save();
+                    $model->user->save();
+                }
+            }
+
+            if ($message != '') {
+                return json_encode(['message' => $message]);
+            } else {
+                return json_encode(['output' => $output]);
             }
         }
+
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
         $dataProvider->pagination->pageSize = 15;
@@ -329,6 +357,30 @@ class UsersController extends ZhkhController
                 'dataProvider' => $dataProvider,
             ]
         );
+    }
+
+    public static function formatRole($roleName)
+    {
+        $string = '';
+        switch ($roleName) {
+            case User::ROLE_ADMIN:
+                $string = '<span class="label label-danger">Администратор</span>';
+                break;
+            case User::ROLE_OPERATOR:
+                $string = '<span class="label label-success">Оператор</span>';
+                break;
+            case User::ROLE_DISPATCH:
+                $string = '<span class="label label-info">Диспетчер</span>';
+                break;
+            case User::ROLE_DIRECTOR:
+                $string = '<span class="label label-info">Директор</span>';
+                break;
+            default:
+                $string = 'Неизвестная';
+                break;
+        }
+
+        return $string;
     }
 
     /**
@@ -378,6 +430,8 @@ class UsersController extends ZhkhController
             if (in_array($users->type, [Users::USERS_WORKER, Users::USERS_ARM_WORKER])) {
                 $users->pin = $model->tagType . ':' . $model->pin;
             }
+
+            $users->active = $user->status;
 
             if ($users->save()) {
                 $am->revokeAll($users->user_id);
