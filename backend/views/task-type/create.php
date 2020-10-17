@@ -33,7 +33,7 @@ $this->title = Yii::t('app', 'Создать тип задачи');
                                 'attribute' => '_id',
                                 'contentOptions' => [
                                     'class' => 'table_class',
-                                    'style' => 'width: 50px; text-align: center'
+                                    'style' => 'width: 50px; text-align: center;'
                                 ],
                                 'headerOptions' => ['class' => 'text-center'],
                                 'content' => function ($data) {

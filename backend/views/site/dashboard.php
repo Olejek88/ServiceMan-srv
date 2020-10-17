@@ -46,6 +46,7 @@
 */
 
 use common\models\Equipment;
+use common\models\User;
 use common\models\UserContragent;
 use common\models\Users;
 use yii\helpers\Html;
@@ -326,7 +327,7 @@ $this->title = Yii::t('app', 'Сводная');
                             $count = 0;
                             foreach ($contragents as $contragent) {
                                 $userContragent = UserContragent::find()->where(['contragentUuid' => $contragent['uuid']])->one();
-                                if ($userContragent) {
+                                if ($userContragent && $userContragent->user->user->status == User::STATUS_ACTIVE) {
                                     if ($userContragent['user']['type'] == Users::USERS_WORKER) {
                                         $path = $userContragent['user']->getPhotoUrl();
                                         if (!$path || !$userContragent['user']['image']) {
@@ -334,7 +335,7 @@ $this->title = Yii::t('app', 'Сводная');
                                         }
                                         print '<li style="width:23%"><img src="' . Html::encode($path) . '" alt="User Image" width="145px">';
                                         echo Html::a(Html::encode($userContragent['user']['name']),
-                                            ['/users/view', '_id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
+                                            ['/users/view', 'id' => Html::encode($userContragent['user']['_id'])], ['class' => 'users-list-name']);
                                         echo '<span class="users-list-date">' . $userContragent['user']['createdAt'] . '</span></li>';
                                     }
                                 }
@@ -469,40 +470,7 @@ $this->title = Yii::t('app', 'Сводная');
     <div class="pull-right hidden-xs">
         <b>Version</b> 0.0.2
     </div>
-    <?php echo Html::a('<img src="images/toir-logo_4x_m.png">', 'http://toirus.ru'); ?>
+    <?php echo Html::a('<img src="/images/toir-logo_4x_m.png">', 'http://toirus.ru'); ?>
     <strong>Copyright &copy; 2014-2019 <a href="http://toirus.ru">ТОиРУС-ЖКХ</a>.</strong> Все права на
     программный продукт защищены.
 </footer>
-
-<script>
-    var userIcon = L.icon({
-        iconUrl: '/images/worker_male1600.png',
-        iconSize: [35, 35],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76]
-    });
-
-    <?php
-    echo $usersList;
-    echo $usersGroup;
-    ?>
-
-    var overlayMapsA = {};
-    var overlayMapsB = {
-        "Пользователи": users
-    };
-    var map = L.map('mapid', {zoomControl: false, layers: [users]}).setView([55.2969, 61.5157], 13);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
-        maxZoom: 18,
-        id: 'mapbox.streets'
-    }).addTo(map);
-
-    L.control.layers(overlayMapsA, overlayMapsB, {
-        position: 'bottomleft'
-    }).addTo(map);
-
-    L.control.zoom({
-        position: 'bottomleft'
-    }).addTo(map);
-
-</script>

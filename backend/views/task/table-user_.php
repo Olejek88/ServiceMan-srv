@@ -2,6 +2,7 @@
 
 use common\components\MainFunctions;
 use common\models\TaskVerdict;
+use common\models\User;
 use common\models\Users;
 use common\models\WorkStatus;
 use kartik\datecontrol\DateControl;
@@ -13,8 +14,10 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 $this->title = Yii::t('app', 'ТОИРУС ЖКХ::Таблица задач');
-
-$users = Users::find()->all();
+$users = Users::find()
+    ->joinWith('user')
+    ->andWhere(['user.status' => User::STATUS_ACTIVE])
+    ->all();
 $items = ArrayHelper::map($users, 'uuid', 'name');
 
 $gridColumns = [

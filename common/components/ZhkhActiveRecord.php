@@ -53,6 +53,12 @@ class ZhkhActiveRecord extends ActiveRecord implements IPermission
         $calledClass = get_called_class();
         $aq = Yii::createObject(ZhkhActiveQuery::class, [$calledClass]);
         if (Yii::$app instanceof Application) {
+            // для модели не применяем фильтрацию по oid, т.к. она не имеет этого поля,
+            // а её uuid для остальных моделей является oid`ом
+            if ($calledClass == 'common\models\Organization') {
+                return $aq;
+            }
+
             if (!Yii::$app->user->isGuest) {
                 /** @var User $identity */
                 $identity = Yii::$app->user->identity;

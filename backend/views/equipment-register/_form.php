@@ -3,6 +3,7 @@
 use app\commands\MainFunctions;
 use common\models\Equipment;
 use common\models\EquipmentRegisterType;
+use common\models\User;
 use common\models\Users;
 use dosamigos\datetimepicker\DateTimePicker;
 use yii\helpers\ArrayHelper;
@@ -37,11 +38,14 @@ use yii\widgets\ActiveForm;
     $items = ArrayHelper::map($registerTypes, 'uuid', 'title');
     echo $form->field($model, 'registerTypeUuid')->dropDownList($items);
 
-    $equipment = Equipment::find()->orderBy("title")->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->orderBy("title")->asArray()->all();
     $items = ArrayHelper::map($equipment, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid')->dropDownList($items);
 
-    $user = Users::find()->all();
+    $user = Users::find()
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($user, 'uuid', 'name');
     echo $form->field($model, 'userUuid')->dropDownList($items);
     ?>

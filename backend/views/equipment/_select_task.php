@@ -5,6 +5,7 @@ use common\models\Equipment;
 use common\models\TaskTemplateEquipmentType;
 use common\models\TaskType;
 use common\models\TaskVerdict;
+use common\models\User;
 use common\models\Users;
 use common\models\UserSystem;
 use common\models\WorkStatus;
@@ -44,7 +45,7 @@ use yii\widgets\ActiveForm;
     if (isset($_GET["equipmentUuid"]))
         echo $form->field($model, 'equipmentUuid')->hiddenInput(['value' => $_GET["equipmentUuid"]])->label(false);
     else {
-        $equipment = Equipment::find()->all();
+        $equipment = Equipment::find()->where(['deleted' => false])->asArray()->all();
         $items = ArrayHelper::map($equipment, 'uuid', 'title');
         echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
             [
@@ -92,7 +93,7 @@ use yii\widgets\ActiveForm;
             ->orderBy('task_template.taskTypeUuid')
             ->all();
         $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
-            return $model['taskTemplate']['taskType']['title'].' :: '.$model['taskTemplate']['title'];
+            return $model['taskTemplate']['taskType']['title'] . ' :: ' . $model['taskTemplate']['title'];
         });
         echo $form->field($model, 'taskTemplateUuid')->widget(Select2::class,
             [
@@ -135,18 +136,26 @@ use yii\widgets\ActiveForm;
     if (isset($_GET["equipmentUuid"])) {
         $equipment = Equipment::find()->where(['uuid' => $_GET["equipmentUuid"]])->one();
         $users = UserSystem::find()
-            ->where(['equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid']])
+            ->joinWith('user.user')
+            ->where([
+                'equipmentSystemUuid' => $equipment['equipmentType']['equipmentSystemUuid'],
+                'user.status' => User::STATUS_ACTIVE
+            ])
             ->all();
         $items = ArrayHelper::map($users, 'userUuid', 'user.name');
     } else {
-        $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
+        $users = Users::find()
+            ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->all();
         $items = ArrayHelper::map($users, 'uuid', 'name');
     }
 
     echo '<label class="control-label">Исполнитель</label>';
     echo Select2::widget(
         [
-                'id' => 'userUuid',
+            'id' => 'userUuid',
             'name' => 'userUuid',
             'language' => 'ru',
             'data' => $items,
@@ -193,7 +202,7 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php
-        echo $form->field($model, 'comment')
+    echo $form->field($model, 'comment')
         ->textarea(['rows' => 4, 'style' => 'resize: none;']);
     ?>
 
@@ -203,27 +212,37 @@ use yii\widgets\ActiveForm;
         ]) ?>
     </div>
     <script>
-        $(document).on("beforeSubmit", "#dynamic-form", function () {
-        }).on('submit', function (e) {
-            var me = $('button.btn.btn-success', e.target);
-            e.preventDefault();
-            me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-            $.ajax({
-                url: "../task/add-task",
-                type: "post",
-                data: $('form').serialize(),
-                success: function () {
-                    $('#modalAddTask').modal('hide');
-                },
-                error: function (result) {
-                    alert(result.statusText);
-                },
-                complete: function () {
-                    console.log('complete');
-                    me.prop('disabled', false).removeClass('disabled').addClass('enabled');
+        if ($(document).data('select-task-form') === true) {
+        } else {
+            $(document).data('select-task-form', true);
+            $(document).on("beforeSubmit", "#dynamic-form", function () {
+                e.preventDefault();
+            }).on('submit', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    var me = $('button.btn.btn-success', e.target);
+                    me.prop('disabled', true).removeClass('enabled').addClass('disabled');
+                    $.ajax({
+                        url: "../task/add-task",
+                        type: "post",
+                        data: $('#form').serialize(),
+                        success: function () {
+                            me.prop('disabled', false).removeClass('disabled').addClass('enabled');
+                            $('#modalAddTask').modal('hide');
+                        },
+                        error: function (result) {
+                            alert(result.statusText);
+                        },
+                        complete: function() {
+                            form.data('submited', false);
+                        }
+                    });
                 }
-            })
-        });
+            });
+        }
     </script>
 
     <?php ActiveForm::end(); ?>

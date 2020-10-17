@@ -24,7 +24,7 @@ use yii\helpers\Html;
     'enableAjaxValidation' => false,
     'action' => '../documentation/save',
     'options' => [
-        'id' => 'form',
+        'id' => 'form-add-doc',
         'enctype' => 'multipart/form-data'
     ]]);
 ?>
@@ -82,6 +82,8 @@ use yii\helpers\Html;
     if (!$equipmentTypeUuid && !$equipmentUuid && !$houseUuid) {
         echo $form->field($documentation, 'equipmentTypeUuid')->hiddenInput(['value' => null])->label(false);
         $equipment = Equipment::find()
+            ->where(['deleted' => false])
+            ->with(['object.house.street', 'equipmentType'])
             ->orderBy('objectUuid')
             ->all();
         $items = ArrayHelper::map($equipment, 'uuid', function ($model) {
@@ -138,12 +140,15 @@ use yii\helpers\Html;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function (e) {
+    $(document).on("beforeSubmit", "#form-add-doc", function (e) {
     }).on('submit', function (e) {
         e.preventDefault();
+        var data = new FormData(e.target);
         $.ajax({
             type: "post",
-            data: new FormData(this),
+            data: data,
+            processData: false,
+            contentType: false,
             url: "../documentation/save",
             success: function () {
                 $('#modalAddDocumentation').modal('hide');

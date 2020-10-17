@@ -1,4 +1,5 @@
 <?php
+
 use common\models\Equipment;
 use common\models\Request;
 use common\models\TaskTemplate;
@@ -25,9 +26,8 @@ use yii\helpers\Url;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => "../task/add-task",
     'options' => [
-        'id' => 'form2'
+        'id' => 'add-task-form'
     ]]);
 ?>
 <div class="modal-header">
@@ -80,7 +80,7 @@ use yii\helpers\Url;
     <?php
     echo $form->field($model, 'authorUuid')->hiddenInput(['value' => $authorUuid])->label(false);
     ?>
-    <?php if ($request->uuid != null) echo Html::hiddenInput("requestUuid", $request->uuid); ?>
+    <?php if ($request != null) echo Html::hiddenInput("requestUuid", $request->uuid); ?>
 
     <?php
     echo '<label class="control-label">Исполнитель</label>';
@@ -189,29 +189,42 @@ use yii\helpers\Url;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form2", function (e) {
-        e.preventDefault();
-    }).on('submit', function (e) {
-        var me = $('button.btn.btn-success', e.target);
-        e.preventDefault();
-        me.prop('disabled', true).removeClass('enabled').addClass('disabled');
-        var form = $('#form2');
-        $.ajax({
-            url: "../task/add-task",
-            type: "post",
-            data: form.serialize(),
-            success: function () {
-                $('#modalTask').modal('hide');
-                window.location.reload();
-            },
-            error: function (result) {
-                //alert(result.statusText);
-            },
-            complete: function () {
-                me.prop('disabled', false).removeClass('disabled').addClass('enabled');
-            }
-        })
-    });
+    if ($(document).data('add-task-form') === true) {
+    } else {
+        $(document).data('add-task-form', true);
+        $(document)
+            .on("beforeSubmit", "#add-task-form", function (e) {
+                e.preventDefault();
+            })
+            .on('submit', "#add-task-form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    $.ajax({
+                        url: "../task/add-task",
+                        type: "post",
+                        data: form.serialize(),
+                        success: function () {
+                            $('#modalTask').modal('hide').removeData();
+                        },
+                        error: function (error) {
+                            // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                            if (error.status !== 302) {
+                                // если это не редирект, включаем возможность повторной отправки формы
+                                form.data('submited', false);
+                            }
+
+                            if (error.status === 302) {
+                                // если редирект, считаем что всё в порядке
+                                $('#modalTask').modal('hide').removeData();
+                            }
+                        }
+                    });
+                }
+            });
+    }
 
 </script>
 <?php ActiveForm::end(); ?>

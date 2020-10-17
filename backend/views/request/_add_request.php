@@ -25,9 +25,8 @@ if (isset($_GET["equipmentUuid"]))
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => "../request/new",
     'options' => [
-        'id' => 'form2'
+        'id' => 'add-request-form'
     ]]);
 ?>
     <div class="modal-header">
@@ -112,6 +111,15 @@ if (isset($_GET["equipmentUuid"]))
                                             $('#request-houseuuid').val(obj.house).trigger('change');
                                             console.log(obj.object);
                                             $('#request-objectuuid').val(obj.object).trigger('change');
+                                            
+                                            $('#object2').trigger(
+                                                  {
+                                                      type: 'select2:select',
+                                                      params: {
+                                                          data: {id : obj.object}
+                                                      }
+                                                  }
+                                            );
                                         }
                                     });
                             }"]
@@ -177,9 +185,11 @@ if (isset($_GET["equipmentUuid"]))
                                             $items = ArrayHelper::map($equipments, 'uuid', function ($equipment) {
                                                 return $equipment->getFullTitle();
                                             });*/
+                        // ['0' => ''] если в селекте нет вариантов выбора, валидация вообще не запускается
+                        $items = empty($model->equipmentUuid) ? ['0' => ''] : [$model->equipmentUuid => $model->equipment->title];
                         echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
                             [
-                                //'data' => $items,
+                                'data' => $items,
                                 'language' => 'ru',
                                 'options' => [
                                     'placeholder' => 'Выберите элементы..'
@@ -235,29 +245,69 @@ if (isset($_GET["equipmentUuid"]))
     </div>
 
     <script>
-        var send = false;
-        $(document).on("beforeSubmit", "#form2", function () {
-            e.preventDefault();
-        }).on('submit', function (e) {
-            e.preventDefault();
-            if (!send) {
-                send = true;
-                var form = $('#form2');
-                $.ajax({
-                    url: "../request/new",
-                    type: "post",
-                    data: form.serialize(),
-                    success: function (ret) {
-                        if (ret.length > 5) {
-                            $('#errors').val(ret);
-                        } else {
-                            $('#modalRequest').modal('hide');
-                            window.location.reload();
+        if ($(document).data('add-request-form') === true) {
+        } else {
+            $(document).data('add-request-form', true);
+            $(document).on('afterInit', '#add-request-form', function (e) {
+                $('#add-request-form').yiiActiveForm('find', 'request-equipmentuuid').validate =
+                    function (attribute, value, messages, deferred, $form) {
+                        console.log('validate function');
+                        console.log(attribute, value, messages, deferred, $form);
+                        if ($("#request-requesttypeuuid").prop('value') !== '56772BB4-5542-499D-B880-6B6EFBE5C2DC') {
+                            yii.validation.required(
+                                value,
+                                messages,
+                                {message: "При выбранном характере обращения, нужно выбрать элемент."}
+                            );
                         }
+                    };
+                return true;
+            });
+
+            $(document).on('change.yii', '#request-requesttypeuuid', function () {
+                $("#add-request-form").yiiActiveForm('validateAttribute', 'request-equipmentuuid');
+            });
+            $(document)
+                .on("beforeSubmit", "#add-request-form", function (e) {
+                    e.preventDefault();
+                })
+                .on('submit', "#add-request-form", function (e) {
+                    e.preventDefault();
+                    var form = $(this);
+                    if (form.data('submited') === true) {
+                    } else {
+                        form.data('submited', true);
+                        $.ajax({
+                            url: "../request/new",
+                            type: "post",
+                            data: form.serialize(),
+                            success: function (ret) {
+                                if (ret.length > 5) {
+                                    $('#errors').val(ret);
+                                } else {
+                                    $('#modalRequest').modal('hide').removeData().find('.modal-content').html('');
+                                    if ($('#request-table').length > 0) {
+                                        $.pjax.reload('#request-table');
+                                    }
+                                }
+                            },
+                            error: function (error) {
+                                // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                                if (error.status !== 302) {
+                                    // если это не редирект, включаем возможность повторной отправки формы
+                                    form.data('submited', false);
+                                }
+
+                                if (error.status === 302) {
+                                    // если редирект, считаем что всё в порядке
+                                    $('#modalRequest').modal('hide').removeData().find('.modal-content').html('');
+                                }
+                            }
+                        });
                     }
                 });
-            }
-        });
+        }
+
     </script>
 <?php ActiveForm::end(); ?>
 
@@ -273,19 +323,19 @@ if (isset($_GET["equipmentUuid"]))
 
 $this->registerJs('function refreshContragent(contragentUuid) {
 $.ajax({
-    url: \'../contragent/address\',
-    type: \'post\',
+    url: "../contragent/address",
+    type: "post",
     data: {
        id: contragentUuid
 },
 success: function (data) {
     var obj = JSON.parse(data);
-    $(\'#request-cityuuid\').val(obj.city).trigger(\'change\');
+    $("#request-cityuuid").val(obj.city).trigger("change");
     refreshStreets(obj.city);
     console.log(obj.street);
-    $(\'#request-streetuuid\').val(obj.street).trigger(\'change\');
-    $(\'#request-houseuuid\').val(obj.house).trigger(\'change\');
-    $(\'#request-objectuuid\').val(obj.object).trigger(\'change\');
+    $("#request-streetuuid").val(obj.street).trigger("change");
+    $("#request-houseuuid").val(obj.house).trigger("change");
+    $("#request-objectuuid").val(obj.object).trigger("change");
     }
   });    
 };
@@ -293,6 +343,6 @@ success: function (data) {
 
 $this->registerJs('$(document).ready(function() 
 {
-//refreshContragent(\'' . $model['contragentUuid'] . '\');
+//refreshContragent("' . $model['contragentUuid'] . '"");
 })');
 ?>

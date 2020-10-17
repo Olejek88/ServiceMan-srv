@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\ObjectsSearch */
 
+use common\models\Objects;
 use common\models\ObjectType;
 use kartik\grid\GridView;
 use yii\helpers\ArrayHelper;
@@ -20,7 +21,7 @@ $gridColumns = [
         'mergeHeader' => true,
         'contentOptions' => [
             'class' => 'table_class',
-            'style' => 'width: 50px; text-align: center'
+            'style' => 'width: 50px; text-align: center;'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'content' => function ($data) {
@@ -43,14 +44,14 @@ $gridColumns = [
         'expandOneOnly' => true
     ],
     [
+        'class' => 'kartik\grid\DataColumn',
         'attribute' => 'fullTitle',
         'vAlign' => 'middle',
-        'mergeHeader' => true,
         'value' => function ($data) {
+            /** @var Objects $data */
             return $data->getFullTitle();
         },
-        'header' => 'Дом' . '<table><tr><form action=""><td>' .
-            Html::textInput('address', $value, ['style' => 'width:100%']) . '</td></form></tr></table>',
+        'header' => 'Дом',
         'format' => 'raw',
     ],
     [
@@ -64,38 +65,38 @@ $gridColumns = [
             return $data['objectType']['title'] . ' ' . $data['title'];
         }
     ],
-/*    [
-        'class' => 'kartik\grid\DataColumn',
-        'attribute' => 'objectStatusUuid',
-        'header' => 'Статус',
-        'contentOptions' => [
-            'class' => 'table_class'
-        ],
-        'headerOptions' => ['class' => 'text-center'],
-        'hAlign' => 'center',
-        'vAlign' => 'middle',
-        'width' => '180px',
-        'value' => function ($model, $key, $index, $widget) {
-            $color = 'background-color: yellow';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_DEFAULT)
-                $color = 'background-color: gray';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_NO_ENTRANCE ||
-                ObjectStatus::OBJECT_STATUS_NO_ENTRANCE)
-                $color = 'background-color: lightred';
-            if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_OK)
-                $color = 'background-color: green';
-            return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;  
-                        " . $model['objectStatus']->title;
-        },
-        'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(ObjectStatus::find()->orderBy('title')->all(),
-            'uuid', 'title'),
-        'filterWidgetOptions' => [
-            'pluginOptions' => ['allowClear' => true],
-        ],
-        'filterInputOptions' => ['placeholder' => 'Любой'],
-        'format' => 'raw'
-    ],*/
+    /*    [
+            'class' => 'kartik\grid\DataColumn',
+            'attribute' => 'objectStatusUuid',
+            'header' => 'Статус',
+            'contentOptions' => [
+                'class' => 'table_class'
+            ],
+            'headerOptions' => ['class' => 'text-center'],
+            'hAlign' => 'center',
+            'vAlign' => 'middle',
+            'width' => '180px',
+            'value' => function ($model, $key, $index, $widget) {
+                $color = 'background-color: yellow';
+                if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_DEFAULT)
+                    $color = 'background-color: gray';
+                if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_NO_ENTRANCE ||
+                    ObjectStatus::OBJECT_STATUS_NO_ENTRANCE)
+                    $color = 'background-color: lightred';
+                if ($model['objectStatusUuid'] == ObjectStatus::OBJECT_STATUS_OK)
+                    $color = 'background-color: green';
+                return "<span class='badge' style='" . $color . "; height: 12px; margin-top: -3px'> </span>&nbsp;
+                            " . $model['objectStatus']->title;
+            },
+            'filterType' => GridView::FILTER_SELECT2,
+            'filter' => ArrayHelper::map(ObjectStatus::find()->orderBy('title')->all(),
+                'uuid', 'title'),
+            'filterWidgetOptions' => [
+                'pluginOptions' => ['allowClear' => true],
+            ],
+            'filterInputOptions' => ['placeholder' => 'Любой'],
+            'format' => 'raw'
+        ],*/
     [
         'attribute' => 'objectTypeUuid',
         'hAlign' => 'center',
@@ -117,14 +118,14 @@ $gridColumns = [
     ],
     [
         'class' => 'kartik\grid\EditableColumn',
-            'width' => '180px',
-            'attribute' => 'square',
-            'mergeHeader' => true,
-            'hAlign' => 'center',
-            'vAlign' => 'middle',
-            'headerOptions' => ['class' => 'kv-sticky-column'],
-            'contentOptions' => ['class' => 'kv-sticky-column'],
-            'header' => 'Площадь',
+        'width' => '180px',
+        'attribute' => 'square',
+        'mergeHeader' => true,
+        'hAlign' => 'center',
+        'vAlign' => 'middle',
+        'headerOptions' => ['class' => 'kv-sticky-column'],
+        'contentOptions' => ['class' => 'kv-sticky-column'],
+        'header' => 'Площадь',
     ],
 
     /*    [

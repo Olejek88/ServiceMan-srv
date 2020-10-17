@@ -7,6 +7,7 @@ use backend\models\UserHouseSearch;
 use common\models\EquipmentSystem;
 use common\models\House;
 use common\models\Street;
+use common\models\User;
 use common\models\UserHouse;
 use common\models\Users;
 use common\models\UserSystem;
@@ -87,6 +88,7 @@ class UserHouseController extends ZhkhController
     public function actionCreateDefault()
     {
         $houses = House::find()
+            ->where(['deleted' => false])
             ->all();
         $currentUser = Users::find()
             ->where('user_id>3')
@@ -205,30 +207,30 @@ class UserHouseController extends ZhkhController
                 foreach ($equipmentSystems as $equipmentSystem) {
                     $userSystems = UserSystem::find()->where(['equipmentSystemUuid' => $equipmentSystem['uuid']])->all();
                     $userHouses = UserHouse::find()->where(['houseUuid' => $house['uuid']])->all();
-                    $user_list='';
+                    $user_list = '';
                     $count = 0;
                     foreach ($userSystems as $userSystem) {
                         foreach ($userHouses as $userHouse) {
-                            if ($userSystem['userUuid']==$userHouse['userUuid']) {
-                                if ($count>0) $user_list.=', ';
-                                $user_list.=$userSystem['user']['name'];
+                            if ($userSystem['userUuid'] == $userHouse['userUuid']) {
+                                if ($count > 0) $user_list .= ', ';
+                                $user_list .= $userSystem['user']['name'];
                                 $count++;
                             }
                         }
                     }
-                    if ($user_list!='') {
-                        $title = '<span style="background-color: #11aa11; color: white; border-radius: 4px !important; margin: 3px; padding: 3px">'.$user_list.'</span>';
+                    if ($user_list != '') {
+                        $title = '<span style="background-color: #11aa11; color: white; border-radius: 4px !important; margin: 3px; padding: 3px">' . $user_list . '</span>';
                     } else {
                         $title = '<div class="progress"><div class="critical5">не_назначены</div></div>';
                     }
-                    $name = 'system'.$equipmentSystem['_id'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['title']=$house['number'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['address']=$street['title'] . ', ' . $house['number'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['type']='house';
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['expanded']=true;
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['uuid']=$house['uuid'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['key']=$house['_id'];
-                    $fullTree['children'][$childIdx]['children'][$childIdx2]['folder']=false;
+                    $name = 'system' . $equipmentSystem['_id'];
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['title'] = $house['number'];
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['address'] = $street['title'] . ', ' . $house['number'];
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['type'] = 'house';
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['expanded'] = true;
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['uuid'] = $house['uuid'];
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['key'] = $house['_id'];
+                    $fullTree['children'][$childIdx]['children'][$childIdx2]['folder'] = false;
                     $fullTree['children'][$childIdx]['children'][$childIdx2][$name] = Html::a(
                         $title,
                         ['/user-house/change', 'houseUuid' => $house['uuid'],
@@ -281,7 +283,7 @@ class UserHouseController extends ZhkhController
                 $userHouse = UserHouse::find()->where(['houseUuid' => $_POST['houseUuid']])
                     ->andWhere(['userUuid' => $user['uuid']])
                     ->count();
-                if ($userHouse==0) {
+                if ($userHouse == 0) {
                     $userHouse = new UserHouse();
                     $userHouse->uuid = \common\components\MainFunctions::GUID();
                     $userHouse->houseUuid = $_POST['houseUuid'];
@@ -292,10 +294,13 @@ class UserHouseController extends ZhkhController
             }
         }
 
-        $users = Users::find()->where(['!=','name','sUser'])->all();
+        $users = Users::find()->where(['!=', 'name', 'sUser'])
+            ->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->all();
         foreach ($users as $user) {
-            $id = 'user-'.$user['_id'];
-            if (isset($_POST[$id]) && ($_POST[$id]==1 || $_POST[$id]=="1")) {
+            $id = 'user-' . $user['_id'];
+            if (isset($_POST[$id]) && ($_POST[$id] == 1 || $_POST[$id] == "1")) {
                 $userHouse = UserHouse::find()->where(['houseUuid' => $_POST['houseUuid']])
                     ->andWhere(['userUuid' => $user['uuid']])
                     ->one();

@@ -65,8 +65,16 @@ class MainFunctions
         if (!is_array($messages)) {
             $messages = [$messages];
         }
+
+        $dir = dirname(Yii::getAlias($filename));
+        if ($dir != '.' && !file_exists($dir)) {
+            if (!mkdir($dir, 0777, true)) {
+                return;
+            }
+        }
+
         foreach ($messages as $message) {
-            file_put_contents($filename, date('d.m.Y H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND | LOCK_EX);
+            file_put_contents(Yii::getAlias($filename), date('d.m.Y H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
     }
 
@@ -267,7 +275,7 @@ class MainFunctions
             $task->deadlineDate = $model->deadlineDate;
         }
         if (!$task->save()) {
-            MainFunctions::log("request.log", json_encode($task->errors));
+            MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($task->errors));
             return ['result' => null, 'task' => null, 'message' => 'Не верное оборудование'];
         } else {
             if ($userUuid) {
@@ -277,7 +285,7 @@ class MainFunctions
                 $taskUser->userUuid = $userUuid;
                 $taskUser->oid = $oid;
                 if (!$taskUser->save()) {
-                    MainFunctions::log("request.log", json_encode($taskUser->errors));
+                    MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($taskUser->errors));
                     return ['result' => null, 'task' => $task, 'message' => 'Задача создана, но не назначена'];
                 }
             }
@@ -288,7 +296,7 @@ class MainFunctions
                 self::createOperation($operationTemplate['operationTemplate']['uuid'], $task['uuid'], $oid);
             }
         }
-        MainFunctions::log("request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
+        MainFunctions::log("@console/runtime/daemon/logs/request.log", "create new task " . $task->uuid . ' [' . $taskTemplate['uuid'] . ']');
         return ['result' => 1, 'task' => $task, 'message' => 'Задача создана успешно'];
     }
 
@@ -302,52 +310,60 @@ class MainFunctions
         $operation->oid = $oid;
         $operation->workStatusUuid = WorkStatus::NEW;
         if (!$operation->save()) {
-            MainFunctions::log("request.log", json_encode($operation->errors));
+            MainFunctions::log("@console/runtime/daemon/logs/request.log", json_encode($operation->errors));
             return null;
         }
-        MainFunctions::log("request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
+        MainFunctions::log("@console/runtime/daemon/logs/request.log", "create new operation " . $operation->uuid . ' [' . $operationTemplateUuid . ']');
         return $operation;
     }
 
     /**
-     * @return mixed
      * @throws Exception
      * @throws InvalidConfigException
      */
     public static function checkTasks()
     {
         $today = time();
-        $equipments = Equipment::find()->all();
-        foreach ($equipments as $equipment) {
-            $taskTemplateEquipments = TaskTemplateEquipment::find()
-                ->where(['equipmentUuid' => $equipment['uuid']])
-                ->all();
-
-            foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
-                $user = $taskTemplateEquipment->getUser();
-                $taskTemplateEquipment->formDates();
-                $dates = $taskTemplateEquipment->getDates();
-                if ($dates) {
-                    $count = 0;
-                    while ($count < count($dates)) {
-                        $start = strtotime($dates[$count]);
-                        // что-то пошло не так, дата очень старая, нужно перенести на текущую
-                        if ($today - $start > 3600 * 24 * 31) {
-                            $start = $today - 1;
-                            $dates[$count] = date("Y-m-d H:i:s", $start);
-                        }
-                        if ($start < $today) {
-                            //MainFunctions::log("task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
-                            MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
-                                $equipment['uuid'], 'Задача создана по план-графику',
-                                $equipment['oid'], $user, null, $start, null);
-                            $taskTemplateEquipment->last_date = $dates[$count];
-                            $taskTemplateEquipment->save();
-                            $taskTemplateEquipment->popDate();
-                        }
-                        $count++;
-                        if ($count > 5) break;
+        $equipments = Equipment::find()
+            ->joinWith(['object.house'])
+            ->with(['equipmentType.equipmentSystem'])
+            ->where(['equipment.deleted' => false, 'house.deleted' => false, 'object.deleted' => false])
+            ->asArray()
+            ->all();
+        $eqUuids = ArrayHelper::map($equipments, '_id', 'uuid');
+        $equipments = ArrayHelper::map($equipments, 'uuid', function ($element) {
+            return $element;
+        });
+        $taskTemplateEquipments = TaskTemplateEquipment::find()
+            ->where(['equipmentUuid' => $eqUuids])
+            ->all();
+        foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
+            $user = TaskTemplateEquipment::getUserStatic($equipments[$taskTemplateEquipment['equipmentUuid']]['equipmentType']['equipmentSystem'],
+                $equipments[$taskTemplateEquipment['equipmentUuid']]['object']['house']);
+            $taskTemplateEquipment->formDates();
+            $dates = $taskTemplateEquipment->getDates();
+            if ($dates) {
+                $count = 0;
+                while ($count < count($dates)) {
+                    $start = strtotime($dates[$count]);
+                    // что-то пошло не так, дата очень старая, нужно перенести на текущую
+                    if ($today - $start > 3600 * 24 * 31) {
+                        $start = $today - 1;
+                        $dates[$count] = date("Y-m-d H:i:s", $start);
                     }
+
+                    if ($start < $today) {
+                        //MainFunctions::log("@backend/runtime/logs/task.log", $equipment['title']." ".date("d-m-Y H:i:s",$start));
+                        MainFunctions::createTask($taskTemplateEquipment['taskTemplate'],
+                            $taskTemplateEquipment['equipmentUuid'], 'Задача создана по план-графику',
+                            $taskTemplateEquipment['oid'], $user['uuid'], null, $start, null);
+                        $taskTemplateEquipment->last_date = $dates[$count];
+                        $taskTemplateEquipment->save();
+                        $taskTemplateEquipment->popDate();
+                    }
+
+                    $count++;
+                    if ($count > 5) break;
                 }
             }
         }

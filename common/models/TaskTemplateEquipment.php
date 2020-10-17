@@ -195,6 +195,33 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
     }
 
     /**
+     * @param $equipmentSystem
+     * @param $house
+     * @return array|Users|ActiveRecord|null
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public static function getUserStatic($equipmentSystem, $house)
+    {
+        $userHouses = UserHouse::find()->where(['houseUuid' => $house['uuid']])->all();
+        foreach ($userHouses as $userHouse) {
+            $userSystems = UserSystem::find()->where(['userUuid' => $userHouse['userUuid']])->all();
+            // если в специализации пользователя есть нужная - выберем пользователя по-умолчанию
+            foreach ($userSystems as $userSystem) {
+                if ($equipmentSystem['uuid'] == $userSystem['equipmentSystemUuid']) {
+                    $user = Users::find()
+                        ->where(['uuid' => $userHouse['userUuid']])
+                        ->andWhere(['active' => 1])
+                        ->one();
+                    if ($user)
+                        return $user;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Link
      *
      * @return string[]
@@ -231,7 +258,7 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
     {
         $next_dates = "";
         $dates = explode(',', $this->next_dates);
-        MainFunctions::log('task.log', $this->next_dates);
+        MainFunctions::log('@backend/runtime/logs/task.log', $this->next_dates);
         if ($dates) {
             $first = 0;
             foreach ($dates as $date) {
@@ -242,7 +269,7 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
                 $first++;
             }
             $this->next_dates = $next_dates;
-            MainFunctions::log('task.log', $next_dates);
+            MainFunctions::log('@backend/runtime/logs/task.log', $next_dates);
             $this->save();
             return $dates[0];
         }
@@ -255,11 +282,17 @@ class TaskTemplateEquipment extends ZhkhActiveRecord
      */
     public function formDates()
     {
+        if (empty($this->period)) {
+            return false;
+        }
+
         $next_dates = $this->next_dates;
         $dates = explode(',', $this->next_dates);
         if ($dates) {
             $count = count($dates);
-            if (strlen($this->next_dates) < 6) $count = 0;
+            if (strlen($this->next_dates) < 6) {
+                $count = 0;
+            }
 
             while (self::TASK_DEEP - $count) {
                 if ($count > 0)

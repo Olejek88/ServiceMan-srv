@@ -2,6 +2,7 @@
 /* @var $searchModel backend\models\DefectSearch */
 
 use common\models\DefectType;
+use common\models\User;
 use common\models\Users;
 use kartik\date\DatePicker;
 use kartik\editable\Editable;
@@ -119,8 +120,9 @@ $gridColumns = [
         'vAlign' => 'middle',
         'width' => '200px',
         'filterType' => GridView::FILTER_SELECT2,
-        'filter' => ArrayHelper::map(Users::find()->orderBy('name')->all(),
-            'uuid', 'name'),
+        'filter' => ArrayHelper::map(Users::find()->joinWith('user')
+            ->andWhere(['user.status' => User::STATUS_ACTIVE])
+            ->orderBy('name')->all(), 'uuid', 'name'),
         'filterWidgetOptions' => [
             'pluginOptions' => ['allowClear' => true],
         ],
@@ -172,6 +174,7 @@ if (isset($_GET['start_time']))
     $start_date = $_GET['start_time'];
 
 echo GridView::widget([
+    'filterSelector' => '.add-filter',
     'dataProvider' => $dataProvider,
     'filterModel' => $searchModel,
     'columns' => $gridColumns,
@@ -186,6 +189,8 @@ echo GridView::widget([
                 'name' => 'start_time',
                 'value' => $start_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'defect-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd 00:00:00'
@@ -195,6 +200,8 @@ echo GridView::widget([
                 'name' => 'end_time',
                 'value' => $end_date,
                 'removeButton' => false,
+                'pjaxContainerId' => 'defect-table',
+                'class' => ['add-filter'],
                 'pluginOptions' => [
                     'autoclose' => true,
                     'format' => 'yyyy-mm-dd 00:00:00'
@@ -209,6 +216,11 @@ echo GridView::widget([
         'filename' => 'event'
     ],
     'pjax' => true,
+    'pjaxSettings' => [
+        'options' => [
+            'id' => 'defect-table',
+        ],
+    ],
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
     'summary' => '',

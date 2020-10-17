@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use backend\models\TaskSearchTemplate;
 use common\components\MainFunctions;
+use common\components\Tag;
 use common\models\Equipment;
 use common\models\EquipmentSystem;
 use common\models\EquipmentType;
@@ -16,9 +17,11 @@ use common\models\TaskType;
 use common\models\Users;
 use Throwable;
 use Yii;
+use yii\base\DynamicModel;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use yii\db\StaleObjectException;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\web\NotFoundHttpException;
 
@@ -170,6 +173,7 @@ class TaskTemplateController extends ZhkhController
         $fullTree = array();
         $systems = EquipmentSystem::find()
             ->orderBy('title')
+            ->asArray()
             ->all();
         foreach ($systems as $system) {
             $fullTree['children'][] = [
@@ -185,6 +189,7 @@ class TaskTemplateController extends ZhkhController
             $types = EquipmentType::find()
                 ->where(['equipmentSystemUuid' => $system['uuid']])
                 ->orderBy('title')
+                ->asArray()
                 ->all();
             foreach ($types as $type) {
                 $expanded = false;
@@ -193,10 +198,19 @@ class TaskTemplateController extends ZhkhController
                     'operation' => false];
                 $childIdx2 = count($fullTree['children'][$childIdx]['children']) - 1;
 
-                $equipments = Equipment::find()->where(['equipmentTypeUuid' => $type['uuid']])->all();
+                $equipments = Equipment::find()
+                    ->joinWith('object.house')
+                    ->where([
+                        'equipment.equipmentTypeUuid' => $type['uuid'],
+                        'equipment.deleted' => false,
+                        'house.deleted' => false
+                    ])
+                    ->with(['object.house.street'])
+                    ->asArray()
+                    ->all();
                 foreach ($equipments as $equipment) {
                     $fullTree['children'][$childIdx]['children'][$childIdx2]['children'][] = [
-                        'title' => $equipment->getFullTitle(),
+                        'title' => Equipment::getFullTitleStatic($equipment),
                         'key' => $equipment['_id'] . "",
                         'expanded' => $expanded,
                         'folder' => true,
@@ -207,6 +221,8 @@ class TaskTemplateController extends ZhkhController
 
                     $taskTemplateEquipments = TaskTemplateEquipment::find()
                         ->where(['equipmentUuid' => $equipment['uuid']])
+                        ->with(['taskTemplate'])
+                        ->asArray()
                         ->all();
                     foreach ($taskTemplateEquipments as $taskTemplateEquipment) {
                         $period_text = $taskTemplateEquipment["period"];
@@ -254,6 +270,7 @@ class TaskTemplateController extends ZhkhController
                         $childIdx4 = count($fullTree['children'][$childIdx]['children'][$childIdx2]['children'][$childIdx3]['children']) - 1;
                         $taskOperations = TaskOperation::find()
                             ->where(['taskTemplateUuid' => $taskTemplateEquipment["taskTemplate"]["uuid"]])
+                            ->asArray()
                             ->all();
                         foreach ($taskOperations as $taskOperation) {
                             $type = '<div class="progress"><div class="critical5">' .
@@ -279,8 +296,9 @@ class TaskTemplateController extends ZhkhController
                 }
             }
         }
+
         return $this->render('tree', [
-            'equipment' => $fullTree
+            'equipments' => $fullTree
         ]);
     }
 
@@ -377,7 +395,7 @@ class TaskTemplateController extends ZhkhController
      */
     public function actionAdd()
     {
-        MainFunctions::log("tree.log", "[add] stage template / model" . $_POST["selected_node"]);
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[add] stage template / model" . $_POST["selected_node"]);
         if (isset($_POST["selected_node"])) {
             $folder = $_POST["folder"];
             $type_id = 0;
@@ -419,7 +437,7 @@ class TaskTemplateController extends ZhkhController
                         ->andWhere(['taskTemplateUuid' => $taskTemplate['uuid']])
                         ->one();
                     $operationTemplate = new OperationTemplate();
-                    MainFunctions::log("tree.log", "!operationTemplate");
+                    MainFunctions::log("@backend/runtime/logs/tree.log", "!operationTemplate");
                     return $this->renderAjax('_add_operation', [
                         'taskTemplateUuid' => $taskTemplate['uuid'],
                         'taskTemplateEquipment' => $taskTemplateEquipment['uuid'],
@@ -541,7 +559,7 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new TaskTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new taskTemplate");
         if ($request->isPost && $model->load($request->post())) {
             if (isset($_POST["TaskTemplate"]["normative"]))
                 $model->normative = $_POST["TaskTemplate"]["normative"];
@@ -556,7 +574,7 @@ class TaskTemplateController extends ZhkhController
             $model->taskTypeUuid = $_POST["TaskTemplate"]["taskTypeUuid"];
             $model->uuid = MainFunctions::GUID();
             $model->save();
-            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
             if ($model->validate() && $equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
                 if ($equipment) {
@@ -570,7 +588,7 @@ class TaskTemplateController extends ZhkhController
                     $taskTemplateEquipment->uuid = MainFunctions::GUID();
                     $taskTemplateEquipment->save();
                 } else
-                    MainFunctions::log("tree.log", "error create task template");
+                    MainFunctions::log("@backend/runtime/logs/tree.log", "error create task template");
             }
         }
         return $this->redirect(['tree']);
@@ -590,7 +608,7 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new OperationTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] operationTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] operationTemplate");
         if ($request->isPost && $model->load($request->post())) {
             if (isset($_POST["OperationTemplate"]["normative"]))
                 $model->description = $_POST["OperationTemplate"]["description"];
@@ -604,17 +622,17 @@ class TaskTemplateController extends ZhkhController
             }
             $model->uuid = MainFunctions::GUID();
             $model->save();
-            MainFunctions::log("tree.log", "[new] new OperationTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new OperationTemplate " . json_encode($model->errors));
             if ($model->validate()) {
                 $taskOperation = new TaskOperation();
                 $taskOperation->uuid = MainFunctions::GUID();
                 $taskOperation->taskTemplateUuid = $_POST["taskTemplateUuid"];
                 $taskOperation->operationTemplateUuid = $model["uuid"];
-                MainFunctions::log("tree.log", "[new] create new");
+                MainFunctions::log("@backend/runtime/logs/tree.log", "[new] create new");
                 $taskOperation->save();
             }
         } else
-            MainFunctions::log("tree.log", "[new] error create operation template: " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] error create operation template: " . json_encode($model->errors));
         return $this->redirect(['tree']);
     }
 
@@ -641,15 +659,38 @@ class TaskTemplateController extends ZhkhController
 
             // оборудование
             if ($folder == "true" && $equipment_id > 0) {
-                $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+                $equipment = Equipment::findOne(['_id' => $equipment_id]);
+                if ($equipment != null) {
+                    $equipmentUuid = $equipment['uuid'];
+                    $taskTemplate = TaskTemplateEquipmentType::find()
+                        ->joinWith('taskTemplate')
+                        ->where(['equipmentTypeUuid' => $equipment['equipmentTypeUuid']])
+                        ->andWhere(['or',
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_TO],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_PLAN_REPAIR],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_CURRENT_CHECK],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_MEASURE],
+                            ['task_template.taskTypeUuid' => TaskType::TASK_TYPE_POVERKA]])
+                        ->orderBy('task_template.taskTypeUuid')
+                        ->all();
+                    $items = ArrayHelper::map($taskTemplate, 'taskTemplate.uuid', function ($model) {
+                        return $model['taskTemplate']['taskType']['title'] . ' :: ' . $model['taskTemplate']['title'];
+                    });
+                } else {
+                    $equipmentUuid = null;
+                    $taskTemplates = TaskTemplate::find()->all();
+                    $items = ArrayHelper::map($taskTemplates, 'uuid', 'title');
+                }
+
                 return $this->renderAjax('_choose_task', [
-                    'equipment' => $equipment
+                    'taskTemplates' => $items,
+                    'equipmentUuid' => $equipmentUuid,
                 ]);
             }
 
             // задача
             if ($folder == "false" && $task_id > 0) {
-                $taskTemplate = TaskTemplate::find()->where(['_id' => $task_id])->one();
+                $taskTemplate = TaskTemplate::findOne(['_id' => $task_id]);
                 if ($taskTemplate) {
                     return $this->renderAjax('_choose_operation', [
                         'taskTemplate' => $taskTemplate
@@ -657,8 +698,10 @@ class TaskTemplateController extends ZhkhController
                 }
             }
         }
+
         if (isset($_POST["equipment_uuid"]) && isset($_POST["taskTemplateUuid"])) {
             $taskTemplateEquipment = new TaskTemplateEquipment();
+            $taskTemplateEquipment->oid = Users::getCurrentOid();;
             $taskTemplateEquipment->taskTemplateUuid = $_POST["taskTemplateUuid"];
             $taskTemplateEquipment->equipmentUuid = $_POST["equipment_uuid"];
             if (isset($_POST["period"])) {
@@ -769,9 +812,25 @@ class TaskTemplateController extends ZhkhController
             // оборудование
             if ($equipment_id > 0) {
                 $equipment = Equipment::find()->where(['_id' => $equipment_id])->one();
+
+                $tagTypeList = [
+                    Tag::TAG_TYPE_DUMMY => 'Пустая',
+                    Tag::TAG_TYPE_GRAPHIC_CODE => 'QR код',
+                    Tag::TAG_TYPE_NFC => 'NFC метка',
+                    Tag::TAG_TYPE_UHF => 'UHF метка'
+                ];
+                $tagType = new DynamicModel(['tagType']);
+                $tagType->addRule(['tagType'], 'required');
+                $tagType->addRule(['tagType'], 'in', ['range' => array_keys($tagTypeList)]);
+                $tagType->setAttributes(['tagType' => Tag::getTagType($equipment->tag)]);
+                $equipment->tag = Tag::getTagId($equipment->tag); // это нужно чтоб в форме правильно отображалась метка, без типа.
+
                 return $this->renderAjax('../equipment/_add_form', [
                     'equipment' => $equipment,
-                    'reference' => 'task-template/tree'
+                    'reference' => 'task-template/tree',
+                    'tagTypeList' => $tagTypeList,
+                    'source' => '/task-template/tree',
+                    'tagType' => $tagType,
                 ]);
             }
 
@@ -821,7 +880,7 @@ class TaskTemplateController extends ZhkhController
             $task_id = $_POST["task_id"];
         if (isset($_POST["type_id"]))
             $type_id = $_POST["type_id"];
-        $types_id=0;
+        $types_id = 0;
         if ($task_id) {
             $taskTemplate = TaskTemplate::find()->where(['uuid' => $task_id])->one();
             if ($taskTemplate) {
@@ -879,10 +938,10 @@ class TaskTemplateController extends ZhkhController
         else
             $model = new TaskTemplate();
         $request = Yii::$app->getRequest();
-        MainFunctions::log("tree.log", "[new] new taskTemplate");
+        MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new taskTemplate");
         if ($request->isPost && $model->load($request->post())) {
             $model->save();
-            MainFunctions::log("tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
+            MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplate " . json_encode($model->errors));
             if (!isset($_POST['taskTemplateUuid'])) {
                 $taskTemplateEquipment = new TaskTemplateEquipmentType();
                 $taskTemplateEquipment->equipmentTypeUuid = $_POST['equipmentTypeUuid'];
@@ -890,7 +949,7 @@ class TaskTemplateController extends ZhkhController
                 $taskTemplateEquipment->uuid = MainFunctions::GUID();
                 $taskTemplateEquipment->oid = Users::getCurrentOid();
                 $taskTemplateEquipment->save();
-                MainFunctions::log("tree.log", "[new] new TaskTemplateEquipment " .
+                MainFunctions::log("@backend/runtime/logs/tree.log", "[new] new TaskTemplateEquipment " .
                     json_encode($taskTemplateEquipment->errors));
                 echo json_encode($taskTemplateEquipment->errors);
             }

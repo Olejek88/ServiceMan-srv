@@ -38,6 +38,7 @@ use yii\db\Expression;
  * @property string $address
  * @property Photo $photo
  * @property User $user
+ * @property TaskTemplateEquipment[] $taskTemplateEquipments
  */
 class Equipment extends ZhkhActiveRecord
 {
@@ -226,10 +227,24 @@ class Equipment extends ZhkhActiveRecord
         return $this['object']->getFullTitle() . ' [' . $this['title'] . ']';
     }
 
+    public static function getFullTitleStatic($equipment)
+    {
+        $objectFullTitle = Objects::getFullTitleStatic($equipment['object']);
+        return $objectFullTitle . ' [' . $equipment['title'] . ']';
+    }
+
     public function getAddress()
     {
         if ($this['object'] && $this['object']['house'])
             return $this['object']['house']['street']->title . ', ' . $this['object']['house']->number . ' - ' . $this['object']->title;
+        else
+            return '';
+    }
+
+    public static function getAddressStatic($model)
+    {
+        if ($model['object'] && $model['object']['house'])
+            return $model['object']['house']['street']['title'] . ', ' . $model['object']['house']['number'] . ' - ' . $model['object']['title'];
         else
             return '';
     }
@@ -249,6 +264,11 @@ class Equipment extends ZhkhActiveRecord
                 return $userSystem['user'];
         }
         return null;
+    }
+
+    public function getTaskTemplateEquipments()
+    {
+        return $this->hasMany(TaskTemplateEquipment::class, ['equipmentUuid' => 'uuid']);
     }
 
     function getActionPermissions()

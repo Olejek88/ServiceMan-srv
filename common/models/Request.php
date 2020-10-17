@@ -33,6 +33,7 @@ use yii\db\Expression;
  * @property string $changedAt
  * @property string $extId
  * @property string $integrationClass
+ * @property integer $serialNumber
  *
  * @property Contragent $contragent
  * @property Users $author
@@ -41,7 +42,6 @@ use yii\db\Expression;
  * @property Equipment $equipment
  * @property Objects $object
  * @property Task $task
- * @property int $id
  */
 class Request extends ZhkhActiveRecord
 {
@@ -123,9 +123,10 @@ class Request extends ZhkhActiveRecord
                 'string',
                 'max' => 45
             ],
-            [['comment', 'verdict', 'result'], 'string', 'max' => 500],
+            [['comment', 'verdict', 'result'], 'string', 'max' => 512],
             [['oid'], 'exist', 'targetClass' => Organization::class, 'targetAttribute' => ['oid' => 'uuid']],
             [['oid'], 'checkOrganizationOwn'],
+            [['serialNumber'], 'integer', 'min' => 1],
         ];
     }
 
@@ -204,6 +205,7 @@ class Request extends ZhkhActiveRecord
             'createdAt' => Yii::t('app', 'Создан'),
             'changedAt' => Yii::t('app', 'изменен'),
             'comment' => Yii::t('app', 'Причина обращения'),
+            'serialNumber' => Yii::t('app', '№'),
         ];
     }
 
@@ -282,24 +284,6 @@ class Request extends ZhkhActiveRecord
     /**
      * Объект связанного поля.
      *
-     * @return int
-     * @throws InvalidConfigException
-     * @throws Exception
-     */
-    public function getId()
-    {
-        $date = date("Y-01-01 00:00:00", strtotime($this->createdAt));
-        $request = Request::find()->where(['>=', 'createdAt', $date])->orderBy('_id')->one();
-        if ($request) {
-            return $this->_id - $request['_id'] + 1;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Объект связанного поля.
-     *
      * @return ActiveQuery
      */
     public function getTask()
@@ -361,5 +345,20 @@ class Request extends ZhkhActiveRecord
         /** @var IntegrationExtSystem $integrationClass */
         $integrationClass = $request->integrationClass;
         return $integrationClass::sendComment($request, $text);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     * @throws InvalidConfigException
+     * @throws Exception
+     */
+    public function beforeSave($insert)
+    {
+        if ($insert) {
+            $this->serialNumber = Request::find()->where(['>=', 'createdAt', date('Y-01-01')])->max('serialNumber') + 1;
+        }
+
+        return parent::beforeSave($insert);
     }
 }

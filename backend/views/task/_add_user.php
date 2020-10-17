@@ -1,6 +1,7 @@
 <?php
 
 use common\models\TaskUser;
+use common\models\User;
 use common\models\Users;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -35,14 +36,16 @@ use yii\widgets\ActiveForm;
         echo Html::checkbox('user-' . $userTask['user']['_id'], false, ['label' => $userTask['user']['name']]);
         echo '</br>';
     }
-    $users = Users::find()->all();
-    $items = ArrayHelper::map($users, 'uuid', 'name');
 
     echo Html::hiddenInput('taskUuid',$taskUuid);
 
     echo '</br>';
     echo '<label class="control-label">Добавить исполнителя</label>';
-    $users = Users::find()->where(['!=', 'uuid', Users::USER_SERVICE_UUID])->all();
+    $users = Users::find()
+        ->where(['!=', 'uuid', Users::USER_SERVICE_UUID])
+        ->joinWith('user')
+        ->andWhere(['user.status' => User::STATUS_ACTIVE])
+        ->all();
     $items = ArrayHelper::map($users, 'uuid', 'name');
     try {
         echo Select2::widget(

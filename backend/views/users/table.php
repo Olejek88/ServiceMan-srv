@@ -1,6 +1,7 @@
 <?php
 /* @var $searchModel backend\models\UsersSearch */
 
+use backend\controllers\UsersController;
 use common\models\User;
 use common\models\Users;
 use kartik\editable\Editable;
@@ -25,7 +26,7 @@ $gridColumns = [
         'vAlign' => 'middle',
         'contentOptions' => [
             'class' => 'table_class',
-            'style' => 'width: 50px; text-align: center'
+            'style' => 'width: 50px; text-align: center;'
         ],
         'headerOptions' => ['class' => 'text-center'],
         'mergeHeader' => true,
@@ -59,29 +60,20 @@ $gridColumns = [
         'value' => function ($model, $key, $index, $widget) {
             $assignments = Yii::$app->getAuthManager()->getAssignments($model['user_id']);
             foreach ($assignments as $value) {
-                if ($value->roleName==User::ROLE_ADMIN)
-                    return '<span class="label label-danger">Администратор</span>';
-                if ($value->roleName==User::ROLE_OPERATOR)
-                    return '<span class="label label-success">Оператор</span>';
-                if ($value->roleName==User::ROLE_DISPATCH)
-                    return '<span class="label label-info">Диспетчер</span>';
-                if ($value->roleName==User::ROLE_DIRECTOR)
-                    return '<span class="label label-info">Директор</span>';
+                return UsersController::formatRole($value->roleName);
             }
             return '';
         },
-        'editableOptions'=> function ($model, $key, $index, $widget) {
+        'editableOptions' => function ($model, $key, $index, $widget) {
             return [
-                'header' => 'Тип',
-                'id' => 'type',
-                'name' => 'type',
+                'name' => 'role',
                 'size' => 'lg',
                 'inputType' => Editable::INPUT_DROPDOWN_LIST,
                 'data' => [
-                    User::ROLE_ADMIN =>'Администратор',
-                    User::ROLE_OPERATOR =>'Оператор',
-                    User::ROLE_DISPATCH =>'Диспетчер',
-                    User::ROLE_DIRECTOR =>'Директор',
+                    User::ROLE_ADMIN => 'Администратор',
+                    User::ROLE_OPERATOR => 'Оператор',
+                    User::ROLE_DISPATCH => 'Диспетчер',
+                    User::ROLE_DIRECTOR => 'Директор',
                 ]
             ];
         },
@@ -134,14 +126,24 @@ $gridColumns = [
         'format' => 'html',
         'vAlign' => 'middle',
         'value' => function ($model, $key, $index, $widget) {
-            if ($model->active==1)
+            if ($model->active == User::STATUS_ACTIVE) {
                 return GridView::ICON_ACTIVE;
-            else
+            } else if ($model->active == User::STATUS_DELETED) {
                 return GridView::ICON_INACTIVE;
+            } else {
+                return GridView::ICON_COLLAPSE;
+            }
         },
-        'editableOptions' => $editableOptions
+        'editableOptions' => [
+            'inputType' => Editable::INPUT_DROPDOWN_LIST,
+            'data' => [
+                User::STATUS_ACTIVE => 'Активен',
+                User::STATUS_DELETED => 'Отключен',
+            ],
+        ],
     ],
-/*    [
+    /*
+    [
         'class' => 'kartik\grid\EditableColumn',
         'attribute' => 'active',
         'header' => 'Статус',
@@ -184,7 +186,7 @@ echo GridView::widget([
     'pjax' => true,
     'showPageSummary' => false,
     'pageSummaryRowOptions' => ['style' => 'line-height: 0; padding: 0'],
-    'summary'=>'',
+    'summary' => '',
     'bordered' => true,
     'striped' => false,
     'condensed' => false,

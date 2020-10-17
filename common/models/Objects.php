@@ -28,6 +28,7 @@ use yii\db\Expression;
  * @property ObjectStatus $objectStatus
  * @property Photo $photo
  * @property string $fullTitle
+ * @property ObjectContragent[] $contragents
  * @property ObjectType $objectType
  */
 class Objects extends ZhkhActiveRecord
@@ -150,6 +151,12 @@ class Objects extends ZhkhActiveRecord
         return 'ул.' . $house->street->title . ', д.' . $house->number . ' - ' . $this->title;
     }
 
+    public static function getFullTitleStatic($object)
+    {
+        $house = $object['house'];
+        return 'ул.' . $house['street']['title'] . ', д.' . $house['number'] . ' - ' . $object['title'];
+    }
+
     function getActionPermissions()
     {
         return array_merge_recursive(parent::getActionPermissions(), [
@@ -165,5 +172,13 @@ class Objects extends ZhkhActiveRecord
                 'remove',
                 'remove-link',
             ]]);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getContragents()
+    {
+        return $this->hasMany(ObjectContragent::class, ['objectUuid' => 'uuid']);
     }
 }

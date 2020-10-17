@@ -99,13 +99,13 @@ class DefectController extends ZhkhController
     public function actionCreate()
     {
         $model = new Defect();
-        $searchModel = new DefectSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-        $dataProvider->pagination->pageSize = 10;
-        $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->_id, 'uuid' => $model->uuid]);
         } else {
+            $searchModel = new DefectSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+            $dataProvider->pagination->pageSize = 10;
+            $dataProvider->setSort(['defaultOrder' => ['_id' => SORT_DESC]]);
             return $this->render('create', [
                 'model' => $model,
                 'dataProvider' => $dataProvider

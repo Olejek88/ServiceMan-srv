@@ -19,6 +19,9 @@ class m190529_123303_fix_sUser extends Migration
         if ($users != null) {
             $user = User::findOne(['username' => 'sUser']);
             if ($user != null) {
+                if ($users->user_id == $user->_id) {
+                    return true; // User should be created in insert_references migration
+                }
                 $usersTest = Users::findOne(['user_id' => $user->_id]);
                 if ($usersTest == null) {
                     $users->user_id = $user->_id;

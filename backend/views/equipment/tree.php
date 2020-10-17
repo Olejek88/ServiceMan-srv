@@ -6,61 +6,140 @@ use yii\web\JsExpression;
 $this->title = 'Дерево моделей элементов';
 
 ?>
-<table id="tree" style="width: 100%">
-    <colgroup>
-        <col style="width:*">
-        <col style="width:*">
-        <col style="width:180px">
-        <col style="width:120px">
-        <col style="width:130px">
-        <col style="width:150px">
-        <col style="width:110px">
-        <col style="width:80px">
-        <col style="width:70px">
-    </colgroup>
-    <thead style="background-color: #337ab7; color: white">
-    <tr>
-        <th colspan="10" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы</th>
-    </tr>
-    <tr style="background-color: #3c8dbc; color: whitesmoke">
-        <th align="center">Элементы
-            <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
-                <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
-            </button>
-            <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
-                <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
-            </button>
-        </th>
-        <th>Адрес</th>
-        <th>Задачи</th>
-        <th>Заводской номер</th>
-        <th>Статус</th>
-        <th>Исполнители</th>
-        <th>Дата ввода в эксплуатацию</th>
-        <th>Файлы</th>
-        <th>Действия</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-        <td class="alt"></td>
-        <td class="center"></td>
-    </tr>
-    </tbody>
-</table>
+    <style>
+        /* Popup container - can be anything you want */
+        .popup {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
 
-<div class="modal remote fade" id="modalChange">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg"></div>
+        /* The actual popup */
+        .popup .popuptext {
+            visibility: hidden;
+            /*width: 250px;*/
+            background-color: #555;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 0px 16px;
+            position: absolute;
+            z-index: 1;
+            top: -150%;
+            left: -210%;
+            /*margin-left: -80px;*/
+        }
+
+        .popup .popuptext ol {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .popup .popuptext li {
+            list-style: none;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        /* Popup arrow */
+        .popup .popuptext::after {
+            /*content: "";*/
+            /*position: absolute;*/
+            /*top: 100%;*/
+            /*left: 50%;*/
+            /*margin-left: -5px;*/
+            /*border-width: 5px;*/
+            /*border-style: solid;*/
+            /*border-color: #555 transparent transparent transparent;*/
+        }
+
+        /* Toggle this class - hide and show the popup */
+        .popup .show {
+            visibility: visible;
+            -webkit-animation: fadeIn 1s;
+            animation: fadeIn 1s;
+        }
+
+        /* Add animation (fade in the popup) */
+        @-webkit-keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <table id="tree" style="width: 100%">
+        <colgroup>
+            <col style="width:*">
+            <col style="width:*">
+            <col style="width:180px">
+            <col style="width:120px">
+            <col style="width:130px">
+            <col style="width:150px">
+            <col style="width:110px">
+            <col style="width:80px">
+            <col style="width:70px">
+        </colgroup>
+        <thead style="background-color: #337ab7; color: white">
+        <tr>
+            <th colspan="10" style="text-align:center;background-color: #3c8dbc; color: whitesmoke">Элементы системы
+            </th>
+        </tr>
+        <tr style="background-color: #3c8dbc; color: whitesmoke">
+            <th align="center">Элементы
+                <button class="btn btn-info" type="button" id="expandButton" style="padding: 1px 5px">
+                    <span class="glyphicon glyphicon-expand" aria-hidden="true"></span>
+                </button>
+                <button class="btn btn-info" type="button" id="collapseButton" style="padding: 1px 5px">
+                    <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+                </button>
+            </th>
+            <th>Адрес</th>
+            <th>Задачи</th>
+            <th>Заводской номер</th>
+            <th>Статус</th>
+            <th>Исполнители</th>
+            <th>Дата ввода в эксплуатацию</th>
+            <th>Файлы</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+            <td class="alt"></td>
+            <td class="center"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="modal remote fade" id="modalChange">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg"></div>
+        </div>
     </div>
-</div>
 
 <?php
 $this->registerJsFile('/js/custom/modules/list/jquery.fancytree.contextMenu.js', ['depends' => ['wbraganca\fancytree\FancytreeAsset']]);
@@ -76,6 +155,17 @@ try {
             'checkbox' => true,
             'selectMode' => 2,
             'extensions' => ['table', 'contextMenu'],
+            'expand' => new JsExpression('function() {
+                $(".isp").unbind("mouseenter").unbind("mouseleave");
+                $(".isp").mouseenter(function(event) {
+                    var popup = $(event.currentTarget).find("span");
+                    popup[0].classList.toggle("show");
+                })
+                .mouseleave(function(event) {
+                    var popup = $(event.currentTarget).find("span");
+                    popup[0].classList.toggle("show");
+                });
+            }'),
             'edit' => [
                 'triggerStart' => ["clickActive", "dblclick", "f2", "mac+enter", "shift+click"],
                 'close' => new JsExpression('function(event, data) {
@@ -273,88 +363,88 @@ try {
 }
 ?>
 
-<div class="modal remote fade" id="modalMeasures">
-    <div class="modal-dialog" style="width: 600px">
-        <div class="modal-content loader-lg">
+    <div class="modal remote fade" id="modalMeasures">
+        <div class="modal-dialog" style="width: 600px">
+            <div class="modal-content loader-lg">
+            </div>
         </div>
     </div>
-</div>
 
-<div class="modal remote fade" id="modalTasks">
-    <div class="modal-dialog" style="width: 1000px">
-        <div class="modal-content loader-lg">
+    <div class="modal remote fade" id="modalTasks">
+        <div class="modal-dialog" style="width: 1000px">
+            <div class="modal-content loader-lg">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalRegister">
-    <div class="modal-dialog" style="width: 800px">
-        <div class="modal-content loader-lg" id="modalRegisterContent">
+    <div class="modal remote fade" id="modalRegister">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content loader-lg" id="modalRegisterContent">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalStatus">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalStatus">
+        <div class="modal-dialog" style="width: 250px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalSN">
-    <div class="modal-dialog" style="width: 250px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalSN">
+        <div class="modal-dialog" style="width: 250px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddTask">
-    <div class="modal-dialog" style="width: 800px; height: 400px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalAddTask">
+        <div class="modal-dialog" style="width: 800px; height: 400px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddPeriodicTask">
-    <div class="modal-dialog" style="width: 600px; height: 300px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px" id="modalContent">
+    <div class="modal remote fade" id="modalAddPeriodicTask">
+        <div class="modal-dialog" style="width: 600px; height: 300px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px" id="modalContent">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAttributes">
-    <div class="modal-dialog" style="width: 800px">
-        <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+    <div class="modal remote fade" id="modalAttributes">
+        <div class="modal-dialog" style="width: 800px">
+            <div class="modal-content loader-lg" style="margin: 10px; padding: 10px">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddDocumentation">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentDoc">
+    <div class="modal remote fade" id="modalAddDocumentation">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentDoc">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddDefect">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentDefect">
+    <div class="modal remote fade" id="modalAddDefect">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentDefect">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalAddEquipment">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentEquipment">
+    <div class="modal remote" id="modalAddEquipment">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentEquipment">
+            </div>
         </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalDefects">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContent"></div>
+    <div class="modal remote fade" id="modalDefects">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContent"></div>
+        </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalRequest">
-    <div class="modal-dialog" style="width: 1000px; height: 400px">
-        <div class="modal-content loader-lg" id="modalContentRequest"></div>
+    <div class="modal remote fade" id="modalRequest">
+        <div class="modal-dialog" style="width: 1000px; height: 400px">
+            <div class="modal-content loader-lg" id="modalContentRequest"></div>
+        </div>
     </div>
-</div>
-<div class="modal remote fade" id="modalMeasure">
-    <div class="modal-dialog">
-        <div class="modal-content loader-lg" id="modalContentMeasure"></div>
+    <div class="modal remote fade" id="modalMeasure">
+        <div class="modal-dialog">
+            <div class="modal-content loader-lg" id="modalContentMeasure"></div>
+        </div>
     </div>
-</div>
 
 <?php
 $this->registerJs('$("#modalRegister").on("hidden.bs.modal",

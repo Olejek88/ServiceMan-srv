@@ -18,9 +18,8 @@ use yii\helpers\Html;
 
 <?php $form = ActiveForm::begin([
     'enableAjaxValidation' => false,
-    'action' => '/object/save',
     'options' => [
-        'id' => 'form',
+        'id' => 'add-contragent-form',
         'enctype' => 'multipart/form-data'
     ]]);
 ?>
@@ -72,21 +71,41 @@ use yii\helpers\Html;
     <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 </div>
 <script>
-    $(document).on("beforeSubmit", "#form", function (e) {
-        e.preventDefault();
-    }).on('submit', function (e) {
-        e.preventDefault();
-        var form = $('#form');
-        $.ajax({
-            type: "post",
-            data: form.serialize(),
-            url: "../object/save",
-            success: function () {
-                $('#modalAdd').modal('hide');
-            },
-            error: function () {
-            }
-        })
-    });
+    if ($(document).data('add-contragent-form') === true) {
+    } else {
+        $(document).data('add-contragent-form', true);
+        $(document)
+            .on("beforeSubmit", "#add-contragent-form", function (e) {
+                e.preventDefault();
+            })
+            .on('submit', "#add-contragent-form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                if (form.data('submited') === true) {
+                } else {
+                    form.data('submited', true);
+                    $.ajax({
+                        url: "../object/save",
+                        type: "post",
+                        data: form.serialize(),
+                        success: function () {
+                            $('#modalAdd').modal('hide');
+                        },
+                        error: function (error) {
+                            // когда на ajax запрос отвечают редиректом, генерируется ошибка
+                            if (error.status !== 302) {
+                                // если это не редирект, включаем возможность повторной отправки формы
+                                form.data('submited', false);
+                            }
+
+                            if (error.status === 302) {
+                                // если редирект, считаем что всё в порядке
+                                $('#modalAdd').modal('hide');
+                            }
+                        }
+                    });
+                }
+            });
+    }
 </script>
 <?php ActiveForm::end(); ?>

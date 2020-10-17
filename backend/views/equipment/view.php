@@ -35,11 +35,11 @@ $this->title = $model['equipmentType']->title;
                                     'uuid',
                                     [
                                         'label' => 'Объект',
-                                        'value' => $model['object']->title
+                                        'value' => $model['object']['title']
                                     ],
                                     [
                                         'label' => 'Статус',
-                                        'value' => $model['equipmentStatus']->title
+                                        'value' => $model['equipmentStatus']['title']
                                     ],
                                     'testDate',
                                     'createdAt',

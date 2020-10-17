@@ -30,7 +30,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipment = Equipment::find()->orderBy(['changedAt' => SORT_DESC])->all();
+    $equipment = Equipment::find()->where(['deleted' => false])->orderBy(['changedAt' => SORT_DESC])->asArray()->all();
     $items = ArrayHelper::map($equipment, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid')->widget(Select2::class,
         [

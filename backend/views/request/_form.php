@@ -102,7 +102,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $equipments = Equipment::find()->all();
+    $equipments = Equipment::find()->where(['deleted' => false])->asArray()->all();
     $items = ArrayHelper::map($equipments, 'uuid', 'title');
     echo $form->field($model, 'equipmentUuid',
         ['template' => MainFunctions::getAddButton("/equipment/create")])->widget(Select2::class,
@@ -119,7 +119,7 @@ use yii\widgets\ActiveForm;
     ?>
 
     <?php
-    $objects  = Objects::find()->all();
+    $objects = Objects::find()->where(['deleted' => false])->all();
     $items = ArrayHelper::map($objects,'uuid','title');
     echo $form->field($model, 'objectUuid',
         ['template' => MainFunctions::getAddButton("/object/create")])->widget(Select2::class,

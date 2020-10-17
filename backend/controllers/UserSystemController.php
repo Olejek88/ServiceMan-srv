@@ -64,7 +64,7 @@ class UserSystemController extends ZhkhController
             $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
             $dataProvider->pagination->pageSize = 100;
             MainFunctions::register('user-system','Добавлена специализация пользователя',
-                '<a class="btn btn-default btn-xs">' . $model['user']['name'] . '</a> ' . $model['system']['title'] . '<br/>',
+                '<a class="btn btn-default btn-xs">' . $model['user']['name'] . '</a> ' . $model['equipmentSystem']['title'] . '<br/>',
                 $model->uuid);
 
             return $this->render('index', [
@@ -93,7 +93,7 @@ class UserSystemController extends ZhkhController
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             MainFunctions::register('user-system','Изменена специализация пользователя',
-                '<a class="btn btn-default btn-xs">' . $model['user']['name'] . '</a> ' . $model['system']['title'] . '<br/>',
+                '<a class="btn btn-default btn-xs">' . $model['user']['name'] . '</a> ' . $model['equipmentSystem']['title'] . '<br/>',
                 $model->uuid);
 
             return $this->redirect(['view', 'id' => $model->_id]);
